@@ -1,0 +1,70 @@
+WARNING: (lint) http-rest: 'rpc Rpc2 as HTTP GET /v1/nonconforming1' is not a recognized REST pattern. Did you mean one of:
+  rpc List.* as HTTP GET <prefix>/<literal>
+  rpc Get.* as HTTP GET <prefix>:<literal>
+  rpc List.* as HTTP GET <prefix>:<literal>
+  rpc Rpc2 as HTTP POST <prefix>:<literal>
+WARNING: (lint) http-rest-shadowed: REST method 'nonconforming1' from rpc method 'protiary.test.Service.Rpc1' at 'suppress_warning.proto:23:3' on collection 'v1' is shadowed by REST method of same name from this rpc. The original method will not be available in REST discovery and derived artifacts.
+documentation {
+  rules {
+    selector: "protiary.test"
+    description: "Globally suppress documentation presence warnings in this file"
+  }
+  rules {
+    selector: "protiary.test.Message"
+    description: "A message."
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc"
+    description: "(-- Rpc uses a wrong rpc name but the warning is suppressed. --)"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc1"
+    description: "(-- Another way to suppress the warning. --)"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc2"
+    description: "(-- This does not suppress the http warning. --)"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc3"
+    description: "some comments  some comments\nsome comments  more comments"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc4"
+    description: "comment1  some comment2\nsome comment3  more comment4\n comment5\n comment6"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc5"
+    description: "Returns an object."
+  }
+  pages {
+    name: "Overview"
+  }
+}
+http {
+  rules {
+    selector: "protiary.test.Service.Rpc"
+    get: "/v1/nonconforming"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc1"
+    get: "/v1/nonconforming1"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc2"
+    get: "/v1/nonconforming1"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc3"
+    get: "/v2/nonconforming1"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc4"
+    get: "/v2/nonconforming2"
+  }
+  rules {
+    selector: "protiary.test.Service.Rpc5"
+    get: "/v1/nonconforming2"
+  }
+}
+

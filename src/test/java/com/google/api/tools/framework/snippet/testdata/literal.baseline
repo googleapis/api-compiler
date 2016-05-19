@@ -1,0 +1,6 @@
+---- eval foo() ==>
+"
+---- end
+---- eval bar() ==>
+"foo
+---- end

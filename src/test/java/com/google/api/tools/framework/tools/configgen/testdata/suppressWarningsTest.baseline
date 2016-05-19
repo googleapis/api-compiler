@@ -1,0 +1,68 @@
+WARNING: toplevel: The api_service name {} does not match the base service name {test} of {test.googleapis.com}.
+============== file: normalized config without derived data ==============
+name: "test.googleapis.com"
+title: "test"
+apis {
+  name: "test.v1.Service"
+  methods {
+    name: "Call"
+    request_type_url: "type.googleapis.com/test.v1.Request"
+    response_type_url: "type.googleapis.com/test.v1.Response"
+  }
+  version: "v1"
+  source_context {
+    file_name: "suppress_warnings.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "test.v1.Request"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "suppress_warnings.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "test.v1.Response"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "suppress_warnings.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+documentation {
+  rules {
+    selector: "test.v1.Service.Call"
+    description: "To silence proto lint error."
+  }
+}
+http {
+  rules {
+    selector: "test.v1.Service.Call"
+    get: "/v1beta1/foo"
+  }
+}
+authentication {
+}
+context {
+}
+usage {
+}
+config_version {
+  value: 3
+}
+
+============== Successfully regenerated service config ==============

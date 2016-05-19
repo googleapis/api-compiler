@@ -1,0 +1,22 @@
+type: google.api.Service
+config_version: 1
+title: test
+name: test.googleapis.com
+
+apis:
+- name: protiary.test.TestService
+
+
+documentation:
+  rules:
+  - selector: "*"
+    description: TBD
+
+http:
+  rules:
+  - selector: protiary.test.TestService.Call1
+    post: /test/call1
+
+control:
+  environment: usagemanager.googleprod.com
+

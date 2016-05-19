@@ -1,0 +1,2 @@
+errors!!
+ERROR: failsForDuplicateCollections.yaml:12: Node 'google.api.Http.rules' is already defined in this yaml file. Multiple definitions for the same node are not allowed.

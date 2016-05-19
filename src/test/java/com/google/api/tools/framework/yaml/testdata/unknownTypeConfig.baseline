@@ -1,0 +1,2 @@
+errors!!
+ERROR: unknownTypeConfig:1: The specified configuration type 'google.api.SomethigElse' is unknown.

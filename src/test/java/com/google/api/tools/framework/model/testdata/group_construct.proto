@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package test.ProtoFileTest;
+
+// A proto message containing a group construct
+message SearchResponse {
+  repeated group Result = 1 {
+    //...
+  }
+
+  message Rankings {
+    // LINT: ALLOW_GROUPS
+    repeated group Rank = 1 {
+    }
+  }
+}

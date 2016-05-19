@@ -1,0 +1,19 @@
+type: google.api.Service
+config_version: 3
+title: test
+name: foobar.corp.googleapis.com
+
+apis:
+- name: protiary.test.TestService
+
+
+documentation:
+  rules:
+  - selector: "*"
+    description: TBD
+
+http:
+  rules:
+  - selector: protiary.test.TestService.Call1
+    post: /test/call1
+

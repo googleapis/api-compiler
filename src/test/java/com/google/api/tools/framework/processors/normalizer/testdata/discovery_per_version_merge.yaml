@@ -1,0 +1,14 @@
+type: google.api.Service
+config_version: 2
+title: Echo Service
+name: echo.googleapis.com
+apis:
+- name: protiary.test.EchoService
+
+http:
+  rules:
+  - selector: protiary.test.EchoService.Echo
+    post: /v3/echo
+  - selector: protiary.test.EchoService.ReverseEcho
+    post: /v4/reverseecho
+

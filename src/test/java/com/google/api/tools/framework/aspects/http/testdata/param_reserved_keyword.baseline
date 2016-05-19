@@ -1,0 +1,13 @@
+WARNING: http: POST/PATCH/PUT method for 'paramtest.test.TestService.Call1' should specify a body.
+WARNING: http: POST/PATCH/PUT method for 'paramtest.test.TestService.Call1' should specify a body.
+WARNING: (lint) http-param-reserved-keyword: Field name 'fields' is a reserved keyword, please use a different name. The reserved keywords are access_token, alt, bearer_token, callback, fields, key, oauth_token, passwd, password, pp, pretty_print, quota_user, upload_protocol, upload_type, xgafv.
+http {
+  rules {
+    selector: "paramtest.test.TestService.Call1"
+    post: "/v1/test2"
+    additional_bindings {
+      post: "/v1/test3"
+    }
+  }
+}
+

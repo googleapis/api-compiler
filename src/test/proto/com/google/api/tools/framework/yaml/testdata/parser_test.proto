@@ -1,0 +1,12 @@
+// Proto for ProtoFieldValueParser tests
+
+syntax = "proto2";
+
+package test.ProtoFieldValueParser;
+
+option java_package = "com.google.api.tools.framework.yaml";
+option java_outer_classname = "ProtoFieldValueParserProto";
+
+enum TestEnum {
+  VALUE1 = 2;
+}

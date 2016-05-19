@@ -1,0 +1,9 @@
+---- eval foo(a) ==>
+A
+---- end
+---- eval foo(b) ==>
+B
+---- end
+---- eval foo(c) ==>
+C
+---- end

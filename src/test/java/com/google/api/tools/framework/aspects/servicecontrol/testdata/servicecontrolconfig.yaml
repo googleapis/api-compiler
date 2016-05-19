@@ -1,0 +1,187 @@
+type: google.api.Service
+config_version: 1
+
+monitored_resources:
+- type: "type0"
+  display_name: "res0"
+  description: "desc0"
+  labels:
+  - key: "label1"
+
+- type: "type1"
+  display_name: "res1_______" # Display names must not be longer than the predefined limit.
+  description: "description1" # Descriptions must not be longer than the predefined limit.
+  labels:
+  - key: "label1"
+  - key: "label2_____" # Label must not be longer than the predefined limit.
+    description: "description2" # Descriptions must not be longer than the predefined limit.
+  - key: "label3"
+  - key: "label4" # List must not be longer than the predefined limit.
+  - key: "" # Label key must not be empty
+
+- type: "type2_____" # Type must not be longer than the predefined limit.
+
+- type: "" # Type must not be empty
+
+logs:
+- name: "log0" # Unused log
+  display_name: "log0"
+  description: "desc0"
+  labels:
+  - key: "label1"
+
+- name: "log1"
+  display_name: "log1_______" # Display names must not be longer than the predefined limit.
+  description: "description1" # Descriptions must not be longer than the predefined limit.
+  labels:
+  - key: "label1"
+  - key: "label2_____" # Label must not be longer than the predefined limit.
+    description: "description2" # Descriptions must not be longer than the predefined limit.
+  - key: "label3"
+  - key: "label4" # List must not be longer than the predefined limit.
+  - key: "" # Label key must not be empty
+
+- name: "log1" # Name must be unique
+
+- name: "log2_______" # Names must not be longer than the predefined limit.
+
+- name: "log3" # List must not be longer than the predefined limit.
+
+- name: "" # Log name must not be empty
+
+metrics:
+- name: "metric0" # Unused metric
+  display_name: "metric0"
+  description: "desc0"
+  metric_kind: DELTA
+  value_type: INT64
+  labels:
+  - key: "label1"
+
+- name: "metric1"
+  display_name: "log1_______" # Display names must not be longer than the predefined limit.
+  description: "description1" # Descriptions must not be longer than the predefined limit.
+  metric_kind: DELTA
+  value_type: INT64
+  labels:
+  - key: "label1"
+  - key: "label2_____" # Label must not be longer than the predefined limit.
+    description: "description2" # Descriptions must not be longer than the predefined limit.
+  - key: "label3"
+  - key: "label4" # List must not be longer than the predefined limit.
+  - key: "" # Label key must not be empty
+
+- name: "metric1" # Name must be unique.
+  metric_kind: DELTA
+  value_type: INT64
+
+- name: "metric2____" # Names must not be longer than the predefined limit.
+  # Metric kind must be specified.
+  value_type: INT64
+
+- name: "metric3" # List must not be longer than the predefined limit.
+  metric_kind: DELTA
+  # Value type must be specified.
+
+- name: "" # Metric name must not be empty.
+  metric_kind: CUMULATIVE
+  value_type: INT64
+
+- name: "int64_cumulative"
+  metric_kind: CUMULATIVE
+  value_type: INT64
+
+- name: "double_cumulative"
+  metric_kind: CUMULATIVE
+  value_type: DOUBLE
+
+- name: "money_cumulative"
+  metric_kind: CUMULATIVE
+  value_type: MONEY
+
+- name: "bool_cumulative"
+  metric_kind: CUMULATIVE # BOOL metric can only be of GAUGE kind.
+  value_type: BOOL
+
+- name: "bool_delta"
+  metric_kind: DELTA # BOOL metric can only be of GAUGE kind.
+  value_type: BOOL
+
+- name: "string_cumulative"
+  metric_kind: CUMULATIVE # STRING metric can only be of GAUGE kind.
+  value_type: STRING
+
+- name: "string_delta"
+  metric_kind: DELTA # STRING metric can only be of GAUGE kind.
+  value_type: STRING
+
+- name: "distribution"
+  metric_kind: DELTA # DISTRIBUTION metric is not allowed to be used with analytics.
+  value_type: DISTRIBUTION
+
+logging:
+  producer_destinations:
+  - monitored_resource: "type" # Destination must refer to the monitored resource defined in the monitored resources section.
+  # Logging destination must have at least one log name.
+  - monitored_resource: "type1"
+    logs:
+    - log1
+    - log2 # Log name must defined in the logs section.
+    - log2_______
+    - log3 # List must not be longer than the predefined limit.
+    - log3 # Same log used more than once.
+  - monitored_resource: "type1" # Same resource used more than once.
+    logs:
+    - log1
+
+  consumer_destinations:
+  - monitored_resource: "type" # Destination must refer to the monitored resource defined in the monitored resources section.
+  # Logging destination must have at least one log name.
+  - monitored_resource: "type1"
+    logs:
+    - log1
+    - log2 # Log name must defined in the logs section.
+    - log2_______
+    - log3 # List must not be longer than the predefined limit.
+    - log3 # Same log used more than once.
+
+  - monitored_resource: "type1" # Same resource used more than once.
+    logs:
+    - log1
+
+monitoring:
+  producer_destinations:
+  - monitored_resource: "type" # Destination must refer to the monitored resource defined in the monitored resources section.
+  # Logging destination must have at least one log name.
+
+  - monitored_resource: "type1"
+    metrics:
+    - metric1
+    - metric2 # Log name must defined in the logs section.
+    - metric2____
+    - metric3 # List must not be longer than the predefined limit.
+    - metric3 # Same metric used more than once.
+    - distribution # Same metric used more than once.
+    - double_cumulative
+    - int64_cumulative
+    - money_cumulative
+
+  - monitored_resource: "type1" # Same resource used more than once.
+    metrics:
+    - metric1
+
+  consumer_destinations:
+  - monitored_resource: "type" # Destination must refer to the monitored resource defined in the monitored resources section.
+  # Logging destination must have at least one log name.
+
+  - monitored_resource: "type1"
+    metrics:
+    - metric1
+    - metric2 # Log name must defined in the logs section.
+    - metric2____
+    - metric3 # List must not be longer than the predefined limit.
+    - metric3 # Same metric used more than once.
+
+  - monitored_resource: "type1" # Same resource used more than once.
+    metrics:
+    - metric1

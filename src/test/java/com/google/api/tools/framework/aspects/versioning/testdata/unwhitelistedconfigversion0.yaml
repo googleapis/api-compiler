@@ -1,0 +1,11 @@
+type: google.api.Service
+config_version: 0
+name: unwhitelisted.googleapis.com # This service name has not been whitelisted to allow config_version 0.
+
+apis:
+- name: protiary.test.TestService
+
+documentation:
+  rules:
+  - selector: "*"
+    description: TBD

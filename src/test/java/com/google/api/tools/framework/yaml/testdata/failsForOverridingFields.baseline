@@ -1,0 +1,2 @@
+errors!!
+ERROR: failsForOverridingFields.yaml:7: Node 'google.api.Service.config_version' is already defined in this yaml file. Multiple definitions for the same node are not allowed.

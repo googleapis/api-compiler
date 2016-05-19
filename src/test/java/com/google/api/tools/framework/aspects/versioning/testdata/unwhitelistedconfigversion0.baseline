@@ -1,0 +1,1 @@
+ERROR: versioning: config_version 0 is no longer supported unless your service is whitelisted at google/api/whitelist/config_version_0_whitelist

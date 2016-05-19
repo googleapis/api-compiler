@@ -1,0 +1,30 @@
+errors!!
+snippet parsing error(s):
+testInput:1: unrecognized input:
+  foo(x,y) aut
+            ^
+testInput:2: expected '\w+' looking at:
+  foo.
+      ^
+testInput:3: expected '\w+' looking at:
+  foo..x
+      ^
+testInput:4: expected identifier or literal
+  .foo(x)
+  ^
+testInput:5: unrecognized input:
+  x.foo x
+        ^
+testInput:6: expected ')' looking at:
+  x.foo(x y))
+          ^
+testInput:7: unrecognized input:
+  x %x
+     ^
+testInput:8: expected identifier or literal
+  x.x(a,b,)
+          ^
+testInput:10: command '@x' is unexpected in this context
+testInput:11: unrecognized input line on top level: 'garbage'
+testInput:14: command '@snippet' is unexpected in this context
+testInput:16: missing '@end' terminator

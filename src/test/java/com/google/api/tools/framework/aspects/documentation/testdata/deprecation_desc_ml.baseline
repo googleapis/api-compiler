@@ -1,0 +1,31 @@
+WARNING: (lint) documentation-presence: 'message protiary.test.Message' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'string protiary.test.Message.field' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'api protiary.test.Service1' has no documentation, neither in IDL nor config.
+documentation {
+  rules {
+    selector: "protiary.test"
+    description: "Testing various ways to add deprecation descriptions"
+  }
+  rules {
+    selector: "protiary.test.Service1.Rpc11"
+    description: "Rpc11.proto desc"
+  }
+  rules {
+    selector: "protiary.test.Service1.Rpc12"
+    description: "This is Rpc12()"
+  }
+  rules {
+    selector: "protiary.test.Service1.Rpc13"
+    description: "Rpc13.proto desc"
+    deprecation_description: "This is the first line...\nof a multiline description.\n   Indented by 3 spaces (plus 1 to separate from \"//\" comment)"
+  }
+  rules {
+    selector: "protiary.test.Service1.Rpc14"
+    description: "A multiline... ...method description."
+    deprecation_description: "First line of... ...multi-line deprecation description in YAML."
+  }
+  pages {
+    name: "Overview"
+  }
+}
+

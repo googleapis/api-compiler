@@ -1,0 +1,23 @@
+syntax = "proto2";
+package protiary.test;
+
+message In {
+}
+
+message Out {
+}
+
+service TestService {
+  // ListBookResource and CreateBook cause a name clash.
+  rpc ListBookResource (In) returns (Out);
+  // ListBookResource and CreateBook cause a name clash.
+  rpc CreateBook (In) returns (Out);
+  // ListShelveResource and CreateShelve cause a name clash.
+  rpc ListShelveResource (In) returns (Out);
+  // ListShelveResource and CreateShelve cause a name clash.
+  rpc CreateShelve (In) returns (Out);
+  // ListItems and CreateItem DOES NOT cause a name clash.
+  rpc ListItems (In) returns (Out);
+  // ListItems and CreateItem DOES NOT cause a name clash.
+  rpc CreateItem (In) returns (Out);
+}

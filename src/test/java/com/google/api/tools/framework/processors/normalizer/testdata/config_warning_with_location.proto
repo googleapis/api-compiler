@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package tech.env.framework.testing;
+
+import "google/protobuf/empty.proto";
+
+service MultipleHttpBindings {
+  // test
+  rpc GetResource(GetResourceRequest) returns (Resource);
+  // test
+  rpc ListResources(ListResourcesRequest) returns (ListResourcesResponse);
+  // test
+  rpc DeleteResource(DeleteResourceRequest) returns (google.protobuf.Empty);
+  // test
+  rpc MoveResource(MoveResourceRequest) returns (Resource);
+}
+
+message Resource {
+  string name = 1;
+}
+
+message GetResourceRequest {
+  string name = 1;
+  string id = 2;
+}
+
+message ListResourcesRequest {
+}
+
+message ListResourcesResponse {
+}
+
+message DeleteResourceRequest {
+  string name = 1;
+  string id = 2;
+}
+
+message MoveResourceRequest {
+  string name = 1;
+  string id = 2;
+  string from = 3;
+  string to = 4;
+}

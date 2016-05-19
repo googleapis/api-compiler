@@ -1,0 +1,130 @@
+WARNING: auth.json: Operation 'get' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "google.example.methods"
+  methods {
+    name: "ApiKeyNotReqOverride"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  methods {
+    name: "ApiKeyReqInherit"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  methods {
+    name: "SimpleMethod"
+    request_type_url: "type.googleapis.com/namespace.types.SimpleMethodRequest"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  version: "v1"
+  source_context {
+    file_name: "google.example.methods"
+  }
+}
+types {
+  name: "namespace.types.SimpleDef"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.SimpleMethodRequestBody"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.SimpleMethodRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_body_ref"
+    type_url: "type.googleapis.com/namespace.types.SimpleMethodRequestBody"
+    json_name: "myBodyRef"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "google.example.methods.ApiKeyNotReqOverride"
+    get: "/v1/pets"
+  }
+  rules {
+    selector: "google.example.methods.ApiKeyReqInherit"
+    delete: "/v1/pets"
+  }
+  rules {
+    selector: "google.example.methods.SimpleMethod"
+    post: "/v1/pets"
+    body: "my_body_ref"
+  }
+}
+authentication {
+  rules {
+    selector: "google.example.methods.ApiKeyNotReqOverride"
+  }
+  rules {
+    selector: "google.example.methods.SimpleMethod"
+    requirements {
+      provider_id: "test_auth3"
+      audiences: "www.test_auth3.com,www.test_auth3_2.com"
+    }
+    requirements {
+      provider_id: "test_auth"
+      audiences: "www.test_auth.com"
+    }
+  }
+  providers {
+    id: "test_auth"
+    issuer: "1234567-compute@developer.gserviceaccount.com"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+  }
+  providers {
+    id: "test_auth2"
+    issuer: "1234567-compute@developer.gserviceaccount2.com"
+  }
+  providers {
+    id: "test_auth3"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs3"
+  }
+}
+context {
+}
+usage {
+  rules {
+    selector: "google.example.methods.ApiKeyNotReqOverride"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "google.example.methods.ApiKeyReqInherit"
+  }
+  rules {
+    selector: "google.example.methods.SimpleMethod"
+  }
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+

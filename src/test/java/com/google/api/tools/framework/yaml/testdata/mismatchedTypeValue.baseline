@@ -1,0 +1,2 @@
+errors!!
+ERROR: mismatchedTypeValue:2: Parsing of field 'value' failed: Failed to parse text 'stringInsteadOfInt' for proto field 'google.protobuf.UInt32Value.value' of type 'UINT32' for reason: java.lang.NumberFormatException: For input string: "stringIns"

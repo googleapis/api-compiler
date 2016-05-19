@@ -1,0 +1,5 @@
+errors!!
+snippet parsing error(s):
+B:3: snippet 'foo(1)' cannot be overridden from here since it is not in the extension path.
+ Current path: testInput:B
+ Original path: testInput:A, line 3

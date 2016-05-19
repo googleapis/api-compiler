@@ -1,0 +1,6 @@
+type: google.api.Service
+config_version: 1
+name: blob.googleapis.com
+apis:
+- name: protiary.test.Storage
+  version: v2

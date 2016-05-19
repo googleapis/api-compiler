@@ -1,0 +1,87 @@
+name: "echo.googleapis.com"
+title: "Echo Service"
+apis {
+  name: "protiary.test.EchoService"
+  methods {
+    name: "Echo"
+    request_type_url: "type.googleapis.com/protiary.test.EchoRequest"
+    response_type_url: "type.googleapis.com/protiary.test.EchoResponse"
+  }
+  methods {
+    name: "ReverseEcho"
+    request_type_url: "type.googleapis.com/protiary.test.EchoRequest"
+    response_type_url: "type.googleapis.com/protiary.test.EchoResponse"
+  }
+  version: "v1"
+  source_context {
+    file_name: "discovery_per_version_merge.proto"
+  }
+}
+types {
+  name: "protiary.test.EchoRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "message"
+    options {
+      name: "google.protobuf.FieldOptions.ctype"
+      value {
+        type_url: "type.googleapis.com/google.protobuf.StringValue"
+        value: "\n\004CORD"
+      }
+    }
+    json_name: "message"
+  }
+  source_context {
+    file_name: "discovery_per_version_merge.proto"
+  }
+}
+types {
+  name: "protiary.test.EchoResponse"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "message"
+    options {
+      name: "google.protobuf.FieldOptions.ctype"
+      value {
+        type_url: "type.googleapis.com/google.protobuf.StringValue"
+        value: "\n\004CORD"
+      }
+    }
+    json_name: "message"
+  }
+  source_context {
+    file_name: "discovery_per_version_merge.proto"
+  }
+}
+documentation {
+  rules {
+    selector: "protiary.test.EchoResponse.message"
+    description: "A special value \"\" indicates that there\'s no further messages in half\nduplex streaming case."
+  }
+  rules {
+    selector: "protiary.test.EchoService.Echo"
+    description: "One request followed by one response\nThe server returns the client message as-is."
+  }
+  rules {
+    selector: "protiary.test.EchoService.ReverseEcho"
+    description: "Reverse."
+  }
+}
+http {
+  rules {
+    selector: "protiary.test.EchoService.Echo"
+    post: "/v3/echo"
+  }
+  rules {
+    selector: "protiary.test.EchoService.ReverseEcho"
+    post: "/v4/reverseecho"
+  }
+}
+config_version {
+  value: 2
+}
+

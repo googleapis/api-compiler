@@ -1,0 +1,59 @@
+// Globally suppress documentation presence warnings in this file
+// (== suppress_warning documentation-presence ==)
+syntax = "proto3";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+import "google/api/annotations.proto";
+
+message Message {
+  string field = 1;
+}
+
+service Service {
+  // (-- Rpc uses a wrong rpc name but the warning is suppressed. --)
+  // (== suppress_warning http-* ==)
+  rpc Rpc(Message) returns (Message) {
+    option (google.api.http).get = "/v1/nonconforming";
+  }
+
+  // (-- Another way to suppress the warning. --)
+  // (== suppress_warning http-rest ==)
+  rpc Rpc1(Message) returns (Message) {
+    option (google.api.http).get = "/v1/nonconforming1";
+  }
+
+  // (-- This does not suppress the http warning. --)
+  // (== suppress_warning documentation-presence ==)
+  rpc Rpc2(Message) returns (Message) {
+    option (google.api.http).get = "/v1/nonconforming1";
+  }
+
+  /* some comments (== suppress_warning http-rest ==) some comments
+   * some comments (==
+   * suppress_warning
+   * versioning-http-version-prefix ==) more comments
+   * (== suppress_warning http-rest ==)
+   */
+  rpc Rpc3(Message) returns (Message) {
+    option (google.api.http).get = "/v2/nonconforming1";
+  }
+
+   // comment1 (== suppress_warning http-rest ==) some comment2
+   // some comment3 (==
+   // suppress_warning
+   // versioning-http-version-prefix ==) more comment4
+   // (== suppress_warning http-rest ==) comment5
+   //  comment6 (== suppress_warning http-rest ==)
+   //  (== suppress_warning http-rest ==)
+  rpc Rpc4(Message) returns (Message) {
+    option (google.api.http).get = "/v2/nonconforming2";
+  }
+
+  // Returns an object.
+  // (== suppress_warning http-rest ==)
+  rpc Rpc5(Message) returns (Message) {
+    option (google.api.http).get = "/v1/nonconforming2";
+  }
+}

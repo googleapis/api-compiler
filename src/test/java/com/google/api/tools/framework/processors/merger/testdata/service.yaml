@@ -1,0 +1,40 @@
+type: google.api.Service
+config_version: 1
+name: blob.googleapis.com
+types:
+- name: protiary.test.inclusion.Type1
+enums:
+- name: protiary.test.inclusion.Enum1
+apis:
+- name: protiary.test.Storage
+http:
+  rules:
+  - selector: "protiary.test.Storage.GetBucket"
+    get: "/buckets/{bucket_id}"
+  - selector: "protiary.test.Storage.CreateObject"
+    post: "/buckets/{bucket_name.bucket_id}/objects"
+    body: "object"
+  - selector: "protiary.test.Storage.GetObject"
+    get: "/buckets/{bucket_name.bucket_id}/objects/{object_id=**}"
+  - selector: "protiary.test.Storage.GetObjectByFullName"
+    get: "/{name=buckets/*/objects/**}"
+  - selector: "protiary.test.Storage.ListBuckets"
+    get: "/buckets"
+  - selector: "protiary.test.Storage.ListBuckets2"
+    get: "{name=/buckets}"
+  - selector: "protiary.test.Storage.CreateBucket"
+    post: "/buckets"
+    body: "bucket"
+  - selector: "protiary.test.Storage.CustomCreate"
+    post: "/buckets/create"
+    body: "*"
+  - selector: "protiary.test.Storage.CustomObjectCreate"
+    post: "/buckets/{bucket_name.bucket_id}/objects"
+    body: "*"
+  - selector: "protiary.test.Storage.CustomObjectCreateAllParam"
+    post: "/buckets/{bucket_name.bucket_id}/objects"
+documentation:
+  rules:
+  - selector: "protiary.test.Storage.GetBucket"
+    description: "Override GetBucket documentation."
+

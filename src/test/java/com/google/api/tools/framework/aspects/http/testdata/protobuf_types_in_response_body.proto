@@ -1,0 +1,82 @@
+syntax = "proto3";
+package protiary.test;
+
+import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/wrappers.proto";
+
+message In1 {
+  google.protobuf.Struct value = 1;
+}
+
+message In2 {
+  google.protobuf.ListValue value = 1;
+}
+
+message In3 {
+  google.protobuf.Value value = 1;
+}
+
+message In4 {
+  google.protobuf.StringValue value = 1;
+}
+
+message In5 {
+  google.protobuf.BoolValue value = 1;
+}
+
+message In6 {
+  google.protobuf.Int32Value value = 1;
+}
+
+message In7 {
+  google.protobuf.DoubleValue value = 1;
+}
+
+message In8 {
+  google.protobuf.FloatValue value = 1;
+}
+
+message In9 {
+  google.protobuf.Int64Value value = 1;
+}
+
+message In10 {
+  google.protobuf.UInt64Value value = 1;
+}
+
+message In11 {
+  google.protobuf.UInt32Value value = 1;
+}
+
+message In12 {
+  google.protobuf.BytesValue value = 1;
+}
+
+service TestService {
+  // comment
+  rpc Call1 (In1) returns (google.protobuf.Struct);
+  // comment
+  rpc Call2 (In2) returns (google.protobuf.ListValue);
+  // comment
+  rpc Call3 (In3) returns (google.protobuf.Value);
+  // comment
+  rpc Call4 (In4) returns (google.protobuf.StringValue);
+  // comment
+  rpc Call5 (In5) returns (google.protobuf.BoolValue);
+  // comment
+  rpc Call6 (In6) returns (google.protobuf.Int32Value);
+  // comment
+  rpc Call7 (In7) returns (google.protobuf.DoubleValue);
+  // comment
+  rpc Call8 (In8) returns (google.protobuf.FloatValue);
+  // comment
+  rpc Call9 (In9) returns (google.protobuf.Int64Value);
+  // comment
+  rpc Call10 (In10) returns (google.protobuf.UInt64Value);
+  // comment
+  rpc Call11 (In11) returns (google.protobuf.UInt32Value);
+  // comment
+  rpc Call12 (In12) returns (google.protobuf.BytesValue);
+}
+

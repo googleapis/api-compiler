@@ -1,0 +1,136 @@
+WARNING: top_level_security_ext.json: Operation 'get' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: top_level_security_ext.json: Operation 'delete' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: top_level_security_ext.json: Operation 'post' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  methods {
+    name: "SecurityExtOverrideWithEmpty"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/SimpleDef"
+  }
+  methods {
+    name: "SecurityExtInherit"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/SimpleDef"
+  }
+  methods {
+    name: "SecurityExtRedefine"
+    request_type_url: "type.googleapis.com/SecurityExtRedefineRequest"
+    response_type_url: "type.googleapis.com/SimpleDef"
+  }
+  version: "v1"
+  source_context {
+  }
+}
+types {
+  name: "SimpleDef"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+  }
+}
+types {
+  name: "SecurityExtRedefineRequestBody"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+  }
+}
+types {
+  name: "SecurityExtRedefineRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_body_ref"
+    type_url: "type.googleapis.com/SecurityExtRedefineRequestBody"
+    json_name: "myBodyRef"
+  }
+  source_context {
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "SecurityExtOverrideWithEmpty"
+    get: "/v1/pets"
+  }
+  rules {
+    selector: "SecurityExtInherit"
+    delete: "/v1/pets"
+  }
+  rules {
+    selector: "SecurityExtRedefine"
+    post: "/v1/pets"
+    body: "my_body_ref"
+  }
+}
+authentication {
+  rules {
+    selector: "SecurityExtOverrideWithEmpty"
+  }
+  rules {
+    selector: "SecurityExtInherit"
+    requirements {
+      provider_id: "test_auth"
+      audiences: "www.test_auth.com"
+    }
+  }
+  rules {
+    selector: "SecurityExtRedefine"
+    requirements {
+      provider_id: "test_auth3"
+      audiences: "www.test_auth3.com,www.test_auth3_2.com"
+    }
+    requirements {
+      provider_id: "test_auth2"
+      audiences: "www.test_auth2.com"
+    }
+  }
+  providers {
+    id: "test_auth"
+    issuer: "1234567-compute@developer.gserviceaccount.com"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+  }
+  providers {
+    id: "test_auth2"
+    issuer: "1234567-compute@developer.gserviceaccount2.com"
+  }
+  providers {
+    id: "test_auth3"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs3"
+  }
+}
+context {
+}
+usage {
+  rules {
+    selector: "SecurityExtOverrideWithEmpty"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "SecurityExtInherit"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "SecurityExtRedefine"
+    allow_unregistered_calls: true
+  }
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+

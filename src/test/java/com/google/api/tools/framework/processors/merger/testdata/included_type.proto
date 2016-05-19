@@ -1,0 +1,20 @@
+syntax = "proto2";
+package protiary.test.inclusion;
+
+// Types used for testing specifying "types" and "enums" entries in service config.
+message Type1 {
+  optional string name = 1;
+  optional Type2 type = 2;
+}
+
+message Type2 {
+  optional string name = 2;
+}
+
+message Type3 {
+  optional string name = 3;
+}
+
+enum Enum1 {
+  VALUE1 = 0;
+}

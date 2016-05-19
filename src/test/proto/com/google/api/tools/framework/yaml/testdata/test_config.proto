@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package test.yaml;
+
+option java_package = "com.google.api.tools.framework.yaml";
+option java_outer_classname = "TestConfigProto";
+option java_multiple_files = true;
+
+message TestConfig {
+  string name = 1;
+  map<string, TestMapValue> map_config = 2;
+}
+
+message TestMapValue {
+  string map_value = 1;
+  map<string, string> map_of_map = 2;
+}

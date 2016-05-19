@@ -1,0 +1,45 @@
+type: google.api.Service
+config_version: 2
+title: Blob Service
+name: blob.googleapis.com
+apis:
+- name: protiary.test.v3.Storage
+  version: v3
+
+# To inhibit missing documentation warnings
+documentation:
+  summary:
+    Test service summary.
+  pages:
+  - name: Overview
+    content: Test service overview.
+  rules:
+  - selector: "*"
+    description: TBD
+
+http:
+  rules:
+  - selector: protiary.test.v3.Storage.GetBucket
+    get: /buckets/{bucket_id}
+  - selector: protiary.test.v3.Storage.CreateObject
+    post: /buckets/{bucket_name.bucket_id}/objects
+    body: object
+  - selector: protiary.test.v3.Storage.GetObject
+    get: /buckets/{bucket_name.bucket_id}/objects/{object_id=**}
+  - selector: protiary.test.v3.Storage.GetObjectByFullName
+    get: "{name=/buckets2/*/objects/**}"
+  - selector: protiary.test.v3.Storage.ListBuckets
+    get: /buckets
+  - selector: protiary.test.v3.Storage.ListBuckets2
+    get: "{name=/buckets2}"
+  - selector: protiary.test.v3.Storage.CreateBucket
+    post: /buckets
+    body: bucket
+  - selector: protiary.test.v3.Storage.CustomCreate
+    post: /buckets/customCreate
+    body: "*"
+  - selector: protiary.test.v3.Storage.CustomObjectCreate
+    post: /buckets/{bucket_name.bucket_id}/objects/customCreate
+    body: "*"
+  - selector: protiary.test.v3.Storage.CustomObjectCreateAllParam
+    post: /$buckets/{bucket_name.bucket_id}/objects/createAllParams

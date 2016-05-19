@@ -1,0 +1,2 @@
+WARNING: whitelistedconfigversion0.yaml:2: (lint) versioning-config: Specified config_version value '0' is not equal to the current default value '3'. Consider changing this value to the default config version.
+

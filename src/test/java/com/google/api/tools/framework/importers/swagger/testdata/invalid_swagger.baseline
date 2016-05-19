@@ -1,0 +1,2 @@
+Unable to parse the content. Unrecognized token 'SOME': was expecting ('true', 'false' or 'null')
+ at [Source: SOME RANDOM TEXT FILE, BUT NOT SWAGGER SPEC; line: 1, column: 5]

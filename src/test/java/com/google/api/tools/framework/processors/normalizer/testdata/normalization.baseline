@@ -1,0 +1,619 @@
+name: "blob.googleapis.com"
+title: "Blob Service"
+apis {
+  name: "protiary.test.Storage"
+  methods {
+    name: "GetBucket"
+    request_type_url: "type.googleapis.com/protiary.test.BucketName"
+    response_type_url: "type.googleapis.com/protiary.test.Bucket"
+  }
+  methods {
+    name: "CreateObject"
+    request_type_url: "type.googleapis.com/protiary.test.CreateObjectRequest"
+    response_type_url: "type.googleapis.com/protiary.test.Object"
+  }
+  methods {
+    name: "GetObject"
+    request_type_url: "type.googleapis.com/protiary.test.ObjectName"
+    response_type_url: "type.googleapis.com/protiary.test.Object"
+  }
+  methods {
+    name: "GetObjectByFullName"
+    request_type_url: "type.googleapis.com/protiary.test.FullObjectName"
+    response_type_url: "type.googleapis.com/protiary.test.Object"
+  }
+  methods {
+    name: "ListBuckets"
+    request_type_url: "type.googleapis.com/protiary.test.ListBucketsRequest"
+    response_type_url: "type.googleapis.com/protiary.test.ListBucketsReply"
+  }
+  methods {
+    name: "ListBuckets2"
+    request_type_url: "type.googleapis.com/protiary.test.ListBucketsRequest2"
+    response_type_url: "type.googleapis.com/protiary.test.ListBucketsReply"
+  }
+  methods {
+    name: "CreateBucket"
+    request_type_url: "type.googleapis.com/protiary.test.CreateBucketRequest"
+    response_type_url: "type.googleapis.com/protiary.test.Bucket"
+  }
+  methods {
+    name: "CustomCreate"
+    request_type_url: "type.googleapis.com/protiary.test.CreateBucketRequest"
+    response_type_url: "type.googleapis.com/protiary.test.Bucket"
+  }
+  methods {
+    name: "CustomObjectCreate"
+    request_type_url: "type.googleapis.com/protiary.test.CreateObjectRequest"
+    response_type_url: "type.googleapis.com/protiary.test.Object"
+  }
+  methods {
+    name: "CustomObjectCreateAllParam"
+    request_type_url: "type.googleapis.com/protiary.test.CreateObjectRequest"
+    response_type_url: "type.googleapis.com/protiary.test.Object"
+  }
+  version: "v1"
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.BucketName"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "bucket_id"
+    options {
+      name: "google.protobuf.FieldOptions.ctype"
+      value {
+        type_url: "type.googleapis.com/google.protobuf.StringValue"
+        value: "\n\006STRING"
+      }
+    }
+    json_name: "bucketId"
+  }
+  fields {
+    kind: TYPE_ENUM
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "e"
+    type_url: "type.googleapis.com/protiary.test.E"
+    json_name: "e"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "one_of_1"
+    oneof_index: 1
+    json_name: "oneOf1"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "one_of_2"
+    oneof_index: 1
+    json_name: "oneOf2"
+  }
+  oneofs: "test_oneof"
+  options {
+    name: "google.protobuf.MessageOptions.deprecated"
+    value {
+      type_url: "type.googleapis.com/google.protobuf.BoolValue"
+    }
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.ObjectName"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "bucket_name"
+    type_url: "type.googleapis.com/protiary.test.BucketName"
+    json_name: "bucketName"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "object_id"
+    json_name: "objectId"
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.Bucket"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "bucket_name"
+    type_url: "type.googleapis.com/protiary.test.BucketName"
+    json_name: "bucketName"
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.Object"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "object_name"
+    type_url: "type.googleapis.com/protiary.test.ObjectName"
+    json_name: "objectName"
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.CreateObjectRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "bucket_name"
+    type_url: "type.googleapis.com/protiary.test.BucketName"
+    json_name: "bucketName"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "object"
+    type_url: "type.googleapis.com/protiary.test.Object"
+    json_name: "object"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "mode"
+    json_name: "mode"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "kind"
+    json_name: "kind"
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.FullObjectName"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.ListBucketsRequest"
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.ListBucketsRequest2"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.ListBucketsReply"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "items"
+    type_url: "type.googleapis.com/protiary.test.Bucket"
+    json_name: "items"
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.CreateBucketRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "bucket"
+    type_url: "type.googleapis.com/protiary.test.Bucket"
+    json_name: "bucket"
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+enums {
+  name: "protiary.test.E"
+  enumvalue {
+    name: "ONE"
+  }
+  enumvalue {
+    name: "E_TWO_OF_A_KIND"
+    number: 2
+  }
+  enumvalue {
+    name: "THREE"
+    number: 3
+  }
+  source_context {
+    file_name: "normalization.proto"
+  }
+}
+documentation {
+  summary: "Test service summary."
+  rules {
+    selector: "protiary.test"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.BucketName"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.BucketName.bucket_id"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.BucketName.e"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.BucketName.one_of_1"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.test_oneof"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.BucketName.one_of_2"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ObjectName"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ObjectName.bucket_name"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ObjectName.object_id"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Bucket"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Bucket.bucket_name"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Object"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Object.object_name"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.CreateObjectRequest"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.CreateObjectRequest.bucket_name"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.CreateObjectRequest.object"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.CreateObjectRequest.mode"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.CreateObjectRequest.kind"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.FullObjectName"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.FullObjectName.name"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ListBucketsRequest"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ListBucketsRequest2"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ListBucketsRequest2.name"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ListBucketsReply"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ListBucketsReply.items"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.CreateBucketRequest"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.CreateBucketRequest.bucket"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.E"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.E.ONE"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.E.E_TWO_OF_A_KIND"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.E.THREE"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.GetBucket"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.CreateObject"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.GetObject"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.GetObjectByFullName"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.ListBuckets"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.ListBuckets2"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.CreateBucket"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomCreate"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomObjectCreate"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomObjectCreateAllParam"
+    description: "TBD"
+  }
+  pages {
+    name: "Overview"
+    content: "Test service overview."
+  }
+}
+http {
+  rules {
+    selector: "protiary.test.Storage.GetBucket"
+    get: "/v1/buckets/{bucket_id}"
+  }
+  rules {
+    selector: "protiary.test.Storage.CreateObject"
+    post: "/v1/buckets/{bucket_name.bucket_id}/objects"
+    body: "object"
+  }
+  rules {
+    selector: "protiary.test.Storage.GetObject"
+    get: "/v1/buckets/{bucket_name.bucket_id}/objects/{object_id=**}"
+  }
+  rules {
+    selector: "protiary.test.Storage.GetObjectByFullName"
+    get: "/v1/{name=buckets2/*/objects/**}"
+  }
+  rules {
+    selector: "protiary.test.Storage.ListBuckets"
+    get: "/v1/buckets"
+  }
+  rules {
+    selector: "protiary.test.Storage.ListBuckets2"
+    get: "/v1/{name=buckets2}"
+  }
+  rules {
+    selector: "protiary.test.Storage.CreateBucket"
+    post: "/v1/buckets"
+    body: "bucket"
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomCreate"
+    post: "/v1/buckets/customCreate"
+    body: "*"
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomObjectCreate"
+    post: "/v1/buckets/{bucket_name.bucket_id}/objects/customCreate"
+    body: "*"
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomObjectCreateAllParam"
+    post: "/v1/buckets/{bucket_name.bucket_id}/objects/createAllParams"
+  }
+}
+authentication {
+  rules {
+    selector: "protiary.test.Storage.GetBucket"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo, https://www.googleapis.com/auth/xapi.zoo.readonly"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "protiary.test.Storage.CreateObject"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+  }
+  rules {
+    selector: "protiary.test.Storage.GetObject"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+  }
+  rules {
+    selector: "protiary.test.Storage.GetObjectByFullName"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+  }
+  rules {
+    selector: "protiary.test.Storage.ListBuckets"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+  }
+  rules {
+    selector: "protiary.test.Storage.ListBuckets2"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+  }
+  rules {
+    selector: "protiary.test.Storage.CreateBucket"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomCreate"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomObjectCreate"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomObjectCreateAllParam"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+  }
+}
+context {
+  rules {
+    selector: "protiary.test.Storage.GetBucket"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+  rules {
+    selector: "protiary.test.Storage.CreateObject"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+  rules {
+    selector: "protiary.test.Storage.GetObject"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+  rules {
+    selector: "protiary.test.Storage.GetObjectByFullName"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+  rules {
+    selector: "protiary.test.Storage.ListBuckets"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+  rules {
+    selector: "protiary.test.Storage.ListBuckets2"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+  rules {
+    selector: "protiary.test.Storage.CreateBucket"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomCreate"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomObjectCreate"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+  rules {
+    selector: "protiary.test.Storage.CustomObjectCreateAllParam"
+    requested: "google.rpc.context.ProjectContext"
+    requested: "google.rpc.context.AbuseContext"
+  }
+}
+config_version {
+  value: 2
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+

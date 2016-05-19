@@ -1,0 +1,14 @@
+name: "blob.googleapis.com"
+apis {
+  name: "protiary.test.Storage"
+}
+http {
+  rules {
+    selector: "protiary.test.Storage.GetBucket"
+    get: "/buckets/{bucket_id}"
+  }
+}
+config_version {
+  value: 1
+}
+

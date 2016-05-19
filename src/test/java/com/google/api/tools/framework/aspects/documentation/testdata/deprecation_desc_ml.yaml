@@ -1,0 +1,20 @@
+type: google.api.Service
+config_version: 1
+name: blob.googleapis.com
+apis:
+- name: protiary.test.Service1
+
+documentation:
+  pages:
+  - name: Overview
+    content: (== suppress_warning versioning-config ==)
+  rules:
+  - selector: protiary.test.Service1.Rpc14
+    deprecation_description: >
+      First line of...
+      ...multi-line deprecation description in YAML.
+    description: >
+      A multiline...
+      ...method description.
+  - selector: protiary.test.Service1.Rpc12
+    description: This is Rpc12()

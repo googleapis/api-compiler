@@ -1,0 +1,3 @@
+errors!!
+snippet parsing error(s):
+testInput:1: cannot open source 'other'

@@ -1,0 +1,48 @@
+type: google.api.Service
+config_version: 1
+title: test
+name: test.googleapis.com
+
+apis:
+- name: protiary.test.TestService
+
+backend:
+  rules:
+  - selector: "*"
+    address: localhost
+
+documentation:
+  rules:
+  - selector: "*"
+    description: TBD
+
+http:
+  rules:
+  - selector: protiary.test.TestService.Call1
+    post: /test/call1
+
+control:
+  environment: test-servicecontrol.googleapis.com
+
+quota:
+  groups:
+  - name: Group1
+    limits:
+    - description: Daily Limit
+      default_limit: 100
+      max_limit: 150
+      duration: 1d
+      limit_by: CLIENT_PROJECT
+
+    - description: Per-second Limit
+      default_limit: 200
+      max_limit: 250
+      duration: 1s
+      limit_by: CLIENT_PROJECT
+
+  # Call1 is not mapped to any quota group. Must be flagged as a warning.
+  rules:
+  - selector: "*"
+    groups:
+    - group: Group1
+

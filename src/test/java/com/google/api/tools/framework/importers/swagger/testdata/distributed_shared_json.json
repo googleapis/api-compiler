@@ -1,0 +1,8 @@
+        {
+            "properties": {
+                "myStringA": {
+                    "$ref": "./distributed_shared_swagger_defs.json#/sharedSchema2"
+                }
+            }
+        }
+

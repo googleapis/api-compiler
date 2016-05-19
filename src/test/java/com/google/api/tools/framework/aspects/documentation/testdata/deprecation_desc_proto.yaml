@@ -1,0 +1,14 @@
+type: google.api.Service
+config_version: 1
+name: blob.googleapis.com
+apis:
+- name: protiary.test.Service
+
+documentation:
+  pages:
+  - name: Overview
+    content: (== suppress_warning versioning-config ==)
+  rules:
+  - selector: protiary.test.Message
+    description: A message.
+

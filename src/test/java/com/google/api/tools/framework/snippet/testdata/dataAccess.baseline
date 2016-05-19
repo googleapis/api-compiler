@@ -1,0 +1,8 @@
+---- eval foo(TestData) ==>
+Hello
+2
+2
+Hello
+Hello
+4
+---- end

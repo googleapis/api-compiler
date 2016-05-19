@@ -1,0 +1,18 @@
+// A test proto
+
+syntax = "proto3";
+
+package test.v1;
+
+message Request {
+  string name  =  1;
+}
+
+message Response {
+  string name = 1;
+}
+
+service Service {
+  // To silence proto lint error.
+  rpc Call(Request) returns (Response);
+}

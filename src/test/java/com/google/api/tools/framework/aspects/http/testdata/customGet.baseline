@@ -1,0 +1,6 @@
+GET GetSummaryResponse /customer:getSummary
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  customer
+Custom Name: getSummary
+

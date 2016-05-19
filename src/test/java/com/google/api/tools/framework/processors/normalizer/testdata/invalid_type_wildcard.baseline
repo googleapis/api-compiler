@@ -1,0 +1,4 @@
+ERROR: invalid_type_wildcard.yaml:9: Cannot resolve additional TYPE_MESSAGE type 'protiary.test.Outer1.Unknown' specified in the config. Make sure the name is right and its associated build target was included in your protobuf build rule.
+ERROR: invalid_type_wildcard.yaml:11: Type selector 'protiary.test.Outer1*' specified in the config has bad syntax. Valid format is "<segment>('.' <segment>)*('.' '*')?"
+ERROR: invalid_type_wildcard.yaml:12: Type selector 'protiary.test.Outer1*.' specified in the config has bad syntax. Valid format is "<segment>('.' <segment>)*('.' '*')?"
+ERROR: invalid_type_wildcard.yaml:13: Type selector '*' specified in the config has bad syntax. Valid format is "<segment>('.' <segment>)*('.' '*')?"

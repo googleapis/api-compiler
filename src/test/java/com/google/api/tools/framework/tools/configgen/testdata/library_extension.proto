@@ -1,0 +1,32 @@
+syntax = "proto2";
+
+package google.example.library.v1.extensions;
+
+import "library_with_extensions.proto";
+
+// Extender
+message Extender {
+  extend google.example.library.v1.Shelf {
+    optional Extender extender = 5;
+  }
+  // Test
+  optional string test = 1;
+}
+
+extend google.example.library.v1.Shelf {
+  // Baz
+  optional string baz = 6;
+}
+
+// Outer message
+message Outer {
+  // Inner extender
+  message Inner {
+    extend google.example.library.v1.Shelf {
+      optional Inner inner = 7;
+    }
+    // Test
+    optional string test = 1;
+  }
+}
+

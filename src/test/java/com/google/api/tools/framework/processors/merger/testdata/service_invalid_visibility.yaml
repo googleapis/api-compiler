@@ -1,0 +1,10 @@
+type: google.api.Service
+config_version: 1
+name: blob.googleapis.com
+apis:
+- name: protiary.test.Storage
+
+visibility:
+  rules:
+  - selector: "protiary.test.Storage.GetBucket"
+    restriction: "TRUSTED_TESTER INTERNAL"

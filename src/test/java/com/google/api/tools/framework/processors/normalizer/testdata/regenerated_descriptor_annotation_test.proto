@@ -1,0 +1,95 @@
+// Test Proto source for RegeneratedDescriptorTest
+
+syntax = "proto2";
+
+package com.google.api.tools.framework.processors.normalizer.RegeneratedDescriptorTest;
+
+import "google/api/annotations.proto";
+import "apiserving/proto/api.proto";
+
+message OuterMessage {
+  option deprecated = true;
+  option (.google.api.message_visibility).restriction = "PUBLIC";
+
+  // Test field options
+  optional string string1 = 1 [ctype = CORD];
+  optional string string2 = 2 [jtype = BYTES];
+  optional int64 int64 = 3 [jstype = JS_NUMBER];
+  optional InnerEnum inner_enum = 4;
+  optional OuterEnum outer_enum = 5;
+  repeated int32 packed = 6 [packed = true];
+  optional InnerMessage lazy = 7 [lazy = true];
+  optional string deprecated = 8 [deprecated = true];
+  optional string visible = 10
+      [(.google.api.field_visibility).restriction = "PUBLIC"];
+  // not testing the "weak" option
+  // not testing upgraded_option
+  // not testing deprecated_raw_message
+  // not testing uninterpreted_option
+
+  message InnerMessage {
+    optional string field1 = 1;
+  }
+
+  enum InnerEnum {
+    VALUE1 = 1;
+  }
+}
+
+enum OuterEnum {
+  option (.google.api.enum_visibility).restriction = "PUBLIC";
+  VALUE2 = 2;
+  VALUE3 = 3 [deprecated = true];
+  VISIBLE = 4 [(.google.api.value_visibility).restriction = "PUBLIC"];
+
+  option deprecated = true;
+}
+
+message GetResourceRequest {
+  optional string resource_id = 1;
+}
+
+message Resource {
+  optional string some_data = 1;
+}
+
+service Service {
+  option deprecated = true;
+  option (.google.api.api_visibility).restriction = "PUBLIC";
+  rpc Method(OuterMessage) returns (OuterMessage.InnerMessage);
+  rpc ServerStreamingMethod(OuterMessage) returns (stream OuterMessage);
+  rpc ClientStreamingMethod(stream OuterMessage) returns (OuterMessage);
+  rpc BidiStreamingMethod(stream OuterMessage) returns (stream OuterMessage) {
+    option legacy_client_initial_tokens = 1024;
+    option legacy_server_initial_tokens = 1024;
+  }
+  rpc LegacyStream(OuterMessage) returns (OuterMessage) {
+    option stream_type = "StreamReply";
+  }
+  rpc MethodWithOptions(OuterMessage) returns (OuterMessage) {
+    // Testing method options
+    option protocol = UDP;
+    option deadline = 5.0;
+    option duplicate_suppression = true;
+    option fail_fast = true;
+    option end_user_creds_requested = true;
+    option client_logging = 128;
+    option server_logging = 129;
+    option security_level = INTEGRITY;
+    option response_format = ZIPPY_COMPRESSED;
+    option request_format = ZIPPY_COMPRESSED;
+    option security_label = "admin";
+    option log_level = LOG_HEADER_ONLY;
+    option deprecated = true;
+    // not testing uninterpreted_options
+  }
+  rpc GetResource(GetResourceRequest) returns (Resource) {
+    // Testing method options that should be ignored.
+    option (.google.api.http).get = "/resources/{resource_id}";
+    option (.google.api.method_visibility).restriction = "PUBLIC";
+    option (.api.http).get = "/resources/{resource_id}";
+  }
+
+  // Legacy stream declarations are not supported in One Platform.
+  // stream StreamWithOptions(OuterMessage, OuterMessage);
+}

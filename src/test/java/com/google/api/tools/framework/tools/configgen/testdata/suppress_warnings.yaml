@@ -1,0 +1,11 @@
+type: google.api.Service
+config_version: 3
+title: test
+name: test.googleapis.com
+apis:
+- name: test.v1.Service
+
+http:
+  rules:
+  - selector: test.v1.Service.Call
+    get: /v1beta1/foo

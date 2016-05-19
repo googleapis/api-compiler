@@ -1,0 +1,12 @@
+---- eval foo(true,true) ==>
+first ifnested ifif-else
+---- end
+---- eval foo(true,false) ==>
+first ifif-else
+---- end
+---- eval foo(false,true) ==>
+else-part
+---- end
+---- eval foo(false,false) ==>
+else-part
+---- end

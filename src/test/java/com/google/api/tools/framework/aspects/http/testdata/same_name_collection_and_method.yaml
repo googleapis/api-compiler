@@ -1,0 +1,21 @@
+type: google.api.Service
+config_version: 3
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.TestService
+http:
+  rules:
+  - selector: protiary.test.TestService.ListBookResource
+    post: /v1/test/books # becomes v1/test collection with method 'books'
+  - selector: protiary.test.TestService.CreateBook
+    post: /v1/test/books # becomes v1/test/books collection with 'create' method
+
+  - selector: protiary.test.TestService.ListShelveResource
+    post: /v1/test:shelves # becomes v1/test collection with method 'shelves'
+  - selector: protiary.test.TestService.CreateShelve
+    post: /v1/test/shelves # becomes v1/test/shelves collection with 'create' method
+
+  - selector: protiary.test.TestService.ListItems
+    get: /v1/test/items # becomes v1/test collection with method 'items'
+  - selector: protiary.test.TestService.CreateItem
+    post: /v1/test/items # becomes v1/test/items collection with 'create' method

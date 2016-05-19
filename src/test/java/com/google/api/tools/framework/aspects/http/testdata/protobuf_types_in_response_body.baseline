@@ -1,0 +1,85 @@
+WARNING: http: Codegen does not allow type 'google.protobuf.ListValue' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.ListValue' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.Value' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.Value' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.StringValue' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.StringValue' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.BoolValue' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.BoolValue' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.Int32Value' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.Int32Value' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.DoubleValue' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.DoubleValue' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.FloatValue' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.FloatValue' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.Int64Value' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.Int64Value' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.UInt64Value' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.UInt64Value' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.UInt32Value' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.UInt32Value' as a response of a method. Please use other message types for response, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.BytesValue' as a body field path. Please use other types, else client library generation will fail.
+WARNING: http: Codegen does not allow type 'google.protobuf.BytesValue' as a response of a method. Please use other message types for response, else client library generation will fail.
+http {
+  rules {
+    selector: "protiary.test.TestService.Call1"
+    post: "/v1/test1"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call2"
+    post: "/v1/test2"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call3"
+    post: "/v1/test3"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call4"
+    post: "/v1/test4"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call5"
+    post: "/v1/test5"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call6"
+    post: "/v1/test6"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call7"
+    post: "/v1/test7"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call8"
+    post: "/v1/test8"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call9"
+    post: "/v1/test9"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call10"
+    post: "/v1/test10"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call11"
+    post: "/v1/test11"
+    body: "value"
+  }
+  rules {
+    selector: "protiary.test.TestService.Call12"
+    post: "/v1/test12"
+    body: "value"
+  }
+}
+

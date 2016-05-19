@@ -1,0 +1,28 @@
+// Testing various ways to add deprecation descriptions
+syntax = "proto3";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+import "google/api/annotations.proto";
+
+message Message {
+  string field = 1;
+}
+
+service Service {
+  // (-- Rpc has no deprecation description. --)
+  rpc Rpc(Message) returns (Message) {
+  }
+
+  // (-- This one is deprecated - use [protiary.test.Service.Rpc][]. --)
+  // (== deprecation_description Use Rpc() instead of Rpc1(). Has embedded '(== deprecation_description foo ==)' that shouldn't be parsed. ==)
+  rpc Rpc1(Message) returns (Message) {
+    option deprecated = true;
+  }
+
+  // (-- This one has deprecation description without being marked deprecated. --)
+  // (== deprecation_description Use [protiary.test.Service.Rpc][] instead of this one. ==)
+  rpc Rpc2(Message) returns (Message) {
+  }
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package protiary.test;
+
+message M {
+  string name = 1;
+}
+
+service TestService {
+  // Silence proto warning
+  rpc Call(M) returns (M);
+}

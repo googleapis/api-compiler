@@ -1,0 +1,26 @@
+ERROR: unknown location: post operation on path /v1/pets/{name} does not have an OperationId
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  version: "v1"
+  source_context {
+  }
+}
+documentation {
+}
+visibility {
+}
+http {
+}
+authentication {
+}
+context {
+}
+usage {
+}
+custom_error {
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+

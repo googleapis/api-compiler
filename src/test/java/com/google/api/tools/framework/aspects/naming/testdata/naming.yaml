@@ -1,0 +1,7 @@
+type: google.api.Service
+config_version: 3
+name: blob.google_apis.com
+apis:
+- name: protiary.test.Storage
+- name: protiary.test.StorageIdentifier
+

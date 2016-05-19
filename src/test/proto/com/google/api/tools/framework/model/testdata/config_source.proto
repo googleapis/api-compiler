@@ -1,0 +1,25 @@
+// Test Proto for ConfigSourceTest
+
+syntax = "proto3";
+
+package model.ConfigSourceTest;
+
+option java_package = "com.google.api.tools.framework.model.testdata";
+
+message SomeConfig {
+  string string_value = 1;
+  bool bool_value = 2;
+  NestedConfig nested_config = 4;
+
+  repeated string repeated_string_value = 5;
+  repeated NestedConfig repeated_nested_config = 6;
+
+  map<string, string> map_value = 7;
+  map<string, NestedConfig> nested_map_value = 8;
+
+}
+
+message NestedConfig {
+  string nested_string_value = 1;
+  repeated int32 nested_repeated_int32_value = 2;
+}

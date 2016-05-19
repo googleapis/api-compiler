@@ -1,0 +1,42 @@
+ERROR: config_error_with_location.yaml:19: http rule has bad syntax in selector 'tech.env.framework.testing.MultipleHttpBindings*BadSyntax?'. See documentation for information on selector syntax.
+ERROR: config_error_with_location.yaml:8: Cannot resolve api 'tech.env.framework.testing.MultipleHttpBindings2'.
+ERROR: config_error_with_location.yaml:27 (at document line 1): Unexpected end tag '--)' with missing begin tag.
+WARNING: toplevel: (lint) control-presence: Service multiplebindings.googleapis.com does not have control environment configured.
+ERROR: config_error_with_location.yaml:40: servicecontrol: The 'type1' monitored resource 'res1_______' label key must not be empty.
+ERROR: config_error_with_location.yaml:52: servicecontrol: The monitored resource type must not be empty.
+ERROR: config_error_with_location.yaml:89: servicecontrol: The 'metric1' metric label key must not be empty.
+ERROR: config_error_with_location.yaml:102: servicecontrol: The 'metric1' metric is already defined. The metric name must be unique.
+ERROR: config_error_with_location.yaml:106: servicecontrol: The metric kind of the 'metric2____' metric is not specified. Allowed values are GAUGE, DELTA and CUMULATIVE.
+ERROR: config_error_with_location.yaml:110: servicecontrol: The metric value type of the 'metric3' metric is not specified. Allowed values are BOOL, INT64, DOUBLE, STRING, DISTRIBUTION and MONEY.
+ERROR: config_error_with_location.yaml:114: servicecontrol: The metric name must not be empty.
+ERROR: config_error_with_location.yaml:130: servicecontrol: The 'bool_cumulative' metric is of BOOL type and of CUMULATIVE kind. Metrics of value type BOOL and STRING must be of GUAGE kind.
+ERROR: config_error_with_location.yaml:134: servicecontrol: The 'bool_delta' metric is of BOOL type and of DELTA kind. Metrics of value type BOOL and STRING must be of GUAGE kind.
+ERROR: config_error_with_location.yaml:138: servicecontrol: The 'string_cumulative' metric is of STRING type and of CUMULATIVE kind. Metrics of value type BOOL and STRING must be of GUAGE kind.
+ERROR: config_error_with_location.yaml:142: servicecontrol: The 'string_delta' metric is of STRING type and of DELTA kind. Metrics of value type BOOL and STRING must be of GUAGE kind.
+ERROR: config_error_with_location.yaml:61: servicecontrol: The 'log1' log label key must not be empty.
+ERROR: config_error_with_location.yaml:72: servicecontrol: The 'log1' log is already defined. The log name must be unique.
+ERROR: config_error_with_location.yaml:78: servicecontrol: The log name must not be empty.
+ERROR: config_error_with_location.yaml:199: servicecontrol: The The 'consumer' monitoring destination for 'type' resource refers to the monitored resource that cannot be resolved.
+ERROR: config_error_with_location.yaml:199: servicecontrol: The The 'consumer' monitoring destination for 'type' resource must contain at least one metric name.
+ERROR: config_error_with_location.yaml:204: servicecontrol: The The 'consumer' monitoring destination for 'type1' resource refers to 'metric2' metric that cannot be resolved.
+ERROR: config_error_with_location.yaml:207: servicecontrol: The The 'consumer' monitoring destination for 'type1' resource uses 'metric3' metric more than once.
+ERROR: toplevel: servicecontrol: Multiple consumer monitoring destinations use the same monitored resource type 'type1'.
+ERROR: config_error_with_location.yaml:180: servicecontrol: The The 'producer' monitoring destination for 'type' resource refers to the monitored resource that cannot be resolved.
+ERROR: config_error_with_location.yaml:180: servicecontrol: The The 'producer' monitoring destination for 'type' resource must contain at least one metric name.
+ERROR: config_error_with_location.yaml:185: servicecontrol: The The 'producer' monitoring destination for 'type1' resource refers to 'metric2' metric that cannot be resolved.
+ERROR: config_error_with_location.yaml:188: servicecontrol: The The 'producer' monitoring destination for 'type1' resource uses 'metric3' metric more than once.
+ERROR: toplevel: servicecontrol: Multiple producer monitoring destinations use the same monitored resource type 'type1'.
+ERROR: config_error_with_location.yaml:165: servicecontrol: The The 'consumer' logging destination for 'type' resource refers to the monitored resource that cannot be resolved.
+ERROR: config_error_with_location.yaml:165: servicecontrol: The The 'consumer' logging destination for 'type' resource must contain at least one log name.
+ERROR: config_error_with_location.yaml:170: servicecontrol: The The 'consumer' logging destination for 'type1' resource refers to 'log2' log that cannot be resolved.
+ERROR: config_error_with_location.yaml:173: servicecontrol: The The 'consumer' logging destination for 'type1' resource uses 'log3' metric more than once.
+ERROR: toplevel: servicecontrol: Multiple consumer logging destinations use the same monitored resource type 'type1'.
+ERROR: config_error_with_location.yaml:151: servicecontrol: The The 'producer' logging destination for 'type' resource refers to the monitored resource that cannot be resolved.
+ERROR: config_error_with_location.yaml:151: servicecontrol: The The 'producer' logging destination for 'type' resource must contain at least one log name.
+ERROR: config_error_with_location.yaml:156: servicecontrol: The The 'producer' logging destination for 'type1' resource refers to 'log2' log that cannot be resolved.
+ERROR: config_error_with_location.yaml:159: servicecontrol: The The 'producer' logging destination for 'type1' resource uses 'log3' metric more than once.
+ERROR: toplevel: servicecontrol: Multiple producer logging destinations use the same monitored resource type 'type1'.
+WARNING: toplevel: (lint) servicecontrol-unused-metrics: The metric(s) '', 'bool_cumulative', 'bool_delta', 'metric0', 'string_cumulative', 'string_delta' are not used.
+WARNING: toplevel: (lint) servicecontrol-unused-logs: The log(s) '', 'log0' are not used.
+WARNING: config_error_with_location.yaml:19: http rule has selector(s) 'tech.env.framework.testing.MultipleHttpBindings*BadSyntax?' that do not match and are not shadowed by other rules.
+WARNING: config_error_with_location.yaml:21: http rule has selector(s) 'tech.env.framework.testing.MultipleHttpBindings.BadSelector' that do not match and are not shadowed by other rules.

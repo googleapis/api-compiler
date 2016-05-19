@@ -1,0 +1,2 @@
+Invalid Swagger spec. Please fix the schema errors:
+{level="error", schema={"loadingURI":"#","pointer":"/definitions/operation"}, instance={"pointer":"/paths/~1v1~1pets~1{name}/post"}, domain="validation", keyword="required", message="missing required property(ies)", required=["responses"], missing=["responses"]}

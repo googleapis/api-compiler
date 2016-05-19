@@ -1,0 +1,2 @@
+errors!!
+ERROR: missingTypeConfig:1: Expected a field 'type' specifying the configuration type name in root object.

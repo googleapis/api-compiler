@@ -1,0 +1,67 @@
+ERROR: servicecontrol: The monitored resources list has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The monitored resource display name 'res1_______' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The monitored resource description 'description1' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The label list of the 'type1' monitored resource 'res1_______' has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The 'type1' monitored resource 'res1_______' label key 'label2_____' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The 'type1' monitored resource 'res1_______' label description 'description2' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The 'type1' monitored resource 'res1_______' label key must not be empty.
+ERROR: servicecontrol: The monitored resource type must not be empty.
+ERROR: servicecontrol: The metrics list has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The metric display name 'log1_______' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The metric description 'description1' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The label list of the 'metric1' metric has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The 'metric1' metric label key 'label2_____' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The 'metric1' metric label description 'description2' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The 'metric1' metric label key must not be empty.
+ERROR: servicecontrol: The 'metric1' metric is already defined. The metric name must be unique.
+ERROR: servicecontrol: The metric name 'metric2____' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The metric kind of the 'metric2____' metric is not specified. Allowed values are GAUGE, DELTA and CUMULATIVE.
+ERROR: servicecontrol: The metric value type of the 'metric3' metric is not specified. Allowed values are BOOL, INT64, DOUBLE, STRING, DISTRIBUTION and MONEY.
+ERROR: servicecontrol: The metric name must not be empty.
+ERROR: servicecontrol: The metric name 'int64_cumulative' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The metric name 'double_cumulative' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The metric name 'money_cumulative' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The metric name 'bool_cumulative' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The 'bool_cumulative' metric is of BOOL type and of CUMULATIVE kind. Metrics of value type BOOL and STRING must be of GUAGE kind.
+ERROR: servicecontrol: The 'bool_delta' metric is of BOOL type and of DELTA kind. Metrics of value type BOOL and STRING must be of GUAGE kind.
+ERROR: servicecontrol: The metric name 'string_cumulative' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The 'string_cumulative' metric is of STRING type and of CUMULATIVE kind. Metrics of value type BOOL and STRING must be of GUAGE kind.
+ERROR: servicecontrol: The metric name 'string_delta' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The 'string_delta' metric is of STRING type and of DELTA kind. Metrics of value type BOOL and STRING must be of GUAGE kind.
+ERROR: servicecontrol: The metric name 'distribution' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The logs list has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The log display name 'log1_______' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The log description 'description1' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The label list of the 'log1' log has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The 'log1' log label key 'label2_____' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The 'log1' log label description 'description2' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The 'log1' log label key must not be empty.
+ERROR: servicecontrol: The 'log1' log is already defined. The log name must be unique.
+ERROR: servicecontrol: The log name 'log2_______' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The log name must not be empty.
+ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type' resource refers to the monitored resource that cannot be resolved.
+ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type' resource must contain at least one metric name.
+ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type1' resource metric names list has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type1' resource refers to 'metric2' metric that cannot be resolved.
+ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type1' resource uses 'metric3' metric more than once.
+ERROR: servicecontrol: Multiple consumer monitoring destinations use the same monitored resource type 'type1'.
+ERROR: servicecontrol: The The 'producer' monitoring destination for 'type' resource refers to the monitored resource that cannot be resolved.
+ERROR: servicecontrol: The The 'producer' monitoring destination for 'type' resource must contain at least one metric name.
+ERROR: servicecontrol: The The 'producer' monitoring destination for 'type1' resource metric names list has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The The 'producer' monitoring destination for 'type1' resource refers to 'metric2' metric that cannot be resolved.
+ERROR: servicecontrol: The The 'producer' monitoring destination for 'type1' resource uses 'metric3' metric more than once.
+ERROR: servicecontrol: Multiple producer monitoring destinations use the same monitored resource type 'type1'.
+ERROR: servicecontrol: The The 'consumer' logging destination for 'type' resource refers to the monitored resource that cannot be resolved.
+ERROR: servicecontrol: The The 'consumer' logging destination for 'type' resource must contain at least one log name.
+ERROR: servicecontrol: The The 'consumer' logging destination for 'type1' resource log names list has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The The 'consumer' logging destination for 'type1' resource refers to 'log2' log that cannot be resolved.
+ERROR: servicecontrol: The The 'consumer' logging destination for 'type1' resource uses 'log3' metric more than once.
+ERROR: servicecontrol: Multiple consumer logging destinations use the same monitored resource type 'type1'.
+ERROR: servicecontrol: The The 'producer' logging destination for 'type' resource refers to the monitored resource that cannot be resolved.
+ERROR: servicecontrol: The The 'producer' logging destination for 'type' resource must contain at least one log name.
+ERROR: servicecontrol: The The 'producer' logging destination for 'type1' resource log names list has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The The 'producer' logging destination for 'type1' resource refers to 'log2' log that cannot be resolved.
+ERROR: servicecontrol: The The 'producer' logging destination for 'type1' resource uses 'log3' metric more than once.
+ERROR: servicecontrol: Multiple producer logging destinations use the same monitored resource type 'type1'.
+WARNING: (lint) servicecontrol-unused-metrics: The metric(s) '', 'bool_cumulative', 'bool_delta', 'metric0', 'string_cumulative', 'string_delta' are not used.
+WARNING: (lint) servicecontrol-unused-logs: The log(s) '', 'log0' are not used.

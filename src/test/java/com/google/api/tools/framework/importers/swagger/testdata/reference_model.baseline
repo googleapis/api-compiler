@@ -1,0 +1,64 @@
+WARNING: reference_model.json: Operation 'post' in path '/v1/pets/{name}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "google.example.methods"
+  methods {
+    name: "SimpleMethod"
+    request_type_url: "type.googleapis.com/namespace.types.SimpleMethodRequest"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  version: "v1"
+  source_context {
+    file_name: "google.example.methods"
+  }
+}
+types {
+  name: "namespace.types.SimpleDef"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.SimpleMethodRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "google.example.methods.SimpleMethod"
+    post: "/v1/pets/{name}"
+  }
+}
+authentication {
+}
+context {
+}
+usage {
+  rules {
+    selector: "google.example.methods.SimpleMethod"
+    allow_unregistered_calls: true
+  }
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+

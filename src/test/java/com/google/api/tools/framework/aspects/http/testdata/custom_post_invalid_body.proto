@@ -1,0 +1,35 @@
+syntax = "proto2";
+package protiary.test;
+
+message InWithBody {
+  optional Body content = 1;
+}
+
+message In {
+}
+
+message Body {
+}
+
+message Out {
+}
+
+service TestService {
+  // test
+  rpc WriteInvalidEntries1 (In) returns (Out);
+  // test
+  rpc WriteInvalidEntries2 (In) returns (Out);
+  // test
+  rpc WriteInvalidEntries3 (In) returns (Out);
+  // test
+  rpc WriteValidEntries1 (In) returns (Out);
+  // test
+  rpc WriteValidEntries2 (InWithBody) returns (Out);
+  // test
+  rpc WriteValidEntries3 (In) returns (Out);
+  // test
+  rpc FetchInvalidInfo (In) returns (Out);
+  // test
+  rpc FetchValidInfo (In) returns (Out);
+}
+

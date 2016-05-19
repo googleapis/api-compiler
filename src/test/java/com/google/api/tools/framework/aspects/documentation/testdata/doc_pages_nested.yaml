@@ -1,0 +1,15 @@
+type: google.api.Service
+config_version: 2
+name: blob.googleapis.com
+apis:
+- name: protiary.test.Service
+
+documentation:
+  pages:
+  - name: overview
+    content: overview content
+    subpages:
+    - name: sub_overview
+      content: sub_overview content
+  - name: example
+    content: example content

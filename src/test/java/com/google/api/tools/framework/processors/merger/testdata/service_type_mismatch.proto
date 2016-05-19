@@ -1,0 +1,21 @@
+syntax = "proto2";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+message BucketName {
+  required string bucket_id = 1;
+}
+
+message Bucket {
+  required BucketName bucket_name = 1;
+}
+
+service Storage {
+  // Get Bucket. (-- For internal tests --)
+  rpc GetBucket(BucketName) returns (Bucket);
+}
+
+enum ExtraEnum {
+  VALUE = 0;
+}

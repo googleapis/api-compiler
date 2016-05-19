@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package tech.env.framework.testing;
+
+import "google/protobuf/empty.proto";
+
+service MultipleHttpBindings {
+  // test
+  rpc GetResource(GetResourceRequest) returns (Resource);
+  // test
+  rpc GetResource2(GetResourceRequest) returns (Resource);
+}
+
+message Resource {
+  string name = 1;
+}
+
+message GetResourceRequest {
+  string name = 1;
+  string id = 2;
+}
+

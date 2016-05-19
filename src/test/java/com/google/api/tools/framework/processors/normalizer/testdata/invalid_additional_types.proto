@@ -1,0 +1,17 @@
+syntax = "proto2";
+package protiary.test;
+
+import "google/api/annotations.proto";
+
+option java_package = "com.google.api.server.tools.protiary";
+
+message Outer1 {
+  message Included {
+    optional string name = 1;
+  }
+}
+
+service Storage {
+  // comment
+  rpc CreateObject(Outer1.Included) returns (Outer1.Included);
+}

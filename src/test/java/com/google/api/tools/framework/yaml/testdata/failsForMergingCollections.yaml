@@ -1,0 +1,14 @@
+type: google.api.Service
+config_version: 1
+name: blob.googleapis.com
+apis:
+- name: protiary.test.Storage
+http:
+  rules:
+  - selector: "protiary.test.Storage.GetBucket"
+    get: "/buckets/{bucket_id}"
+#not allowed to re-define set, but would work 'properly' due to collections
+http:
+  rules:
+  - selector: "protiary.test.Storage.GetBucket"
+    get: "/buckets/{bucket_id}"

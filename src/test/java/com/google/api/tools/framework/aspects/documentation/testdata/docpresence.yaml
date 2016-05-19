@@ -1,0 +1,12 @@
+type: google.api.Service
+config_version: 2
+name: blob.googleapis.com
+apis:
+- name: protiary.test.Service
+
+documentation:
+  rules:
+  # Rule should cover missing documentation in IDL.
+  - selector: protiary.test.Message
+    description: A message.
+

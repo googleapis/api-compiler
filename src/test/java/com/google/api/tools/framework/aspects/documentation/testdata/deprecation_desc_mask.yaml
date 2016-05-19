@@ -1,0 +1,19 @@
+type: google.api.Service
+config_version: 1
+name: blob.googleapis.com
+apis:
+- name: protiary.test.Service1
+- name: protiary.test.Service2
+
+documentation:
+  pages:
+  - name: Overview
+    content: (== suppress_warning versioning-config ==)
+  rules:
+  - selector: protiary.test.Service1.Rpc11
+    deprecation_description: This method is deprecated.
+    description: A method.
+  - selector: protiary.test.Service1.Rpc12
+    description: A 2nd method. (== deprecation_description This is a 2nd deprecated method. ==)
+  - selector: protiary.test.Service2.*
+    deprecation_description: Service2 methods are deprecated!

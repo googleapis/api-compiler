@@ -1,0 +1,66 @@
+syntax = "proto2";
+package protiary.test.v2;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+message BucketName {
+  required string bucket_id = 1;
+}
+
+message ObjectName {
+  required BucketName bucket_name = 1;
+  required string object_id = 2;
+}
+
+message Bucket {
+  required BucketName bucket_name = 1;
+}
+
+message Object {
+  required ObjectName object_name = 1;
+}
+
+message CreateObjectRequest {
+  required BucketName bucket_name = 1;
+  required Object object = 2;
+  optional string mode = 3;
+  optional string kind = 4;
+}
+
+message FullObjectName {
+  required string name = 1;
+}
+
+message ListBucketsRequest {}
+
+message ListBucketsRequest2 {
+  required string name = 1;
+}
+
+message ListBucketsReply {
+  repeated Bucket items = 1;
+}
+
+message CreateBucketRequest {
+  required Bucket bucket = 1;
+}
+
+message CreateBucketRequest2 {
+  required string foo = 1;
+  required Bucket bucket = 2;
+
+}
+
+service Storage {
+  // Get Bucket. (-- For internal tests --)
+  rpc GetBucket(BucketName) returns (Bucket);
+  rpc CreateObject(CreateObjectRequest) returns (Object);
+  rpc GetObject(ObjectName) returns (Object);
+  rpc GetObjectByFullName(FullObjectName) returns (Object);
+  rpc ListBuckets(ListBucketsRequest) returns (ListBucketsReply);
+  rpc ListBuckets2(ListBucketsRequest2) returns (ListBucketsReply);
+  rpc CreateBucket(CreateBucketRequest) returns (Bucket);
+  rpc CustomCreate(CreateBucketRequest) returns (Bucket);
+  rpc CustomObjectCreate(CreateObjectRequest) returns (Object);
+  rpc CustomObjectCreateAllParam(CreateObjectRequest) returns (Object);
+}

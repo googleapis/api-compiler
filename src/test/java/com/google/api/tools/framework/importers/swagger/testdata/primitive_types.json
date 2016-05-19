@@ -1,0 +1,81 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.googleapis.com",
+     "paths": {
+        "/v1/pets": {
+            "post": {
+                "operationId": "simpleMethod",
+                "parameters": [
+                    {
+                        "name": "myString",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "myInteger",
+                        "in": "query",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "myBoolean",
+                        "in": "query",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "myNumber",
+                        "in": "query",
+                        "type": "number"
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "schema": {
+                                "$ref": "#/definitions/simpleDef"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "simpleDef": {
+            "properties": {
+                "myStringA": {
+                    "type": "string"
+                },
+                "myBoolean": {
+                    "type": "boolean"
+                },
+
+                "myIntegerA": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "myIntegerB": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "myNumberFloat": {
+                    "type": "number",
+                    "format": "float"
+                },
+                "myNumberDouble": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "myArray": {
+                    "type": "array",
+                    "items": {
+                      "type": "boolean"
+                    }
+                }
+            }
+        }
+    }
+}

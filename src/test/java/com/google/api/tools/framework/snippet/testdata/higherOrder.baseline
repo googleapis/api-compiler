@@ -1,0 +1,4 @@
+---- eval test() ==>
+called foo(a)
+called foo(b)
+---- end

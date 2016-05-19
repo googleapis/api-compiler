@@ -1,0 +1,22 @@
+WARNING: (lint) documentation-presence: 'message protiary.test.Message' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'int64 protiary.test.Message.begin_time' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'api protiary.test.Service' has no documentation, neither in IDL nor config.
+documentation {
+  rules {
+    selector: "protiary.test.Service.Rpc"
+    description: "1"
+  }
+  pages {
+    name: "overview"
+    content: "overview content"
+    subpages {
+      name: "sub_overview"
+      content: "sub_overview content"
+    }
+  }
+  pages {
+    name: "example"
+    content: "example content"
+  }
+}
+

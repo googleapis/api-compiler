@@ -1,0 +1,3 @@
+---- eval foo(hello) ==>
+Found expected error: snippet evaluation error: program:1: attempt to evaluate abstract snippet 'foo(1)'
+---- end

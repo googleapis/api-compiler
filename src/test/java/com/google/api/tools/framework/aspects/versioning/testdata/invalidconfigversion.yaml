@@ -1,0 +1,12 @@
+type: google.api.Service
+config_version: 100000
+name: blob.googleapis.com # This service name has been whitelisted to allow config_version 0.
+
+apis:
+- name: protiary.test.TestService
+
+documentation:
+  rules:
+  - selector: "*"
+    description: TBD
+

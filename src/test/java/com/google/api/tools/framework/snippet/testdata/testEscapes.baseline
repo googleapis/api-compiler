@@ -1,0 +1,5 @@
+---- eval test() ==>
+escaped 'at' sign: @
+escape backslash : \
+escaped hash mark: #
+---- end

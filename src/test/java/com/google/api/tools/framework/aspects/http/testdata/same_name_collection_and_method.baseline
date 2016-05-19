@@ -1,0 +1,34 @@
+WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.ListBookResource' should specify a body.
+WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.CreateBook' should specify a body.
+WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.ListShelveResource' should specify a body.
+WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.CreateShelve' should specify a body.
+WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.CreateItem' should specify a body.
+WARNING: http: The rpc methods and the associated http paths are not following the guidelines. As a result the derived rest collection 'v1.test' contains a sub collection and a method with the same name as 'books'. This can cause a failure to generate client library, since these names are used for generating artifacts in generated code.
+WARNING: http: The rpc methods and the associated http paths are not following the guidelines. As a result the derived rest collection 'v1.test' contains a sub collection and a method with the same name as 'shelves'. This can cause a failure to generate client library, since these names are used for generating artifacts in generated code.
+http {
+  rules {
+    selector: "protiary.test.TestService.ListBookResource"
+    post: "/v1/test/books"
+  }
+  rules {
+    selector: "protiary.test.TestService.CreateBook"
+    post: "/v1/test/books"
+  }
+  rules {
+    selector: "protiary.test.TestService.ListShelveResource"
+    post: "/v1/test:shelves"
+  }
+  rules {
+    selector: "protiary.test.TestService.CreateShelve"
+    post: "/v1/test/shelves"
+  }
+  rules {
+    selector: "protiary.test.TestService.ListItems"
+    get: "/v1/test/items"
+  }
+  rules {
+    selector: "protiary.test.TestService.CreateItem"
+    post: "/v1/test/items"
+  }
+}
+

@@ -1,0 +1,50 @@
+syntax = "proto2";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+message In {
+}
+
+message Out {
+}
+
+service TestService1 {
+  // 1
+  rpc Call1 (In) returns (Out);
+
+  // 2
+  rpc Call2 (In) returns (Out);
+
+  // 3
+  rpc Call3 (In) returns (Out);
+
+  // 4
+  rpc Call4 (In) returns (Out);
+
+  // 5
+  rpc Call5 (In) returns (Out);
+
+  // 6
+  rpc Call6 (In) returns (Out);
+}
+
+service TestService2 {
+  // 1
+  rpc Call1 (In) returns (Out);
+
+  // 2
+  rpc Call2 (In) returns (Out);
+
+  // 3
+  rpc Call3 (In) returns (Out);
+
+  // 4
+  rpc Call4 (In) returns (Out);
+
+  // 5
+  rpc Call5 (In) returns (Out);
+
+  // 6
+  rpc Call6 (In) returns (Out);
+}

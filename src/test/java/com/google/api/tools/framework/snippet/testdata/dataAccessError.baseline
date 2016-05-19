@@ -1,0 +1,9 @@
+---- eval unknown(TestData) ==>
+Found expected error: snippet evaluation error: testInput:2: field or method 'x' unknown in value of type 'TestData', or has ambigious overloads.
+---- end
+---- eval access(TestData) ==>
+Found expected error: snippet evaluation error: testInput:5: field or method 'privateIntField' unknown in value of type 'TestData', or has ambigious overloads.
+---- end
+---- eval type(TestData) ==>
+Found expected error: snippet evaluation error: testInput:8: Conversion to int32 failed for: Hello
+---- end

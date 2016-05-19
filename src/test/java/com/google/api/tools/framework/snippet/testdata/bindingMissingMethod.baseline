@@ -1,0 +1,2 @@
+Errors binding interface 'interface com.google.api.tools.framework.snippet.SnippetTest$Interface':
+no snippet 'foo(1)' found for method 'public abstract com.google.api.tools.framework.snippet.Doc com.google.api.tools.framework.snippet.SnippetTest$Interface.foo(com.google.api.tools.framework.snippet.Doc)'

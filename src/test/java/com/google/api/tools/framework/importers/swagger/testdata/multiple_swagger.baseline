@@ -1,0 +1,1 @@
+Multiple swagger files were passed as input. Only one top-level swagger file is allowed which can reference schemas from other files passed as input.

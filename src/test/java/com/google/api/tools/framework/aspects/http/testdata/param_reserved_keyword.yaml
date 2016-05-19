@@ -1,0 +1,12 @@
+type: google.api.Service
+config_version: 2
+name: blob.sandbox.googleapis.com
+apis:
+- name: paramtest.test.TestService
+- name: paramtest.test.TestService2
+http:
+  rules:
+  - selector: paramtest.test.TestService.Call1
+    post: /v1/test2
+    additional_bindings:
+    - post: /v1/test3

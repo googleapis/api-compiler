@@ -1,0 +1,9 @@
+---- eval foo(a) ==>
+A
+---- end
+---- eval foo(b) ==>
+B
+---- end
+---- eval foo(c) ==>
+Found expected error: snippet evaluation error: testInput:7: no case evaluates to value 'c'
+---- end

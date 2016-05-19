@@ -1,0 +1,24 @@
+syntax = "proto2";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+option java_api_version = 2;
+
+message EchoRequest {
+  optional string message = 1 [ctype = CORD];
+}
+
+message EchoResponse {
+  // A special value "" indicates that there's no further messages in half
+  // duplex streaming case.
+  optional string message = 1 [ctype = CORD];
+}
+
+service EchoService {
+  // One request followed by one response
+  // The server returns the client message as-is.
+  rpc Echo (EchoRequest) returns (EchoResponse) {};
+
+  // Reverse.
+  rpc ReverseEcho (EchoRequest) returns (EchoResponse) {};
+}

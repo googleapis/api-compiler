@@ -1,0 +1,30 @@
+type: google.api.Service
+config_version: 3
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.TestService
+http:
+  rules:
+  # post with custom verb
+  - selector: protiary.test.TestService.WriteInvalidEntries1
+    post: /v1/invalid/entries:write
+  - selector: protiary.test.TestService.WriteInvalidEntries2
+    put: /v1/invalid/entries:write
+  - selector: protiary.test.TestService.WriteInvalidEntries3
+    patch: /v1/invalid/entries/write
+
+  - selector: protiary.test.TestService.WriteValidEntries1
+    post: /v1/invalid/entries:write
+    body: '*'
+  - selector: protiary.test.TestService.WriteValidEntries2
+    put: /v1/invalid/entries:write
+    body: 'content'
+  - selector: protiary.test.TestService.WriteValidEntries3
+    patch: /v1/invalid/entries/write
+    body: '*'
+
+  - selector: protiary.test.TestService.FetchInvalidInfo
+    get: /v1/invalid/info
+    body: '*'
+  - selector: protiary.test.TestService.FetchValidInfo
+    get: /v1/valid/info

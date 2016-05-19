@@ -1,0 +1,16 @@
+{
+    "sharedSchema2" :    {
+            "properties": {
+                "obj": {
+                    "type": "string"
+                }
+            }
+    },
+    "sharedSchema3" :    {
+            "properties": {
+                "nestedName": {
+                    "type": "string"
+                }
+            }
+    }
+}

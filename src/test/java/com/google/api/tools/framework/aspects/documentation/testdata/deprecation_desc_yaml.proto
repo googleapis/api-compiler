@@ -1,0 +1,31 @@
+// Testing various ways to add deprecation descriptions
+syntax = "proto3";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+import "google/api/annotations.proto";
+
+message Message {
+  string field = 1;
+}
+
+service Service {
+  // Rpc1.proto desc
+  rpc Rpc1(Message) returns (Message) {
+  }
+
+  // (== deprecation_description This is deprecation description for Rpc2 from proto file. ==)
+  rpc Rpc2(Message) returns (Message) {
+  }
+
+  // Rpc3.proto desc
+  rpc Rpc3(Message) returns (Message) {
+    option deprecated = true;
+  }
+
+  // (== deprecation_description This is deprecation description for Rpc4 from proto file. ==)
+  rpc Rpc4(Message) returns (Message) {
+    option deprecated = true;
+  }
+}

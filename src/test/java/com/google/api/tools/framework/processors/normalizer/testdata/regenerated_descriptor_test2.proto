@@ -1,0 +1,15 @@
+// Test Proto source for RegeneratedDescriptorTest
+
+syntax = "proto2";
+
+message OtherMessage {
+  optional OtherEnum other_enum = 1;
+}
+
+enum OtherEnum {
+  VALUE1 = 1;
+}
+
+service Service {
+  rpc Method(OtherMessage) returns (OtherMessage);
+}

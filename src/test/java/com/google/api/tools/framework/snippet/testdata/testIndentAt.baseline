@@ -1,0 +1,46 @@
+---- without indentAt
+<html>
+  <body>
+    <pre>{
+      one: {
+        name: string,
+        size: integer
+      },
+      two: {
+        name: string,
+        size: integer
+      }
+    }</pre>
+  </body>
+</html>
+---- indentAt (0)
+<html>
+  <body>
+    <pre>{
+  one: {
+    name: string,
+    size: integer
+  },
+  two: {
+    name: string,
+    size: integer
+  }
+}</pre>
+  </body>
+</html>
+---- indentAt (3)
+<html>
+  <body>
+    <pre>{
+     one: {
+       name: string,
+       size: integer
+     },
+     two: {
+       name: string,
+       size: integer
+     }
+   }</pre>
+  </body>
+</html>
+---- end

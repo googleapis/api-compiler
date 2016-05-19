@@ -1,0 +1,36 @@
+---- eval foo() ==>
+ is false
+---- end
+---- eval foo(a) ==>
+a is true
+---- end
+---- eval foo() ==>
+ is false
+---- end
+---- eval foo(a) ==>
+a is true
+---- end
+---- eval foo(true) ==>
+true is true
+---- end
+---- eval foo(false) ==>
+false is false
+---- end
+---- eval foo(1) ==>
+1 is true
+---- end
+---- eval foo(0) ==>
+0 is false
+---- end
+---- eval foo(1.0) ==>
+1.0 is true
+---- end
+---- eval foo(0.0) ==>
+0.0 is false
+---- end
+---- eval foo([]) ==>
+[] is false
+---- end
+---- eval foo([1]) ==>
+[1] is true
+---- end

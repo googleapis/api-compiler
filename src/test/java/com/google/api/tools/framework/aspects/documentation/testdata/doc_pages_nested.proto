@@ -1,0 +1,13 @@
+syntax = "proto3";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+message Message {
+  int64 begin_time = 3;
+}
+
+service Service {
+  // 1
+  rpc Rpc(Message) returns (Message);
+}

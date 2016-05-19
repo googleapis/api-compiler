@@ -1,0 +1,48 @@
+type: google.api.Service
+config_version: 1
+name: multiplebindings.googleapis.com
+title: Multiple HTTP Bindings Test API
+
+apis:
+- name: tech.env.framework.testing.MultipleHttpBindings
+
+http:
+  rules:
+  - selector: tech.env.framework.testing.MultipleHttpBindings.GetResource
+    get: "/resources/{name=*}"
+    additional_bindings:
+    - get: "/resources/byName/{name=*}"
+    - get: "/resources/byId/{id=*}"
+    - post: "/resources:getResource"
+      body: '*'
+  - selector: tech.env.framework.testing.MultipleHttpBindings.ListResources
+    get: "/resources"
+    additional_bindings:
+    - post: "/resources:listResources"
+      body: "*"
+  - selector: tech.env.framework.testing.MultipleHttpBindings.DeleteResource
+    delete: "/resources/{name=*}"
+    additional_bindings:
+    - delete: "/resources/byName/{name=*}"
+    - delete: "/resources/byId/{id=*}"
+    - post: "/resources:deleteResource"
+      body: "*"
+  - selector: tech.env.framework.testing.MultipleHttpBindings.MoveResource
+    post: "/resources:move"
+    body: '*'
+    additional_bindings:
+    - post: "/resources/byName/{name=*}:move"
+    - post: "/resources/byId/{id=*}:move"
+    - post: "/resources/byName/{name=*}/from/{from=*}/to/{to=*}"
+    - post: "/resources/byId/{id=*}/from/{from=*}/to/{to=*}"
+
+
+documentation:
+ rules:
+ - selector: "*"
+   description: comment
+
+usage:
+  requirements: "invalidserviceusage.googleapis.com/tos/universal"
+  service_access: ORG_PUBLIC
+

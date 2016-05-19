@@ -1,0 +1,2 @@
+errors!!
+ERROR: nonMapNodeForMessageType:5: Expected a map to merge with 'google.protobuf.Api', found 'scalar'.

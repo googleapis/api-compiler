@@ -1,0 +1,3 @@
+---- eval foo(hello) ==>
+new hello
+---- end

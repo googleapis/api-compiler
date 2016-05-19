@@ -1,0 +1,28 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.googleapis.com",
+     "paths": {
+        "/v1/pets/{name}": {
+            "post": {
+                "operationId": "simpleMethod",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "type": "string"
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "SimpleDef": {
+            "type" : "string"
+        }
+    }
+}

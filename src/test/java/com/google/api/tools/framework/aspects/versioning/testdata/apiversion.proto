@@ -1,0 +1,78 @@
+syntax = "proto2";
+package protiary.test.v3;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+enum E {
+  ONE = 0;
+  E_TWO_OF_A_KIND = 2;
+  THREE = 3;
+}
+
+message BucketName {
+  option deprecated = false; // Test mapping boolean to any type
+
+  optional string bucket_id = 1 [ctype = STRING]; // Test mapping enum to any type
+  optional E e = 2;
+}
+
+message ObjectName {
+  optional BucketName bucket_name = 1;
+  optional string object_id = 2;
+}
+
+message Bucket {
+  optional BucketName bucket_name = 1;
+}
+
+message Object {
+  optional ObjectName object_name = 1;
+}
+
+message CreateObjectRequest {
+  optional BucketName bucket_name = 1;
+  optional Object object = 2;
+  optional string mode = 3;
+  optional string kind = 4;
+}
+
+message FullObjectName {
+  optional string name = 1;
+}
+
+message ListBucketsRequest {}
+
+message ListBucketsRequest2 {
+  optional string name = 1;
+}
+
+message ListBucketsReply {
+  repeated Bucket items = 1;
+}
+
+message CreateBucketRequest {
+  optional Bucket bucket = 1;
+}
+
+service Storage {
+  // 1
+  rpc GetBucket(BucketName) returns (Bucket);
+  // 2
+  rpc CreateObject(CreateObjectRequest) returns (Object);
+  // 3
+  rpc GetObject(ObjectName) returns (Object);
+  // 4
+  rpc GetObjectByFullName(FullObjectName) returns (Object);
+  // 5
+  rpc ListBuckets(ListBucketsRequest) returns (ListBucketsReply);
+  // 6
+  rpc ListBuckets2(ListBucketsRequest2) returns (ListBucketsReply);
+  // 7
+  rpc CreateBucket(CreateBucketRequest) returns (Bucket);
+  // 8
+  rpc CustomCreate(CreateBucketRequest) returns (Bucket);
+  // 9
+  rpc CustomObjectCreate(CreateObjectRequest) returns (Object);
+  // 10
+  rpc CustomObjectCreateAllParam(CreateObjectRequest) returns (Object);
+}

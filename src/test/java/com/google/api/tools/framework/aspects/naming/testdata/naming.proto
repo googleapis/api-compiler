@@ -1,0 +1,53 @@
+// LINT: LEGACY_NAMES
+syntax = "proto3";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+message BucketName {}
+
+// An object (with non-confirming field name)
+message ObjectName {
+  string objectId = 2;
+}
+
+// A bucket (with non-conforming message name).
+message bucket {
+  string DEPRECATED_string_filter = 1;
+}
+
+message Object {
+  Kind kind = 1;
+}
+
+// A bucket (with non-conforming message name).
+message BucketSpecification {
+  string field_specification = 1;
+}
+
+enum Kind {
+  this = 0; // non-conforming enum value
+  THAT = 1;
+}
+
+// Unreachable type, should not produce warning.
+enum Unreachable {
+  SOME = 0;
+  other = 1;
+}
+
+// Api Storage does some things.
+service Storage {
+
+  // Some method
+  rpc GetBucket(BucketName) returns (bucket);
+
+  // Another method
+  rpc get_object(ObjectName) returns (Object);
+}
+
+// test
+service StorageIdentifier {
+  // test
+  rpc GetBucketConfigurationIdentifier(BucketName) returns (BucketSpecification);
+}

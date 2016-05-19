@@ -1,0 +1,96 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.googleapis.com",
+    "paths": {
+        "/v1/pets/{name}": {
+            "post": {
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "schema": {
+                                "$ref": "#/definitions/SimpleDefRef"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "operationId": "test",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "schema": {
+                                "$ref": "#/definitions/SimpleDefRef"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "operationId": "test.",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "schema": {
+                                "$ref": "#/definitions/SimpleDefRef"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "test",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "schema": {
+                                "$ref": "#/definitions/SimpleDefRef"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "SimpleDefRef": {
+            "$ref": "#/definitions/SimpleDef"
+        },
+        "SimpleDef": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

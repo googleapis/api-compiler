@@ -1,0 +1,701 @@
+WARNING: bookstore.json: Operation 'get' in path '/shelves': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+name: "bookstore.appspot.com"
+title: "Bookstore"
+apis {
+  methods {
+    name: "ListShelves"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/ListShelvesResponse"
+  }
+  methods {
+    name: "CreateShelf"
+    request_type_url: "type.googleapis.com/CreateShelfRequest"
+    response_type_url: "type.googleapis.com/Shelf"
+  }
+  methods {
+    name: "GetShelf"
+    request_type_url: "type.googleapis.com/GetShelfRequest"
+    response_type_url: "type.googleapis.com/Shelf"
+  }
+  methods {
+    name: "DeleteShelf"
+    request_type_url: "type.googleapis.com/DeleteShelfRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  methods {
+    name: "ListBooks"
+    request_type_url: "type.googleapis.com/ListBooksRequest"
+    response_type_url: "type.googleapis.com/ListBooksResponse"
+  }
+  methods {
+    name: "CreateBook"
+    request_type_url: "type.googleapis.com/CreateBookRequest"
+    response_type_url: "type.googleapis.com/Book"
+  }
+  methods {
+    name: "GetBook"
+    request_type_url: "type.googleapis.com/GetBookRequest"
+    response_type_url: "type.googleapis.com/Book"
+  }
+  methods {
+    name: "DeleteBook"
+    request_type_url: "type.googleapis.com/DeleteBookRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  version: "v1"
+  source_context {
+  }
+}
+types {
+  name: "Book"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "author"
+    json_name: "author"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "title"
+    json_name: "title"
+  }
+  source_context {
+  }
+}
+types {
+  name: "ListBooksResponse"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "books"
+    type_url: "type.googleapis.com/Book"
+    json_name: "books"
+  }
+  source_context {
+  }
+}
+types {
+  name: "Shelf"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "theme"
+    json_name: "theme"
+  }
+  source_context {
+  }
+}
+types {
+  name: "ListShelvesResponse"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "shelves"
+    type_url: "type.googleapis.com/Shelf"
+    json_name: "shelves"
+  }
+  source_context {
+  }
+}
+types {
+  name: "CreateShelfRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelf"
+    type_url: "type.googleapis.com/Shelf"
+    json_name: "shelf"
+  }
+  source_context {
+  }
+}
+types {
+  name: "GetShelfRequest"
+  fields {
+    kind: TYPE_INT64
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelf"
+    json_name: "shelf"
+  }
+  source_context {
+  }
+}
+types {
+  name: "DeleteShelfRequest"
+  fields {
+    kind: TYPE_INT64
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelf"
+    json_name: "shelf"
+  }
+  source_context {
+  }
+}
+types {
+  name: "ListBooksRequest"
+  fields {
+    kind: TYPE_INT64
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelf"
+    json_name: "shelf"
+  }
+  source_context {
+  }
+}
+types {
+  name: "CreateBookRequest"
+  fields {
+    kind: TYPE_INT64
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelf"
+    json_name: "shelf"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "book"
+    type_url: "type.googleapis.com/Book"
+    json_name: "book"
+  }
+  source_context {
+  }
+}
+types {
+  name: "GetBookRequest"
+  fields {
+    kind: TYPE_INT64
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelf"
+    json_name: "shelf"
+  }
+  fields {
+    kind: TYPE_INT64
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "book"
+    json_name: "book"
+  }
+  source_context {
+  }
+}
+types {
+  name: "DeleteBookRequest"
+  fields {
+    kind: TYPE_INT64
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelf"
+    json_name: "shelf"
+  }
+  fields {
+    kind: TYPE_INT64
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "book"
+    json_name: "book"
+  }
+  source_context {
+  }
+}
+documentation {
+  summary: "A simple Bookstore example."
+}
+http {
+  rules {
+    selector: "ListShelves"
+    get: "/shelves"
+  }
+  rules {
+    selector: "CreateShelf"
+    post: "/shelves"
+    body: "shelf"
+  }
+  rules {
+    selector: "GetShelf"
+    get: "/shelves/{shelf}"
+  }
+  rules {
+    selector: "DeleteShelf"
+    delete: "/shelves/{shelf}"
+  }
+  rules {
+    selector: "ListBooks"
+    get: "/shelves/{shelf}/books"
+  }
+  rules {
+    selector: "CreateBook"
+    post: "/shelves/{shelf}/books"
+    body: "book"
+  }
+  rules {
+    selector: "GetBook"
+    get: "/shelves/{shelf}/books/{book}"
+  }
+  rules {
+    selector: "DeleteBook"
+    delete: "/shelves/{shelf}/books/{book}"
+  }
+}
+authentication {
+  rules {
+    selector: "CreateShelf"
+    requirements {
+      provider_id: "google_id_token"
+      audiences: "848149964201.apps.googleusercontent.com,841077041629.apps.googleusercontent.com"
+    }
+    requirements {
+      provider_id: "google_identity_toolkit"
+    }
+    requirements {
+      provider_id: "auth0_jwk"
+      audiences: "Uuts8fJWf1yieO9Ocv0Uk6LBqsUTePQq"
+    }
+  }
+  rules {
+    selector: "GetShelf"
+    requirements {
+      provider_id: "google_id_token"
+      audiences: "848149964201.apps.googleusercontent.com,841077041629.apps.googleusercontent.com"
+    }
+    requirements {
+      provider_id: "google_identity_toolkit"
+    }
+    requirements {
+      provider_id: "auth0_jwk"
+      audiences: "Uuts8fJWf1yieO9Ocv0Uk6LBqsUTePQq"
+    }
+  }
+  providers {
+    id: "auth0_jwk"
+    issuer: "https://esp-jwk.auth0.com/"
+    jwks_uri: "https://esp-jwk.auth0.com/.well-known/jwks.json"
+  }
+  providers {
+    id: "google_id_token"
+    issuer: "accounts.google.com"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+  }
+  providers {
+    id: "google_identity_toolkit"
+    issuer: "https://securetoken.google.com"
+    jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+  }
+}
+context {
+}
+usage {
+  rules {
+    selector: "ListShelves"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "CreateShelf"
+  }
+  rules {
+    selector: "GetShelf"
+  }
+  rules {
+    selector: "DeleteShelf"
+  }
+  rules {
+    selector: "ListBooks"
+  }
+  rules {
+    selector: "CreateBook"
+  }
+  rules {
+    selector: "GetBook"
+  }
+  rules {
+    selector: "DeleteBook"
+  }
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+logs {
+  name: "endpoints_log"
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/request_count"
+  labels {
+    key: "/credential_id"
+  }
+  labels {
+    key: "/protocol"
+  }
+  labels {
+    key: "/response_code"
+  }
+  labels {
+    key: "/response_code_class"
+  }
+  labels {
+    key: "/status_code"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/error_count"
+  labels {
+    key: "/credential_id"
+  }
+  labels {
+    key: "/error_type"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/total_latencies"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/request_count"
+  labels {
+    key: "/protocol"
+  }
+  labels {
+    key: "/response_code"
+  }
+  labels {
+    key: "/response_code_class"
+  }
+  labels {
+    key: "/status_code"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/error_count"
+  labels {
+    key: "/error_type"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/total_latencies"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_end_user"
+  labels {
+    key: "/credential_id"
+  }
+  labels {
+    key: "/end_user"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_end_user_country"
+  labels {
+    key: "/credential_id"
+  }
+  labels {
+    key: "/end_user_country"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_referer"
+  labels {
+    key: "/credential_id"
+  }
+  labels {
+    key: "/referer"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/top_request_count_by_consumer"
+  labels {
+    key: "/protocol"
+  }
+  labels {
+    key: "/response_code"
+  }
+  labels {
+    key: "/consumer_id"
+  }
+  labels {
+    key: "/status_code"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/quota_used_count"
+  labels {
+    key: "/credential_id"
+  }
+  labels {
+    key: "/quota_group_name"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/quota_billable_count"
+  labels {
+    key: "/quota_group_name"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/request_overhead_latencies"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/backend_latencies"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/request_sizes"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/response_sizes"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/request_overhead_latencies"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/backend_latencies"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/request_sizes"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/response_sizes"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/top_request_sizes_by_consumer"
+  labels {
+    key: "/consumer_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/top_response_sizes_by_consumer"
+  labels {
+    key: "/consumer_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/by_consumer/request_count"
+  labels {
+    key: "/credential_id"
+  }
+  labels {
+    key: "/protocol"
+  }
+  labels {
+    key: "/response_code"
+  }
+  labels {
+    key: "/response_code_class"
+  }
+  labels {
+    key: "/status_code"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/by_consumer/error_count"
+  labels {
+    key: "/credential_id"
+  }
+  labels {
+    key: "/error_type"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/by_consumer/total_latencies"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/by_consumer/quota_used_count"
+  labels {
+    key: "/credential_id"
+  }
+  labels {
+    key: "/quota_group_name"
+  }
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/by_consumer/request_overhead_latencies"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/by_consumer/backend_latencies"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/by_consumer/request_sizes"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/by_consumer/response_sizes"
+  labels {
+    key: "/credential_id"
+  }
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+monitored_resources {
+  type: "api"
+  labels {
+    key: "cloud.googleapis.com/location"
+  }
+  labels {
+    key: "cloud.googleapis.com/uid"
+  }
+  labels {
+    key: "serviceruntime.googleapis.com/api_version"
+  }
+  labels {
+    key: "serviceruntime.googleapis.com/api_method"
+  }
+  labels {
+    key: "serviceruntime.googleapis.com/consumer_project"
+  }
+  labels {
+    key: "cloud.googleapis.com/project"
+  }
+  labels {
+    key: "cloud.googleapis.com/service"
+  }
+}
+logging {
+  producer_destinations {
+    logs: "endpoints_log"
+    monitored_resource: "api"
+  }
+}
+monitoring {
+  producer_destinations {
+    monitored_resource: "api"
+    metrics: "serviceruntime.googleapis.com/api/producer/request_count"
+    metrics: "serviceruntime.googleapis.com/api/producer/error_count"
+    metrics: "serviceruntime.googleapis.com/api/producer/total_latencies"
+    metrics: "serviceruntime.googleapis.com/api/producer/request_overhead_latencies"
+    metrics: "serviceruntime.googleapis.com/api/producer/backend_latencies"
+    metrics: "serviceruntime.googleapis.com/api/producer/request_sizes"
+    metrics: "serviceruntime.googleapis.com/api/producer/response_sizes"
+    metrics: "serviceruntime.googleapis.com/api/producer/top_request_count_by_consumer"
+    metrics: "serviceruntime.googleapis.com/api/producer/top_request_sizes_by_consumer"
+    metrics: "serviceruntime.googleapis.com/api/producer/top_response_sizes_by_consumer"
+    metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/request_count"
+    metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/error_count"
+    metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/total_latencies"
+    metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/quota_used_count"
+    metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/request_overhead_latencies"
+    metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/backend_latencies"
+    metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/request_sizes"
+    metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/response_sizes"
+  }
+  consumer_destinations {
+    monitored_resource: "api"
+    metrics: "serviceruntime.googleapis.com/api/consumer/request_count"
+    metrics: "serviceruntime.googleapis.com/api/consumer/error_count"
+    metrics: "serviceruntime.googleapis.com/api/consumer/quota_used_count"
+    metrics: "serviceruntime.googleapis.com/api/consumer/total_latencies"
+    metrics: "serviceruntime.googleapis.com/api/consumer/request_overhead_latencies"
+    metrics: "serviceruntime.googleapis.com/api/consumer/backend_latencies"
+    metrics: "serviceruntime.googleapis.com/api/consumer/request_sizes"
+    metrics: "serviceruntime.googleapis.com/api/consumer/response_sizes"
+    metrics: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_end_user"
+    metrics: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_end_user_country"
+    metrics: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_referer"
+  }
+}
+

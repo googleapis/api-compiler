@@ -1,0 +1,9 @@
+---- eval foo(A,is selected) ==>
+the a is selected
+---- end
+---- eval foo(B,is selected) ==>
+the b is selected
+---- end
+---- eval foo(C,is selected) ==>
+Found expected error: snippet evaluation error: program:1: No matching definition for 'foo'.
+---- end

@@ -1,0 +1,5 @@
+WARNING: additional_properties.json: Operation 'post' in path '/v1/pets/{name}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+ERROR: unknown location: http: body field path 'my_map_body_ref' must be a non-repeated message.
+WARNING: toplevel: (lint) http-rest: 'rpc SimpleMethod as HTTP POST /v1/pets/*' is not a recognized REST pattern. Did you mean one of:
+  rpc SimpleMethod as HTTP POST <prefix>:<literal>
+Service config creation failed

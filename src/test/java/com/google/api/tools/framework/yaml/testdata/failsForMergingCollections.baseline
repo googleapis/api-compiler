@@ -1,0 +1,2 @@
+errors!!
+ERROR: failsForMergingCollections.yaml:12: Node 'google.api.Service.http' is already defined in this yaml file. Multiple definitions for the same node are not allowed.

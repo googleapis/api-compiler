@@ -1,0 +1,28 @@
+---- eval foo([1]) ==>
+join default:
+1
+join soft break:
+1
+join empty:
+1
+join , then soft break:
+1
+---- end
+---- eval foo([]) ==>
+join default:
+join soft break:
+join empty:
+join , then soft break:
+---- end
+---- eval foo([1, 2, 3]) ==>
+join default:
+1
+2
+3
+join soft break:
+123
+join empty:
+123
+join , then soft break:
+1,2,3
+---- end

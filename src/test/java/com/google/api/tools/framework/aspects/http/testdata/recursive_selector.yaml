@@ -1,0 +1,14 @@
+type: google.api.Service
+config_version: 1
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.TestService
+- name: protiary.test.TestService2
+http:
+  rules:
+  - selector: protiary.test.TestService.Call1
+    post: /v1/test
+    additional_bindings:
+    - selector: protiary.test.TestService2.Call1
+      get: /v1/test
+

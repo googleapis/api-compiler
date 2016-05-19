@@ -1,0 +1,8 @@
+WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.Call1' should specify a body.
+http {
+  rules {
+    selector: "protiary.test.TestService.Call1"
+    post: "/v1/test"
+  }
+}
+

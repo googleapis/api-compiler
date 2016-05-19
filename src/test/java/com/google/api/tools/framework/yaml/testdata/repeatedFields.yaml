@@ -1,0 +1,11 @@
+type: google.api.Service
+config_version: 1
+name: blob.googleapis.com
+apis:
+- name: protiary.test.Storage
+http:
+  rules:
+  - selector: "*"
+    get: "/buckets/{bucket_id}"
+  - selector: "foo"
+    get: "bar"

@@ -1,0 +1,18 @@
+name: "blob.googleapis.com"
+apis {
+  name: "protiary.test.Storage"
+}
+http {
+  rules {
+    selector: "*"
+    get: "/buckets/{bucket_id}"
+  }
+  rules {
+    selector: "foo"
+    get: "bar"
+  }
+}
+config_version {
+  value: 1
+}
+

@@ -1,0 +1,127 @@
+WARNING: primitive_types.json: Operation 'post' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "google.example.methods"
+  methods {
+    name: "SimpleMethod"
+    request_type_url: "type.googleapis.com/namespace.types.SimpleMethodRequest"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  version: "v1"
+  source_context {
+    file_name: "google.example.methods"
+  }
+}
+types {
+  name: "namespace.types.SimpleDef"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  fields {
+    kind: TYPE_BOOL
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "my_boolean"
+    json_name: "myBoolean"
+  }
+  fields {
+    kind: TYPE_INT32
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "my_integer_a"
+    json_name: "myIntegerA"
+  }
+  fields {
+    kind: TYPE_INT64
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "my_integer_b"
+    json_name: "myIntegerB"
+  }
+  fields {
+    kind: TYPE_FLOAT
+    cardinality: CARDINALITY_OPTIONAL
+    number: 5
+    name: "my_number_float"
+    json_name: "myNumberFloat"
+  }
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 6
+    name: "my_number_double"
+    json_name: "myNumberDouble"
+  }
+  fields {
+    kind: TYPE_BOOL
+    cardinality: CARDINALITY_REPEATED
+    number: 7
+    name: "my_array"
+    json_name: "myArray"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.SimpleMethodRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string"
+    json_name: "myString"
+  }
+  fields {
+    kind: TYPE_BOOL
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "my_integer"
+    json_name: "myInteger"
+  }
+  fields {
+    kind: TYPE_INT32
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "my_boolean"
+    json_name: "myBoolean"
+  }
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "my_number"
+    json_name: "myNumber"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "google.example.methods.SimpleMethod"
+    post: "/v1/pets"
+  }
+}
+authentication {
+}
+context {
+}
+usage {
+  rules {
+    selector: "google.example.methods.SimpleMethod"
+    allow_unregistered_calls: true
+  }
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+

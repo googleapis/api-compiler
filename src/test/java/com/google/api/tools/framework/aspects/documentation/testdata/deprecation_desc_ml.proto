@@ -1,0 +1,35 @@
+// Testing various ways to add deprecation descriptions
+syntax = "proto3";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+import "google/api/annotations.proto";
+
+message Message {
+  string field = 1;
+}
+
+service Service1 {
+  // Rpc11.proto desc
+  rpc Rpc11(Message) returns (Message) {
+  }
+
+  //
+  rpc Rpc12(Message) returns (Message) {
+  }
+
+  // Rpc13.proto desc
+  // (== deprecation_description This is the first line...
+  // of a multiline description.
+  //    Indented by 3 spaces (plus 1 to separate from "//" comment)
+  // ==)
+  rpc Rpc13(Message) returns (Message) {
+    option deprecated = true;
+  }
+
+  //
+  rpc Rpc14(Message) returns (Message) {
+    option deprecated = true;
+  }
+}

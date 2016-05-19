@@ -1,0 +1,1 @@
+ERROR: invalid_additional_types.yaml:9: Cannot resolve additional TYPE_ENUM type 'protiary.test.Outer1.*' specified in the config. Make sure the name is right and its associated build target was included in your protobuf build rule.

@@ -1,0 +1,11 @@
+type: google.api.Service
+name: blob.googleapis.com
+
+apis:
+- name: protiary.test.TestService
+
+documentation:
+  rules:
+  - selector: "*"
+    description: TBD
+

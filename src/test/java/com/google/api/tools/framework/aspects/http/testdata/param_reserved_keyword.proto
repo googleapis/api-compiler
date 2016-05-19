@@ -1,0 +1,30 @@
+syntax = "proto2";
+package paramtest.test;
+
+message In {
+  // field name is a reserved keyword. Expect style violation error.
+  optional string fields = 1;
+}
+
+message In2 {
+  // field name is a reserved keyword. No error should be issues because that API, using this
+  // message type, does not have a http binding.
+  optional string fields = 1;
+}
+
+message Out {
+  // field name is a reserved keyword. No error should be issues since this field will not be
+  // mapped to a query parameter.
+  optional string fields = 1;
+}
+
+service TestService {
+  // 1
+  rpc Call1 (In) returns (Out);
+}
+
+service TestService2 {
+  // 1
+  rpc Call1 (In2) returns (Out);
+}
+

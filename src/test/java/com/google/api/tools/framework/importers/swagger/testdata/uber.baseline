@@ -1,0 +1,202 @@
+WARNING: uber.json: Operation 'get' in path '/estimates/price': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: uber.json: Operation 'get' in path '/estimates/time': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: uber.json: Operation 'get' in path '/history': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: uber.json: Operation 'get' in path '/me': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: uber.json: Operation 'get' in path '/products': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+name: "api.uber.com"
+title: "Uber API"
+apis {
+  name: "google.example.methods"
+  methods {
+    name: "GetPrices"
+    request_type_url: "type.googleapis.com/namespace.types.GetPricesRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  methods {
+    name: "GetEstimates"
+    request_type_url: "type.googleapis.com/namespace.types.GetEstimatesRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  methods {
+    name: "GetMyHistory"
+    request_type_url: "type.googleapis.com/namespace.types.GetMyHistoryRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  methods {
+    name: "GetMyProfile"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  methods {
+    name: "GetProducts"
+    request_type_url: "type.googleapis.com/namespace.types.GetProductsRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  version: "v1"
+  source_context {
+    file_name: "google.example.methods"
+  }
+}
+types {
+  name: "namespace.types.GetPricesRequest"
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "start_latitude"
+    json_name: "start_latitude"
+  }
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "start_longitude"
+    json_name: "start_longitude"
+  }
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "end_latitude"
+    json_name: "end_latitude"
+  }
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "end_longitude"
+    json_name: "end_longitude"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.GetEstimatesRequest"
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "start_latitude"
+    json_name: "start_latitude"
+  }
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "start_longitude"
+    json_name: "start_longitude"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "customer_uuid"
+    json_name: "customer_uuid"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "product_id"
+    json_name: "product_id"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.GetMyHistoryRequest"
+  fields {
+    kind: TYPE_INT32
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "offset"
+    json_name: "offset"
+  }
+  fields {
+    kind: TYPE_INT32
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "limit"
+    json_name: "limit"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.GetProductsRequest"
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "latitude"
+    json_name: "latitude"
+  }
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "longitude"
+    json_name: "longitude"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "Move your app forward with the Uber API"
+}
+http {
+  rules {
+    selector: "google.example.methods.GetPrices"
+    get: "/v1/estimates/price"
+  }
+  rules {
+    selector: "google.example.methods.GetEstimates"
+    get: "/v1/estimates/time"
+  }
+  rules {
+    selector: "google.example.methods.GetMyHistory"
+    get: "/v1/history"
+  }
+  rules {
+    selector: "google.example.methods.GetMyProfile"
+    get: "/v1/me"
+  }
+  rules {
+    selector: "google.example.methods.GetProducts"
+    get: "/v1/products"
+  }
+}
+authentication {
+}
+context {
+}
+usage {
+  rules {
+    selector: "google.example.methods.GetPrices"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "google.example.methods.GetEstimates"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "google.example.methods.GetMyHistory"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "google.example.methods.GetMyProfile"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "google.example.methods.GetProducts"
+    allow_unregistered_calls: true
+  }
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+

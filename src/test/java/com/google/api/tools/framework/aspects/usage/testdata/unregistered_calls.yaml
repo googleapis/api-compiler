@@ -1,0 +1,24 @@
+type: google.api.Service
+config_version: 1
+title: test
+name: test.googleapis.com
+
+apis:
+- name: protiary.test.TestService1
+- name: protiary.test.TestService2
+
+usage:
+  requirements:
+  - serviceusage.googleapis.com/tos/test1
+  activation_hooks:
+  - test activation_hook 1
+  - test activation_hook 2
+  deactivation_hooks:
+  - test deactivation_hook 1
+  rules:
+  - selector: 'protiary.test.TestService2.*'
+    allow_unregistered_calls: true
+  - selector: 'protiary.test.TestService1.Call2'
+    allow_unregistered_calls: true
+  - selector: 'protiary.test.TestService1.Call4'
+    allow_unregistered_calls: false

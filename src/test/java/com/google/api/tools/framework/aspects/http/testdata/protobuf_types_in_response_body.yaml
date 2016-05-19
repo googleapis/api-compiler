@@ -1,0 +1,45 @@
+type: google.api.Service
+config_version: 2
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.TestService
+http:
+  rules:
+  - selector: protiary.test.TestService.Call1
+    post: /v1/test1
+    body: 'value'
+  - selector: protiary.test.TestService.Call2
+    post: /v1/test2
+    body: 'value'
+  - selector: protiary.test.TestService.Call3
+    post: /v1/test3
+    body: 'value'
+  - selector: protiary.test.TestService.Call4
+    post: /v1/test4
+    body: 'value'
+  - selector: protiary.test.TestService.Call5
+    post: /v1/test5
+    body: 'value'
+  - selector: protiary.test.TestService.Call6
+    post: /v1/test6
+    body: 'value'
+  - selector: protiary.test.TestService.Call7
+    post: /v1/test7
+    body: 'value'
+  - selector: protiary.test.TestService.Call8
+    post: /v1/test8
+    body: 'value'
+  - selector: protiary.test.TestService.Call9
+    post: /v1/test9
+    body: 'value'
+  - selector: protiary.test.TestService.Call10
+    post: /v1/test10
+    body: 'value'
+  - selector: protiary.test.TestService.Call11
+    post: /v1/test11
+    body: 'value'
+  - selector: protiary.test.TestService.Call12
+    post: /v1/test12
+    body: 'value'
+
+

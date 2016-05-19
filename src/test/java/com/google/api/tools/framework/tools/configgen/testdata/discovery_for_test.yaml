@@ -1,0 +1,15 @@
+type: google.api.Service
+apis:
+- name: google.discovery.Discovery
+
+http:
+  rules:
+  - selector: google.discovery.Discovery.GetDiscovery
+    get:  '/$discovery/{format}'
+  - selector: google.discovery.Discovery.GetDiscoveryRest
+    get:  '/$discovery/{format}/rest'
+
+backend:
+  rules:
+  - selector: google.discovery.Discovery.*
+    address: "fake_discovery_backend"

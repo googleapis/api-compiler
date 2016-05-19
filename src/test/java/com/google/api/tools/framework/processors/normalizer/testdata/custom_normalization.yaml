@@ -1,0 +1,23 @@
+type: google.api.Service
+config_version: 1
+title: Container Service
+name: blob.googleapis.com
+apis:
+- name: protiary.test.ContainerStorage
+# To inhibit missing documentation warnings
+documentation:
+  summary:
+    Test service summary.
+  pages:
+  - name: Overview
+    content: Test service overview.
+  rules:
+  - selector: "*"
+    description: TBD
+
+http:
+  rules:
+  - selector: protiary.test.ContainerStorage.ListContainers
+    custom:
+      kind: custom_list
+      path: /containers_custom_list

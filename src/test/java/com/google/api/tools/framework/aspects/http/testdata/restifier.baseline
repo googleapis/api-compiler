@@ -1,0 +1,278 @@
+GET ListFruits /trees/{tree_id}/fruits
+======================================================================
+Rest Kind:   LIST
+Collection:  trees.fruits
+Custom Name: (null)
+
+GET GetFruit /trees/{tree_id}/fruits/{fruit_id}
+======================================================================
+Rest Kind:   GET
+Collection:  trees.fruits
+Custom Name: (null)
+
+PUT UpdateFruit /trees/{tree_id}/fruits/{fruit_id}
+======================================================================
+Rest Kind:   UPDATE
+Collection:  trees.fruits
+Custom Name: (null)
+
+POST CreateFruit /trees/{tree_id}/fruits
+======================================================================
+Rest Kind:   CREATE
+Collection:  trees.fruits
+Custom Name: (null)
+
+POST InsertFruit /trees/{tree_id}/fruits
+======================================================================
+Rest Kind:   CREATE
+Collection:  trees.fruits
+Custom Name: (null)
+
+POST RipenFruit /trees/{tree_id}/fruits/{fruit_id}/ripen
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  trees.fruits
+Custom Name: ripen
+
+POST RipenFruit /trees/{tree_id}/fruits/{fruit_id}:ripen
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  trees.fruits
+Custom Name: ripen
+
+DELETE DeleteFruit /trees/{tree_id}/fruits/{fruit_id}
+======================================================================
+Rest Kind:   DELETE
+Collection:  trees.fruits
+Custom Name: (null)
+
+PATCH PatchFruit /trees/{tree_id}/fruits/{fruit_id}
+======================================================================
+Rest Kind:   PATCH
+Collection:  trees.fruits
+Custom Name: (null)
+
+PATCH PatchBranch /trees/{tree_id}/branch
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  trees
+Custom Name: patchBranch
+
+GET GetFruitDiameter /{fruit_id}/diameter
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  (empty)
+Custom Name: getDiameter
+
+GET ListTrees /trees
+======================================================================
+Rest Kind:   LIST
+Collection:  trees
+Custom Name: (null)
+
+GET GetTree /trees/{tree_id}
+======================================================================
+Rest Kind:   GET
+Collection:  trees
+Custom Name: (null)
+
+PUT UpdateTree /trees/{tree_id}
+======================================================================
+Rest Kind:   UPDATE
+Collection:  trees
+Custom Name: (null)
+
+POST CreateTree /trees
+======================================================================
+Rest Kind:   CREATE
+Collection:  trees
+Custom Name: (null)
+
+POST InsertTree /trees
+======================================================================
+Rest Kind:   CREATE
+Collection:  trees
+Custom Name: (null)
+
+POST ShakeTree /trees/{tree_id}/shake
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  trees
+Custom Name: shake
+
+POST ShakeTree /trees/{tree_id}:shake
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  trees
+Custom Name: shake
+
+DELETE DeleteTree /trees/{tree_id}
+======================================================================
+Rest Kind:   DELETE
+Collection:  trees
+Custom Name: (null)
+
+PATCH PatchTree /trees/{tree_id}
+======================================================================
+Rest Kind:   PATCH
+Collection:  trees
+Custom Name: (null)
+
+GET GetOrchardLocation /orchard/location
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  orchard
+Custom Name: getLocation
+
+PUT UpdateOrchardLocation /orchard/location
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  orchard
+Custom Name: updateLocation
+
+GET GetOrchard /orchard
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  (empty)
+Custom Name: getOrchard
+
+PUT UpdateOrchard /orchard
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  (empty)
+Custom Name: updateOrchard
+
+GET FindTallestTree /orchard/tallestTree
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  orchard
+Custom Name: tallestTree
+Diagnostics:
+  WARNING: toplevel: (lint) http-rest: 'rpc FindTallestTree as HTTP GET /orchard/tallestTree' is not a recognized REST pattern. Did you mean one of:
+  rpc List.* as HTTP GET <prefix>/<literal>
+  rpc Get.* as HTTP GET <prefix>:<literal>
+  rpc List.* as HTTP GET <prefix>:<literal>
+  rpc FindTallestTree as HTTP POST <prefix>:<literal>
+
+GET FindTrees /findTrees
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  (empty)
+Custom Name: findTrees
+Diagnostics:
+  WARNING: toplevel: (lint) http-rest: 'rpc FindTrees as HTTP GET /findTrees' is not a recognized REST pattern. Did you mean one of:
+  rpc List.* as HTTP GET <prefix>/<literal>
+  rpc Get.* as HTTP GET <prefix>:<literal>
+  rpc List.* as HTTP GET <prefix>:<literal>
+  rpc FindTrees as HTTP POST <prefix>:<literal>
+
+GET FindRipeFruit /trees/{tree_id}/findRipeFruit
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  trees
+Custom Name: findRipeFruit
+Diagnostics:
+  WARNING: toplevel: (lint) http-rest: 'rpc FindRipeFruit as HTTP GET /trees/*/findRipeFruit' is not a recognized REST pattern. Did you mean one of:
+  rpc List.* as HTTP GET <prefix>/<literal>
+  rpc Get.* as HTTP GET <prefix>:<literal>
+  rpc List.* as HTTP GET <prefix>:<literal>
+  rpc FindRipeFruit as HTTP POST <prefix>:<literal>
+
+GET FindRipeFruit /trees/{tree_id}:findRipeFruit
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  trees
+Custom Name: findRipeFruit
+Diagnostics:
+  WARNING: toplevel: (lint) http-rest: 'rpc FindRipeFruit as HTTP GET /trees/*:findRipeFruit' is not a recognized REST pattern. Did you mean one of:
+  rpc Get.* as HTTP GET <prefix>:<literal>
+  rpc List.* as HTTP GET <prefix>:<literal>
+  rpc FindRipeFruit as HTTP POST <prefix>:<literal>
+
+GET FindWorm /trees/{tree_id}/fruits/{fruit_id}/findWorm
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  trees.fruits
+Custom Name: findWorm
+Diagnostics:
+  WARNING: toplevel: (lint) http-rest: 'rpc FindWorm as HTTP GET /trees/*/fruits/*/findWorm' is not a recognized REST pattern. Did you mean one of:
+  rpc List.* as HTTP GET <prefix>/<literal>
+  rpc Get.* as HTTP GET <prefix>:<literal>
+  rpc List.* as HTTP GET <prefix>:<literal>
+  rpc FindWorm as HTTP POST <prefix>:<literal>
+
+PUT CreateBush /bushes/{bush_id}
+======================================================================
+Rest Kind:   CREATE
+Collection:  bushes
+Custom Name: (null)
+
+DELETE DeleteJenkins /projects/{project}/jenkins
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  projects
+Custom Name: deleteJenkins
+
+GET GetFruit /v1:fruit
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  v1
+Custom Name: getFruit
+
+PUT UpdateFruit /v1:fruit
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  v1
+Custom Name: updateFruit
+
+DELETE DeleteFruit /v1:fruit
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  v1
+Custom Name: deleteFruit
+
+GET GetFruit (empty)
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  *error*
+Custom Name: *error*
+Diagnostics:
+  ERROR: toplevel: In path template '': unexpected end of input ''.
+  ERROR: toplevel: In path template '': effective path must start with leading '/'.
+
+GET GetFruit /
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  *error*
+Custom Name: *error*
+Diagnostics:
+  ERROR: toplevel: In path template '/': unexpected end of input '/'.
+
+GET GetFruit /:fruit
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  *error*
+Custom Name: *error*
+Diagnostics:
+  ERROR: toplevel: In path template '/:fruit': invalid token '/:' before the custom verb.
+
+GET MethodNotStartingWithGet /projects/{project}
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  projects
+Custom Name: get
+Diagnostics:
+  WARNING: toplevel: (lint) http-rest: 'rpc MethodNotStartingWithGet as HTTP GET /projects/*' is not a recognized REST pattern. Did you mean one of:
+  rpc Get.* as HTTP GET <prefix>/<wildcard>
+  rpc MethodNotStartingWithGet as HTTP POST <prefix>:<literal>
+
+GET MethodNotStartingWithGet /projects/{project}
+======================================================================
+Rest Kind:   CUSTOM
+Collection:  projects
+Custom Name: methodNotStartingWithGet
+Diagnostics:
+  WARNING: toplevel: (lint) http-rest: 'rpc MethodNotStartingWithGet as HTTP GET /projects/*' is not a recognized REST pattern. Did you mean one of:
+  rpc Get.* as HTTP GET <prefix>/<wildcard>
+  rpc MethodNotStartingWithGet as HTTP POST <prefix>:<literal>
+

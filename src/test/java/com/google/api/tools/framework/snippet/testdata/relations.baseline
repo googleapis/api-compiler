@@ -1,0 +1,30 @@
+---- eval foo(same,same) ==>
+true
+x == y
+x <= y
+x >= y
+---- end
+---- eval foo(less,less1) ==>
+false
+x != y
+x <= y
+x < y
+---- end
+---- eval foo(more1,more) ==>
+false
+x != y
+x > y
+x >= y
+---- end
+---- eval foo(1,10) ==>
+false
+x != y
+x <= y
+x < y
+---- end
+---- eval foo(1,-10) ==>
+false
+x != y
+x > y
+x >= y
+---- end

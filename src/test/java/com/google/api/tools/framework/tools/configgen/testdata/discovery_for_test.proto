@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package google.discovery;
+
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DiscoveryProto";
+option java_package = "com.google.discovery";
+
+
+// `Discovery` is an API which a service can implement to describe itself. The
+// description can be given in multiple formats, and is generally referred to
+// as a **discovery document**. This API is generic regards the description
+// format.
+//
+// (-- API_PRODUCER
+// APIs which are based on the Google API platform implement this API
+// automatically.
+// --)
+service Discovery {
+  // Returns a discovery document in the specified `format`. The typeurl in the
+  // returned [google.protobuf.Any][] value depends on the requested format.
+  rpc GetDiscovery(GetDiscoveryRequest) returns (google.protobuf.Any) {
+    option (google.api.http) = { get: "/v1/discovery/{format}" };
+  }
+
+  // Returns a JSON REST view of discovery document in the specified 'format'.
+  // The returned value is an object which has a direct representation in JSON.
+  rpc GetDiscoveryRest(GetDiscoveryRequest) returns (google.protobuf.Struct) {
+    option (google.api.http) = { get: "/v1/discovery/{format}/rest" };
+  }
+}
+
+// Request message for [Discovery.GetDiscovery][] and [Discovery.GetDiscoveryRest][].
+message GetDiscoveryRequest {
+  // The format requested for discovery.
+  string format = 1;
+
+  // A list of labels (like visibility) influencing the scope of the requested doc.
+  repeated string labels = 2;
+
+  // Any additional arguments.
+  repeated string args = 3;
+}

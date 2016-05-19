@@ -1,0 +1,51 @@
+syntax = "proto2";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+// A bucket name.
+message BucketName {
+  // Id of bucket. Illegal required field.
+  required string bucket_id = 1;
+
+  // Illegal extension.
+  extensions 1000 to 2000;
+}
+
+// An object name.
+message ObjectName {
+  optional string object_id = 2;
+
+  // Illegal default value.
+  optional int32 version = 3 [default = -1];
+}
+
+// A bucket (with non-confirming name).
+message Bucket {
+}
+
+message Object {
+  optional Kind kind = 1;
+}
+
+enum Kind {
+  // Missing 0-constant.
+  THIS = 1;
+  THAT = 2;
+}
+
+// Unreachable type, should not produce missing 0-constant error.
+enum Unreachable {
+  SOME = 1;
+  OTHER = 2;
+}
+
+// Api Storage does some things.
+service Storage {
+
+  // Message GetBucket gets the bucket.
+  rpc GetBucket(BucketName) returns (Bucket);
+
+  // Another method.
+  rpc GetObject(ObjectName) returns (Object);
+}

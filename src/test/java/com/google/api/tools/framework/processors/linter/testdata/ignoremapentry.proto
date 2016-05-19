@@ -1,0 +1,39 @@
+syntax = "proto3";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+// A message for defining a map type
+message AMap {
+  // Map of parameters
+  map<string, string> param = 1;
+  // Map of args.
+  map<string, Enum> arg = 2;
+  // Map of args.
+  map<int64, Model> model = 3;
+}
+
+enum Enum {
+  // E0
+  E0 = 0;
+  // E1
+  E1 = 1;
+}
+
+message Model {
+  // Name
+  string name = 1;
+}
+
+// Data
+message Data {
+  // value
+  string value = 1;
+}
+
+// Api Storage does some things.
+service Map {
+
+  // Reverses a map
+  rpc Reverse(Data) returns (AMap);
+}

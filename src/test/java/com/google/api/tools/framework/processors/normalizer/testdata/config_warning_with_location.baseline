@@ -1,0 +1,306 @@
+WARNING: config_warning_with_location.yaml:46: (lint) usage-requirement: Unsupported usage requirement: invalidserviceusage.googleapis.com/tos/universal
+WARNING: toplevel: (lint) control-presence: Service multiplebindings.googleapis.com does not have control environment configured.
+WARNING: config_warning_with_location.proto:15:3: http: POST/PATCH/PUT method for 'tech.env.framework.testing.MultipleHttpBindings.MoveResource' should specify a body.
+WARNING: config_warning_with_location.proto:15:3: http: POST/PATCH/PUT method for 'tech.env.framework.testing.MultipleHttpBindings.MoveResource' should specify a body.
+WARNING: config_warning_with_location.proto:15:3: http: POST/PATCH/PUT method for 'tech.env.framework.testing.MultipleHttpBindings.MoveResource' should specify a body.
+WARNING: config_warning_with_location.yaml:36: (lint) http-rest: 'rpc MoveResource as HTTP POST /resources/byName/*/from/*/to/*' is not a recognized REST pattern. Did you mean one of:
+  rpc MoveResource as HTTP POST <prefix>:<literal>
+WARNING: config_warning_with_location.proto:15:3: http: POST/PATCH/PUT method for 'tech.env.framework.testing.MultipleHttpBindings.MoveResource' should specify a body.
+WARNING: config_warning_with_location.yaml:37: (lint) http-rest: 'rpc MoveResource as HTTP POST /resources/byId/*/from/*/to/*' is not a recognized REST pattern. Did you mean one of:
+  rpc MoveResource as HTTP POST <prefix>:<literal>
+WARNING: config_warning_with_location.yaml:11: (lint) versioning-http-version-prefix: 'method tech.env.framework.testing.MultipleHttpBindings.GetResource' has a HTTP path that does not start with version, which must match '^(v\d+(\w+)?)$'.
+WARNING: config_warning_with_location.yaml:18: (lint) versioning-http-version-prefix: 'method tech.env.framework.testing.MultipleHttpBindings.ListResources' has a HTTP path that does not start with version, which must match '^(v\d+(\w+)?)$'.
+WARNING: config_warning_with_location.yaml:23: (lint) versioning-http-version-prefix: 'method tech.env.framework.testing.MultipleHttpBindings.DeleteResource' has a HTTP path that does not start with version, which must match '^(v\d+(\w+)?)$'.
+WARNING: config_warning_with_location.yaml:30: (lint) versioning-http-version-prefix: 'method tech.env.framework.testing.MultipleHttpBindings.MoveResource' has a HTTP path that does not start with version, which must match '^(v\d+(\w+)?)$'.
+WARNING: config_warning_with_location.yaml:2: (lint) versioning-config: Specified config_version value '1' is not equal to the current default value '3'. Consider changing this value to the default config version.
+name: "multiplebindings.googleapis.com"
+title: "Multiple HTTP Bindings Test API"
+apis {
+  name: "tech.env.framework.testing.MultipleHttpBindings"
+  methods {
+    name: "GetResource"
+    request_type_url: "type.googleapis.com/tech.env.framework.testing.GetResourceRequest"
+    response_type_url: "type.googleapis.com/tech.env.framework.testing.Resource"
+  }
+  methods {
+    name: "ListResources"
+    request_type_url: "type.googleapis.com/tech.env.framework.testing.ListResourcesRequest"
+    response_type_url: "type.googleapis.com/tech.env.framework.testing.ListResourcesResponse"
+  }
+  methods {
+    name: "DeleteResource"
+    request_type_url: "type.googleapis.com/tech.env.framework.testing.DeleteResourceRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Empty"
+  }
+  methods {
+    name: "MoveResource"
+    request_type_url: "type.googleapis.com/tech.env.framework.testing.MoveResourceRequest"
+    response_type_url: "type.googleapis.com/tech.env.framework.testing.Resource"
+  }
+  version: "v1"
+  source_context {
+    file_name: "config_warning_with_location.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.protobuf.Empty"
+  source_context {
+    file_name: "google/protobuf/empty.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "tech.env.framework.testing.Resource"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "config_warning_with_location.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "tech.env.framework.testing.GetResourceRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "id"
+    json_name: "id"
+  }
+  source_context {
+    file_name: "config_warning_with_location.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "tech.env.framework.testing.ListResourcesRequest"
+  source_context {
+    file_name: "config_warning_with_location.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "tech.env.framework.testing.ListResourcesResponse"
+  source_context {
+    file_name: "config_warning_with_location.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "tech.env.framework.testing.DeleteResourceRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "id"
+    json_name: "id"
+  }
+  source_context {
+    file_name: "config_warning_with_location.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "tech.env.framework.testing.MoveResourceRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "id"
+    json_name: "id"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "from"
+    json_name: "from"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "to"
+    json_name: "to"
+  }
+  source_context {
+    file_name: "config_warning_with_location.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+documentation {
+  rules {
+    selector: "tech.env.framework.testing"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.Resource"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.Resource.name"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.GetResourceRequest"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.GetResourceRequest.name"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.GetResourceRequest.id"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.ListResourcesRequest"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.ListResourcesResponse"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.DeleteResourceRequest"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.DeleteResourceRequest.name"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.DeleteResourceRequest.id"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MoveResourceRequest"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MoveResourceRequest.name"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MoveResourceRequest.id"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MoveResourceRequest.from"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MoveResourceRequest.to"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MultipleHttpBindings"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MultipleHttpBindings.GetResource"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MultipleHttpBindings.ListResources"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MultipleHttpBindings.DeleteResource"
+    description: "comment"
+  }
+  rules {
+    selector: "tech.env.framework.testing.MultipleHttpBindings.MoveResource"
+    description: "comment"
+  }
+}
+http {
+  rules {
+    selector: "tech.env.framework.testing.MultipleHttpBindings.GetResource"
+    get: "/resources/{name=*}"
+    additional_bindings {
+      get: "/resources/byName/{name=*}"
+    }
+    additional_bindings {
+      get: "/resources/byId/{id=*}"
+    }
+    additional_bindings {
+      post: "/resources:getResource"
+      body: "*"
+    }
+  }
+  rules {
+    selector: "tech.env.framework.testing.MultipleHttpBindings.ListResources"
+    get: "/resources"
+    additional_bindings {
+      post: "/resources:listResources"
+      body: "*"
+    }
+  }
+  rules {
+    selector: "tech.env.framework.testing.MultipleHttpBindings.DeleteResource"
+    delete: "/resources/{name=*}"
+    additional_bindings {
+      delete: "/resources/byName/{name=*}"
+    }
+    additional_bindings {
+      delete: "/resources/byId/{id=*}"
+    }
+    additional_bindings {
+      post: "/resources:deleteResource"
+      body: "*"
+    }
+  }
+  rules {
+    selector: "tech.env.framework.testing.MultipleHttpBindings.MoveResource"
+    post: "/resources:move"
+    body: "*"
+    additional_bindings {
+      post: "/resources/byName/{name=*}:move"
+    }
+    additional_bindings {
+      post: "/resources/byId/{id=*}:move"
+    }
+    additional_bindings {
+      post: "/resources/byName/{name=*}/from/{from=*}/to/{to=*}"
+    }
+    additional_bindings {
+      post: "/resources/byId/{id=*}/from/{from=*}/to/{to=*}"
+    }
+  }
+}
+usage {
+  requirements: "invalidserviceusage.googleapis.com/tos/universal"
+  service_access: ORG_PUBLIC
+}
+config_version {
+  value: 1
+}
+

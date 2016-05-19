@@ -1,0 +1,18 @@
+# Generates documentation for auth configuration aspect.
+@snippet authDocumentation(oauthScopes, isSingleScope)
+  @if isSingleScope
+    Requires the following OAuth scope:
+
+    {@listScopes(oauthScopes)}
+  @else
+    Requires one of the following OAuth scopes:
+
+    {@listScopes(oauthScopes)}
+  @end
+@end
+
+@private listScopes(oauthScopes)
+  @join scope : oauthScopes
+    * `{@scope}`
+  @end
+@end

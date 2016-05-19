@@ -1,0 +1,8 @@
+Top level line.
+# Header1 #
+(== include com/google/api/tools/framework/aspects/documentation/testdata/invalid.dummy==)
+## Header2.
+Header2 content line1.
+(== include com/google/api/tools/framework/aspects/documentation/testdata/dummy.md==)
+ERROR: toplevel: Not supported file extension: 'com/google/api/tools/framework/aspects/documentation/testdata/invalid.dummy'.
+ERROR: toplevel: File not found, relative path 'com/google/api/tools/framework/aspects/documentation/testdata/dummy.md', inside root ''.

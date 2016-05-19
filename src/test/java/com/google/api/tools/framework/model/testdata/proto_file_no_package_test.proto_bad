@@ -1,0 +1,36 @@
+// Test Proto source for ProtoFileTest
+
+syntax = "proto2";
+
+/* Outer Message.
+ * Contains inner Message. */
+message OuterMessage {
+
+  optional string field1 = 1; // Field.
+
+  optional string field2 = 2;
+
+  // Inner Message.
+  message InnerMessage {
+
+    optional string field3 = 3;
+  }
+
+  // Inner Enum.
+  enum InnerEnum {
+
+    VALUE1 = 1;
+  }
+}
+
+// Outer Enum.
+enum OuterEnum {
+
+  VALUE2 = 2;
+  VALUE3 = 3;
+}
+
+// Service.
+service Service {
+  rpc Method(OuterMessage) returns (OuterMessage.InnerMessage);
+}

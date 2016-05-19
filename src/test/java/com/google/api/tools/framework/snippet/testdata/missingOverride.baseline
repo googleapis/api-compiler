@@ -1,0 +1,3 @@
+errors!!
+snippet parsing error(s):
+testInput:4: must use '@override name(...) ...' to override snippet 'foo(1)'

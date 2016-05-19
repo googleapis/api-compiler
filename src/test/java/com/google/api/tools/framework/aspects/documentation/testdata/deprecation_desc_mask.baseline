@@ -1,0 +1,56 @@
+WARNING: (lint) documentation-presence: 'message protiary.test.Message' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'string protiary.test.Message.field' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'api protiary.test.Service1' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-deprecation: 'method protiary.test.Service1.Rpc11' is not marked deprecated=true, so its deprecation_description will be ignored.
+WARNING: (lint) documentation-deprecation: 'method protiary.test.Service1.Rpc12' is not marked deprecated=true, so its deprecation_description will be ignored.
+WARNING: (lint) documentation-presence: 'method protiary.test.Service1.Rpc13' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'method protiary.test.Service1.Rpc14' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'api protiary.test.Service2' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'method protiary.test.Service2.Rpc21' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-deprecation: 'method protiary.test.Service2.Rpc21' is not marked deprecated=true, so its deprecation_description will be ignored.
+WARNING: (lint) documentation-presence: 'method protiary.test.Service2.Rpc22' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-deprecation: 'method protiary.test.Service2.Rpc22' is not marked deprecated=true, so its deprecation_description will be ignored.
+WARNING: (lint) documentation-presence: 'method protiary.test.Service2.Rpc23' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'method protiary.test.Service2.Rpc24' has no documentation, neither in IDL nor config.
+documentation {
+  rules {
+    selector: "protiary.test"
+    description: "Testing various ways to add deprecation descriptions"
+  }
+  rules {
+    selector: "protiary.test.Service1.Rpc11"
+    description: "A method."
+    deprecation_description: "This method is deprecated."
+  }
+  rules {
+    selector: "protiary.test.Service1.Rpc12"
+    description: "A 2nd method."
+    deprecation_description: "This is a 2nd deprecated method."
+  }
+  rules {
+    selector: "protiary.test.Service1.Rpc13"
+  }
+  rules {
+    selector: "protiary.test.Service1.Rpc14"
+  }
+  rules {
+    selector: "protiary.test.Service2.Rpc21"
+    deprecation_description: "Service2 methods are deprecated!"
+  }
+  rules {
+    selector: "protiary.test.Service2.Rpc22"
+    deprecation_description: "Service2 methods are deprecated!"
+  }
+  rules {
+    selector: "protiary.test.Service2.Rpc23"
+    deprecation_description: "Service2 methods are deprecated!"
+  }
+  rules {
+    selector: "protiary.test.Service2.Rpc24"
+    deprecation_description: "Service2 methods are deprecated!"
+  }
+  pages {
+    name: "Overview"
+  }
+}
+

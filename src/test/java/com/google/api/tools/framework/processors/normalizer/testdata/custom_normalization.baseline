@@ -1,0 +1,128 @@
+name: "blob.googleapis.com"
+title: "Container Service"
+apis {
+  name: "protiary.test.ContainerStorage"
+  methods {
+    name: "ListContainers"
+    request_type_url: "type.googleapis.com/protiary.test.ListContainersRequest"
+    response_type_url: "type.googleapis.com/protiary.test.ListContainersReply"
+  }
+  version: "v1"
+  source_context {
+    file_name: "custom_normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.ContainerName"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "container_id"
+    options {
+      name: "google.protobuf.FieldOptions.ctype"
+      value {
+        type_url: "type.googleapis.com/google.protobuf.StringValue"
+        value: "\n\006STRING"
+      }
+    }
+    json_name: "containerId"
+  }
+  source_context {
+    file_name: "custom_normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.Container"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "container_name"
+    type_url: "type.googleapis.com/protiary.test.ContainerName"
+    json_name: "containerName"
+  }
+  source_context {
+    file_name: "custom_normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.ListContainersRequest"
+  source_context {
+    file_name: "custom_normalization.proto"
+  }
+}
+types {
+  name: "protiary.test.ListContainersReply"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "items"
+    type_url: "type.googleapis.com/protiary.test.Container"
+    json_name: "items"
+  }
+  source_context {
+    file_name: "custom_normalization.proto"
+  }
+}
+documentation {
+  summary: "Test service summary."
+  rules {
+    selector: "protiary.test"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ContainerName"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ContainerName.container_id"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Container"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.Container.container_name"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ListContainersRequest"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ListContainersReply"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ListContainersReply.items"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ContainerStorage"
+    description: "TBD"
+  }
+  rules {
+    selector: "protiary.test.ContainerStorage.ListContainers"
+    description: "TBD"
+  }
+  pages {
+    name: "Overview"
+    content: "Test service overview."
+  }
+}
+http {
+  rules {
+    selector: "protiary.test.ContainerStorage.ListContainers"
+    custom {
+      kind: "custom_list"
+      path: "/containers_custom_list"
+    }
+  }
+}
+config_version {
+  value: 1
+}
+

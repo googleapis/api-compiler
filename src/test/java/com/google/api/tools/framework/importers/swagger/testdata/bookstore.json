@@ -1,0 +1,370 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Bookstore",
+        "description": "A simple Bookstore example."
+    },
+    "host": "bookstore.cloudendpointsapis.com",
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "key",
+            "in": "query"
+        },
+        "google_id_token": {
+            "type": "oauth2",
+            "authorizationUrl": "",
+            "flow": "implicit",
+            "x-issuer": "accounts.google.com",
+            "x-jwks_uri": "https://www.googleapis.com/oauth2/v1/certs"
+        },
+        "google_identity_toolkit": {
+            "type": "oauth2",
+            "authorizationUrl": "",
+            "flow": "implicit",
+            "x-issuer": "https://securetoken.google.com",
+            "x-jwks_uri": "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+        },
+        "auth0_jwk": {
+            "type": "oauth2",
+            "authorizationUrl": "https://esp-jwk.auth0.com/authorize",
+            "flow": "implicit",
+            "x-issuer": "https://esp-jwk.auth0.com/",
+            "x-jwks_uri": "https://esp-jwk.auth0.com/.well-known/jwks.json"
+        }
+    },
+    "security": [
+        {
+            "api_key": []
+        }
+    ],
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/shelves": {
+            "get": {
+                "description": "Returns all shelves in the bookstore",
+                "operationId": "listShelves",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "shelves list response",
+                        "schema": {
+                            "$ref": "#/definitions/listShelvesResponse"
+                        }
+                    }
+                },
+                "security": []
+            },
+            "post": {
+                "description": "Creates a new shelf in the bookstore.",
+                "operationId": "createShelf",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "shelf",
+                        "in": "body",
+                        "description": "Shelf to create",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shelf"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "shelf response",
+                        "schema": {
+                            "$ref": "#/definitions/shelf"
+                        }
+                    }
+                },
+                "x-security": [
+                    {
+                        "google_id_token": {
+                            "audiences": [
+                                "848149964201.apps.googleusercontent.com",
+                                "841077041629.apps.googleusercontent.com"
+                            ]
+                        }
+                    },
+                    {
+                        "google_identity_toolkit": {
+                            "audiences": []
+                        }
+                    },
+                    {
+                        "auth0_jwk": {
+                            "audiences": [
+                                "Uuts8fJWf1yieO9Ocv0Uk6LBqsUTePQq"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "/shelves/{shelf}": {
+            "get": {
+                "description": "Returns a single shelf.",
+                "operationId": "getShelf",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "shelf",
+                        "in": "path",
+                        "description": "Name of the shelf to get.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "shelf response",
+                        "schema": {
+                            "$ref": "#/definitions/shelf"
+                        }
+                    }
+                },
+                "x-security": [
+                    {
+                        "google_id_token": {
+                            "audiences": [
+                                "848149964201.apps.googleusercontent.com",
+                                "841077041629.apps.googleusercontent.com"
+                            ]
+                        }
+                    },
+                    {
+                        "google_identity_toolkit": {
+                            "audiences": []
+                        }
+                    },
+                    {
+                        "auth0_jwk": {
+                            "audiences": [
+                                "Uuts8fJWf1yieO9Ocv0Uk6LBqsUTePQq"
+                            ]
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "description": "deletes a single shelf based on supplied name",
+                "operationId": "deleteShelf",
+                "parameters": [
+                    {
+                        "name": "shelf",
+                        "in": "path",
+                        "description": "Name of the shelf to delete.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "shelf deleted"
+                    }
+                }
+            }
+        },
+        "/shelves/{shelf}/books": {
+            "get": {
+                "description": "Returns all books in a shelf.",
+                "operationId": "listBooks",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "shelf",
+                        "in": "path",
+                        "description": "Name of the shelf whose books should be returned.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "books list response",
+                        "schema": {
+                            "$ref": "#/definitions/listBooksResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new book on the shelf.",
+                "operationId": "createBook",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "shelf",
+                        "in": "path",
+                        "description": "Name of the shelf where the book should be created.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "book",
+                        "in": "body",
+                        "description": "Book to create.",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/book"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "book response",
+                        "schema": {
+                            "$ref": "#/definitions/book"
+                        }
+                    }
+                }
+            }
+        },
+        "/shelves/{shelf}/books/{book}": {
+            "get": {
+                "description": "Returns a single book.",
+                "operationId": "getBook",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "shelf",
+                        "in": "path",
+                        "description": "Name of the shelf from which to get the book.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Name of the book to get from the shelf.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "book response",
+                        "schema": {
+                            "$ref": "#/definitions/book"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "deletes a single book.",
+                "operationId": "deleteBook",
+                "parameters": [
+                    {
+                        "name": "shelf",
+                        "in": "path",
+                        "description": "Name of the shelf from which to delete the book.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Name of the book to delete from the shelf.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "book deleted"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "shelf": {
+            "required": [
+                "name",
+                "theme"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "theme": {
+                    "type": "string"
+                }
+            }
+        },
+        "listShelvesResponse": {
+            "type": "object",
+            "properties": {
+                "shelves": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/shelf"
+                    }
+                }
+            }
+        },
+        "listBooksResponse": {
+            "type": "object",
+            "required": [
+                "books"
+            ],
+            "properties": {
+                "books": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/book"
+                    }
+                }
+            }
+        },
+        "book": {
+            "required": [
+                "name",
+                "author",
+                "title"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "author": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

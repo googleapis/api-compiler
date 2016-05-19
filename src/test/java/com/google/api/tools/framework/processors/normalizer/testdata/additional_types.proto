@@ -1,0 +1,65 @@
+syntax = "proto2";
+package protiary.test;
+
+import "google/api/annotations.proto";
+
+option java_package = "com.google.api.server.tools.protiary";
+
+message Outer1 {
+  message Included {
+    optional string name = 1;
+  }
+  message Excluded {
+  }
+}
+
+message Outer2 {
+  message EnsureNotIncludedTwice {
+  }
+  message IncludedByWildCard1 {
+  }
+  message IncludedByWildCard2 {
+  }
+  message IncludedByWildCard3 {
+    message IncludedByWildCardNested {
+      optional string name = 1;
+    }
+  }
+}
+
+message Outer3 {
+  enum EnumIncludedByWildCard1 {
+    TEST1 = 0;
+  }
+  enum EnumIncludedByWildCard2 {
+    TEST2 = 0;
+  }
+  message Excluded {
+  }
+}
+
+message Outer4 {
+  message SystemType1 {
+  }
+  message SystemType2 {
+  }
+}
+
+message Outer5 {
+  message CustomError1 {
+  }
+  message CustomError2 {
+  }
+}
+
+message Outer6 {
+  message CustomError3 {
+  }
+  message CustomError4 {
+  }
+}
+
+service Storage {
+  // comment
+  rpc CreateObject(Outer2.EnsureNotIncludedTwice) returns (Outer1.Included);
+}

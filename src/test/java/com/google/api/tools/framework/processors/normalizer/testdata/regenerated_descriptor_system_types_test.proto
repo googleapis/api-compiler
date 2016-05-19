@@ -1,0 +1,103 @@
+// Test Proto source for RegeneratedDescriptorTest
+
+syntax = "proto3";
+
+package com.google.api.tools.framework.processors.normalizer.RegeneratedDescriptorTest;
+
+message OuterMessage {
+  option deprecated = true;
+
+  // Test field options
+  string string1 = 1 [ctype = CORD];
+  string string2 = 2 [jtype = BYTES];
+  int64 int64 = 3 [jstype = JS_NUMBER];
+  InnerEnum inner_enum = 4 [json_name = "inner"];
+  OuterEnum outer_enum = 5;
+  repeated int32 packed = 6 [packed = true];
+  InnerMessage lazy = 7 [lazy = true];
+  string deprecated = 8 [deprecated = true];
+
+  oneof test_oneof {
+    string foo = 10;
+    string bar = 11;
+  }
+  // not testing the "weak" option
+  // not testing upgraded_option
+  // not testing deprecated_raw_message
+  // not testing uninterpreted_option
+
+  message InnerMessage {
+    string field1 = 1;
+    enum InnerInnerEnum {
+      VALUE1 = 0;
+    }
+
+    InnerInnerEnum enum1 = 2;
+    message InnerInnerMessage {
+      string field1 = 1;
+    }
+
+    InnerInnerMessage field2 = 3;
+  }
+
+  enum InnerEnum {
+    VALUE1 = 0;
+  }
+
+  string required_field = 15;
+  InnerMessage mess = 16;
+}
+
+// A service-unreachable message type which is added into service config as a
+// system type.
+message SystemType {
+  // The name of the system type.
+  string name = 1;
+}
+
+enum OuterEnum {
+  VALUE0 = 0;
+  VALUE2 = 2;
+  VALUE3 = 3 [deprecated = true];
+
+  option deprecated = true;
+}
+
+service Service {
+  // Silence lint warning.
+  rpc Method(OuterMessage) returns (OuterMessage.InnerMessage);
+  // Silence lint warning.
+  rpc ServerStreamingMethod(OuterMessage) returns (stream OuterMessage);
+  // Silence lint warning.
+  rpc ClientStreamingMethod(stream OuterMessage) returns (OuterMessage);
+  // Silence lint warning.
+  rpc BidiStreamingMethod(stream OuterMessage) returns (stream OuterMessage) {
+    option legacy_client_initial_tokens = 1024;
+    option legacy_server_initial_tokens = 1024;
+  }
+  // Silence lint warning.
+  rpc LegacyStream(OuterMessage) returns (OuterMessage) {
+    option stream_type = "StreamReply";
+  }
+  // Silence lint warning.
+  rpc MethodWithOptions(OuterMessage) returns (OuterMessage) {
+    // Testing method options
+    option protocol = UDP;
+    option deadline = 5.0;
+    option duplicate_suppression = true;
+    option fail_fast = true;
+    option end_user_creds_requested = true;
+    option client_logging = 128;
+    option server_logging = 129;
+    option security_level = INTEGRITY;
+    option response_format = ZIPPY_COMPRESSED;
+    option request_format = ZIPPY_COMPRESSED;
+    option security_label = "admin";
+    option log_level = LOG_HEADER_ONLY;
+    option deprecated = true;
+    // not testing uninterpreted_options
+  }
+
+  // Legacy stream declarations are not supported in One Platform.
+  // stream StreamWithOptions(OuterMessage, OuterMessage);
+}

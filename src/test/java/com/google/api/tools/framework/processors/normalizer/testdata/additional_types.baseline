@@ -1,0 +1,110 @@
+name: "blob.googleapis.com"
+title: "Blob Service"
+apis {
+  name: "protiary.test.Storage"
+  methods {
+    name: "CreateObject"
+    request_type_url: "type.googleapis.com/protiary.test.Outer2.EnsureNotIncludedTwice"
+    response_type_url: "type.googleapis.com/protiary.test.Outer1.Included"
+  }
+  version: "v1"
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+types {
+  name: "protiary.test.Outer1"
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+types {
+  name: "protiary.test.Outer1.Included"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+types {
+  name: "protiary.test.Outer2"
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+types {
+  name: "protiary.test.Outer2.EnsureNotIncludedTwice"
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+types {
+  name: "protiary.test.Outer2.IncludedByWildCard1"
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+types {
+  name: "protiary.test.Outer2.IncludedByWildCard2"
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+types {
+  name: "protiary.test.Outer2.IncludedByWildCard3"
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+types {
+  name: "protiary.test.Outer2.IncludedByWildCard3.IncludedByWildCardNested"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+types {
+  name: "protiary.test.Outer3"
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+enums {
+  name: "protiary.test.Outer3.EnumIncludedByWildCard1"
+  enumvalue {
+    name: "TEST1"
+  }
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+enums {
+  name: "protiary.test.Outer3.EnumIncludedByWildCard2"
+  enumvalue {
+    name: "TEST2"
+  }
+  source_context {
+    file_name: "additional_types.proto"
+  }
+}
+documentation {
+  rules {
+    selector: "protiary.test.Storage.CreateObject"
+    description: "comment"
+  }
+}
+config_version {
+  value: 1
+}
+

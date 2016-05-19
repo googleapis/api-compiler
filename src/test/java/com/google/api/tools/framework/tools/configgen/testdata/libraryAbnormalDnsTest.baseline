@@ -1,0 +1,19 @@
+WARNING: toplevel: (lint) control-presence: Service foobar.googleprod.com does not have control environment configured.
+============== file: normalized config without derived data ==============
+name: "foobar.googleprod.com"
+title: "Google Foobar"
+documentation {
+}
+http {
+}
+authentication {
+}
+context {
+}
+usage {
+}
+config_version {
+  value: 3
+}
+
+============== Successfully regenerated service config ==============
