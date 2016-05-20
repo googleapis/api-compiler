@@ -324,21 +324,23 @@ public class MergerTest {
 
   private void assertError(final String phrase) {
     Assert.assertTrue(model.getDiagCollector().hasErrors());
-    Assert.assertTrue(Iterators.any(model.getDiags().iterator(), new Predicate<Diag>() {
-      @Override
-      public boolean apply(Diag diag) {
-        return diag.getKind() == Kind.ERROR && diag.toString().contains(phrase);
-      }
+    Assert.assertTrue(Iterators.any(model.getDiagCollector().getDiags().iterator(),
+      new Predicate<Diag>() {
+        @Override
+        public boolean apply(Diag diag) {
+          return diag.getKind() == Kind.ERROR && diag.toString().contains(phrase);
+        }
     }));
   }
 
   private void assertWarning(final String phrase) {
-    Assert.assertTrue(model.getDiags().size() > 0);
-    Assert.assertTrue(Iterators.any(model.getDiags().iterator(), new Predicate<Diag>() {
-      @Override
-      public boolean apply(Diag diag) {
-        return diag.getKind() != Kind.ERROR && diag.toString().contains(phrase);
-      }
+    Assert.assertTrue(model.getDiagCollector().getDiags().size() > 0);
+    Assert.assertTrue(Iterators.any(model.getDiagCollector().getDiags().iterator(),
+      new Predicate<Diag>() {
+        @Override
+        public boolean apply(Diag diag) {
+          return diag.getKind() != Kind.ERROR && diag.toString().contains(phrase);
+        }
     }));
   }
 
@@ -395,7 +397,7 @@ public class MergerTest {
 
   private void checkNoErrors() {
     if (model.getDiagCollector().hasErrors()) {
-      Assert.fail("Errors: " + Joiner.on("\n").join(model.getDiags()));
+      Assert.fail("Errors: " + Joiner.on("\n").join(model.getDiagCollector().getDiags()));
     }
     StageValidator.assertStages(ImmutableList.<Key<?>>of(Resolved.KEY, Merged.KEY), model);
   }

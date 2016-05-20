@@ -102,7 +102,7 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
               }
             })), Pattern.DOTALL);
     int processedIndex = 0;
-    for (final Diag diag : model.getDiags()) {
+    for (final Diag diag : model.getDiagCollector().getDiags()) {
       ++processedIndex;
       if (diag.getKind() != Diag.Kind.ERROR
           && !messagePattern.matcher(diag.getMessage()).matches()) {
@@ -131,8 +131,9 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
     }
 
     // Start from processedIndex so that we don't print the warnings that we already printed out.
-    for (int i = processedIndex; i < model.getDiags().size(); ++i) {
-      final Diag diag = model.getDiags().get(i);
+    List<Diag> diags = model.getDiagCollector().getDiags();
+    for (int i = processedIndex; i < diags.size(); ++i) {
+      final Diag diag = diags.get(i);
       if (diag.getKind() != Diag.Kind.ERROR
           && !messagePattern.matcher(diag.getMessage()).matches()) {
         continue;

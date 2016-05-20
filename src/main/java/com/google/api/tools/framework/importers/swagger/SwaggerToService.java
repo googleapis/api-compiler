@@ -311,7 +311,7 @@ public class SwaggerToService implements DiagCollector {
     model.enableExperiment("empty-descriptor-defaults");
     model.establishStage(Normalized.KEY);
     if (model.getDiagCollector().hasErrors()) {
-      diags.addAll(model.getDiags());
+      diags.addAll(model.getDiagCollector().getDiags());
       errorCount += model.getDiagCollector().getErrorCount();
       return null;
     }
@@ -528,6 +528,7 @@ public class SwaggerToService implements DiagCollector {
   /**
    * Returns the diagnosis accumulated.
    */
+  @Override
   public List<Diag> getDiags() {
     return diags;
   }

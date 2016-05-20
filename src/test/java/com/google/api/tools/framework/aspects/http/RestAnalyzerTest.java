@@ -133,7 +133,7 @@ public class RestAnalyzerTest extends BaselineTestCase {
 
     RestMethod restMethod;
     ImmutableList<PathSegment> path = parse(model, template);
-    if (!model.getDiags().isEmpty()) {
+    if (!model.getDiagCollector().getDiags().isEmpty()) {
       restMethod = RestMethod.create(method, RestKind.CUSTOM, "*error*", "*error*");
     } else {
       HttpAttribute httpConfig = new HttpAttribute(HttpRule.getDefaultInstance(),
@@ -161,7 +161,7 @@ public class RestAnalyzerTest extends BaselineTestCase {
         restMethod.getRestKind() == RestKind.CUSTOM
         ? restMethod.getRestMethodName() : "(null)");
 
-    List<Diag> diags = model.getDiags();
+    List<Diag> diags = model.getDiagCollector().getDiags();
     if (diags.size() > 0) {
       pw.println("Diagnostics:");
       for (Diag d : diags) {

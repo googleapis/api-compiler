@@ -173,6 +173,7 @@ public abstract class ToolDriverBase extends GenericToolDriverBase {
   /**
    * Report any errors and exit if there were some.
    */
+  @Override
   protected void onErrorsExit() {
     if (getDiagCollector().hasErrors()) {
       reportDiag();
@@ -183,8 +184,9 @@ public abstract class ToolDriverBase extends GenericToolDriverBase {
   /**
    * Report errors and warnings.
    */
+  @Override
   protected void reportDiag() {
-    ToolUtil.reportDiag(model.getDiags(), true);
+    ToolUtil.reportDiags(model.getDiagCollector(), true);
   }
 
 }

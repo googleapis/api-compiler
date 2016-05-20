@@ -116,7 +116,7 @@ public class ResolverTest {
     testApi.registerProcessor(new Resolver());
     Assert.assertFalse(testApi.establishStage(Resolved.KEY));
     Assert.assertEquals(2, testApi.getDiagCollector().getErrorCount());
-    assertThat(testApi.getDiags().get(0).toString()).contains("undef_N");
-    assertThat(testApi.getDiags().get(1).toString()).contains("undef_E");
+    assertThat(testApi.getDiagCollector().getDiags().get(0).toString()).contains("undef_N");
+    assertThat(testApi.getDiagCollector().getDiags().get(1).toString()).contains("undef_E");
   }
 }

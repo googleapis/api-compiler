@@ -234,10 +234,6 @@ public class Model extends Element implements ConfigLocationResolver {
     return diagCollector;
   }
 
-  public List<Diag> getDiags(){
-    return diagCollector.getDiags();
-  }
-
   /**
    * Returns the list of (proto) files.
    */

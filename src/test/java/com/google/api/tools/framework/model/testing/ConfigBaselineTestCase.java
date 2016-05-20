@@ -158,7 +158,7 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
 
     // Output diag into baseline file.
     if (!suppressDiagnosis()) {
-      for (Diag diag : model.getDiags()) {
+      for (Diag diag : model.getDiagCollector().getDiags()) {
         printDiag(diag);
       }
     }

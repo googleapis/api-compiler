@@ -123,8 +123,8 @@ public class ToolUtil {
   /**
    * Report errors and warnings.
    */
-  public static void reportDiag(List<Diag> diags, boolean colored) {
-    for (Diag diag : diags) {
+  public static void reportDiags(DiagCollector diagCollector, boolean colored) {
+    for (Diag diag : diagCollector.getDiags()) {
       System.err.println(diagToString(diag, colored));
     }
   }

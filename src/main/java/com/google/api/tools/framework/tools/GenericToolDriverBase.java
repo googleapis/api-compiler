@@ -125,6 +125,6 @@ public abstract class GenericToolDriverBase {
    * Report errors and warnings.
    */
   protected void reportDiag() {
-    ToolUtil.reportDiag(getDiagCollector().getDiags(), true);
+    ToolUtil.reportDiags(getDiagCollector(), true);
   }
 }

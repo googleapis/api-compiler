@@ -178,7 +178,7 @@ public class ConfigGeneratorToolTest extends BaselineTestCase {
       StandardSetup.registerStandardProcessors(model);
       model.establishStage(Normalized.KEY);
       if (model.getDiagCollector().hasErrors()) {
-        printDiags(model.getDiags(), false);
+        printDiags(model.getDiagCollector().getDiags(), false);
       } else {
         testOutput().println(
             "============== Successfully regenerated service config ==============");

@@ -290,7 +290,7 @@ public abstract class ConfigAspectBase implements ConfigAspect {
 
       @Override
       public List<Diag> getDiags() {
-        return model.getDiags();
+        return model.getDiagCollector().getDiags();
       }
     };
   }
