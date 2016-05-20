@@ -47,7 +47,7 @@ Build source code
 ## Creating service config from proto files
 
 
-### Creating a proto descriptor
+### Creating a proto descriptor file
 
 Google API Compiler does not consume the proto files directly. Developers need
 to use `protoc` to generate the proto descriptor, then feed it to the Google
