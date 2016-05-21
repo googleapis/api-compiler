@@ -6,3 +6,8 @@ jdk:
 
 before_install:
   - git submodule update --init --recursive
+
+os:
+  - linux
+  - osx
+
