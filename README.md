@@ -1,3 +1,6 @@
+
+[![Build Status](https://travis-ci.com/googleapis/tools-framework.svg?token=LXQXgsAejsD4JjMseuxD&branch=master)](https://travis-ci.com/googleapis/tools-framework)
+
 # Google API Compiler
 
 ## Overview
