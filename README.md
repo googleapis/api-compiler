@@ -1,4 +1,3 @@
-
 [![Build Status](https://travis-ci.com/googleapis/tools-framework.svg?token=LXQXgsAejsD4JjMseuxD&branch=master)](https://travis-ci.com/googleapis/tools-framework)
 
 # Google API Compiler
@@ -46,6 +45,15 @@ Build source code
 ```
 ./gradlew buildGoogleApiConfigGen
 ```
+For running tests, currently protoc needs to be in your path. If you don't
+already have protoc version 3 or higher, you can download
+it from https://github.com/google/protobuf/releases and set a symbolic link to
+the protoc.
+```
+# Example
+sudo ln -s  <Path to the downloaded protoc> /usr/local/bin/protoc
+```
+
 
 ## Creating service config from proto files
 
