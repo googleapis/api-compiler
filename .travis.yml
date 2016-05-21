@@ -5,9 +5,10 @@ jdk:
   - oraclejdk7
 
 before_install:
-  - git submodule update --init --recursive
+  - wget https://github.com/google/protobuf/releases/download/v3.0.0-beta-3/protoc-3.0.0-beta-3-linux-x86_64.zip
+  - unzip protoc-3.0.0-beta-3-linux-x86_64.zip
+  - export PROTOC_COMPILER="$(pwd)/protoc"
 
 os:
   - linux
-  - osx
 
