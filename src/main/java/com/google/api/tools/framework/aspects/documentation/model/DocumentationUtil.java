@@ -193,7 +193,7 @@ public class DocumentationUtil {
     Pattern pattern = Pattern.compile("\\[(?<name>[^\\]]+?)\\]( |\\n)*"
         + "\\[(?<link>[^\\]]*?)\\]");
     Matcher matcher = pattern.matcher(text);
-    StringBuilder result = new StringBuilder();
+    StringBuffer result = new StringBuffer();
     while (matcher.find()) {
       String replacementText = matcher.group("name");
       replacementText = Matcher.quoteReplacement(replacementText);
