@@ -1,0 +1,17 @@
+type: google.api.Service
+title: test
+config_version: 2
+name: test.googleapis.com
+
+apis:
+- name: proto.test.v1.TestService
+
+control:
+  environment: servicecontrol.googleapis.com
+
+metrics:
+  - name: test.googleapis.com/read_requests
+    metric_kind: DELTA
+    value_type: INT64
+
+

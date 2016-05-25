@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package google.discovery;
+
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+
+
+// A dummy discovery service for testing purpose
+service Discovery {
+  // GetDiscovery.
+  rpc GetDiscovery(GetDiscoveryRequest) returns (google.protobuf.Any);
+
+  // GetDiscoveryRest.
+  rpc GetDiscoveryRest(GetDiscoveryRequest) returns (google.protobuf.Struct);
+}
+
+message GetDiscoveryRequest {
+  string format = 1;
+
+  repeated string labels = 2;
+
+  repeated string args = 3;
+}

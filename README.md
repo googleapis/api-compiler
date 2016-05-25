@@ -31,6 +31,10 @@ NOTE: Google API Service Configuration is a rich and mature specification used
 for Google production services, such as Cloud Logging, Cloud Bigtable, IAM, and
 many more.
 
+## Used by other tools.
+Google API compiler is used by other tools like [googleapis/toolkit](https://github.com/googleapis/toolkit)
+to read the users API definition and autogenerate client libraries.
+
 ## Compile Google API Compiler
 
 Clone the _Google API Compiler_ repo
@@ -141,16 +145,3 @@ This will create the Google API service configuration:
 
 Any of these can be used as input to an Endpoints API server.
 
-## Work with Google Cloud Endpoints
-
-Once you generate the service config, you can use it to configure Endpoints API
-Proxy. For example, based on the service config, Endpoints API Proxy will know
-how to perform authentication/logging/monitoring, if needed, for a given HTTP
-request.
-
-The service config can be fed into other tools to generate API reference,
-a Google API discovery document, REST and RPC client libraries etc.
-
-If you choose to use Google Cloud Services to provide control plane features
-like logging and monitoring, you also need to submit the service config via
-`gcloud` to configure the corresponding backend services.

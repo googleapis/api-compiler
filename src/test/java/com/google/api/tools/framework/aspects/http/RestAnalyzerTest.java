@@ -23,6 +23,7 @@ import com.google.api.tools.framework.aspects.http.model.HttpAttribute.MethodKin
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.PathSegment;
 import com.google.api.tools.framework.aspects.http.model.RestKind;
 import com.google.api.tools.framework.aspects.http.model.RestMethod;
+import com.google.api.tools.framework.model.ConfigSource;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.ExtensionPool;
 import com.google.api.tools.framework.model.Interface;
@@ -40,6 +41,7 @@ import com.google.protobuf.DescriptorProtos.FileDescriptorSet;
 import com.google.protobuf.DescriptorProtos.MethodDescriptorProto;
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto;
 import com.google.protobuf.Empty;
+import com.google.protobuf.UInt32Value;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -122,8 +124,14 @@ public class RestAnalyzerTest extends BaselineTestCase {
 
   private void restify(MethodKind httpKind, String simpleName, String template) {
     Model model = Model.create(FileDescriptorSet.getDefaultInstance());
-    model.setServiceConfig(Service.getDefaultInstance());
-    model.setConfigVersionForTesting(configVersion);
+    model.setServiceConfig(
+        ConfigSource.newBuilder(Service.getDefaultInstance())
+            .setValue(
+                Service.getDescriptor().findFieldByNumber(Service.CONFIG_VERSION_FIELD_NUMBER),
+                null,
+                UInt32Value.newBuilder().setValue(configVersion).build(),
+                new SimpleLocation("from test"))
+            .build());
     HttpConfigAspect aspect = HttpConfigAspect.create(model);
     ProtoFile file = ProtoFile.create(model, FileDescriptorProto.getDefaultInstance(), true,
         ExtensionPool.EMPTY);

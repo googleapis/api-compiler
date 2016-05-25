@@ -17,6 +17,7 @@
 package com.google.api.tools.framework.tools;
 
 import com.google.api.AnnotationsProto;
+import com.google.api.AuthProto;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.ExtensionPool;
 import com.google.api.tools.framework.model.Model;
@@ -75,6 +76,7 @@ public abstract class ToolDriverBase extends GenericToolDriverBase {
   protected ExtensionRegistry getPlatformExtensions() {
     ExtensionRegistry registry = ExtensionRegistry.newInstance();
     AnnotationsProto.registerAllExtensions(registry);
+    AuthProto.registerAllExtensions(registry);
     return registry;
   }
 

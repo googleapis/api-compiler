@@ -17,6 +17,7 @@
 package com.google.api.tools.framework.model.testing;
 
 import com.google.api.AnnotationsProto;
+import com.google.api.AuthProto;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.ConfigSource;
 import com.google.api.tools.framework.model.DiagCollector;
@@ -70,6 +71,7 @@ public class TestConfig {
   static {
     EXTENSIONS = ExtensionRegistry.newInstance();
     AnnotationsProto.registerAllExtensions(EXTENSIONS);
+    AuthProto.registerAllExtensions(EXTENSIONS);
   }
 
   private final List<String> protoFiles;

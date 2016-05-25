@@ -26,7 +26,6 @@ import com.google.api.tools.framework.processors.normalizer.DescriptorGenerator;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -40,7 +39,6 @@ import com.google.protobuf.Api;
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto;
 import com.google.protobuf.DescriptorProtos.FileDescriptorSet;
 import com.google.protobuf.Descriptors.Descriptor;
-import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import com.google.protobuf.UInt32Value;
 
@@ -81,10 +79,6 @@ public class Model extends Element implements ConfigLocationResolver {
   private static final String CORP_DNS_SUFFIX = ".corp.googleapis.com";
   private static final String SANDBOX_DNS_SUFFIX = ".sandbox.googleapis.com";
   private static final String PRIVATE_API_DNS_SUFFIX = "-pa.googleapis.com";
-  private static final String DISCOVERY_API_NAME = "google.discovery.Discovery";
-
-  private static final FieldDescriptor CONFIG_VERSION_FIELD =
-      Preconditions.checkNotNull(Service.getDescriptor().findFieldByName("config_version"));
 
   // An experiment which allows to turn off merging semantics and drop back to proto3.
   // This is for cases the new merging causes compatibility problems.
@@ -314,18 +308,6 @@ public class Model extends Element implements ConfigLocationResolver {
     return apiV1VersionSuffix;
   }
 
-  /**
-   * Useful to see if this model has any APIs other than the ones automatically defined by Discovery
-   * TODO(user) Remove this after we fix Discovery for services with no APIs
-   */
-  public boolean hasApis() {
-    for (Api api : getNormalizedConfig().getApisList()) {
-      if (!DISCOVERY_API_NAME.equals(api.getName())) {
-        return true;
-      }
-    }
-    return false;
-  }
   //-------------------------------------------------------------------------
   // Attributes belonging to resolved stage
 
@@ -490,22 +472,6 @@ public class Model extends Element implements ConfigLocationResolver {
       return config.getConfigVersion().getValue();
     }
     return CURRENT_CONFIG_DEFAULT_VERSION;
-  }
-
-  /**
-   * Sets config version for testing.
-   */
-  @VisibleForTesting
-  public void setConfigVersionForTesting(int configVersion) {
-    serviceConfig =
-        serviceConfig
-            .toBuilder()
-            .setValue(
-                CONFIG_VERSION_FIELD,
-                null,
-                UInt32Value.newBuilder().setValue(configVersion).build(),
-                new SimpleLocation("from test"))
-            .build();
   }
 
   // -------------------------------------------------------------------------

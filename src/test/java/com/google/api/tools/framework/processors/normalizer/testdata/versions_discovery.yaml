@@ -1,0 +1,29 @@
+type: google.api.Service
+config_version: 2
+
+apis:
+- name: google.discovery.Discovery
+
+http:
+  rules:
+  - selector: google.discovery.Discovery.GetDiscovery
+    get:  '/$discovery'
+  - selector: google.discovery.Discovery.GetDiscoveryRest
+    # TODO(user): Deprecate the old http mapping once it is no longer used.
+    get:  '/$discovery/{format}/rest'
+    additional_bindings:
+    - get: '/$discovery/{format}'
+
+metrics:
+  - name: google.discovery.Discovery/RequestQuota
+    metric_kind: DELTA
+    value_type: INT64
+
+
+context:
+  rules:
+  - selector: 'google.discovery.Discovery.*'
+    requested:
+    - google.rpc.context.VisibilityContext
+
+# TODO(user) Add more configuration (e.g. auth) for Discovery API.
