@@ -4,10 +4,10 @@
 
 ## Overview
 
-Google API Compiler is an open source tool for processing API specifications.
-It currently supports OpenAPI specification, Protocol Buffers (proto), and
-Google API Service Configuration (service config), and can be extended to
-support other formats.
+Google API Compiler (Api Compiler) is an open source tool for processing API
+specifications. It currently supports OpenAPI specification, Protocol Buffers
+(proto), and Google API Service Configuration (service config), and can be
+extended to support other formats.
 
 Google API Compiler parses the input files into object models, processes and
 validates the models, and generate various outputs, such as:
@@ -21,15 +21,16 @@ validates the models, and generate various outputs, such as:
 ## Google API Service Configuration
 
 Google API Service Configuration is a specification that defines the surface and
-behavior of an API service, including authentication, discovery, documentation,
-logging, monitoring and much more. It is formally defined by the proto message
-`google.api.Service` and works with both REST and RPC APIs. Developers typically
-create the service config using YAML files, and use the Google API Compiler to
-generate the proto message.
+behavior of an API service, including interface, types, methods, authentication,
+discovery, documentation, logging, monitoring and more. It is formally defined
+by the proto message [`google.api.Service`](https://github.com/googleapis/googleapis/tree/master/google/api/service.proto)
+and works with both REST and RPC APIs. Developers typically create the service
+config using YAML files, and use the Google API Compiler to generate the proto
+message.
 
 NOTE: Google API Service Configuration is a rich and mature specification used
-for Google production services, such as Cloud Logging, Cloud Bigtable, IAM, and
-many more.
+for Google production services, such as Cloud Logging, Cloud Vision,
+Cloud Bigtable, IAM, and more.
 
 ## Used by other tools.
 Google API compiler is used by other tools like [googleapis/toolkit](https://github.com/googleapis/toolkit)
@@ -39,7 +40,7 @@ to read the users API definition and autogenerate client libraries.
 
 Clone the _Google API Compiler_ repo
 ```
-git clone <TODO PATH TO THE REPO>
+git clone https://github.com/googleapis/tools-framework
 ```
 Update submodules
 ```
@@ -49,8 +50,8 @@ Build source code
 ```
 ./gradlew buildGoogleApiConfigGen
 ```
-For running tests, currently protoc needs to be in your path. If you don't
-already have protoc version 3 or higher, you can download
+For running tests, you need to have `protoc` in your path. If you don't
+already have protoc version 3, you can download
 it from https://github.com/google/protobuf/releases and set a symbolic link to
 the protoc.
 ```
@@ -98,11 +99,12 @@ apis:
 # ...
 ```
 
-### Executing the Google API Compiler Tool
+### Executing the Google API Compiler
+
+Once the jar 'gapi-config-gen-with-deps-0.0.0-SNAPSHOT.jar' is built under the
+build/libs directory, you can execute the jar using the following command:
 
 ```
-# Once the jar 'gapi-config-gen-with-deps-0.0.0-SNAPSHOT.jar' is built under the
-# build/libs directory, you can execute the jar using the following command:
 alias gapi-config-gen='java -jar <path to gapi-config-gen-with-deps-0.0.0-SNAPSHOT.jar>'
 DESCRIPTOR_FILE=<PATH TO out.descriptor>
 CONFIG_FILE=<path to yaml file>
@@ -116,7 +118,7 @@ gapi-config-gen \
 --bin_out $BINARY_FILE_NAME
 ```
 
-This command will output the Google API Service Configuration in different
+This command will output the service configuration in different
 formats:
 - Binary file: $BINARY_FILE_NAME
 - Json file: $JSON_FILE_NAME
@@ -125,7 +127,7 @@ Any of these can be used as input to an Endpoints API server.
 
 ## Creating service config from an OpenAPI Spec
 
-Validate the OpenAPI Spec and create the GoogleApi Service Configuration.
+Validate the OpenAPI Spec and create the service configuration.
 
 ```
 alias gapi-config-gen='java -jar <path to gapi-service-config-gen-with-deps-0.0.0-SNAPSHOT.jar>'
@@ -139,9 +141,9 @@ gapi-config-gen \
 --bin_out $BINARY_FILE_NAME
 ```
 
-This will create the Google API service configuration:
+This will create the service config:
 - Binary file: $BINARY_FILE_NAME
-- Json file: $JSON_FILE_NAME
+- JSON file: $JSON_FILE_NAME
 
 Any of these can be used as input to an Endpoints API server.
 
