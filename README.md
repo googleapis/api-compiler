@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/googleapis/api-compiler.svg?token=LXQXgsAejsD4JjMseuxD&branch=master)](https://travis-ci.com/googleapis/api-compiler)
+[![Build Status](https://travis-ci.org/googleapis/api-compiler.svg?branch=master)](https://travis-ci.org/googleapis/api-compiler)
 
 # Google API Compiler
 
