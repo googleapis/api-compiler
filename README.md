@@ -40,7 +40,7 @@ to read the users API definition and autogenerate client libraries.
 
 Clone the _Google API Compiler_ repo
 ```
-git clone https://github.com/googleapis/tools-framework
+git clone https://github.com/googleapis/api-compiler
 ```
 Update submodules
 ```
