@@ -16,7 +16,6 @@ buildscript {
   }
 }
 
-
 apply plugin: "java"
 apply plugin: "maven"
 apply plugin: "idea"
@@ -81,7 +80,6 @@ dependencies {
     libraries.jsonSchemaValidator,
     libraries.grpcCore,
     libraries.apacheCommonCli
-
 
   testCompile libraries.junit,
     libraries.mockito,
@@ -167,6 +165,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
   from sourceSets.main.allSource,
        sourceSets.test.allSource
 }
+
 artifacts {
   archives sourcesJar, testJar
 }
@@ -174,12 +173,12 @@ artifacts {
 // Jar with dependencies
 // ---------------------
 task buildGoogleApiConfigGen(type: Jar) {
-    baseName = googleApiConfigGenName + '-with-deps'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-    manifest {
-        attributes 'Main-Class': 'com.google.api.tools.framework.tools.configgen.ServiceConfigGeneratorTool'
-    }
+  baseName = googleApiConfigGenName + '-with-deps'
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+  with jar
+  manifest {
+    attributes 'Main-Class': 'com.google.api.tools.framework.tools.configgen.ServiceConfigGeneratorTool'
+  }
 }
 
 // Eclipse Annotation Processing
@@ -217,11 +216,11 @@ tasks.eclipseJdt {
     aptPrefs.parentFile.mkdirs()
 
     aptPrefs.text = """\
-          eclipse.preferences.version=1
-          org.eclipse.jdt.apt.aptEnabled=true
-          org.eclipse.jdt.apt.genSrcDir=${eclipseAptFolder}
-          org.eclipse.jdt.apt.reconcileEnabled=true
-          """.stripIndent()
+        eclipse.preferences.version=1
+        org.eclipse.jdt.apt.aptEnabled=true
+        org.eclipse.jdt.apt.genSrcDir=${eclipseAptFolder}
+        org.eclipse.jdt.apt.reconcileEnabled=true
+        """.stripIndent()
 
     file('.factorypath').withWriter {
       new groovy.xml.MarkupBuilder(it).'factorypath' {
@@ -259,7 +258,6 @@ if (project.hasProperty('privateOssrhUsername') && project.hasProperty('privateO
           // TODO(cbao): update with github repo url.
           url 'http://www.googleapis.com'
 
-
           licenses {
             license {
               name 'The Apache License, Version 2.0'
@@ -275,3 +273,4 @@ if (project.hasProperty('privateOssrhUsername') && project.hasProperty('privateO
     + "and privateOssrhPassword properties need to be set correctly in "
     + "your ~/.gradle/gradle.properties file in order to upload archives.")
 }
+
