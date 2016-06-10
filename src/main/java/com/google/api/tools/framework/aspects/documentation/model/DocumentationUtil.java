@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
  * Static utilities for dealing with documentation.
  */
 public class DocumentationUtil {
+
   private DocumentationUtil() {}
 
   /**
