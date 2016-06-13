@@ -92,20 +92,6 @@ final class AuthBuilder {
   }
 
   /**
-   * Returns whether vendor extension contains the particular extension.
-   */
-  private static <T> boolean hasVendorExtension(
-      Map<String, Object> vendorExtensions, String extensionName, Class<T> clazz) {
-    if (vendorExtensions != null) {
-      Object extensionValue = vendorExtensions.get(extensionName);
-      if (extensionValue != null && clazz.isInstance(extensionValue)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * Creates {@link AuthProvider} from Swagger SecuritySchemeDefinition.
    */
   void addAuthProvider(String securitySchemaName, SecuritySchemeDefinition securitySchema) {
@@ -115,13 +101,15 @@ final class AuthBuilder {
     if (securitySchema.getType().equalsIgnoreCase("oauth2")) {
       AuthProvider.Builder authProviderBuilder = AuthProvider.newBuilder();
       authProviderBuilder.setId(securitySchemaName);
-      if (hasVendorExtension(
-              securitySchema.getVendorExtensions(), OAUTH_ISSUER_SWAGGER_EXTENSION, String.class)) {
+      if (VendorExtensionUtils.hasExtension(
+              securitySchema.getVendorExtensions(), OAUTH_ISSUER_SWAGGER_EXTENSION, String.class,
+              diagCollector)) {
         authProviderBuilder.setIssuer(
             (String) securitySchema.getVendorExtensions().get(OAUTH_ISSUER_SWAGGER_EXTENSION));
       }
-      if (hasVendorExtension(
-              securitySchema.getVendorExtensions(), JWKS_SWAGGER_EXTENSION, String.class)) {
+      if (VendorExtensionUtils.hasExtension(
+              securitySchema.getVendorExtensions(), JWKS_SWAGGER_EXTENSION, String.class,
+              diagCollector)) {
         authProviderBuilder.setJwksUri(
             (String) securitySchema.getVendorExtensions().get(JWKS_SWAGGER_EXTENSION));
       }
@@ -199,7 +187,8 @@ final class AuthBuilder {
    */
   private boolean convertSecurityRequirementExtension(Map<String, Object> extensions,
       AuthenticationRule.Builder authenticationRuleBuilder, Location location) {
-    if (hasVendorExtension(extensions, SECURITY_REQUIREMENT_EXTENSION, List.class)) {
+    if (VendorExtensionUtils.hasExtension(
+        extensions, SECURITY_REQUIREMENT_EXTENSION, List.class, diagCollector)) {
       List<Map<String, SecurityReq>> securityRequirements =
           getSecurityRequirements(extensions.get(SECURITY_REQUIREMENT_EXTENSION));
       if (securityRequirements == null) {
@@ -276,10 +265,14 @@ final class AuthBuilder {
     boolean perMethodApiKeyRequired =
         isApiKeyRequired(securityRequirements, requiresApiKeyAtTopLevel);
     if (!perMethodApiKeyRequired) {
-      diagCollector.addDiag(Diag.warning(
-          SwaggerToService.createOperationLocation(operationType, swaggerPath),
-          "Operation does not require an API key; callers may invoke the method "
-          + "without specifying an associated API-consuming project."));
+      // TODO(): Remove this check once we have warnings suppression implemented.
+      if (!swaggerPath.equals(SwaggerToService.WILDCARD_URL_PATH)) {
+        diagCollector.addDiag(
+            Diag.warning(
+                SwaggerToService.createOperationLocation(operationType, swaggerPath),
+                "Operation does not require an API key; callers may invoke the method "
+                    + "without specifying an associated API-consuming project."));
+      }
     }
     usageRules.add(
         UsageRule.newBuilder()

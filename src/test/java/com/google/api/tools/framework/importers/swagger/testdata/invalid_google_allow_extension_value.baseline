@@ -1,0 +1,25 @@
+ERROR: invalid_google_allow_extension_value.json: x-google-allow: Only allowed values for x-google-allow are all|configured
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "google.example.methods"
+  version: "v1"
+  source_context {
+    file_name: "google.example.methods"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+}
+authentication {
+}
+context {
+}
+usage {
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+

@@ -1,0 +1,25 @@
+ERROR: invalid_vendor_extension_type.json: x-google-allow: Extension x-google-allow has invalid type. Valid type is java.lang.String
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "google.example.methods"
+  version: "v1"
+  source_context {
+    file_name: "google.example.methods"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+}
+authentication {
+}
+context {
+}
+usage {
+}
+control {
+  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+}
+
