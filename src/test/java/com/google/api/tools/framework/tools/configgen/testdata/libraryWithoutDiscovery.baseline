@@ -18,5 +18,7 @@ usage {
 config_version {
   value: 2
 }
+system_parameters {
+}
 
 ============== Successfully regenerated service config ==============

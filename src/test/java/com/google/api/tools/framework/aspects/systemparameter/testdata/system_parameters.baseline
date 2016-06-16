@@ -1,0 +1,17 @@
+system_parameters {
+  rules {
+    selector: "protiary.test.TestService.Call1"
+    parameters {
+      name: "api_key1"
+      http_header: "x-api-key1"
+    }
+  }
+  rules {
+    selector: "protiary.test.TestService2.Call1"
+    parameters {
+      name: "api_key2"
+      http_header: "x-api-key2"
+    }
+  }
+}
+
