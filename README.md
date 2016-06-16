@@ -71,7 +71,7 @@ API Compiler.
 
 ```
 # Creates a proto descriptor from proto files using protoc.
-protoc <file1.proto> <file2.proto> --include_source_info --descriptor_set_out=out.descriptors
+protoc <file1.proto> <file2.proto> --include_source_info --include_imports --descriptor_set_out=out.descriptors
 ```
 
 ### Create service config
