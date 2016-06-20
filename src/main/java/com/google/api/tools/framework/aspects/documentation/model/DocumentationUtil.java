@@ -252,6 +252,7 @@ public class DocumentationUtil {
   private static class CommentFilter {
 
     private static final String NEW_LINE = "\n";
+    private static final String OUTPUT_ONLY_ANNTATION = "@OutputOnly";
 
     private final DiagCollector diagCollector;
     @Nullable private final Set<String> labels;
@@ -346,7 +347,8 @@ public class DocumentationUtil {
      */
     private void appendText(CommentTokenizer tokenizer, StringBuilder builder) {
       while (tokenizer.hasNext() && tokenizer.peekNext().kind == TokenKind.TEXT) {
-        String text = tokenizer.pollNext().text;
+        // Remove OUTPUT_ONLY_ANNTATION string from the text before appending it to the builder.
+        String text = tokenizer.pollNext().text.replaceAll(OUTPUT_ONLY_ANNTATION, "");
         // Append a whitespace, if the position the text to be appended is not the
         // beginning of the line and text to be appended is not newline.
         if (builder.length() > 0 && builder.charAt(builder.length() - 1) != '\n'
