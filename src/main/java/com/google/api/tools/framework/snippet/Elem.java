@@ -285,7 +285,8 @@ abstract class Elem {
               return true;
             }
           }).toList();
-          return cands.size() == 1 ? cands.get(0) : null;
+          // If there are multiple matching methods, just choose the first one.
+          return cands.size() > 0 ? cands.get(0) : null;
       }
     }
   }
