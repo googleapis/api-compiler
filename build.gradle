@@ -26,7 +26,7 @@ sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
 group = "io.gapi"
-version = "0.0.0-SNAPSHOT"
+version = "0.0.3-SNAPSHOT"
 // url to the snapshot repository of a private maven repo.
 def privateSnapshotRepo = "http://104.197.230.53:8081/nexus/content/repositories/snapshots/"
 

@@ -101,11 +101,11 @@ apis:
 
 ### Executing the Google API Compiler
 
-Once the jar 'gapi-config-gen-with-deps-0.0.0-SNAPSHOT.jar' is built under the
+Once the jar 'gapi-config-gen-with-deps-0.0.3-SNAPSHOT.jar' is built under the
 build/libs directory, you can execute the jar using the following command:
 
 ```
-alias gapi-config-gen='java -jar <path to gapi-config-gen-with-deps-0.0.0-SNAPSHOT.jar>'
+alias gapi-config-gen='java -jar <path to gapi-config-gen-with-deps-0.0.3-SNAPSHOT.jar>'
 DESCRIPTOR_FILE=<PATH TO out.descriptor>
 CONFIG_FILE=<path to yaml file>
 JSON_FILE_NAME=<json output file name>
@@ -130,7 +130,7 @@ Any of these can be used as input to an Endpoints API server.
 Validate the OpenAPI Spec and create the service configuration.
 
 ```
-alias gapi-config-gen='java -jar <path to gapi-service-config-gen-with-deps-0.0.0-SNAPSHOT.jar>'
+alias gapi-config-gen='java -jar <path to gapi-service-config-gen-with-deps-0.0.3-SNAPSHOT.jar>'
 OPENAPI_FILE=<OpenAPI Spec filename>
 JSON_FILE_NAME=<json output file name>
 BINARY_FILE_NAME=<binary output file name>
