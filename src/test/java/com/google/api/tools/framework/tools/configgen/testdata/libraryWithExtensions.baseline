@@ -40,7 +40,7 @@ apis {
       name: "google.api.method_visibility"
       value {
         type_url: "type.googleapis.com/google.api.VisibilityRule"
-        value: "\022\016TRUSTED_TESTER\032\002\b\001"
+        value: "\022\016TRUSTED_TESTER"
       }
     }
     options {
@@ -73,13 +73,6 @@ apis {
         type_url: "type.googleapis.com/google.api.HttpRule"
         value: "*\024/v1/{name=shelves/*}"
       }
-    }
-  }
-  options {
-    name: "google.api.api_visibility"
-    value {
-      type_url: "type.googleapis.com/google.api.VisibilityRule"
-      value: "\032\002\b\001"
     }
   }
   version: "v1"
