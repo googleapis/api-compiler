@@ -103,13 +103,20 @@ public class DocumentationUtil {
 
   /**
    * Get the description of the element scoped to the visibility as currently set in the model.
-   *
    */
   public static String getScopedDescription(ProtoElement element) {
+    return getScopedDescription(element, false);
+  }
+
+  public static String getScopedDescription(ProtoElement element, boolean reportWarning) {
     Model model = element.getModel();
     Location location = element.getLocation();
-    return new CommentFilter(model.getDiagCollector(), location, model.getVisibilityLabels())
-        .process(getDescription(element));
+    String internalCommentFilteredString =
+        new CommentFilter(model.getDiagCollector(), location, model.getVisibilityLabels())
+            .process(getDescription(element));
+
+    return sanitizeTodos(
+        model.getDiagCollector(), location, internalCommentFilteredString, reportWarning);
   }
 
   /**
@@ -244,6 +251,40 @@ public class DocumentationUtil {
   public static String filter(DiagCollector collector, @Nullable Set<String> visibilityLabels,
       Location location, @Nullable String source) {
     return new CommentFilter(collector, location, visibilityLabels).process(source);
+  }
+
+  /**
+   * Given a comment string, remove the TODO and all characters found after the TODO. If the input
+   * string has no TODO, then the original string is returned. If a TODO was found, then a warning
+   * will be triggered telling the user that the TODO comment has been removed and to use internal
+   * documentation comment tags to avoid non internal documentation from getting removed from the
+   * generated documentation.
+   */
+  private static String sanitizeTodos(
+      DiagCollector diagCollector,
+      Location location,
+      @Nullable String source,
+      boolean reportWarning) {
+    if (Strings.isNullOrEmpty(source)) {
+      return source;
+    }
+
+    String[] sourceSplitByTodo = Pattern.compile("\\bTODO(\\(.*?\\))?:").split(source);
+
+    if (sourceSplitByTodo.length > 1 && reportWarning) {
+      diagCollector.addDiag(
+          Diag.warning(
+              location,
+              "A TODO comment was found. All comments from this TODO to the end of the comment "
+                  + "block will be removed from the generated documentation. This TODO Comment "
+                  + "should be wrapped in internal comment tags, \"(--\" and \"--)\", to prevent "
+                  + "non-internal documentation after the TODO from being removed from the "
+                  + "generated documentation."));
+    }
+
+    String result = sourceSplitByTodo[0];
+    // Remove last newline.
+    return result.endsWith("\n") ? result.substring(0, result.length() - 1) : result;
   }
 
   /**
