@@ -246,6 +246,7 @@ public class DocumentationUtil {
    * be filtered.
    * <li> Nested tags are valid, but should appear in pair.
    * <li> It only reports the first encountered error if multiple ones exist.
+   * <li> Tags may be escaped with a backslash, for example, "\(-- ... \--)".
    * </ul>
    */
   public static String filter(DiagCollector collector, @Nullable Set<String> visibilityLabels,
@@ -333,9 +334,13 @@ public class DocumentationUtil {
             return source;
         }
       }
-      String result = builder.toString();
+      String result = unescape(builder.toString());
       // Remove last newline.
       return result.endsWith(NEW_LINE) ? result.substring(0, result.length() - 1) : result;
+    }
+
+    private String unescape(String source) {
+      return source.replace("\\(--", "(--").replace("\\--)", "--)");
     }
 
     /**
@@ -426,15 +431,15 @@ public class DocumentationUtil {
     private static class CommentTokenizer {
       private static final Pattern ACL_LABEL = Pattern.compile("[A-Z_]+:");
       private static final Pattern BEGIN_TAG = Pattern.compile(String.format(
-          " *\\(--(%s)? *", ACL_LABEL));
-      private static final Pattern END_TAG = Pattern.compile(" *--\\) *\\n?");
+          " *(?<!\\\\)\\(--(?<ACL>%s)? *", ACL_LABEL));
+      private static final Pattern END_TAG = Pattern.compile(" *(?<!\\\\)--\\) *\\n?");
 
       private static final Pattern TOKEN = Pattern.compile(String.format(
-          "(%s)|(%s)|(\n)", BEGIN_TAG, END_TAG));
+          "(?<BeginTag>%s)|(?<EndTag>%s)|(\n)", BEGIN_TAG, END_TAG));
 
-      private static final int BEGIN_TAG_GROUP = 1;
-      private static final int ACL_LABEL_GROUP = 2;
-      private static final int END_TAG_GROUP = 3;
+      private static final String BEGIN_TAG_GROUP = "BeginTag";
+      private static final String ACL_LABEL_GROUP = "ACL";
+      private static final String END_TAG_GROUP = "EndTag";
 
       private final Matcher matcher;
       private final String source;
