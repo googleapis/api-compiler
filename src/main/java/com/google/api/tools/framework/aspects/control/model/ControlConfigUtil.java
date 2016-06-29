@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Google Inc.
+ * Copyright (C) 2016 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.google.api.tools.framework.aspects.control.model;
 
 /**
- * Public constants and util methods related to ControlConfigAspect.
+ * Public constants and utility methods related to ControlConfigAspect.
  */
 public class ControlConfigUtil {
 
