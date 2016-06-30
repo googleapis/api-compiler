@@ -18,6 +18,7 @@ buildscript {
 
 apply plugin: "java"
 apply plugin: "maven"
+apply plugin: "signing"
 apply plugin: "idea"
 apply plugin: "eclipse"
 apply plugin: "com.google.protobuf"
@@ -25,10 +26,22 @@ apply plugin: "com.google.protobuf"
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
-group = "io.gapi"
-version = "0.0.3-SNAPSHOT"
+group = "com.google.api"
+version = "0.0.5-SNAPSHOT"
 // url to the snapshot repository of a private maven repo.
-def privateSnapshotRepo = "http://104.197.230.53:8081/nexus/content/repositories/snapshots/"
+def privateSnapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+archivesBaseName = "api-compiler"
+
+
+signing {
+    sign configurations.archives
+}
+
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
 
 // Dependencies
 // ------------
@@ -250,16 +263,22 @@ if (project.hasProperty('privateOssrhUsername') && project.hasProperty('privateO
   uploadArchives {
     repositories {
       mavenDeployer {
-        snapshotRepository(url: privateSnapshotRepo) {
+
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+          authentication(userName: privateOssrhUsername, password: privateOssrhPassword)
+        }
+
+        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
           authentication(userName: privateOssrhUsername, password: privateOssrhPassword)
         }
 
         pom.project {
-          name 'gapi-tools-framework'
+          name 'api-compiler'
           packaging 'jar'
-          description 'Google API tools framework.'
-          // TODO(cbao): update with github repo url.
-          url 'http://www.googleapis.com'
+          description 'Google API Compiler.'
+          url 'https://github.com/googleapis/api-compiler'
 
           licenses {
             license {

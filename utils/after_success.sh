@@ -10,7 +10,7 @@ if [ "$SITE_VERSION" == "" ]; then
     exit 1
 fi
 if [ "${SITE_VERSION##*-}" != "SNAPSHOT" ]; then
-    URL=${NEXUS_SNAPSHOTS_DIR}io/gapi/gapi-tools-framework/$SITE_VERSION/
+    URL=${NEXUS_SNAPSHOTS_DIR}com/google/api/api-compiler/$SITE_VERSION/
     if curl --output /dev/null --silent --head --fail "$URL"; then
         echo "Not deploying artifacts because it seems like they already exist."
         echo "Existence was checked using the url $URL"
