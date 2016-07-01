@@ -4,15 +4,10 @@
 buildscript {
   repositories {
     mavenLocal()
-    maven {
-      // For 0.7.2-SNAPSHOT of gradle protobuf plugin. This should
-      // be removed once 0.7.2 becomes released.
-      url 'https://oss.sonatype.org/content/repositories/snapshots/'
-    }
     mavenCentral()
   }
   dependencies {
-    classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.2-SNAPSHOT'
+    classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.7'
   }
 }
 
@@ -61,7 +56,7 @@ ext {
       snakeyaml: 'org.yaml:snakeyaml:1.16',
       swaggerModel: 'io.swagger:swagger-models:1.5.4',
       swaggerParser: 'io.swagger:swagger-parser:1.0.11',
-      grpcCore: 'com.google.api.grpc:grpc-core-proto:0.0.4',
+      grpcCore: 'com.google.api.grpc:grpc-core-proto:0.0.5',
       apacheCommonCli: 'commons-cli:commons-cli:1.2',
       jsonSchemaValidator: 'com.github.fge:json-schema-validator:2.0.0',
 
@@ -72,9 +67,9 @@ ext {
       jodaTime: 'joda-time:joda-time:2.9',
 
       // Protobuf
-      protobuf: 'com.google.protobuf:protobuf-java:3.0.0-beta-1',
-      protobufUtil: 'com.google.protobuf:protobuf-java-util:3.0.0-beta-2',
-      protoc:  'com.google.protobuf:protoc:3.0.0-beta-1'
+      protobuf: 'com.google.protobuf:protobuf-java:3.0.0-beta-3',
+      protobufUtil: 'com.google.protobuf:protobuf-java-util:3.0.0-beta-3',
+      protoc:  'com.google.protobuf:protoc:3.0.0-beta-3'
   ]
 }
 
