@@ -33,9 +33,11 @@ def privateSnapshotRepo = "https://oss.sonatype.org/content/repositories/snapsho
 archivesBaseName = "api-compiler"
 
 
-signing {
-    sign configurations.archives
-}
+// TODO: fix error on Travis-CI and workstations without signing config:
+//       "Cannot perform signing task ':signArchives' because it has no configured signatory"
+//signing {
+//    sign configurations.archives
+//}
 
 
 task javadocJar(type: Jar) {
