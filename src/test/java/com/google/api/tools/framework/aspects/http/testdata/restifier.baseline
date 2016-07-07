@@ -152,6 +152,7 @@ Diagnostics:
   rpc List.* as HTTP GET <prefix>/<literal>
   rpc Get.* as HTTP GET <prefix>:<literal>
   rpc List.* as HTTP GET <prefix>:<literal>
+  rpc FindTallestTree as HTTP GET <prefix>:<literal>
   rpc FindTallestTree as HTTP POST <prefix>:<literal>
 
 GET FindTrees /findTrees
@@ -164,6 +165,7 @@ Diagnostics:
   rpc List.* as HTTP GET <prefix>/<literal>
   rpc Get.* as HTTP GET <prefix>:<literal>
   rpc List.* as HTTP GET <prefix>:<literal>
+  rpc FindTrees as HTTP GET <prefix>:<literal>
   rpc FindTrees as HTTP POST <prefix>:<literal>
 
 GET FindRipeFruit /trees/{tree_id}/findRipeFruit
@@ -176,6 +178,7 @@ Diagnostics:
   rpc List.* as HTTP GET <prefix>/<literal>
   rpc Get.* as HTTP GET <prefix>:<literal>
   rpc List.* as HTTP GET <prefix>:<literal>
+  rpc FindRipeFruit as HTTP GET <prefix>:<literal>
   rpc FindRipeFruit as HTTP POST <prefix>:<literal>
 
 GET FindRipeFruit /trees/{tree_id}:findRipeFruit
@@ -183,11 +186,6 @@ GET FindRipeFruit /trees/{tree_id}:findRipeFruit
 Rest Kind:   CUSTOM
 Collection:  trees
 Custom Name: findRipeFruit
-Diagnostics:
-  WARNING: toplevel: (lint) http-rest: 'rpc FindRipeFruit as HTTP GET /trees/*:findRipeFruit' is not a recognized REST pattern. Did you mean one of:
-  rpc Get.* as HTTP GET <prefix>:<literal>
-  rpc List.* as HTTP GET <prefix>:<literal>
-  rpc FindRipeFruit as HTTP POST <prefix>:<literal>
 
 GET FindWorm /trees/{tree_id}/fruits/{fruit_id}/findWorm
 ======================================================================
@@ -199,6 +197,7 @@ Diagnostics:
   rpc List.* as HTTP GET <prefix>/<literal>
   rpc Get.* as HTTP GET <prefix>:<literal>
   rpc List.* as HTTP GET <prefix>:<literal>
+  rpc FindWorm as HTTP GET <prefix>:<literal>
   rpc FindWorm as HTTP POST <prefix>:<literal>
 
 PUT CreateBush /bushes/{bush_id}
@@ -264,6 +263,7 @@ Custom Name: get
 Diagnostics:
   WARNING: toplevel: (lint) http-rest: 'rpc MethodNotStartingWithGet as HTTP GET /projects/*' is not a recognized REST pattern. Did you mean one of:
   rpc Get.* as HTTP GET <prefix>/<wildcard>
+  rpc MethodNotStartingWithGet as HTTP GET <prefix>:<literal>
   rpc MethodNotStartingWithGet as HTTP POST <prefix>:<literal>
 
 GET MethodNotStartingWithGet /projects/{project}
@@ -274,5 +274,6 @@ Custom Name: methodNotStartingWithGet
 Diagnostics:
   WARNING: toplevel: (lint) http-rest: 'rpc MethodNotStartingWithGet as HTTP GET /projects/*' is not a recognized REST pattern. Did you mean one of:
   rpc Get.* as HTTP GET <prefix>/<wildcard>
+  rpc MethodNotStartingWithGet as HTTP GET <prefix>:<literal>
   rpc MethodNotStartingWithGet as HTTP POST <prefix>:<literal>
 

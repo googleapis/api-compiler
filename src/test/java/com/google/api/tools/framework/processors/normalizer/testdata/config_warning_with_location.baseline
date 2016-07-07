@@ -4,9 +4,11 @@ WARNING: config_warning_with_location.proto:15:3: http: POST/PATCH/PUT method fo
 WARNING: config_warning_with_location.proto:15:3: http: POST/PATCH/PUT method for 'tech.env.framework.testing.MultipleHttpBindings.MoveResource' should specify a body.
 WARNING: config_warning_with_location.proto:15:3: http: POST/PATCH/PUT method for 'tech.env.framework.testing.MultipleHttpBindings.MoveResource' should specify a body.
 WARNING: config_warning_with_location.yaml:36: (lint) http-rest: 'rpc MoveResource as HTTP POST /resources/byName/*/from/*/to/*' is not a recognized REST pattern. Did you mean one of:
+  rpc MoveResource as HTTP GET <prefix>:<literal>
   rpc MoveResource as HTTP POST <prefix>:<literal>
 WARNING: config_warning_with_location.proto:15:3: http: POST/PATCH/PUT method for 'tech.env.framework.testing.MultipleHttpBindings.MoveResource' should specify a body.
 WARNING: config_warning_with_location.yaml:37: (lint) http-rest: 'rpc MoveResource as HTTP POST /resources/byId/*/from/*/to/*' is not a recognized REST pattern. Did you mean one of:
+  rpc MoveResource as HTTP GET <prefix>:<literal>
   rpc MoveResource as HTTP POST <prefix>:<literal>
 WARNING: config_warning_with_location.yaml:11: (lint) versioning-http-version-prefix: 'method tech.env.framework.testing.MultipleHttpBindings.GetResource' has a HTTP path that does not start with version, which must match '^(v\d+(\w+)?)$'.
 WARNING: config_warning_with_location.yaml:18: (lint) versioning-http-version-prefix: 'method tech.env.framework.testing.MultipleHttpBindings.ListResources' has a HTTP path that does not start with version, which must match '^(v\d+(\w+)?)$'.
