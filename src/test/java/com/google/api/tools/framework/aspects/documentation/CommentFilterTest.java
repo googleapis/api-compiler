@@ -116,6 +116,18 @@ public class CommentFilterTest {
   }
 
   @Test
+  public void testFilter_escapedNotInternal() {
+    String comment = "hello \\(-- not internal \\--) world";
+    assertResult("hello (-- not internal --) world", filter(comment, location));
+  }
+
+  @Test
+  public void testFilter_escapeWithinInternal() {
+    String comment = "hello (-- internal \\--) still internal --) world";
+    assertResult("hello world", filter(comment, location));
+  }
+
+  @Test
   public void testFilter_missingStartTag() {
     filter("Missing \n start tag --)", location);
     expectError("ERROR: toplevel (at document line 2): Unexpected end tag '--)' with missing "
@@ -127,6 +139,13 @@ public class CommentFilterTest {
     filter("Missing end tag (--", location);
     expectError("ERROR: toplevel (at document line 1): Did not find associated end tag for the "
         + "begin tag '(--'");
+  }
+
+  @Test
+  public void testFilter_escapedMissingEndTag() {
+    filter("\\(-- error --)", location);
+    expectError("ERROR: toplevel (at document line 1): Unexpected end tag '--)' with missing "
+        + "begin tag.");
   }
 
   /**
@@ -153,4 +172,5 @@ public class CommentFilterTest {
           .isEqualTo(message);
     }
   }
+
 }

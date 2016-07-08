@@ -8,6 +8,7 @@ schemes:
   - http
   - https
 basePath: /
+x-google-allow: configured
 paths:
   /v1/shelves:
     post:

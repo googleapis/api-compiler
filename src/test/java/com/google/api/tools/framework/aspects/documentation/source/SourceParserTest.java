@@ -58,9 +58,10 @@ public class SourceParserTest {
     assertTrue(e0 instanceof Text);
     assertTrue(e1 instanceof CodeBlock);
     assertTrue(e2 instanceof Text);
-    assertTrue(e0.getContent().equals("A B C\n  "));
-    assertTrue(e1.getContent().equals("<pre> 1 2  3\n 4  5 6\n</pre>"));
-    assertTrue(e2.getContent().equals("\nNOTCODE"));
+    assertEquals("A B C\n  ", e0.getContent());
+    assertEquals("<pre> 1 2  3\n 4  5 6\n</pre>", e1.getContent());
+    assertEquals("\nNOTCODE", e2.getContent());
+
     assertEquals(3, tlcontents.size());
   }
 
@@ -86,9 +87,10 @@ public class SourceParserTest {
     assertTrue(e0 instanceof Text);
     assertTrue(e1 instanceof CodeBlock);
     assertTrue(e2 instanceof Text);
-    assertTrue(e0.getContent().equals("A B C\n"));
-    assertTrue(e1.getContent().equals("<pre> 1 2  3\n 4  5 6\n</pre>"));
-    assertTrue(e2.getContent().equals("\nNOTCODE"));
+    assertEquals("A B C\n", e0.getContent());
+    assertEquals("<pre> 1 2  3\n 4  5 6\n</pre>", e1.getContent());
+    assertEquals("\nNOTCODE", e2.getContent());
+
     assertEquals(3, tlcontents.size());
   }
 
@@ -118,4 +120,79 @@ public class SourceParserTest {
     parser.parse();
   }
 
+  @Test
+  public void escape_instruction() {
+    String source = "a (== do_something arg ==) b\n"
+                  + "c \\(== don't do anything \\==) d\n"
+                  + "e \\(== f (== command arg ==) \\==) g\n"
+                  + "h (== do_something_else arg1 \\==) \\(== \\==) arg5 ==) i";
+    parser = new SourceParser(source, null, diag, "");
+    SourceRoot root = parser.parse();
+    List<ContentElement> tlcontents = Lists.newArrayList();
+    for (ContentElement elt : root.getTopLevelContents()) {
+      tlcontents.add(elt);
+    }
+
+    ContentElement e0 = tlcontents.get(0);
+    ContentElement e1 = tlcontents.get(1);
+    ContentElement e2 = tlcontents.get(2);
+    ContentElement e3 = tlcontents.get(3);
+    ContentElement e4 = tlcontents.get(4);
+    ContentElement e5 = tlcontents.get(5);
+    ContentElement e6 = tlcontents.get(6);
+
+    assertTrue(e0 instanceof Text);
+    assertTrue(e1 instanceof Instruction);
+    assertTrue(e2 instanceof Text);
+    assertTrue(e3 instanceof Instruction);
+    assertTrue(e4 instanceof Text);
+    assertTrue(e5 instanceof Instruction);
+    assertTrue(e6 instanceof Text);
+
+    assertEquals("a ", e0.getContent());
+    assertEquals("do_something", ((Instruction) e1).getCode());
+    assertEquals("arg", ((Instruction) e1).getArg());
+    assertEquals(" b\nc (== don't do anything ==) d\ne (== f ", e2.getContent());
+    assertEquals("command", ((Instruction) e3).getCode());
+    assertEquals("arg", ((Instruction) e3).getArg());
+    assertEquals(" ==) g\nh ", e4.getContent());
+    assertEquals("do_something_else", ((Instruction) e5).getCode());
+    assertEquals("arg1 ==) (== ==) arg5", ((Instruction) e5).getArg());
+    assertEquals(" i", e6.getContent());
+
+    assertEquals(7, tlcontents.size());
+  }
+
+  @Test
+  public void instruction_scoping() {
+    String source = "a (== do_something arg ==) ==) b\n"
+        + "c (== do_something (== (== arg ==) d";
+    parser = new SourceParser(source, null, diag, "");
+    SourceRoot root = parser.parse();
+    List<ContentElement> tlcontents = Lists.newArrayList();
+    for (ContentElement elt : root.getTopLevelContents()) {
+      tlcontents.add(elt);
+    }
+    ContentElement e0 = tlcontents.get(0);
+    ContentElement e1 = tlcontents.get(1);
+    ContentElement e2 = tlcontents.get(2);
+    ContentElement e3 = tlcontents.get(3);
+    ContentElement e4 = tlcontents.get(4);
+
+    assertTrue(e0 instanceof Text);
+    assertTrue(e1 instanceof Instruction);
+    assertTrue(e2 instanceof Text);
+    assertTrue(e3 instanceof Instruction);
+    assertTrue(e4 instanceof Text);
+
+    assertEquals("a ", e0.getContent());
+    assertEquals("do_something", ((Instruction) e1).getCode());
+    assertEquals("arg", ((Instruction) e1).getArg());
+    assertEquals(" ==) b\nc ", e2.getContent());
+    assertEquals("do_something", ((Instruction) e3).getCode());
+    assertEquals("(== (== arg", ((Instruction) e3).getArg());
+    assertEquals(" d", e4.getContent());
+
+    assertEquals(5, tlcontents.size());
+  }
 }

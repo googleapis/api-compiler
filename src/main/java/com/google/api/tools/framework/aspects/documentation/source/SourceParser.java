@@ -76,19 +76,19 @@ public class SourceParser {
    *     (== code arg ==)
    */
   private static final Pattern INSTRUCTION = Pattern.compile(
-      "\\(=="                     // Begin tag
+      "(?<!\\\\)\\(==" // Begin tag
       + "\\s*"
-      + "(?<instrcode>[\\w-]+)"   // Instruction code
+      + "(?<instrcode>[\\w-]+)" // Instruction code
       + "\\s+"
       + "(?<instrarg>[\\S\\s]+?)" // Instruction arg
       + "\\s*"
-      + "==\\)(?:\n|\\Z)?");      // End tag
+      + "(?<!\\\\)==\\)(?:\n|\\Z)?"); // End tag
 
   private static final Pattern CODE_BLOCK = Pattern.compile(
       "(?<=\\n\\n|\\A)"
-      + "(?<codeblocksource>"     // The code block -- one or more lines, starting with a space/tab
+      + "(?<codeblocksource>" // The code block -- one or more lines, starting with a space/tab
       + "(?:"
-      + "(?:\\s{4}|\\t)"          // # Lines must start with a tab or a tab-width of spaces
+      + "(?:\\s{4}|\\t)" // # Lines must start with a tab or a tab-width of spaces
       + ".*\n*"
       + ")+"
       + ")"
@@ -191,7 +191,7 @@ public class SourceParser {
       if (matcher.start() > curIndex) {
         // Extract text content between current index and start of found inclusion instruction.
         String text = source.substring(curIndex, matcher.start());
-        contents.add(new Text(text, curIndex, matcher.start(),
+        contents.add(new Text(unescapeInstructions(text), curIndex, matcher.start(),
             diagCollector, sourceLocation));
       }
 
@@ -201,27 +201,24 @@ public class SourceParser {
         String code = matcher.group(INSTRUCTION_CODE);
         if (INCLUSION_CODE.equals(code)) {
           // Create content element for found file inclusion instruction.
-          newElement = new FileInclusion(docPath, matcher.group(INSTRUCTION_ARG).trim(),
-              headingLevel, matcher.start(), matcher.end(), diagCollector, sourceLocation);
+          newElement = new FileInclusion(docPath,
+              unescapeInstructions(matcher.group(INSTRUCTION_ARG).trim()), headingLevel,
+              matcher.start(), matcher.end(), diagCollector, sourceLocation);
         } else {
           // Create content element for other instruction.
-          newElement = new Instruction(code, matcher.group(INSTRUCTION_ARG),
+          newElement = new Instruction(code, unescapeInstructions(matcher.group(INSTRUCTION_ARG)),
               matcher.start(), matcher.end(), diagCollector, sourceLocation);
         }
       } else {
         // Create content element for code block.
         if (matcher.group(CODE_BLOCK_SOURCE_GROUP) != null) {
-          newElement = new CodeBlock(matcher.group(CODE_BLOCK_SOURCE_GROUP),
-                                     matcher.start(),
-                                     matcher.end(),
-                                     diagCollector,
-                                     sourceLocation);
+          newElement = new CodeBlock(
+              unescapeInstructions(matcher.group(CODE_BLOCK_SOURCE_GROUP)), matcher.start(),
+              matcher.end(), diagCollector, sourceLocation);
         } else {
-          newElement = new CodeBlock(matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP),
-                                     matcher.start(),
-                                     matcher.end(),
-                                     diagCollector,
-                                     sourceLocation);
+          newElement = new CodeBlock(
+              unescapeInstructions(matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP)),
+              matcher.start(), matcher.end(), diagCollector, sourceLocation);
         }
       }
 
@@ -252,5 +249,9 @@ public class SourceParser {
     }
     return new SectionHeader(level, text, matcher.start(), matcher.end(),
         diagCollector, sourceLocation);
+  }
+
+  private String unescapeInstructions(String string) {
+    return string.replace("\\(==", "(==").replace("\\==)", "==)");
   }
 }

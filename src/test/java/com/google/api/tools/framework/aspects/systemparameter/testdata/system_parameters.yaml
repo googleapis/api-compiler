@@ -1,0 +1,18 @@
+type: google.api.Service
+config_version: 2
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.TestService
+- name: protiary.test.TestService2
+
+system_parameters:
+  rules:
+    - selector: "*"
+      parameters:
+        - name: api_key1
+          http_header: x-api-key1
+    - selector: protiary.test.TestService2.*
+      parameters:
+        - name: api_key2
+          http_header: x-api-key2
+

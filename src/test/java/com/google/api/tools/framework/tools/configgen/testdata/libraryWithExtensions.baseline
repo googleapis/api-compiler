@@ -1,3 +1,4 @@
+WARNING: library_with_extensions.yaml:90: The field 'public_discovery' is deprecated.
 WARNING: toplevel: The api_service name {} does not match the base service name {library-example} of {library-example.googleapis.com}.
 WARNING: toplevel: (lint) control-presence: Service library-example.googleapis.com does not have control environment configured.
 WARNING: library_extension.proto:10:5: (lint) documentation-presence: 'google.example.library.v1.extensions.Extender google.example.library.v1.Shelf.(google.example.library.v1.extensions.Extender.extender)' has no documentation, neither in IDL nor config.
@@ -40,7 +41,7 @@ apis {
       name: "google.api.method_visibility"
       value {
         type_url: "type.googleapis.com/google.api.VisibilityRule"
-        value: "\022\016TRUSTED_TESTER\032\002\b\001"
+        value: "\022\016TRUSTED_TESTER"
       }
     }
     options {
@@ -73,13 +74,6 @@ apis {
         type_url: "type.googleapis.com/google.api.HttpRule"
         value: "*\024/v1/{name=shelves/*}"
       }
-    }
-  }
-  options {
-    name: "google.api.api_visibility"
-    value {
-      type_url: "type.googleapis.com/google.api.VisibilityRule"
-      value: "\032\002\b\001"
     }
   }
   version: "v1"
@@ -482,6 +476,8 @@ usage {
 }
 config_version {
   value: 2
+}
+system_parameters {
 }
 
 ============== Successfully regenerated service config ==============

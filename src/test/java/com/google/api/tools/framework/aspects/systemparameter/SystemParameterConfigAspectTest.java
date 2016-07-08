@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-package com.google.api.tools.framework.aspects.control.model;
+package com.google.api.tools.framework.aspects.systemparameter;
+
+import com.google.api.tools.framework.aspects.ConfigAspectBaselineTestCase;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
- * Public constants and utility methods related to ControlConfigAspect.
+ * Tests for {@link SystemParameterConfigAspect}.
  */
-public class ControlConfigUtil {
+@RunWith(JUnit4.class)
 
-  public static final String ENDPOINTS_SERVICE_CONTROL =
-      "endpoints-servicecontrol.sandbox.googleapis.com";
+public class SystemParameterConfigAspectTest extends ConfigAspectBaselineTestCase{
 
+  public SystemParameterConfigAspectTest() {
+    super(SystemParameterConfigAspect.class);
+  }
+
+  @Test public void system_parameters() throws Exception {
+    test("system_parameters");
+  }
 }

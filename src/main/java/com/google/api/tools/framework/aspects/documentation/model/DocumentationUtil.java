@@ -103,13 +103,20 @@ public class DocumentationUtil {
 
   /**
    * Get the description of the element scoped to the visibility as currently set in the model.
-   *
    */
   public static String getScopedDescription(ProtoElement element) {
+    return getScopedDescription(element, false);
+  }
+
+  public static String getScopedDescription(ProtoElement element, boolean reportWarning) {
     Model model = element.getModel();
     Location location = element.getLocation();
-    return new CommentFilter(model.getDiagCollector(), location, model.getVisibilityLabels())
-        .process(getDescription(element));
+    String internalCommentFilteredString =
+        new CommentFilter(model.getDiagCollector(), location, model.getVisibilityLabels())
+            .process(getDescription(element));
+
+    return sanitizeTodos(
+        model.getDiagCollector(), location, internalCommentFilteredString, reportWarning);
   }
 
   /**
@@ -239,11 +246,46 @@ public class DocumentationUtil {
    * be filtered.
    * <li> Nested tags are valid, but should appear in pair.
    * <li> It only reports the first encountered error if multiple ones exist.
+   * <li> Tags may be escaped with a backslash, for example, "\(-- ... \--)".
    * </ul>
    */
   public static String filter(DiagCollector collector, @Nullable Set<String> visibilityLabels,
       Location location, @Nullable String source) {
     return new CommentFilter(collector, location, visibilityLabels).process(source);
+  }
+
+  /**
+   * Given a comment string, remove the TODO and all characters found after the TODO. If the input
+   * string has no TODO, then the original string is returned. If a TODO was found, then a warning
+   * will be triggered telling the user that the TODO comment has been removed and to use internal
+   * documentation comment tags to avoid non internal documentation from getting removed from the
+   * generated documentation.
+   */
+  private static String sanitizeTodos(
+      DiagCollector diagCollector,
+      Location location,
+      @Nullable String source,
+      boolean reportWarning) {
+    if (Strings.isNullOrEmpty(source)) {
+      return source;
+    }
+
+    String[] sourceSplitByTodo = Pattern.compile("\\bTODO(\\(.*?\\))?:").split(source);
+
+    if (sourceSplitByTodo.length > 1 && reportWarning) {
+      diagCollector.addDiag(
+          Diag.warning(
+              location,
+              "A TODO comment was found. All comments from this TODO to the end of the comment "
+                  + "block will be removed from the generated documentation. This TODO Comment "
+                  + "should be wrapped in internal comment tags, \"(--\" and \"--)\", to prevent "
+                  + "non-internal documentation after the TODO from being removed from the "
+                  + "generated documentation."));
+    }
+
+    String result = sourceSplitByTodo[0];
+    // Remove last newline.
+    return result.endsWith("\n") ? result.substring(0, result.length() - 1) : result;
   }
 
   /**
@@ -292,9 +334,13 @@ public class DocumentationUtil {
             return source;
         }
       }
-      String result = builder.toString();
+      String result = unescape(builder.toString());
       // Remove last newline.
       return result.endsWith(NEW_LINE) ? result.substring(0, result.length() - 1) : result;
+    }
+
+    private String unescape(String source) {
+      return source.replace("\\(--", "(--").replace("\\--)", "--)");
     }
 
     /**
@@ -385,15 +431,15 @@ public class DocumentationUtil {
     private static class CommentTokenizer {
       private static final Pattern ACL_LABEL = Pattern.compile("[A-Z_]+:");
       private static final Pattern BEGIN_TAG = Pattern.compile(String.format(
-          " *\\(--(%s)? *", ACL_LABEL));
-      private static final Pattern END_TAG = Pattern.compile(" *--\\) *\\n?");
+          " *(?<!\\\\)\\(--(?<ACL>%s)? *", ACL_LABEL));
+      private static final Pattern END_TAG = Pattern.compile(" *(?<!\\\\)--\\) *\\n?");
 
       private static final Pattern TOKEN = Pattern.compile(String.format(
-          "(%s)|(%s)|(\n)", BEGIN_TAG, END_TAG));
+          "(?<BeginTag>%s)|(?<EndTag>%s)|(\n)", BEGIN_TAG, END_TAG));
 
-      private static final int BEGIN_TAG_GROUP = 1;
-      private static final int ACL_LABEL_GROUP = 2;
-      private static final int END_TAG_GROUP = 3;
+      private static final String BEGIN_TAG_GROUP = "BeginTag";
+      private static final String ACL_LABEL_GROUP = "ACL";
+      private static final String END_TAG_GROUP = "EndTag";
 
       private final Matcher matcher;
       private final String source;

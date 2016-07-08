@@ -114,6 +114,7 @@ class RestAnalyzer {
           case VARIABLE:
             return "<prefix>/<wildcard>";
           case CUSTOM_VERB:
+          case CUSTOM_VERB_WITH_COLON:
             return "<prefix>:<literal>";
           case LITERAL:
             return "<prefix>/<literal>";
@@ -127,7 +128,11 @@ class RestAnalyzer {
   enum SegmentPattern {
     VARIABLE,
     LITERAL,
+    // matches both legacy custom method segment which uses <prefix>/<literal> and standard
+    // conforming custom method which uses <prefix>:<literal>.
     CUSTOM_VERB,
+    // matches only one platform conforming custom method which uses <prefix>:<literal>.
+    CUSTOM_VERB_WITH_COLON,
   }
 
   // Declares all the currently allowed rest method patterns. If none of those
@@ -205,6 +210,13 @@ class RestAnalyzer {
             RestKind.CUSTOM,
             "list",
             "Custom list resources."
+        ))
+        .add(MethodPattern.create(
+            MethodKind.GET,
+            ".*",
+            SegmentPattern.CUSTOM_VERB_WITH_COLON,
+            RestKind.CUSTOM,
+            "General custom get method."
         ))
         .add(MethodPattern.create(
             MethodKind.PUT,
@@ -530,8 +542,14 @@ class RestAnalyzer {
       List<PathSegment> flatPath = httpConfig.getFlatPath();
       PathSegment lastSegment = flatPath.get(flatPath.size() - 1);
       switch (pattern.lastSegmentPattern()) {
+        case CUSTOM_VERB_WITH_COLON:
+          // Allow only standard conforming custom method which uses <prefix>:<literal>.
+          matches =
+              lastSegment instanceof LiteralSegment
+                  && ((LiteralSegment) lastSegment).isTrailingCustomVerb();
+          break;
         case CUSTOM_VERB:
-          // We allow both a custom verb literal and a regular literal, the latter is for supporting
+          // Allow both a custom verb literal and a regular literal, the latter is for supporting
           // legacy custom verbs.
           matches = lastSegment instanceof LiteralSegment;
           break;
@@ -547,7 +565,8 @@ class RestAnalyzer {
 
     // Creates a RestMethod from this matcher.
     private RestMethod createRestMethod() {
-      if (pattern.lastSegmentPattern() == SegmentPattern.CUSTOM_VERB) {
+      if (pattern.lastSegmentPattern() == SegmentPattern.CUSTOM_VERB
+          || pattern.lastSegmentPattern() == SegmentPattern.CUSTOM_VERB_WITH_COLON) {
         return createCustomMethod(method, httpConfig, pattern.customPrefix());
       }
       return RestMethod.create(method, pattern.restKind(),

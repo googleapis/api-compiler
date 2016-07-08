@@ -247,6 +247,26 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void invalid_vendor_extension_type() throws Exception {
+    testWithDefaults("invalid_vendor_extension_type");
+  }
+
+  @Test
+  public void invalid_google_allow_extension_value() throws Exception {
+    testWithDefaults("invalid_google_allow_extension_value");
+  }
+
+  @Test
+  public void x_google_allow_extension_all() throws Exception {
+    testWithDefaults("x_google_allow_extension_all");
+  }
+
+  @Test
+  public void x_google_allow_extension_all_with_existing_catchall_methods() throws Exception {
+    testWithDefaults("x_google_allow_extension_all_with_existing_catchall_methods");
+  }
+
+  @Test
   public void library_example_yaml() throws Exception {
     testWithDefaults("library_example_yaml");
   }
