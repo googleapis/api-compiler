@@ -16,18 +16,13 @@
 
 package com.google.api.tools.framework.model.testing;
 
-import com.google.api.DocumentationRule;
 import com.google.api.Service;
-import com.google.api.Service.Builder;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.setup.StandardSetup;
 import com.google.api.tools.framework.snippet.Doc;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 
@@ -51,12 +46,6 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
 
   @Rule
   public TemporaryFolder tempDir = new TemporaryFolder();
-
-  /**
-   * Package names of known system core types.
-   */
-  private static final FluentIterable<String> SYSTEM_TYPE_PACKAGE_NAMES =
-      FluentIterable.from(Lists.newArrayList("google.protobuf"));
 
   /**
    * The test configuration.
@@ -227,36 +216,7 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
    * semantically irrelevant.
    */
   public String toBaselineString(Service config) {
-    Service.Builder builder = config.toBuilder();
-    clearSystemDataDocumentation(builder);
-    for (FieldDescriptor field : Service.getDescriptor().getFields()) {
-      clearIfEmptyMessage(builder, field);
-    }
+    Service.Builder builder = ServiceConfigTestingUtil.clearIrrelevantData(config.toBuilder());
     return formatter.printToString(builder);
-  }
-
-  public static Builder clearSystemDataDocumentation(Builder builder) {
-    List<DocumentationRule> documentationRules = builder.getDocumentationBuilder().getRulesList();
-    builder.getDocumentationBuilder().clearRules();
-    for (com.google.api.DocumentationRule docRule : documentationRules) {
-      final String selector = docRule.getSelector();
-      if (!SYSTEM_TYPE_PACKAGE_NAMES.anyMatch(
-          new Predicate<String>() {
-            @Override
-            public boolean apply(String systemTypePackageName) {
-              return selector.startsWith(systemTypePackageName);
-            }
-          })) {
-        builder.getDocumentationBuilder().addRules(docRule);
-      }
-    }
-    return builder;
-  }
-
-  private static void clearIfEmptyMessage(Service.Builder builder, FieldDescriptor field) {
-    if (!field.isRepeated() && field.getType() == FieldDescriptor.Type.MESSAGE
-        && ((Message) builder.getField(field)).getAllFields().size() == 0) {
-      builder.clearField(field);
-    }
   }
 }

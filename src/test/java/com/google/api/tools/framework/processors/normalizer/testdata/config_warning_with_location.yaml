@@ -44,5 +44,4 @@ documentation:
 
 usage:
   requirements: "invalidserviceusage.googleapis.com/tos/universal"
-  service_access: ORG_PUBLIC
 

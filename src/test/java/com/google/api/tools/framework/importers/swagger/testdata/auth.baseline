@@ -110,8 +110,6 @@ authentication {
     jwks_uri: "https://www.googleapis.com/oauth2/v1/certs3"
   }
 }
-context {
-}
 usage {
   rules {
     selector: "google.example.methods.ApiKeyNotReqOverride"
@@ -126,7 +124,5 @@ usage {
 }
 control {
   environment: "endpoints-servicecontrol.sandbox.googleapis.com"
-}
-system_parameters {
 }
 

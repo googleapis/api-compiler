@@ -23,6 +23,7 @@ import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.Diag.Kind;
 import com.google.api.tools.framework.model.testing.BaselineTestCase;
 import com.google.api.tools.framework.model.testing.DiagUtils;
+import com.google.api.tools.framework.model.testing.ServiceConfigTestingUtil;
 import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.api.tools.framework.model.testing.TextFormatForTest;
 import com.google.common.collect.ImmutableList;
@@ -137,6 +138,7 @@ public class SwaggerImportTest extends BaselineTestCase {
     }
     // Remove the config version too.
     printableServiceBuilder.clearConfigVersion();
+    printableServiceBuilder = ServiceConfigTestingUtil.clearIrrelevantData(printableServiceBuilder);
     testOutput().println(
         TextFormatForTest.INSTANCE.printToString(printableServiceBuilder));
 

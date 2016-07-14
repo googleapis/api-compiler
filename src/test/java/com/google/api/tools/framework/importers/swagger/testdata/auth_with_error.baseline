@@ -100,8 +100,6 @@ authentication {
     issuer: "1234567-compute@developer.gserviceaccount2.com"
   }
 }
-context {
-}
 usage {
   rules {
     selector: "google.example.methods.SecondMethod"
@@ -114,7 +112,5 @@ usage {
 }
 control {
   environment: "endpoints-servicecontrol.sandbox.googleapis.com"
-}
-system_parameters {
 }
 

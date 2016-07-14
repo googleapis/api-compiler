@@ -25,8 +25,8 @@ behavior of an API service, including interface, types, methods, authentication,
 discovery, documentation, logging, monitoring and more. It is formally defined
 by the proto message [`google.api.Service`](https://github.com/googleapis/googleapis/tree/master/google/api/service.proto)
 and works with both REST and RPC APIs. Developers typically create the service
-configuration using YAML files, and use the Google API Compiler to generate the
-proto message.
+config using YAML files, and use the Google API Compiler to generate the proto
+message.
 
 NOTE: Google API Service Configuration is a rich and mature specification used
 for Google production services, such as Cloud Logging, Cloud Vision,
@@ -40,15 +40,15 @@ to read the users API definition and autogenerate client libraries.
 
 Clone the _Google API Compiler_ repo
 ```
-$ git clone https://github.com/googleapis/api-compiler
+git clone https://github.com/googleapis/api-compiler
 ```
 Update submodules
 ```
-$ git submodule update --recursive --init
+git submodule update --recursive --init
 ```
 Build source code
 ```
-$ ./gradlew buildGoogleApiConfigGen
+./gradlew buildGoogleApiConfigGen
 ```
 For running tests, you need to have `protoc` in your path. If you don't
 already have protoc version 3, you can download
@@ -56,10 +56,12 @@ it from https://github.com/google/protobuf/releases and set a symbolic link to
 the protoc.
 ```
 # Example
-$ sudo ln -s  <Path to the downloaded protoc> /usr/local/bin/protoc
+sudo ln -s  <Path to the downloaded protoc> /usr/local/bin/protoc
 ```
 
-## Creating service configuration from proto files
+
+## Creating service config from proto files
+
 
 ### Creating a proto descriptor file
 
@@ -69,10 +71,10 @@ API Compiler.
 
 ```
 # Creates a proto descriptor from proto files using protoc.
-$ protoc <file1.proto> <file2.proto> --include_source_info --include_imports --descriptor_set_out=out.descriptors
+protoc <file1.proto> <file2.proto> --include_source_info --descriptor_set_out=out.descriptors
 ```
 
-### Creating service configuration
+### Create service config
 
 ```
 # -------------File: myapi.yaml-----------------
@@ -99,11 +101,11 @@ apis:
 
 ### Executing the Google API Compiler
 
-Once the jar 'gapi-config-gen-with-deps-0.0.5-SNAPSHOT.jar' is built under the
-build/libs directory, you can run the jar using the following command:
+Once the jar 'gapi-config-gen-with-deps-0.0.0-SNAPSHOT.jar' is built under the
+build/libs directory, you can execute the jar using the following command:
 
 ```
-$ alias gapi-config-gen='java -jar <path to gapi-config-gen-with-deps-0.0.5-SNAPSHOT.jar>'
+alias gapi-config-gen='java -jar <path to gapi-config-gen-with-deps-0.0.0-SNAPSHOT.jar>'
 DESCRIPTOR_FILE=<PATH TO out.descriptor>
 CONFIG_FILE=<path to yaml file>
 JSON_FILE_NAME=<json output file name>
@@ -116,18 +118,19 @@ gapi-config-gen \
 --bin_out $BINARY_FILE_NAME
 ```
 
-This command will output the service configuration in different formats:
+This command will output the service configuration in different
+formats:
 - Binary file: $BINARY_FILE_NAME
 - Json file: $JSON_FILE_NAME
 
-Either format can be used to configure a Google Cloud Endpoints API.
+Any of these can be used as input to an Endpoints API server.
 
-## Creating service configuration from an OpenAPI Specification
+## Creating service config from an OpenAPI Spec
 
-Validate an OpenAPI Specification and create the corresponding service configuration.
+Validate the OpenAPI Spec and create the service configuration.
 
 ```
-alias gapi-config-gen='java -jar <path to gapi-service-config-gen-with-deps-0.0.5-SNAPSHOT.jar>'
+alias gapi-config-gen='java -jar <path to gapi-service-config-gen-with-deps-0.0.0-SNAPSHOT.jar>'
 OPENAPI_FILE=<OpenAPI Spec filename>
 JSON_FILE_NAME=<json output file name>
 BINARY_FILE_NAME=<binary output file name>
@@ -138,9 +141,9 @@ gapi-config-gen \
 --bin_out $BINARY_FILE_NAME
 ```
 
-This will create the service configuration in different formats:
+This will create the service config:
 - Binary file: $BINARY_FILE_NAME
 - JSON file: $JSON_FILE_NAME
 
-Either format can be used to configure a Google Cloud Endpoints API.
+Any of these can be used as input to an Endpoints API server.
 

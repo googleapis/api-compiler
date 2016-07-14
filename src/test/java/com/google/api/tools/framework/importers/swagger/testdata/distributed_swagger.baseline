@@ -84,10 +84,6 @@ http {
     body: "body"
   }
 }
-authentication {
-}
-context {
-}
 usage {
   rules {
     selector: "google.example.methods.SimpleMethod"
@@ -96,7 +92,5 @@ usage {
 }
 control {
   environment: "endpoints-servicecontrol.sandbox.googleapis.com"
-}
-system_parameters {
 }
 

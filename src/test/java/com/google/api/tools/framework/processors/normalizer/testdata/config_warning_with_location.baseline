@@ -300,7 +300,6 @@ http {
 }
 usage {
   requirements: "invalidserviceusage.googleapis.com/tos/universal"
-  service_access: ORG_PUBLIC
 }
 config_version {
   value: 1

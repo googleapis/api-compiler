@@ -1,8 +1,4 @@
 usage {
-  requirements: "serviceusage.googleapis.com/tos/test1"
-  activation_hooks: "test activation_hook 1"
-  activation_hooks: "test activation_hook 2"
-  deactivation_hooks: "test deactivation_hook 1"
   rules {
     selector: "protiary.test.TestService1.Call2"
     allow_unregistered_calls: true

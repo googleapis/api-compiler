@@ -22,8 +22,8 @@ import com.google.api.tools.framework.model.Diag.Kind;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.stages.Normalized;
 import com.google.api.tools.framework.model.testing.BaselineTestCase;
-import com.google.api.tools.framework.model.testing.ConfigBaselineTestCase;
 import com.google.api.tools.framework.model.testing.DiagUtils;
+import com.google.api.tools.framework.model.testing.ServiceConfigTestingUtil;
 import com.google.api.tools.framework.model.testing.TestConfig;
 import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.api.tools.framework.model.testing.TextFormatForTest;
@@ -57,7 +57,7 @@ public class ConfigGeneratorToolTest extends BaselineTestCase {
   // TODO(user): this test should not directly use the tool driver, because that one
   // calls System.exit on errors.
 
-  private final class ConfigGeneratorDriverForTest extends ConfigGeneratorDriver {
+  private static final class ConfigGeneratorDriverForTest extends ConfigGeneratorDriver {
 
     protected ConfigGeneratorDriverForTest(ToolOptions options) {
       super(options);
@@ -164,9 +164,8 @@ public class ConfigGeneratorToolTest extends BaselineTestCase {
       if (outputWarnings) {
         printDiags(tool.getDiags(), true);
       }
-
       Service.Builder serviceBuilder =
-          ConfigBaselineTestCase.clearSystemDataDocumentation(tool.getServiceConfig().toBuilder());
+          ServiceConfigTestingUtil.clearIrrelevantData(tool.getServiceConfig().toBuilder());
       testOutput().println(
           "============== file: normalized config without derived data ==============");
       testOutput().println(TextFormatForTest.INSTANCE.printToString(serviceBuilder.build()));

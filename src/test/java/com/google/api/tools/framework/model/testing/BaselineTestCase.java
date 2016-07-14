@@ -18,6 +18,9 @@ package com.google.api.tools.framework.model.testing;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.io.Files;
 
 import junit.framework.AssertionFailedError;
@@ -96,9 +99,11 @@ public abstract class BaselineTestCase {
             testName, baselineFileName, actualLocation);
       }
       BaselineDiffer differ = new BaselineDiffer();
-      return String.format("Expected for '%s' differs from actual:%nFile: %s%n%s%n%s",
-          testName, baselineFileName, actualLocation,
-          differ.diff(expected, actual));
+      String resultMessage = String.format(
+          "Expected for '%s' differs from actual:%n%n\"******New baseline content is******%n%s%n"
+              + "Expected File: %s%nActual File: %s%nDiff:\n%s",
+          testName, actual, baselineFileName, actualLocation, differ.diff(expected, actual));
+      return resultMessage;
     }
 
     /**
@@ -124,6 +129,30 @@ public abstract class BaselineTestCase {
   }
 
   private static final String DEFAULT_BASELINE_SUFFIX = ".baseline";
+
+  private static final String DIRECTORY_TO_COPY_NEW_BASELINE;
+  private static final boolean RETAIN_DIRECTORY_TREE_FOR_BASELINE_OUTPUT;
+
+  static {
+    if (!Strings.isNullOrEmpty(System.getenv("COPY_BASELINE_TO_DIR"))) {
+      DIRECTORY_TO_COPY_NEW_BASELINE = System.getenv("COPY_BASELINE_TO_DIR");
+    } else {
+      DIRECTORY_TO_COPY_NEW_BASELINE = "/tmp";
+    }
+  }
+
+  static {
+    String retainDirectoryTree = System.getenv("RETAIN_DIRECTORY_TREE_FOR_BASELINE_OUTPUT");
+    RETAIN_DIRECTORY_TREE_FOR_BASELINE_OUTPUT = shouldRetainDirectoryTree(retainDirectoryTree);
+  }
+
+  private static boolean shouldRetainDirectoryTree(String retainDirectoryTree) {
+    return !Strings.isNullOrEmpty(retainDirectoryTree) && isTrue(retainDirectoryTree);
+  }
+
+  private static boolean isTrue(String str) {
+    return str.trim().toLowerCase().equals("true");
+  }
 
   @Rule public TestName testName = new TestName();
 
@@ -217,18 +246,34 @@ public abstract class BaselineTestCase {
    * then this file provides a convenient way for the developer to overwrite the old baseline
    * and keep the test passing.
    *
-   *  <p>The created file is stored under /tmp. Information where the file is stored is returned
+   *  <p>The created file is stored under /tmp or location specified by the environment
+   *  variable DIRECTORY_TO_COPY_NEW_BASELINE. Information where the file is stored is returned
    *  as a string.
+   *  <p>The directory structure of the package where the baseline file belongs can be retained by
+   *  setting environment variable RETAIN_DIRECTORY_TREE_FOR_BASELINE_OUTPUT to true. If this
+   *  variable is not set, the new baseline file is dropped inside a folder name
+   *  {package name}_testdata
    *
    *  <p>This method might be overridden to provide a different way to store a new baseline.
    */
   protected String tryCreateNewBaseline(String actual) throws IOException {
-    Class<?> clazz = this.getClass();
-    File file = new File(File.separator + "/tmp"
-        + File.separator + clazz.getPackage().getName() + "_testdata" + File.separator
+    File file = new File(File.separator + DIRECTORY_TO_COPY_NEW_BASELINE
+        + File.separator + getSubDirectoryPathForNewBaseline() + File.separator
         + baselineFileName());
     Files.createParentDirs(file);
     Files.write(actual, file, Charset.defaultCharset());
-    return "Expected result stored at: " + file.toString();
+    return file.toString();
+  }
+
+  private String getSubDirectoryPathForNewBaseline() {
+    if (RETAIN_DIRECTORY_TREE_FOR_BASELINE_OUTPUT) {
+      return Joiner.on(File.separator)
+              .join(Splitter.on(".").split(this.getClass().getPackage().getName()))
+          + File.separator
+          + "testdata";
+
+    } else {
+      return this.getClass().getPackage().getName() + "_testdata";
+    }
   }
 }

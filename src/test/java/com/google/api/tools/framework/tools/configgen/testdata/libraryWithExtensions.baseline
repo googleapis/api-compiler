@@ -1,4 +1,3 @@
-WARNING: library_with_extensions.yaml:90: The field 'public_discovery' is deprecated.
 WARNING: toplevel: The api_service name {} does not match the base service name {library-example} of {library-example.googleapis.com}.
 WARNING: toplevel: (lint) control-presence: Service library-example.googleapis.com does not have control environment configured.
 WARNING: library_extension.proto:10:5: (lint) documentation-presence: 'google.example.library.v1.extensions.Extender google.example.library.v1.Shelf.(google.example.library.v1.extensions.Extender.extender)' has no documentation, neither in IDL nor config.
@@ -472,12 +471,8 @@ context {
     requested: "google.rpc.context.ProjectContext"
   }
 }
-usage {
-}
 config_version {
   value: 2
-}
-system_parameters {
 }
 
 ============== Successfully regenerated service config ==============

@@ -47,10 +47,6 @@ http {
     get: "/v1/pets/{name}"
   }
 }
-authentication {
-}
-context {
-}
 usage {
   rules {
     selector: "Test"
@@ -59,7 +55,5 @@ usage {
 }
 control {
   environment: "endpoints-servicecontrol.sandbox.googleapis.com"
-}
-system_parameters {
 }
 

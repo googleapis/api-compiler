@@ -55,16 +55,8 @@ http {
     get: "/v1beta1/foo"
   }
 }
-authentication {
-}
-context {
-}
-usage {
-}
 config_version {
   value: 3
-}
-system_parameters {
 }
 
 ============== Successfully regenerated service config ==============

@@ -8,13 +8,6 @@ apis:
 - name: protiary.test.TestService2
 
 usage:
-  requirements:
-  - serviceusage.googleapis.com/tos/test1
-  activation_hooks:
-  - test activation_hook 1
-  - test activation_hook 2
-  deactivation_hooks:
-  - test deactivation_hook 1
   rules:
   - selector: 'protiary.test.TestService2.*'
     allow_unregistered_calls: true

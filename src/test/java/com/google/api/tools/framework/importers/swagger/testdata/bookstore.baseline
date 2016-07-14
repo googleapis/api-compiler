@@ -308,8 +308,6 @@ authentication {
     jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
   }
 }
-context {
-}
 usage {
   rules {
     selector: "ListShelves"
@@ -697,7 +695,5 @@ monitoring {
     metrics: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_end_user_country"
     metrics: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_referer"
   }
-}
-system_parameters {
 }
 
