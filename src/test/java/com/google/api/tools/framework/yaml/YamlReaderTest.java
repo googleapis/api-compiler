@@ -23,12 +23,10 @@ import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.api.tools.framework.model.testing.TextFormatForTest;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Message;
-
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.util.Map;
 
 /**
  * Test for {@link YamlReader}

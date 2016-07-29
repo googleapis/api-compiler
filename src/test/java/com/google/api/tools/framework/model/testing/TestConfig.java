@@ -16,6 +16,8 @@
 
 package com.google.api.tools.framework.model.testing;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.api.AnnotationsProto;
 import com.google.api.AuthProto;
 import com.google.api.Service;
@@ -236,7 +238,7 @@ public class TestConfig {
   /**
    * Calls the protocol compiler to compile the given sources into a descriptor.
    */
-  private void compileProtos(String tempDir, List<String> sourceFiles, String outputFile) {
+  protected void compileProtos(String tempDir, List<String> sourceFiles, String outputFile) {
     List<String> commandLine = Lists.newArrayList();
     commandLine.add(PROTOCOL_COMPILER);
     commandLine.add("--include_imports");
@@ -256,7 +258,7 @@ public class TestConfig {
       if (process.waitFor() != 0) {
         throw new IllegalArgumentException(
             String.format("proto compilation failed: %s:\n%s",
-                Joiner.on(" ").join(commandLine), new String(Files.readAllBytes(output))));
+                Joiner.on(" ").join(commandLine), new String(Files.readAllBytes(output), UTF_8)));
       }
     } catch (Exception e) {
       throw new IllegalArgumentException(

@@ -21,12 +21,10 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.api.tools.framework.model.SimpleDiagCollector;
 import com.google.common.collect.Lists;
-
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.util.List;
 
 /**
  * Test for {@link SourceParser}

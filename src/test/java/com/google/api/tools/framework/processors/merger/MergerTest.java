@@ -19,7 +19,7 @@ package com.google.api.tools.framework.processors.merger;
 import com.google.api.Service;
 import com.google.api.tools.framework.aspects.documentation.model.ElementDocumentationAttribute;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute;
-import com.google.api.tools.framework.aspects.http.model.HttpAttribute.MethodKind;
+import com.google.api.tools.framework.aspects.http.model.MethodKind;
 import com.google.api.tools.framework.aspects.versioning.model.VersionAttribute;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.Diag.Kind;

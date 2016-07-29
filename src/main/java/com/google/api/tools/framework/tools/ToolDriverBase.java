@@ -183,12 +183,4 @@ public abstract class ToolDriverBase extends GenericToolDriverBase {
     }
   }
 
-  /**
-   * Report errors and warnings.
-   */
-  @Override
-  protected void reportDiag() {
-    ToolUtil.reportDiags(model.getDiagCollector(), true);
-  }
-
 }

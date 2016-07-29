@@ -22,15 +22,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
-
-import junit.framework.AssertionFailedError;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestName;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +29,12 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
+import junit.framework.AssertionFailedError;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 /**
  * Test fixture for baseline testing.

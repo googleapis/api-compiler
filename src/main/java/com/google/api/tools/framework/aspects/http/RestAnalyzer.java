@@ -17,19 +17,20 @@
 package com.google.api.tools.framework.aspects.http;
 
 import com.google.api.tools.framework.aspects.documentation.model.ResourceAttribute;
+import com.google.api.tools.framework.aspects.http.RestPatterns.MethodPattern;
+import com.google.api.tools.framework.aspects.http.RestPatterns.SegmentPattern;
 import com.google.api.tools.framework.aspects.http.model.CollectionAttribute;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.LiteralSegment;
-import com.google.api.tools.framework.aspects.http.model.HttpAttribute.MethodKind;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.PathSegment;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.WildcardSegment;
+import com.google.api.tools.framework.aspects.http.model.MethodKind;
 import com.google.api.tools.framework.aspects.http.model.RestKind;
 import com.google.api.tools.framework.aspects.http.model.RestMethod;
 import com.google.api.tools.framework.model.MessageType;
 import com.google.api.tools.framework.model.Method;
 import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.api.tools.framework.model.TypeRef;
-import com.google.auto.value.AutoValue;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
@@ -37,15 +38,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nullable;
 
 /**
  * Rest analyzer. Determines {@link RestMethod} associated with method and http binding. Also
@@ -58,214 +55,6 @@ class RestAnalyzer {
 
   private static final String REST_STYLE_RULE_NAME = "rest";
   private static final String METHOD_SHADOWED_RULE_NAME = "rest-shadowed";
-
-  // Represents a rest method pattern.
-  @AutoValue
-  abstract static class MethodPattern {
-
-    // The http method.
-    abstract MethodKind httpMethod();
-
-    // A regular expression which the rpc name must match.
-    abstract Pattern nameRegexp();
-
-    // A pattern which the last segment of the path must match.
-    @Nullable abstract SegmentPattern lastSegmentPattern();
-
-    // The implied rest kind.
-    @Nullable abstract RestKind restKind();
-
-    // The implied prefix to use for custom methods.
-    abstract String customPrefix();
-
-    // Documentation of the pattern.
-    abstract String description();
-
-    private static MethodPattern create(MethodKind methodKind, String nameRegexp,
-        SegmentPattern lastSegment, RestKind restKind, String customPrefix, String description) {
-      return new AutoValue_RestAnalyzer_MethodPattern(methodKind, Pattern.compile(nameRegexp),
-          lastSegment, restKind, customPrefix, description);
-    }
-
-    private static MethodPattern create(MethodKind methodKind, String nameRegexp,
-          SegmentPattern lastSegment, RestKind restKind, String description) {
-      return create(methodKind, nameRegexp, lastSegment, restKind, "", description);
-    }
-
-    // Produce readable output for this pattern. This is used in error messages, as in
-    // 'rpc Get.* as HTTP GET <prefix>/<wildcard>'. We don't print the rest kind.
-    @Override
-    public String toString() {
-      StringBuilder result = new StringBuilder();
-      result.append("rpc ");
-      result.append(nameRegexp().pattern());
-      result.append(" as HTTP ");
-      result.append(httpMethod().toString());
-      if (lastSegmentPattern() != null) {
-        result.append(" ");
-        result.append(pathDisplay());
-      }
-      return result.toString();
-    }
-
-    private String pathDisplay() {
-      if (lastSegmentPattern() != null) {
-        switch (lastSegmentPattern()) {
-          case VARIABLE:
-            return "<prefix>/<wildcard>";
-          case CUSTOM_VERB:
-          case CUSTOM_VERB_WITH_COLON:
-            return "<prefix>:<literal>";
-          case LITERAL:
-            return "<prefix>/<literal>";
-        }
-      }
-      return "";
-    }
-  }
-
-  // A pattern for a path segment.
-  enum SegmentPattern {
-    VARIABLE,
-    LITERAL,
-    // matches both legacy custom method segment which uses <prefix>/<literal> and standard
-    // conforming custom method which uses <prefix>:<literal>.
-    CUSTOM_VERB,
-    // matches only one platform conforming custom method which uses <prefix>:<literal>.
-    CUSTOM_VERB_WITH_COLON,
-  }
-
-  // Declares all the currently allowed rest method patterns. If none of those
-  // matches, a warning will be produced.
-  private static final ImmutableList<MethodPattern> METHOD_PATTERNS =
-      ImmutableList.<MethodPattern>builder()
-
-        // First list all standard methods. They have priority in matching.
-        // Note that the only source of ambiguity here is a legacy custom
-        // method which uses <prefix>/<literal> instead of <prefix>:<literal>, otherwise
-        // our patterns would be unique.
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            "Get.*",
-            SegmentPattern.VARIABLE,
-            RestKind.GET,
-            "Gets a resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            "List.*",
-            SegmentPattern.LITERAL,
-            RestKind.LIST,
-            "Lists all resources"
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PUT,
-            "Update.*",
-            SegmentPattern.VARIABLE,
-            RestKind.UPDATE,
-            "Update a resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PUT,
-            "(Create|Insert).*",
-            SegmentPattern.VARIABLE,
-            RestKind.CREATE,
-            "Create a resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PATCH,
-            "(Update|Patch).*",
-            SegmentPattern.VARIABLE,
-            RestKind.PATCH,
-            "Patch a resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.DELETE,
-            "Delete.*",
-            SegmentPattern.VARIABLE,
-            RestKind.DELETE,
-            "Delete a resource"
-        ))
-        .add(MethodPattern.create(
-            MethodKind.POST,
-            "(Create|Insert).*",
-            SegmentPattern.LITERAL,
-            RestKind.CREATE,
-            "Create a resource"
-        ))
-
-        // Next list all custom methods.
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            "Get.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "get",
-            "Custom get resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            "List.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "list",
-            "Custom list resources."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            ".*",
-            SegmentPattern.CUSTOM_VERB_WITH_COLON,
-            RestKind.CUSTOM,
-            "General custom get method."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PUT,
-            "Update.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "update",
-            "Custom update resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PUT,
-            "Create.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "create",
-            "Custom create resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PATCH,
-            "Patch.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "patch",
-            "Custom patch resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PATCH,
-            "Update.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "update",
-            "Custom update resource"
-        ))
-        .add(MethodPattern.create(
-            MethodKind.DELETE,
-            "Delete.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "delete",
-            "Custom delete resource"
-        ))
-        .add(MethodPattern.create(
-            MethodKind.POST,
-            ".*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "General custom method."
-        ))
-        .build();
 
   private final HttpConfigAspect aspect;
   private final Map<String, CollectionAttribute> collectionMap =
@@ -365,7 +154,7 @@ class RestAnalyzer {
     if (restMethod == null) {
       // Search for the first matching method pattern.
       MethodMatcher matcher = null;
-      for (MethodPattern pattern : METHOD_PATTERNS) {
+      for (MethodPattern pattern : RestPatterns.METHOD_PATTERNS) {
         matcher = new MethodMatcher(pattern, method, httpConfig);
         if (matcher.matches) {
           break;
@@ -464,7 +253,7 @@ class RestAnalyzer {
   // which could have matched and show them to the user.
   private void diagnose(Method method, HttpAttribute httpConfig) {
     List<MethodPattern> cands = Lists.newArrayList();
-    for (MethodPattern pattern : METHOD_PATTERNS) {
+    for (MethodPattern pattern : RestPatterns.METHOD_PATTERNS) {
       if (pattern.nameRegexp().matcher(method.getSimpleName()).matches()) {
         // The name matches, but other attributes not. Add a cand with the given name and
         // required attributes.
@@ -479,7 +268,7 @@ class RestAnalyzer {
       }
     }
     if (cands.isEmpty()) {
-      cands = METHOD_PATTERNS;
+      cands = RestPatterns.METHOD_PATTERNS;
     }
     Object loc = method;
     if (!httpConfig.isFromIdl()) {
@@ -572,35 +361,5 @@ class RestAnalyzer {
       return RestMethod.create(method, pattern.restKind(),
           buildCollectionName(httpConfig.getFlatPath()), null);
     }
-  }
-
-  /**
-   * Main entry point for generating a table of supported REST patterns.
-   */
-  public static void main(String[] args) {
-    PrintStream out = System.out;
-    out.println("HTTP method | RPC name regexp | Path | REST verb | REST name | Remarks");
-    out.println("------------|-----------------|------|-----------|-----------|--------");
-    for (MethodPattern pattern : METHOD_PATTERNS) {
-      out.print("`" + pattern.httpMethod() + "`");
-      out.print(" | ");
-      out.print("`" + pattern.nameRegexp().pattern().replace("|", "\\|") + "`");
-      out.print(" | ");
-      out.print("`" + pattern.pathDisplay() + "`");
-      out.print(" | ");
-      out.print("`" + pattern.restKind() + "`");
-      out.print(" | ");
-      out.print("`" + restNameDisplay(pattern) + "`");
-      out.print(" | ");
-      out.print(pattern.description());
-      out.println();
-    }
-  }
-
-  private static String restNameDisplay(MethodPattern pattern) {
-    if (pattern.restKind() == RestKind.CUSTOM) {
-      return pattern.customPrefix().isEmpty() ? "<literal>" : pattern.customPrefix() + "<Literal>";
-    }
-    return pattern.restKind().toString().toLowerCase();
   }
 }

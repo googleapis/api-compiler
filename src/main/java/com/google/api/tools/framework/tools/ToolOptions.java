@@ -23,17 +23,14 @@ import com.google.common.collect.Maps;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Nullable;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
 
 /**
  * Class for representing options (flags) for tools.

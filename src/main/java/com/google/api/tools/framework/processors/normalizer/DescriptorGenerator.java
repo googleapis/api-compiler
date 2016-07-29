@@ -82,9 +82,7 @@ public class DescriptorGenerator {
   private final Map<String, String> typeLocations = Maps.newLinkedHashMap();
   private final Map<String, Set<String>> imports = Maps.newLinkedHashMap();
 
-  /**
-   * Generates a FileDescriptorSet for the specified normalized service config.
-   */
+  /** Generates a FileDescriptorSet for the specified normalized service config. */
   public static FileDescriptorSet generate(Service normalizedService) {
     DescriptorGenerator generator = new DescriptorGenerator();
     generator.analyzeService(normalizedService);
@@ -154,9 +152,7 @@ public class DescriptorGenerator {
     for (Map.Entry<String, FileContents> entry : contentsByFile.entrySet()) {
       FileContents contents = entry.getValue();
       String fileName = entry.getKey();
-      if (!contents.apis.isEmpty()
-          || !contents.types.isEmpty()
-          || !contents.enums.isEmpty()) {
+      if (!contents.apis.isEmpty() || !contents.types.isEmpty() || !contents.enums.isEmpty()) {
         setBuilder.addFile(generateFile(fileName, contents));
       }
     }
@@ -294,9 +290,7 @@ public class DescriptorGenerator {
     return builder.build();
   }
 
-  /**
-   * Compute the simple name of a field, including extensions.
-   */
+  /** Compute the simple name of a field, including extensions. */
   private String getFieldName(Field field) {
     Matcher m = EXTENSION_PATTERN.matcher(field.getName());
     if (m.matches()) {
@@ -341,15 +335,15 @@ public class DescriptorGenerator {
     return builder.build();
   }
 
-  private void setOptions(GeneratedMessage.Builder<?> builder, List<Option> optionsList,
-      String optionPrefix) {
+  private void setOptions(
+      GeneratedMessage.Builder<?> builder, List<Option> optionsList, String optionPrefix) {
     for (Option option : optionsList) {
       setOption(builder, option, optionPrefix);
     }
   }
 
-  private void setOption(GeneratedMessage.Builder<?> builder, Option option,
-      String expectedPrefix) {
+  private void setOption(
+      GeneratedMessage.Builder<?> builder, Option option, String expectedPrefix) {
     if (!option.getName().startsWith(expectedPrefix)) {
       return;
     }
@@ -357,11 +351,16 @@ public class DescriptorGenerator {
     String optionName = option.getName().substring(expectedPrefix.length());
     FieldDescriptor optionField = descriptor.findFieldByName(optionName);
     if (optionField != null) {
-      builder.setField(optionField, fieldValueFrom(option.getValue(), optionField));
+      if (optionField.isRepeated()) {
+        builder.addRepeatedField(optionField, fieldValueFrom(option.getValue(), optionField));
+      } else {
+        builder.setField(optionField, fieldValueFrom(option.getValue(), optionField));
+      }
     }
   }
 
   private Object fieldValueFrom(Any value, FieldDescriptor field) {
+
     switch (field.getType()) {
       case STRING:
         return parseAny(value, com.google.protobuf.StringValue.parser()).getValue();
@@ -423,8 +422,8 @@ public class DescriptorGenerator {
   }
 
   /**
-   * Returns the parent type name of a nested type.  Returns null if the specified type is not
-   * a nested type.
+   * Returns the parent type name of a nested type. Returns null if the specified type is not a
+   * nested type.
    */
   private static String getParentName(String packageName, String typeName) {
     int dotIndex = typeName.lastIndexOf('.');
@@ -433,8 +432,11 @@ public class DescriptorGenerator {
   }
 
   private static String getTypeName(String typeUrl) {
-    Preconditions.checkArgument(typeUrl.startsWith(TYPE_URL_PREFIX),
-        "type url (%s) did not start with expected prefix %s)", typeUrl, TYPE_URL_PREFIX);
+    Preconditions.checkArgument(
+        typeUrl.startsWith(TYPE_URL_PREFIX),
+        "type url (%s) did not start with expected prefix %s)",
+        typeUrl,
+        TYPE_URL_PREFIX);
     return "." + typeUrl.substring(TYPE_URL_PREFIX.length());
   }
 
@@ -506,7 +508,7 @@ public class DescriptorGenerator {
     }
 
     private <V> List<V> getOrCreateList(Map<Type, List<V>> lists, Type key) {
-      if (!lists.containsKey(key))  {
+      if (!lists.containsKey(key)) {
         lists.put(key, Lists.<V>newArrayList());
       }
       return lists.get(key);

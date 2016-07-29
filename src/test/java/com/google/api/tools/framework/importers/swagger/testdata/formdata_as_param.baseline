@@ -1,4 +1,3 @@
-WARNING: formdata_as_param.json: Parameter 'avatar' in operation 'post' in path '/v1/pets': Parameter is ignored because its location (in=formData) is not supported. Supported values for 'in' are 'body', 'query', and 'path'.
 WARNING: formdata_as_param.json: Operation 'post' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
@@ -56,6 +55,6 @@ usage {
   }
 }
 control {
-  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+  environment: "servicecontrol.googleapis.com"
 }
 

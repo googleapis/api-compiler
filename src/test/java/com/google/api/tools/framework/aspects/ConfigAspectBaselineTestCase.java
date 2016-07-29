@@ -39,7 +39,6 @@ import java.util.regex.Pattern;
 public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCase {
 
   private final Class<? extends ConfigAspectBase> aspectType;
-  private final List<String> experiments = Lists.newArrayList();
   protected ConfigAspectBase testedAspect;
   private final List<Class<? extends ConfigAspectBase>> baselineAspectTypes = Lists.newArrayList();
 
@@ -52,13 +51,6 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
   protected boolean suppressDiagnosis() {
     // Suppress diagnosis output to the baseline from the base class, we do it ourselves.
     return true;
-  }
-
-  /**
-   * Add the given experiment on the model.
-   */
-  public void enableExperiment(String experiment) {
-    experiments.add(experiment);
   }
 
   /**
@@ -80,11 +72,6 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
     baselineAspects.add(testedAspect);
     for (Class<?> type : baselineAspectTypes) {
       baselineAspects.add(findAspect(type));
-    }
-
-    // Enable the experiments on the model.
-    for (String experiment : experiments) {
-      model.enableExperiment(experiment);
     }
 
     // Establish linted stage. This will run merge and lint on all registered aspects, as we

@@ -40,7 +40,6 @@ public class UsageConfigAspect extends RuleBasedConfigAspect<UsageRule, UsageRul
   public static final String UTOS_REQUIREMENT = TOS_REQUIREMENT_PREFIX + "universal";
 
   private static final String UNSUPPORTED_REQUIREMENT_RULE = "requirement";
-
   /**
    * Creates usage config aspect.
    */

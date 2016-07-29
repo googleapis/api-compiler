@@ -1,0 +1,15 @@
+type: google.api.Service
+config_version: 2
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.json_name_ok.TestService
+documentation:
+  summary:
+    A test case
+  overview: |
+    (== suppress_warning http-rest ==)
+http:
+  rules:
+  - selector: protiary.test.json_name_ok.TestService.Call1
+    post: /v1/test/{JJJJ}
+

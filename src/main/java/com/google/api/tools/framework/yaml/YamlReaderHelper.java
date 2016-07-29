@@ -21,12 +21,10 @@ import com.google.api.tools.framework.model.DiagCollector;
 import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.protobuf.Descriptors.FieldDescriptor;
-
-import org.yaml.snakeyaml.error.Mark;
-import org.yaml.snakeyaml.nodes.Node;
-
 import java.util.HashSet;
 import java.util.Set;
+import org.yaml.snakeyaml.error.Mark;
+import org.yaml.snakeyaml.nodes.Node;
 
 /**
  * Configuration objects used during YamlParsing w/ convenience methods for common operations

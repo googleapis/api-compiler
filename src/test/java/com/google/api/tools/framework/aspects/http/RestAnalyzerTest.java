@@ -19,8 +19,8 @@ package com.google.api.tools.framework.aspects.http;
 import com.google.api.HttpRule;
 import com.google.api.Service;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute;
-import com.google.api.tools.framework.aspects.http.model.HttpAttribute.MethodKind;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.PathSegment;
+import com.google.api.tools.framework.aspects.http.model.MethodKind;
 import com.google.api.tools.framework.aspects.http.model.RestKind;
 import com.google.api.tools.framework.aspects.http.model.RestMethod;
 import com.google.api.tools.framework.model.ConfigSource;
@@ -42,13 +42,11 @@ import com.google.protobuf.DescriptorProtos.MethodDescriptorProto;
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto;
 import com.google.protobuf.Empty;
 import com.google.protobuf.UInt32Value;
-
+import java.io.PrintWriter;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * Tests for {@link RestAnalyzer}.

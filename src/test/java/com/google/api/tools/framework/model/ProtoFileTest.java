@@ -22,15 +22,13 @@ import com.google.api.tools.framework.model.testing.TestConfig;
 import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
+import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.util.List;
 
 /**
  * Test for {@link ProtoFile}

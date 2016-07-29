@@ -56,29 +56,34 @@ public class FieldSelector {
   }
 
   /**
-   * Construct a field selector by resolving a field path (as in 'a.b.c') against a message.
-   * Returns null if resolution fails.
+   * Construct a field selector by resolving a field path (as in 'a.b.c') against a message. Returns
+   * null if resolution fails.
    */
   public static FieldSelector resolve(MessageType message, String fieldPath) {
     Iterator<String> path = FIELD_PATH_SPLITTER.split(fieldPath).iterator();
-    ImmutableList.Builder<Field> fields = ImmutableList.builder();
-    while (true) {
+    ImmutableList.Builder<Field> fieldsBuilder = ImmutableList.builder();
+
+    MessageType currMessage = message;
+    while (path.hasNext()) {
       String fieldName = path.next();
-      Field field = message.lookupField(fieldName);
+      Field field = currMessage.lookupField(fieldName);
       if (field == null) {
         return null;
       }
-      fields.add(field);
+      fieldsBuilder.add(field);
       if (path.hasNext()) {
         if (!field.getType().isMessage()) {
           return null;
         }
-        message = field.getType().getMessageType();
-      } else {
-        break;
+        currMessage = field.getType().getMessageType();
       }
     }
-    return new FieldSelector(fields.build());
+
+    return new FieldSelector(fieldsBuilder.build());
+  }
+
+  private static boolean hasSinglePathElement(String path) {
+    return !path.isEmpty() && !path.contains(".");
   }
 
   private final ImmutableList<Field> fields;

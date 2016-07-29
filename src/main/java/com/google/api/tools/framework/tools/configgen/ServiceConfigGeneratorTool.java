@@ -20,13 +20,11 @@ import com.google.api.tools.framework.importers.swagger.SwaggerImportTool;
 import com.google.api.tools.framework.tools.ToolOptions;
 import com.google.api.tools.framework.tools.ToolOptions.Option;
 import com.google.common.collect.ImmutableList;
-
+import java.io.IOException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import java.io.IOException;
 
 /**
  * Main entry point for the service config generator.

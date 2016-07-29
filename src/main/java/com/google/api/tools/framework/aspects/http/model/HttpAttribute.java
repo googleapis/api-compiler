@@ -44,28 +44,6 @@ public class HttpAttribute {
   public static final Key<HttpAttribute> KEY = Key.get(HttpAttribute.class);
 
   /**
-   * The http method kind.
-   */
-  public enum MethodKind {
-    GET(true),
-    PUT(true),
-    POST(false),
-    DELETE(true),
-    PATCH(false),
-    NONE(false);
-
-    private final boolean isIdempotent;
-
-    private MethodKind(boolean isIdempotent) {
-      this.isIdempotent = isIdempotent;
-    }
-
-    public boolean isIdempotent() {
-      return isIdempotent;
-    }
-  }
-
-  /**
    * Base class for path segments.
    */
   public abstract static class PathSegment {

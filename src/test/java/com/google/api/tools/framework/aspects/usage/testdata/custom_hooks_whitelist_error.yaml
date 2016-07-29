@@ -1,0 +1,11 @@
+type: google.api.Service
+config_version: 1
+title: test
+name: not-whitelisting.googleapis.com
+
+apis:
+- name: protiary.test.TestService1
+
+usage:
+  activation_hooks:
+    - serviceusage.googleapis.com/tenant-project

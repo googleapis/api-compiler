@@ -16,6 +16,9 @@
 
 package com.google.api.tools.framework.importers.swagger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.api.AuthProvider;
 import com.google.api.AuthRequirement;
 import com.google.api.Authentication;
@@ -35,18 +38,12 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-
 import io.swagger.models.Operation;
 import io.swagger.models.SecurityRequirement;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.In;
 import io.swagger.models.auth.SecuritySchemeDefinition;
-
 import java.lang.reflect.Type;
 import java.util.LinkedHashSet;
 import java.util.List;

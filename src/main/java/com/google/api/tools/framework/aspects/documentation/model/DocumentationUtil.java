@@ -29,15 +29,12 @@ import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.annotation.Nullable;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * Static utilities for dealing with documentation.

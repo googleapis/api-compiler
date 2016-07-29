@@ -26,17 +26,14 @@ import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Key;
 import com.google.protobuf.DescriptorProtos.FileDescriptorSet;
-
+import java.io.IOException;
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.io.IOException;
 
 /**
  * Tests for {@link Resolver}.

@@ -26,16 +26,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests for {@link SnippetSet} and related functionality.
@@ -122,10 +119,11 @@ public class SnippetTest extends BaselineTestCase {
 
   @Test public void simple() {
     create(
+        "# just a simple snippet",
         "@snippet foo(x,y)",
+        "  # say something",
         "  {@x}, {@y}!",
-        "@end"
-        );
+        "@end");
     eval("foo", "Hello", "World");
   }
 
@@ -177,20 +175,22 @@ public class SnippetTest extends BaselineTestCase {
     create(
         "@snippet foo(x,y)",
         "  @if x",
+        "    # this is first",
         "    first if",
         "  @end",
         "  @if x",
         "    @if y",
+        "      # this is nested",
         "      nested if",
         "    @end",
         "  @end",
         "  @if x",
         "    if-else",
         "  @else",
+        "      # on the other hand...",
         "    else-part",
         "  @end",
-        "@end"
-        );
+        "@end");
     eval("foo", true, true);
     eval("foo", true, false);
     eval("foo", false, true);
@@ -257,22 +257,24 @@ public class SnippetTest extends BaselineTestCase {
         "@snippet foo(x)",
         "  join default:",
         "  @join e : x",
+        "    # joining some stuff",
         "    {@e}",
         "  @end",
         "  join soft break:",
         "  @join e : x auto on SOFT_BREAK",
+        "    # joining some stuff softly",
         "    {@e}",
         "  @end",
         "  join empty:",
         "  @join e : x auto on EMPTY",
+        "    # joining not at all",
         "    {@e}",
         "  @end",
         "  join , then soft break:",
         "  @join e : x auto on \",\".add(SOFT_BREAK)",
         "    {@e}",
         "  @end",
-        "@end"
-        );
+        "@end");
     eval("foo", ImmutableList.of("1"));
     eval("foo", ImmutableList.of());
     eval("foo", ImmutableList.of("1", "2", "3"));
@@ -320,6 +322,7 @@ public class SnippetTest extends BaselineTestCase {
     create(
         "@snippet foo(x,y)",
         "  @let x = bar(x,y)",
+        "    # who let the dogs out?",
         "    {@x}",
         "  @end",
         "",
@@ -327,8 +330,7 @@ public class SnippetTest extends BaselineTestCase {
         "@end",
         "@snippet bar(x,y)",
         "  {@x} + {@y}",
-        "@end"
-        );
+        "@end");
     eval("foo", 1, 2);
   }
 
@@ -372,8 +374,7 @@ public class SnippetTest extends BaselineTestCase {
         "  @case \"b\"",
         "    B",
         "  @end",
-        "@end"
-        );
+        "@end");
     eval("foo", "a");
     eval("foo", "b");
     evalWithError("foo", "c");
@@ -382,16 +383,18 @@ public class SnippetTest extends BaselineTestCase {
   @Test public void casesWithDefault() {
     create(
         "@snippet foo(x)",
+        "  # whatever the case may be",
         "  @switch x",
         "  @case \"a\"",
+        "    # just in case",
         "    A",
         "  @case \"b\"",
         "    B",
         "  @default",
+        "    # The two sweetest words in the English language. -Homer Simpson",
         "    C",
         "  @end",
-        "@end"
-        );
+        "@end");
     eval("foo", "a");
     eval("foo", "b");
     eval("foo", "c");
@@ -504,9 +507,9 @@ public class SnippetTest extends BaselineTestCase {
         "  {@callee(x)}",
         "@end",
         "@private callee(x)",
+        "  # keep it secret, keep it safe",
         "  {@x}",
-        "@end"
-        );
+        "@end");
     eval("caller", "Hello");
   }
 

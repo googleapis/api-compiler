@@ -24,12 +24,10 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.truth.Truth;
-
+import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.util.Set;
 
 /**
  * Tests for {@link DocumentationUtil#filter}.

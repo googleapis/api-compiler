@@ -25,8 +25,8 @@ import com.google.api.tools.framework.aspects.documentation.model.ResourceAttrib
 import com.google.api.tools.framework.aspects.http.model.CollectionAttribute;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.FieldSegment;
-import com.google.api.tools.framework.aspects.http.model.HttpAttribute.MethodKind;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.PathSegment;
+import com.google.api.tools.framework.aspects.http.model.MethodKind;
 import com.google.api.tools.framework.model.ConfigAspect;
 import com.google.api.tools.framework.model.Field;
 import com.google.api.tools.framework.model.FieldSelector;
@@ -161,6 +161,9 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
     return binding;
   }
 
+  // Suppressing ReferenceEquality warning to avoid possibly changing behavior of "check for
+  // overlapping selectors" below.
+  @SuppressWarnings("ReferenceEquality")
   private void validateBinding(Method method, HttpRule rule, HttpAttribute binding,
       boolean isAdditionalBinding) {
     // Resolve the http mapping.
@@ -373,11 +376,18 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
    * Resolves a field path into a field selector.
    */
   private FieldSelector resolveFieldPath(Method method, String fieldPath) {
-    FieldSelector result = FieldSelector.resolve(method.getInputType().getMessageType(),
-        fieldPath);
-    if (result == null) {
-      error(method, "undefined field '%s' on message '%s'.",
-          fieldPath, getInputMessageName(method));
+    FieldSelector result = null;
+    try {
+      result = FieldSelector.resolve(method.getInputType().getMessageType(), fieldPath);
+      if (result == null) {
+        error(
+            method,
+            "undefined field '%s' (or json_name) on message '%s'.",
+            fieldPath,
+            getInputMessageName(method));
+      }
+    } catch (RuntimeException exception) {
+      error(method, "%s", exception.getMessage());
     }
     return result;
   }

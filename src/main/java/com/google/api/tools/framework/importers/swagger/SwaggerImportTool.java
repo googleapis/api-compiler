@@ -28,15 +28,12 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
 import javax.annotation.Nullable;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Main entry point for the Swagger Importer.

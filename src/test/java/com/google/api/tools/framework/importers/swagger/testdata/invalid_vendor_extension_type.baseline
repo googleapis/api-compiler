@@ -12,6 +12,6 @@ documentation {
   summary: "A simple Google Example Library API."
 }
 control {
-  environment: "endpoints-servicecontrol.sandbox.googleapis.com"
+  environment: "servicecontrol.googleapis.com"
 }
 

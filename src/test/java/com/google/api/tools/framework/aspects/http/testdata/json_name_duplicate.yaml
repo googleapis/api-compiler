@@ -1,0 +1,10 @@
+type: google.api.Service
+config_version: 2
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.json_name_duplicate.TestService
+http:
+  rules:
+  - selector: protiary.test.json_name_duplicate.TestService.Call1
+    post: /v1/test/{J2}
+

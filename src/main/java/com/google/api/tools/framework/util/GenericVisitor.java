@@ -20,10 +20,8 @@ package com.google.api.tools.framework.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-
-import net.sf.cglib.reflect.FastMethod;
-
 import java.lang.reflect.InvocationTargetException;
+import net.sf.cglib.reflect.FastMethod;
 
 /**
  * A generic visitor class. Implements the visitor style pattern for depth-first traversal

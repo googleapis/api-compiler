@@ -1,0 +1,16 @@
+// LINT: LEGACY_NAMES
+syntax = "proto2";
+package protiary.test.json_name_conflict;
+
+message In {
+  required string J = 1;
+  required string J2 = 2 [ json_name = "J" ];
+}
+
+message Out {
+}
+
+service TestService {
+  // 1
+  rpc Call1 (In) returns (Out);
+}

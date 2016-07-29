@@ -16,6 +16,12 @@
 
 package com.google.api.tools.framework.importers.swagger;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.github.fge.jsonschema.report.ProcessingReport;
+import com.github.fge.jsonschema.report.ProcessingMessage;
 import com.google.api.Http;
 import com.google.api.Service;
 import com.google.api.tools.framework.aspects.control.model.ControlConfigUtil;
@@ -42,14 +48,6 @@ import com.google.protobuf.Api;
 import com.google.protobuf.Method;
 import com.google.protobuf.Type;
 import com.google.protobuf.UInt32Value;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.github.fge.jsonschema.report.ProcessingReport;
-import com.github.fge.jsonschema.report.ProcessingMessage;
-
 import io.swagger.models.Info;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
@@ -58,13 +56,9 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
-
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -72,6 +66,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
+import java.nio.charset.Charset;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Class to create a {@link Service} instance from a {@link Swagger} object.
@@ -296,7 +292,7 @@ public class SwaggerToService implements DiagCollector {
    * Sets special configuration needed for 3rd party Endpoints APIs.
    */
   private void applyThirdPartyApiSettings() {
-    serviceBuilder.getControlBuilder().setEnvironment(ControlConfigUtil.ENDPOINTS_SERVICE_CONTROL);
+    serviceBuilder.getControlBuilder().setEnvironment(ControlConfigUtil.PROD_SERVICE_CONTROL);
 
     // Set the config version to 3.
     serviceBuilder.setConfigVersion(

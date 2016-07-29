@@ -41,4 +41,5 @@ public class UsageConfigAspectTest extends ConfigAspectBaselineTestCase{
   @Test public void unregistered_calls() throws Exception {
     test("unregistered_calls");
   }
+
 }

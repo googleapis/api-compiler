@@ -73,13 +73,7 @@ class HttpRuleBuilder {
           path = path.replace("{" + parameter.getName() + "}", "{" + paramNameWithUnderScore + "}");
           break;
         default:
-          /* TODO(user): Make this an error once we want to start supporting json to proto
-           * transformation for APIs imported from Swagger spec.*/
-          diagCollector.addDiag(Diag.warning(
-              SwaggerToService.createParameterLocation(parameter, operationType, path),
-              "Parameter is ignored because its location (in=%s) is not supported. Supported values"
-              + " for 'in' are 'body', 'query', and 'path'.",
-              parameter.getIn()));
+          /* TODO(user): Support other In types.*/
       }
     }
 

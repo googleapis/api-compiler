@@ -23,5 +23,6 @@ public class ControlConfigUtil {
 
   public static final String ENDPOINTS_SERVICE_CONTROL =
       "endpoints-servicecontrol.sandbox.googleapis.com";
+  public static final String PROD_SERVICE_CONTROL = "servicecontrol.googleapis.com";
 
 }

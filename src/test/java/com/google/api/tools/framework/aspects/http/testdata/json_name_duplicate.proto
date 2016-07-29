@@ -1,0 +1,17 @@
+// LINT: LEGACY_NAMES
+syntax = "proto2";
+package protiary.test.json_name_duplicate;
+
+message In {
+  required string J = 1;
+  required string J2 = 2 [ json_name = "J2" ];
+  required string J3 = 3 [ json_name = "J2" ];
+}
+
+message Out {
+}
+
+service TestService {
+  // 1
+  rpc Call1 (In) returns (Out);
+}

@@ -20,13 +20,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
-
-import name.fraser.neil.plaintext.diff_match_patch;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import name.fraser.neil.plaintext.diff_match_patch;
 
 /**
  * A differ for {@link BaselineTestCase}, based on the commonly used diff_match_patch package,

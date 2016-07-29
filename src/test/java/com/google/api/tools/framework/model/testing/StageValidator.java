@@ -24,11 +24,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.inject.Key;
-
-import junit.framework.Assert;
-
 import java.util.Collection;
 import java.util.Set;
+import junit.framework.Assert;
 
 /**
  * A class which does stage validation of model elements. Walks the tree and checks whether all

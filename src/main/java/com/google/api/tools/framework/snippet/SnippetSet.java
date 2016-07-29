@@ -45,95 +45,98 @@ import javax.annotation.Nullable;
  * Represents a snippet set.
  *
  * <p>
- * <p>
- * Snippets are a templating system tailored for code generation. In contrast to other templating
- * approaches, snippets produce structured documents based on the principles of a Wadler-Lindig
- * pretty printer (see {@link Doc}). They are thus better suited for producing source code with
- * spacing and indentation requirements. The decoupling of layout of the snippet code from the
- * generated source also allows for producing better readable snippet definitions. Furthermore,
- * snippets support smooth interop with Java, and a rich set of control structures.
+ *
+ * <p>Snippets are a templating system tailored for code generation. In contrast to other
+ * templating approaches, snippets produce structured documents based on the principles of a
+ * Wadler-Lindig pretty printer (see {@link Doc}). They are thus better suited for producing source
+ * code with spacing and indentation requirements. The decoupling of layout of the snippet code
+ * from the generated source also allows for producing better readable snippet definitions.
+ * Furthermore, snippets support smooth interop with Java, and a rich set of control structures.
  *
  * <p>
- * <p>
- * A snippet is defined by a declaration as follows:
  *
- * <p>
- * <pre>
+ * <p>A snippet is defined by a declaration as follows:
+ *
+ * <p><pre>
  *   {@literal @}snippet add(x,y)
- *     &#123@x} + &#123@y}
+ *      &#123@x} + &#123@y}
  *   {@literal @}end
  * </pre>
  *
- * <p>
- * Evaluating {@code add(1,2)} will produce {@code 1 + 2}. More precisely, it will produce
+ * <p>Evaluating {@code add(1,2)} will produce {@code 1 + 2}. More precisely, it will produce
  * {@code Doc.text("1").add(Doc.text(" + ")).add(Doc.text("2"))}.
  *
  * <p>
- * <p>
- * Unless specified otherwise, all elements in a snippet are joined within a vertical group with
+ *
+ * <p>Unless specified otherwise, all elements in a snippet are joined within a vertical group with
  * nesting of 0 and the separator {@link Doc#BREAK} for a line break. This can be overridden in the
  * snippet header, for example:
  *
- * <p>
- * <pre>
+ * <p><pre>
  *   {@literal @}snippet add(x,y) auto 4
- *     &#123@x}
- *     + &#123@y}
+ *      &#123@x}
+ *      + &#123@y}
  *   {@literal @}end
  * </pre>
  *
- * <p>
- * The layout specification following the parameter list of a snippet has the following general
+ * <p>The layout specification following the parameter list of a snippet has the following general
  * syntax:
  *
- * <p>
- * <pre>
+ * <p><pre>
  *   [ fill | vertical | horizontal | auto ] [ NUMBER ] [ on EXPR ]
  * </pre>
  *
- * <p>
- * Fill, vertical, horizontal, and auto describe the grouping mode (see
- * {@link Doc#group(Doc.GroupKind, Doc)} for definitions), NUMBER the indentation inserted after the
- * first break, and EXPR the separator to use (expressions are described below). The default is
+ * <p>Fill, vertical, horizontal, and auto describe the grouping mode (see
+ * {@link Doc#group(Doc.GroupKind, Doc)} for definitions), NUMBER the indentation inserted after
+ * the first break, and EXPR the separator to use (expressions are described below). The default is
  * {@code vertical 0 BREAK}. A snippet output group is wrapped with {@link Doc#align()}. See the
  * documentation of {@link Doc} for details, or the papers cited there.
  *
  * <p>
- * <p>
- * Indentation of subsequent lines in a snippet definition will be trimmed based on the indentation
- * of the first line. Therefore, nesting for control structures does not introduce indentation.
- * However, in the subsequent definition the inner block will be indented as expected:
  *
- * <p>
- * <pre>
+ * <p>Indentation of subsequent lines in a snippet definition will be trimmed based on the
+ * indentation of the first line. Therefore, nesting for control structures does not introduce
+ * indentation. However, in the subsequent definition the inner block will be indented as expected:
+ *
+ * <p><pre>
  *   {@literal @}snippet block(stm)
- *     {
- *       &#123@stm}
- *     }
+ *      {
+ *        &#123@stm}
+ *      }
  *   {@literal @}end
  * </pre>
  *
- * <p>
- * Lines in the snippet source can be joined to avoid overflow. Such joined lines appear as one
+ * <p>Lines in the snippet source can be joined to avoid overflow. Such joined lines appear as one
  * logical line to the snippet engine. For example:
  *
- * <p>
- * <pre>
+ * <p><pre>
  *   {@literal @}snippet add(x,y) auto 4
- *     &#123@x} \
- *       + &#123@y}
+ *      &#123@x} \
+ *        + &#123@y}
  *   {@literal @}end
  * </pre>
  *
- * Leading space from a line continuation is trimmed, however, any space before the {@literal \} is
- * not. In order to escape a backslash, use {@literal @\}.
+ * <p>Leading space from a line continuation is trimmed, however, any space before the {@code \} is
+ * not. In order to escape a backslash, use {@code @\}.
  *
+ * <p>Snippet code can be documented with {@code #} comments. These can appear both inside and
+ * outside snippet definitions:
+ *
+ * <p><pre>
+ *   # Renders an advanced math equation.
+ *   {@literal @}snippet add(x,y)
+ *     # This is the equation.
+ *      &#123@x} + &#123@y}
+ *   {@literal @}end
+ * </pre>
+ *
+ * Inline comments (comments on the same line as executed code) are not supported.
  *
  * <p>
- * <p>
- * A snippet expression is a text enclosed as &#123@expr}. Expressions evaluate to objects and are
- * finally converted to strings before inserted into the snippet output. The following expression
- * forms are supported:
+ *
+ * <p>A snippet expression is a text enclosed as &#123@expr}. Expressions evaluate to objects and
+ * are finally converted to strings before inserted into the snippet output. The following
+ * expression forms are supported:
  *
  * <ul>
  *
@@ -156,161 +159,144 @@ import javax.annotation.Nullable;
  * {@code expr}.
  *
  * <li>{@code expr1 R expr2}, where {@code R} is any of {@code ==}, {@code !=}, {@code &lt;},
- * {@code &lt;=}, {@code >}, {@code >=}. Calls the comparison relation on the operands, resulting in
- * either the constant TRUE or FALSE. For comparison, a {@link Doc} or enum value will be first
+ * {@code &lt;=}, {@code >}, {@code >=}. Calls the comparison relation on the operands, resulting
+ * in either the constant TRUE or FALSE. For comparison, a {@link Doc} or enum value will be first
  * converted to a string. After that, operands are either compared with their equals method or, for
  * metric relations, must have the same type and implement the {@link Comparable} interface.
  *
  * </ul>
  *
  * <p>
- * <p>
- * Values passed and returned to Java methods are converted on the fly to strings, numbers, and enum
- * values as demanded by the context type. When a method is applied on an iterable and the name
- * cannot be resolved, an attempt is made to wrap the iterable in a {@link FluentIterable}, making
- * methods like {@code append}, {@code first}, etc. available.
+ *
+ * <p>Values passed and returned to Java methods are converted on the fly to strings, numbers, and
+ * enum values as demanded by the context type. When a method is applied on an iterable and the
+ * name cannot be resolved, an attempt is made to wrap the iterable in a {@link FluentIterable},
+ * making methods like {@code append}, {@code first}, etc. available.
  *
  * <p>
- * <p>
- * A few control structures are supported by a snippet. A conditional is written as follows, where
- * the else-part is optional, and the then-part is taken if the condition expression evaluates to a
- * value depending on its type: {@code true} for boolean, a non-zero value for numbers, a non-empty
- * value for strings, a document which contains more than whitespace, or an iterable which contains
- * at least one element:
  *
- * <p>
- * <pre>
+ * <p>A few control structures are supported by a snippet. A conditional is written as follows,
+ * where the else-part is optional, and the then-part is taken if the condition expression
+ * evaluates to a value depending on its type: {@code true} for boolean, a non-zero value for
+ * numbers, a non-empty value for strings, a document which contains more than whitespace, or an
+ * iterable which contains at least one element:
+ *
+ * <p><pre>
  *   {@literal @}if expr
- *   ...
+ *      ...
  *   {@literal @}else
- *   ...
+ *      ...
  *   {@literal @}end
  * </pre>
  *
  * <p>
- * <p>
- * A join is written as follows: {@code expr1} must evaluate to an iterable. The optional
+ *
+ * <p>A join is written as follows: {@code expr1} must evaluate to an iterable. The optional
  * conditional, if specified, forces the iterable to only evaluate on elements where {@code expr2}
  * returns {@code true} or the equivalent (see above). The optional layout specifies how the
  * elements in the body are joined (layout has the same syntax as with snippet definitions):
  *
- * <p>
- * <pre>
+ * <p><pre>
  *   {@literal @}join var : expr1 [ if expr2 ] [ layout ]
- *   ...
+ *      ...
  *   {@literal @}end
  * </pre>
  *
  * <p>
- * <p>
- * A let is written as follows, where {@code var} is bound over the scope of the let:
  *
- * <p>
- * <pre>
+ * <p>A let is written as follows, where {@code var} is bound over the scope of the let:
+ *
+ * <p><pre>
  *   {@literal @}let var1 = expr1, var2 = expr2, ...
- *   ...
+ *      ...
  *   {@literal @}end
  * </pre>
  *
  * <p>
- * <p>
- * Finally, a switch is written as such, where the default-part is optional:
  *
- * <p>
- * <pre>
+ * <p>Finally, a switch is written as such, where the default-part is optional:
+ *
+ * <p><pre>
  *   {@literal @}switch expr
  *   {@literal @}case expr
- *   ...
+ *      ...
  *   {@literal @}case expr
- *   ...
+ *      ...
  *   {@literal @}default
- *   ...
+ *      ...
  *   {@literal @}end
  * </pre>
  *
+ * <p>
  *
- * <p>
- * <p>
- * Snippet sources can extend other snippet sources using the following syntax:
+ * <p>Snippet sources can extend other snippet sources using the following syntax:
  *
- * <p>
- * <pre>
+ * <p><pre>
  *   {@literal @}extends "some/file.snip"
  * </pre>
  *
- * <p>
- * All extends-clauses must be at the beginning of a snippet source.
+ * <p>All extends-clauses must be at the beginning of a snippet source.
  *
- * <p>
- * A snippet can be defined private to a file, which is good practice to specify the interface
+ * <p>A snippet can be defined private to a file, which is good practice to specify the interface
  * between different files in a snippet set:
  *
- * <p>
- * <pre>
+ * <p><pre>
  *   {@literal @}private add(x)
- *     ...
+ *      ...
  *   {@literal @}end
  * </pre>
  *
- * <p>
- * Definitions coming from extended sources can be overridden if the override-marker is used:
+ * <p>Definitions coming from extended sources can be overridden if the override-marker is used:
  *
- * <p>
- * <pre>
+ * <p><pre>
  *   {@literal @}override add(x)
- *     ...
+ *      ...
  *   {@literal @}end
  * </pre>
  *
- * <p>
- * It is not possible to override definitions in the same source. Also, a snippet can only be
- * overridden if it is in the direct extension path. For example, if sources A and B are extended by
- * C, and B attempts to override a definition in A (without extending it explicitly), an error will
- * be produced.
+ * <p>It is not possible to override definitions in the same source. Also, a snippet can only be
+ * overridden if it is in the direct extension path. For example, if sources A and B are extended
+ * by C, and B attempts to override a definition in A (without extending it explicitly), an error
+ * will be produced.
  *
  * <p>
- * <p>
- * A snippet can be declared abstract:
  *
- * <p>
- * <pre>
+ * <p>A snippet can be declared abstract:
+ *
+ * <p><pre>
  *   {@literal @}abstract add(x)
  * </pre>
  *
- * <p>
- * An abstract snippet has no body. Attempting to evaluate an abstract snippet results in a runtime
- * error.
- *
+ * <p>An abstract snippet has no body. Attempting to evaluate an abstract snippet results in a
+ * runtime error.
  *
  * <p>
- * <p>
- * The {@link #bind(Class, Map)} method allows to bind an interface to a snippet set, implementing
- * this interface via the methods in the set. This allows for a typed access to the snippet
- * definitions from Java. The snippet engine attempts to convert to and from types used in the
- * interface, using standard string-based conversion methods if needed.
+ *
+ * <p>The {@link #bind(Class, Map)} method allows to bind an interface to a snippet set,
+ * implementing this interface via the methods in the set. This allows for a typed access to the
+ * snippet definitions from Java. The snippet engine attempts to convert to and from types used in
+ * the interface, using standard string-based conversion methods if needed.
  *
  * <p>
- * <p>
- * A runtime error is raised if a method in an interface cannot be bound to any snippet. It is
+ *
+ * <p>A runtime error is raised if a method in an interface cannot be bound to any snippet. It is
  * allowed to bind an abstract snippet, however. An attempt to evaluate it will result in a runtime
  * error. Hence, abstract snippet are a way to express that certain functionality stays
  * unimplemented in a snippet set.
  *
  * <p>
- * <p>
- * It is good practice to declare a snippet which is not intended to be bound to an interface and
- * not used by other snippet files as private:
  *
- * <p>
- * <pre>
+ * <p>It is good practice to declare a snippet which is not intended to be bound to an interface
+ * and not used by other snippet files as private:
+ *
+ * <p><pre>
  *   {@literal @}private add(x)
- *     ...
+ *      ...
  *   {@literal @}end
  * </pre>
  *
- * <p>
- * This snippet will be only available for calls from the same snippet file. Its name is unique to
- * the file and cannot clash with similar named snippets from other files.
+ * <p>This snippet will be only available for calls from the same snippet file. Its name is unique
+ * to the file and cannot clash with similar named snippets from other files.
  */
 public class SnippetSet {
 

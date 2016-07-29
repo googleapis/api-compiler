@@ -11,6 +11,12 @@ message OuterMessage {
   option deprecated = true;
   option (.google.api.message_visibility).restriction = "PUBLIC";
 
+  // MOE:begin_strip
+  // Makes sure repeated options work correctly.
+  option experimental_java_message_interface = "foo";
+  option experimental_java_message_interface = "bar";
+  // MOE:end_strip
+
   // Test field options
   optional string string1 = 1 [ctype = CORD];
   optional string string2 = 2 [jtype = BYTES];

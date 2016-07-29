@@ -59,4 +59,5 @@ public class HttpConfigAspectTest extends ConfigAspectBaselineTestCase {
   @Test public void custom_post_invalid_body() throws Exception {
     test("custom_post_invalid_body");
   }
+
 }

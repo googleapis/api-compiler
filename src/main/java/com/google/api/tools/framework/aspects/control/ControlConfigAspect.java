@@ -35,7 +35,8 @@ public class ControlConfigAspect extends ConfigAspectBase {
   private static final String NO_CONTROL_ENV = "presence";
 
   private static final List<String> SUPPORTED_ENVS = Lists.newArrayList(
-      ControlConfigUtil.ENDPOINTS_SERVICE_CONTROL);
+      ControlConfigUtil.ENDPOINTS_SERVICE_CONTROL,
+      ControlConfigUtil.PROD_SERVICE_CONTROL);
 
   private final String environment;
 

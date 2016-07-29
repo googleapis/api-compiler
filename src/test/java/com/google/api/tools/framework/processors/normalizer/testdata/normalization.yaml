@@ -62,6 +62,6 @@ authentication:
                         https://www.googleapis.com/auth/xapi.zoo.readonly
 
 control:
-  environment: endpoints-servicecontrol.sandbox.googleapis.com
+  environment: servicecontrol.googleapis.com
 
 

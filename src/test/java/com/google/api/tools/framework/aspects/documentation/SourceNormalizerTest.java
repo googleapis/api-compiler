@@ -24,15 +24,13 @@ import com.google.api.tools.framework.model.testing.BaselineTestCase;
 import com.google.api.tools.framework.model.testing.DiagUtils;
 import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.common.base.Joiner;
-
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * Baseline tests for {@link SourceNormalizer}
