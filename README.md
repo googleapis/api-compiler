@@ -36,29 +36,6 @@ Cloud Bigtable, IAM, and more.
 Google API compiler is used by other tools like [googleapis/toolkit](https://github.com/googleapis/toolkit)
 to read the users API definition and autogenerate client libraries.
 
-## Compile Google API Compiler
-
-Clone the _Google API Compiler_ repo
-```
-$ git clone https://github.com/googleapis/api-compiler
-```
-Update submodules
-```
-$ git submodule update --recursive --init
-```
-Build source code
-```
-$ ./gradlew buildGoogleApiConfigGen
-```
-For running tests, you need to have `protoc` in your path. If you don't
-already have protoc version 3, you can download
-it from https://github.com/google/protobuf/releases and set a symbolic link to
-the protoc.
-```
-# Example
-$ sudo ln -s  <Path to the downloaded protoc> /usr/local/bin/protoc
-```
-
 ## Creating service configuration from proto files
 
 ### Creating a proto descriptor file
@@ -99,17 +76,13 @@ apis:
 
 ### Executing the Google API Compiler
 
-Once the jar 'gapi-config-gen-with-deps-0.0.5-SNAPSHOT.jar' is built under the
-build/libs directory, you can run the jar using the following command:
-
 ```
-$ alias gapi-config-gen='java -jar <path to gapi-config-gen-with-deps-0.0.5-SNAPSHOT.jar>'
 DESCRIPTOR_FILE=<PATH TO out.descriptor>
 CONFIG_FILE=<path to yaml file>
 JSON_FILE_NAME=<json output file name>
 BINARY_FILE_NAME=<binary output file name>
 
-gapi-config-gen \
+./run.sh \
 --configs $CONFIG_FILE \
 --descriptor $DESCRIPTOR_FILE \
 --json_out $JSON_FILE_NAME \
@@ -127,12 +100,11 @@ Either format can be used to configure a Google Cloud Endpoints API.
 Validate an OpenAPI Specification and create the corresponding service configuration.
 
 ```
-alias gapi-config-gen='java -jar <path to gapi-service-config-gen-with-deps-0.0.5-SNAPSHOT.jar>'
 OPENAPI_FILE=<OpenAPI Spec filename>
 JSON_FILE_NAME=<json output file name>
 BINARY_FILE_NAME=<binary output file name>
 
-gapi-config-gen \
+./run.sh \
 --openapi $OPENAPI_FILE \
 --json_out $JSON_FILE_NAME \
 --bin_out $BINARY_FILE_NAME
@@ -143,4 +115,29 @@ This will create the service configuration in different formats:
 - JSON file: $JSON_FILE_NAME
 
 Either format can be used to configure a Google Cloud Endpoints API.
+
+
+## Compile Google API Compiler
+
+Clone the _Google API Compiler_ repo
+```
+$ git clone https://github.com/googleapis/api-compiler
+```
+Update submodules
+```
+$ git submodule update --recursive --init
+```
+Build source code
+```
+$ ./gradlew buildApplication
+```
+For running tests, you need to have `protoc` in your path. If you don't
+already have protoc version 3, you can download
+it from https://github.com/google/protobuf/releases and set a symbolic link to
+the protoc.
+```
+# Example
+$ sudo ln -s  <Path to the downloaded protoc> /usr/local/bin/protoc
+```
+
 

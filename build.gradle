@@ -17,6 +17,7 @@ apply plugin: "signing"
 apply plugin: "idea"
 apply plugin: "eclipse"
 apply plugin: "com.google.protobuf"
+apply plugin: "application"
 
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
@@ -26,7 +27,7 @@ version = "0.0.5-SNAPSHOT"
 // url to the snapshot repository of a private maven repo.
 def privateSnapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
 archivesBaseName = "api-compiler"
-
+mainClassName = "com.google.api.tools.framework.tools.configgen.ServiceConfigGeneratorTool"
 
 // TODO: fix error on Travis-CI and workstations without signing config:
 //       "Cannot perform signing task ':signArchives' because it has no configured signatory"
@@ -98,6 +99,12 @@ dependencies {
     libraries.mockito,
     libraries.truth,
     libraries.jodaTime
+}
+
+run {
+  if ( project.hasProperty("appArgs") ) {
+    args Eval.me(appArgs)
+  }
 }
 
 // Test data
@@ -185,8 +192,8 @@ artifacts {
 
 // Jar with dependencies
 // ---------------------
-task buildGoogleApiConfigGen(type: Jar) {
-  baseName = googleApiConfigGenName + '-with-deps'
+task buildApplication(type: Jar) {
+  baseName = archivesBaseName + '-with-deps'
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   with jar
   manifest {
