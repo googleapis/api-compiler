@@ -36,6 +36,16 @@ Cloud Bigtable, IAM, and more.
 Google API compiler is used by other tools like [googleapis/toolkit](https://github.com/googleapis/toolkit)
 to read the users API definition and autogenerate client libraries.
 
+## Cloning Google API Compiler
+
+Clone the _Google API Compiler_ repo
+```
+$ git clone https://github.com/googleapis/api-compiler
+```
+Update submodules
+```
+$ git submodule update --recursive --init
+
 ## Creating service configuration from proto files
 
 ### Creating a proto descriptor file
@@ -119,14 +129,6 @@ Either format can be used to configure a Google Cloud Endpoints API.
 
 ## Compile Google API Compiler
 
-Clone the _Google API Compiler_ repo
-```
-$ git clone https://github.com/googleapis/api-compiler
-```
-Update submodules
-```
-$ git submodule update --recursive --init
-```
 Build source code
 ```
 $ ./gradlew buildApplication
