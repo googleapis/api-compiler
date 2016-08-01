@@ -45,6 +45,7 @@ $ git clone https://github.com/googleapis/api-compiler
 Update submodules
 ```
 $ git submodule update --recursive --init
+```
 
 ## Creating service configuration from proto files
 
