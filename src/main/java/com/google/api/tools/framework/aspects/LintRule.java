@@ -60,7 +60,7 @@ public abstract class LintRule<E extends Element> {
 
   /**
    * Runs the rule. All issues should be reported using the
-   * {@link #warning(Element, String, Object...)} method.
+   * {@link #warning(Object, String, Object...)} method.
    */
   public abstract void run(E element);
 

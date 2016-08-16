@@ -59,7 +59,7 @@ import javax.annotation.Nullable;
  *
  * <p><pre>
  *   {@literal @}snippet add(x,y)
- *      &#123@x} + &#123@y}
+ *      &#123;@x} + &#123;@y}
  *   {@literal @}end
  * </pre>
  *
@@ -74,8 +74,8 @@ import javax.annotation.Nullable;
  *
  * <p><pre>
  *   {@literal @}snippet add(x,y) auto 4
- *      &#123@x}
- *      + &#123@y}
+ *      &#123;@x}
+ *      + &#123;@y}
  *   {@literal @}end
  * </pre>
  *
@@ -101,7 +101,7 @@ import javax.annotation.Nullable;
  * <p><pre>
  *   {@literal @}snippet block(stm)
  *      {
- *        &#123@stm}
+ *        &#123;@stm}
  *      }
  *   {@literal @}end
  * </pre>
@@ -111,8 +111,8 @@ import javax.annotation.Nullable;
  *
  * <p><pre>
  *   {@literal @}snippet add(x,y) auto 4
- *      &#123@x} \
- *        + &#123@y}
+ *      &#123;@x} \
+ *        + &#123;@y}
  *   {@literal @}end
  * </pre>
  *
@@ -126,7 +126,7 @@ import javax.annotation.Nullable;
  *   # Renders an advanced math equation.
  *   {@literal @}snippet add(x,y)
  *     # This is the equation.
- *      &#123@x} + &#123@y}
+ *      &#123;@x} + &#123;@y}
  *   {@literal @}end
  * </pre>
  *
@@ -134,7 +134,7 @@ import javax.annotation.Nullable;
  *
  * <p>
  *
- * <p>A snippet expression is a text enclosed as &#123@expr}. Expressions evaluate to objects and
+ * <p>A snippet expression is a text enclosed as &#123;@expr}. Expressions evaluate to objects and
  * are finally converted to strings before inserted into the snippet output. The following
  * expression forms are supported:
  *

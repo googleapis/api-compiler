@@ -16,6 +16,7 @@
 
 package com.google.api.tools.framework.aspects.versioning.model;
 
+import com.google.api.tools.framework.model.Interface;
 import com.google.api.tools.framework.model.Method;
 import com.google.auto.value.AutoValue;
 import com.google.inject.Key;

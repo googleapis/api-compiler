@@ -49,7 +49,7 @@ import net.sf.cglib.reflect.FastMethod;
  * <p>More formally, the abstract pseudo code for the {@link #visit} method is:
  * <pre>
  *   void visit(x) {
- *     if (hasVisitsBefore(x) && !visitsBefore(x)) return;
+ *     if (hasVisitsBefore(x) &amp;&amp; !visitsBefore(x)) return;
  *     if (hasVisits(x))
  *       visits(x);
  *     else

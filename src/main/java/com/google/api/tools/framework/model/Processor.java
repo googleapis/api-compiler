@@ -42,7 +42,7 @@ public interface Processor {
    * established before this method is called via {@link Model#establishStage(Key)}. The method
    * should return true if processing successfully finished and the given {@link #establishes()} key
    * has been attached to the model. Any errors, warnings, and hints during processing should be
-   * attached to the model via {@link Model#addDiag(Diag)}.
+   * attached to the model via {@link Model#getDiagCollector}.
    */
   boolean run(Model model);
 }

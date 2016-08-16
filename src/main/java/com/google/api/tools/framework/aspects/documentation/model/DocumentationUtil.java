@@ -236,7 +236,7 @@ public class DocumentationUtil {
    *   will be returned as
    *   "Foo
    *   Foo"
-   * <pre>
+   * </pre>
    *
    * <li> If visibility label "(--LABEL: ... --) is specified, the comments will be kept if the
    * label is found in the provided visibility labels. If no label was specified, the comments will

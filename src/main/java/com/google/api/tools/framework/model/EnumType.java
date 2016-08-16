@@ -105,7 +105,7 @@ public class EnumType extends ProtoElement {
   }
 
   /**
-   * Returns the enum values, {@link ProtoElement#isIncludedInService} of which is true.
+   * Returns the enum values for which {@link ProtoElement#isReachable} is true.
    */
   public Iterable<EnumValue> getReachableValues() {
       return getModel().reachable(values);

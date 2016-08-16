@@ -51,7 +51,8 @@ import java.util.regex.Pattern;
  * and IDL are combined and validated.
  *
  * <p>The merger also derives interpreted values from the configuration, for example, the
- * {@link HttpMethodConfig}, and reports consistency errors encountered during interpretation.
+ * {@link com.google.api.tools.framework.aspects.http.HttpConfigAspect},
+ * and reports consistency errors encountered during interpretation.
  */
 public class Merger implements Processor {
 
