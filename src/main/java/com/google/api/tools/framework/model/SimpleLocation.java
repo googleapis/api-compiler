@@ -47,22 +47,43 @@ public class SimpleLocation implements Location {
         return String.format("%s:%d:%d", element.getFile().getLocation().getDisplayString(),
             location.getSpan(0) + 1, location.getSpan(1) + 1);
       }
+      @Override
+      public String getContainerName() {
+        return element.getFile().getLocation().getDisplayString();
+      }
     };
   }
 
   private final String displayString;
+  private final String containerName;
 
   /**
-   * Creates a simple location.
+   * Creates a simple location with just the display string. {@link SimpleLocation#containerName}
+   * is set to displayString.
    */
   public SimpleLocation(String displayString) {
     super();
     this.displayString = Preconditions.checkNotNull(displayString);
+    this.containerName = displayString;
+  }
+
+  /**
+   * Creates a simple location with display string and the container name.
+   */
+  public SimpleLocation(String displayString, String containerName) {
+    super();
+    this.displayString = Preconditions.checkNotNull(displayString);
+    this.containerName = Preconditions.checkNotNull(containerName);
   }
 
   @Override
   public String getDisplayString() {
     return displayString;
+  }
+
+  @Override
+  public String getContainerName() {
+    return containerName;
   }
 
   @Override

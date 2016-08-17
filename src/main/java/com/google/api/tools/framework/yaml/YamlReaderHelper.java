@@ -30,24 +30,24 @@ import org.yaml.snakeyaml.nodes.Node;
  * Configuration objects used during YamlParsing w/ convenience methods for common operations
  */
 final class YamlReaderHelper {
-  
+
   private final DiagCollector diag;
-  private final String inputName;
+  private final String fileName;
   private final Set<String> traversedPaths = new HashSet<>();
-  
-  public YamlReaderHelper(DiagCollector diag, String inputName){
+
+  public YamlReaderHelper(DiagCollector diag, String fileName){
     this.diag = diag;
-    this.inputName = inputName;
+    this.fileName = fileName;
   }
-  
+
   public DiagCollector getDiag(){
     return diag;
   }
-  
+
   public String getInputName(){
-    return inputName;
+    return fileName;
   }
-    
+
   public boolean checkAndAddPath(String path, Node value, FieldDescriptor field){
     if (!traversedPaths.add(path)) {
       error(value, "Node '%s' is already defined in this yaml file. Multiple definitions "
@@ -56,19 +56,19 @@ final class YamlReaderHelper {
     }
     return true;
   }
-  
+
   public void warning(Node node, String message, Object... params) {
     diag.addDiag(Diag.warning(getLocation(node), message, params));
   }
-  
+
   public void error(Location location, String message, Object...params) {
     diag.addDiag(Diag.error(location, message, params));
   }
-  
+
   public void error(Mark mark, String message, Object... params) {
     error(getLocation(mark), message, params);
   }
-  
+
   public void error(Node node, String message, Object... params) {
     error(getLocation(node.getStartMark()), message, params);
   }
@@ -78,6 +78,6 @@ final class YamlReaderHelper {
   }
 
   private Location getLocation(Mark mark) {
-    return new SimpleLocation(String.format("%s:%s", inputName, mark.getLine() + 1));
+    return new SimpleLocation(String.format("%s:%s", fileName, mark.getLine() + 1), fileName);
   }
 }

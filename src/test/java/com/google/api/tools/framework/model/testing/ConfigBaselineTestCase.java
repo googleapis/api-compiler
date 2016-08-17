@@ -33,6 +33,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -119,7 +120,13 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
    * base name (i.e. baseName.proto or baseName.yaml), constructs model, and calls {@link #run()}.
    * Post that, prints diags and the result of the run to the baseline.
    */
-  protected void test(TestModelGenerator testModelGenerator, String... baseNames) throws Exception {
+  protected void test(
+      TestModelGenerator testModelGenerator, String... baseNames) throws Exception {
+    test(testModelGenerator, Arrays.asList(baseNames));
+  }
+  protected void test(
+      TestModelGenerator testModelGenerator, Iterable<String> baseNames) throws Exception {
+    String firstBaseName = baseNames.iterator().next();
     ModelTestInfo modelTestInfo = testModelGenerator.buildModel(baseNames);
     this.model = modelTestInfo.getModel();
     this.testConfig = modelTestInfo.getTestConfig();

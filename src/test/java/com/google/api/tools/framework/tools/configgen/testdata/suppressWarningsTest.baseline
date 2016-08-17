@@ -1,4 +1,3 @@
-WARNING: toplevel: The api_service name {} does not match the base service name {test} of {test.googleapis.com}.
 ============== file: normalized config without derived data ==============
 name: "test.googleapis.com"
 title: "test"

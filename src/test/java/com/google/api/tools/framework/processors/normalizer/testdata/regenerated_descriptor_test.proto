@@ -11,7 +11,7 @@ message OuterMessage {
 
   // Test field options
   optional string string1 = 1 [ctype = CORD];
-  optional string string2 = 2 [jtype = BYTES];
+  optional string string2 = 2;
   optional int64 int64 = 3 [jstype = JS_NUMBER];
   optional InnerEnum inner_enum = 4 [json_name = "inner"];
   optional OuterEnum outer_enum = 5 [default = VALUE3];

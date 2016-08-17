@@ -115,6 +115,14 @@ public abstract class ScoperImpl implements Scoper {
     return this;
   }
 
+  private Set<String> getValidVisibilityLabels(Set<Set<String>> declaredVisibilityCombinations) {
+    Set<String> validVisibilityLabels = Sets.newLinkedHashSet();
+    for (Set<String> validVisibilityLabelSet : declaredVisibilityCombinations) {
+      validVisibilityLabels.addAll(validVisibilityLabelSet);
+    }
+    return validVisibilityLabels;
+  }
+
   @Override
   public Scoper restrict(final Predicate<ProtoElement> predicate, String errorContext) {
     final ScoperImpl that = this;

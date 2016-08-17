@@ -475,6 +475,21 @@ types {
     name: "other_shelf_name"
     json_name: "otherShelfName"
   }
+  fields {
+    kind: TYPE_INT32
+    cardinality: CARDINALITY_REPEATED
+    number: 4
+    name: "default_packed"
+    packed: true
+    json_name: "defaultPacked"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_REPEATED
+    number: 5
+    name: "not_default_packed"
+    json_name: "notDefaultPacked"
+  }
   source_context {
     file_name: "library_config_version_2.proto"
   }

@@ -18,7 +18,10 @@ package com.google.api.tools.framework.model;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Syntax;
+
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -89,6 +92,11 @@ public abstract class ProtoElement extends Element {
     // Don't need to care about root case as that overrides.
     return parent.getFile();
   }
+
+  /**
+   * Return this element's options from the proto.
+   */
+  public abstract Map<FieldDescriptor, Object> getOptionFields();
 
   /**
    * Deliver the location of this protocol element.

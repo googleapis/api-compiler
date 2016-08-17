@@ -35,8 +35,8 @@ import com.google.protobuf.Enum;
 import com.google.protobuf.Field.Cardinality;
 import com.google.protobuf.Field.Kind;
 import com.google.protobuf.SourceContext;
+import com.google.protobuf.Syntax;
 import com.google.protobuf.Type;
-
 import java.util.List;
 
 /**
@@ -91,7 +91,7 @@ class DescriptorNormalizer extends Visitor {
       coreMethodBuilder.setRequestStreaming(method.getRequestStreaming());
       coreMethodBuilder.setResponseStreaming(method.getResponseStreaming());
       coreMethodBuilder.addAllOptions(DescriptorNormalization.getMethodOptions(
-          method.getDescriptor().getOptions(),
+          method.getOptionFields(),
           false,
           includeDefaults));
       coreApiBuilder.addMethods(coreMethodBuilder);
@@ -131,6 +131,8 @@ class DescriptorNormalizer extends Visitor {
       }
       if (proto.getOptions().hasPacked()) {
         coreFieldBuilder.setPacked(proto.getOptions().getPacked());
+      } else if (isDefaultPackedEncoding(field)) {
+        coreFieldBuilder.setPacked(true);
       }
       if (proto.hasDefaultValue()) {
         coreFieldBuilder.setDefaultValue(proto.getDefaultValue());
@@ -144,6 +146,20 @@ class DescriptorNormalizer extends Visitor {
         includeDefaults));
     coreTypeBuilder.addAllOneofs(DescriptorNormalization.getOneofs(message.getProto()));
     types.add(coreTypeBuilder.build());
+  }
+
+  /** In proto3, repeated fields of scalar numeric types use packed encoding by default */
+  private boolean isDefaultPackedEncoding(Field field) {
+    if (field.getSyntax() == Syntax.SYNTAX_PROTO3 && field.isRepeated()) {
+      FieldDescriptorProto.Type fieldType = field.getProto().getType();
+      if (fieldType != FieldDescriptorProto.Type.TYPE_GROUP
+          && fieldType != FieldDescriptorProto.Type.TYPE_BYTES
+          && fieldType != FieldDescriptorProto.Type.TYPE_STRING
+          && fieldType != FieldDescriptorProto.Type.TYPE_MESSAGE) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @VisitsBefore void normalize(EnumType enumType) {

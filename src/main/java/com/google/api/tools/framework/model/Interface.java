@@ -24,8 +24,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Api;
 import com.google.protobuf.DescriptorProtos.MethodDescriptorProto;
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -80,6 +82,10 @@ public class Interface extends ProtoElement {
    */
   public ServiceDescriptorProto getProto() {
     return proto;
+  }
+
+  @Override public Map<FieldDescriptor, Object> getOptionFields() {
+    return proto.getOptions().getAllFields();
   }
 
   /**

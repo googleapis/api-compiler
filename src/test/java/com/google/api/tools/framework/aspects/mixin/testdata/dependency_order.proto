@@ -1,0 +1,27 @@
+syntax = "proto3";
+package mixin.v2;
+
+import "google/api/annotations.proto";
+
+// M
+message M {
+// name
+  string name = 1;
+}
+
+// MixinConsumer
+service MixinConsumer {
+  // (-- see Meta.GetAcl --)
+  rpc GetAcl (M) returns (M);
+  // (-- Silent the linter --)
+  rpc GetBanana(M) returns (M);
+}
+
+// Meta
+service Meta1 {
+  // Get the ACL Meta1.
+  rpc GetAcl (M) returns (M);
+  // Get the Banana Meta1.
+  rpc GetBanana (M) returns (M) {
+  }
+}

@@ -1,0 +1,34 @@
+WARNING: http: POST/PATCH/PUT method for 'mixin.v2.MixinConsumer.GetObject' should specify a body.
+WARNING: (lint) documentation-presence: 'message meta.v1.M' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'string meta.v1.M.name' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'message mixin.v2.M' has no documentation, neither in IDL nor config.
+WARNING: (lint) documentation-presence: 'api mixin.v2.MixinConsumer' has no documentation, neither in IDL nor config.
+documentation {
+  rules {
+    selector: "mixin.v2.MixinConsumer.GetAcl"
+    description: "Get the ACL."
+  }
+  rules {
+    selector: "mixin.v2.MixinConsumer.GetBanana"
+    description: "Special version of the Meta.GetBanana method, returns an apple instead."
+  }
+  rules {
+    selector: "mixin.v2.MixinConsumer.GetObject"
+    description: "Get an object."
+  }
+}
+http {
+  rules {
+    selector: "mixin.v2.MixinConsumer.GetAcl"
+    get: "/v2/acls/{name=**}:getAcl"
+  }
+  rules {
+    selector: "mixin.v2.MixinConsumer.GetBanana"
+    get: "/v2/{name=**}:getApple"
+  }
+  rules {
+    selector: "mixin.v2.MixinConsumer.GetObject"
+    post: "/v2:getObject"
+  }
+}
+

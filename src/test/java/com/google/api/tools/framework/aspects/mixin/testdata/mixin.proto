@@ -1,0 +1,21 @@
+syntax = "proto3";
+package mixin.v2;
+
+import "google/api/annotations.proto";
+import "meta.proto";
+message M {}
+
+service MixinConsumer {
+  // (-- see Meta.GetAcl --)
+  rpc GetAcl (meta.v1.M) returns (meta.v1.M);
+
+  // Special version of the Meta.GetBanana method, returns an apple instead.
+  rpc GetBanana(meta.v1.M) returns (meta.v1.M) {
+    option (google.api.http).get = "/v2/{name=**}:getApple";
+  }
+
+  // Get an object.
+  rpc GetObject (M) returns (M) {
+    option (google.api.http).post = "/v2:getObject";
+  }
+}

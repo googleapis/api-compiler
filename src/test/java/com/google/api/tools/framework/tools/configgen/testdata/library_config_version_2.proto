@@ -140,7 +140,7 @@ message CreateShelfRequest {
 // Request message for LibraryService.GetShelf.
 message GetShelfRequest {
   // The name of the shelf to retrieve.
-  string name = 1;
+  string name = 1 ;
 }
 
 // Request message for LibraryService.ListShelves.
@@ -252,4 +252,6 @@ message MoveBookRequest {
 
   // The name of the destination shelf.
   string other_shelf_name = 2;
+  repeated int32 default_packed = 4;
+  repeated string not_default_packed = 5;
 }

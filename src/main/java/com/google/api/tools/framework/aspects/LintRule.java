@@ -18,7 +18,6 @@ package com.google.api.tools.framework.aspects;
 
 import com.google.api.tools.framework.model.Element;
 import com.google.api.tools.framework.model.Location;
-import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.Message;
 
@@ -73,9 +72,16 @@ public abstract class LintRule<E extends Element> {
 
   /**
    * Returns the service config file location of the given named field in the (sub)message.
-   * Returns {@link SimpleLocation#TOPLEVEL} if the location is not known.
    */
   public Location getLocationInConfig(Message message, String fieldName) {
     return aspect.getLocationInConfig(message, fieldName);
+  }
+
+  /**
+   * Returns the service config file location of the given field number in the (sub)message.
+   */
+  public Location getLocationInConfig(Message message, int fieldNumber) {
+    return aspect.getLocationInConfig(
+        message, message.getDescriptorForType().findFieldByNumber(fieldNumber).getName());
   }
 }

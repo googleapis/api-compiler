@@ -4,7 +4,7 @@ package protiary.test.json_name_ok;
 
 message In {
   required string J = 1;
-  required string J2 = 2 [ json_name = "JJJJ" ];
+  required string J2 = 2 [ json_name = "J2_JSON_NAME" ];
 }
 
 message Out {

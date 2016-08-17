@@ -1,0 +1,24 @@
+syntax = "proto3";
+package protiary.test;
+
+
+message Request {
+  Nested nested = 1;
+}
+
+message Nested {
+  Inner inside = 1;
+}
+
+message Inner {
+  string foo = 1;
+}
+
+message Response {
+  string bar = 1;
+}
+
+service TestService {
+  // 1
+  rpc Call1 (Request) returns (Response);
+}

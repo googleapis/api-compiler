@@ -31,13 +31,11 @@ import com.google.common.collect.Sets;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import javax.annotation.Nullable;
 
 /**
@@ -63,7 +61,7 @@ public class ConfigRuleSet<RuleType extends Message> {
   private static final Pattern SELECTOR_PATTERN =
       Pattern.compile("^(\\w+(\\.\\w+)*((\\.\\*)|(\\.\\(\\w+(\\.\\w+)*\\)))?)|\\*$");
 
-  private final List<Rule<RuleType>> rules;
+  private final List<RuleWrapper<RuleType>> rules;
   private final Model model;
   private final FieldDescriptor selectorFieldDesc;
   private final Map<ProtoElement, RuleType> ruleMap = Maps.newHashMap();
@@ -71,7 +69,7 @@ public class ConfigRuleSet<RuleType extends Message> {
   /**
    * Mapping from rule to unmatched selectors.
    */
-  private final Map<Rule<RuleType>, Set<String>> unmatchedRules = Maps.newLinkedHashMap();
+  private final Map<RuleWrapper<RuleType>, Set<String>> unmatchedRules = Maps.newLinkedHashMap();
 
   public ConfigRuleSet(Descriptor ruleDescriptor, List<RuleType> rules, Model model) {
     Preconditions.checkNotNull(ruleDescriptor);
@@ -88,8 +86,8 @@ public class ConfigRuleSet<RuleType extends Message> {
 
     this.rules = minimize(buildRules(rules));
 
-    for (Rule<RuleType> rule : this.rules) {
-      unmatchedRules.put(rule, Sets.newHashSet(rule.selectors));
+    for (RuleWrapper<RuleType> ruleWrapper : this.rules) {
+      unmatchedRules.put(ruleWrapper, Sets.newHashSet(ruleWrapper.selectors));
     }
   }
 
@@ -101,12 +99,12 @@ public class ConfigRuleSet<RuleType extends Message> {
   }
 
   /**
-   * Build {@link Rule} instances from given rules.
+   * Build {@link RuleWrapper} instances from given rules.
    */
-  private List<Rule<RuleType>> buildRules(List<RuleType> rules) {
-    ImmutableList.Builder<Rule<RuleType>> flattened = ImmutableList.builder();
+  private List<RuleWrapper<RuleType>> buildRules(List<RuleType> rules) {
+    ImmutableList.Builder<RuleWrapper<RuleType>> flattened = ImmutableList.builder();
     for (RuleType rule : rules) {
-      flattened.add(new Rule<RuleType>(rule));
+      flattened.add(new RuleWrapper<RuleType>(rule));
     }
     return flattened.build();
   }
@@ -124,12 +122,15 @@ public class ConfigRuleSet<RuleType extends Message> {
    */
   public void reportBadSelectors(DiagCollector collector,
       ConfigLocationResolver configLocationResolver, String category, String messagePrefix) {
-    for (Rule<RuleType> rule : rules) {
-      for (String selector : rule.selectors) {
+    for (RuleWrapper<RuleType> ruleWrapper : rules) {
+      for (String selector : ruleWrapper.selectors) {
         if (!SELECTOR_PATTERN.matcher(selector).matches()) {
-          collector.addDiag(getBadSelectorErrorDiag(
-              configLocationResolver.getLocationInConfig(rule.rule, "selector"), category,
-              messagePrefix, selector));
+          collector.addDiag(
+              getBadSelectorErrorDiag(
+                  configLocationResolver.getLocationInConfig(ruleWrapper.rule, SELECTOR_FIELD_NAME),
+                  category,
+                  messagePrefix,
+                  selector));
         }
       }
     }
@@ -147,13 +148,13 @@ public class ConfigRuleSet<RuleType extends Message> {
    * Minimize a rule set, removing selectors that are subsumed by selectors of subsequent rules.
    * Rules will be removed if all selectors have been subsumed subsequent rules.
    */
-  private List<Rule<RuleType>> minimize(List<Rule<RuleType>> rules) {
-    ImmutableList.Builder<Rule<RuleType>> minimized = ImmutableList.builder();
+  private List<RuleWrapper<RuleType>> minimize(List<RuleWrapper<RuleType>> rules) {
+    ImmutableList.Builder<RuleWrapper<RuleType>> minimized = ImmutableList.builder();
     for (int i = 0; i < rules.size(); i++) {
-      Rule<RuleType> rule = rules.get(i);
-      rule.minimizeSelectors(rules, i + 1);
-      if (!rule.selectors.isEmpty()) {
-        minimized.add(rule);
+      RuleWrapper<RuleType> ruleWrapper = rules.get(i);
+      ruleWrapper.minimizeSelectors(rules, i + 1);
+      if (!ruleWrapper.selectors.isEmpty()) {
+        minimized.add(ruleWrapper);
       }
     }
     return minimized.build();
@@ -170,18 +171,18 @@ public class ConfigRuleSet<RuleType extends Message> {
     }
 
     for (int i = rules.size() - 1; i >= 0; i--) {
-      Rule<RuleType> rule = rules.get(i);
-      String matchedSelector = rule.getMatchedSelector(elem);
+      RuleWrapper<RuleType> ruleWrapper = rules.get(i);
+      String matchedSelector = ruleWrapper.getMatchedSelector(elem);
       if (matchedSelector != null) {
-        ruleMap.put(elem, rule.rule);
-        if (unmatchedRules.containsKey(rule)) {
-          Set<String> unmatchedSelectors = unmatchedRules.get(rule);
+        ruleMap.put(elem, ruleWrapper.rule);
+        if (unmatchedRules.containsKey(ruleWrapper)) {
+          Set<String> unmatchedSelectors = unmatchedRules.get(ruleWrapper);
           unmatchedSelectors.remove(matchedSelector);
           if (unmatchedSelectors.isEmpty()) {
-            unmatchedRules.remove(rule);
+            unmatchedRules.remove(ruleWrapper);
           }
         }
-        return rule.rule;
+        return ruleWrapper.rule;
       }
     }
     return null;
@@ -192,17 +193,20 @@ public class ConfigRuleSet<RuleType extends Message> {
    */
   public void reportUnmatchedRules(
       DiagCollector collector, ConfigLocationResolver configLocationResolver, String category) {
-    for (Map.Entry<Rule<RuleType>, Set<String>> unmatched : unmatchedRules.entrySet()) {
+    for (Map.Entry<RuleWrapper<RuleType>, Set<String>> unmatched : unmatchedRules.entrySet()) {
       Set<String> selectors = unmatched.getValue();
       selectors.remove("*");
       // For rules which are not general default, report a warning.
       if (!selectors.isEmpty()) {
         String unmatchedSelectors = SELECTOR_JOINER.join(unmatched.getValue());
-        collector.addDiag(Diag.warning(
-            configLocationResolver.getLocationInConfig(unmatched.getKey().rule, "selector"),
-            "%s rule has selector(s) '%s' that do not match and are not "
-            + "shadowed by other rules.",
-            category, unmatchedSelectors));
+        collector.addDiag(
+            Diag.warning(
+                configLocationResolver.getLocationInConfig(
+                    unmatched.getKey().rule, SELECTOR_FIELD_NAME),
+                "%s rule has selector(s) '%s' that do not match and are not "
+                    + "shadowed by other rules.",
+                category,
+                unmatchedSelectors));
       }
     }
   }
@@ -211,13 +215,13 @@ public class ConfigRuleSet<RuleType extends Message> {
    * Represent Rule which keeps RuleType with comma delimited selectors Flattened into
    * {@link Iterable} of selectors.
    */
-  private class Rule<RuleType extends Message> {
+  private class RuleWrapper<RuleType extends Message> {
     private final Splitter selectorSplitter = Splitter.on(',').trimResults();
     private final RuleType rule;
     private final Set<String> selectors;
     private final FieldDescriptor selectorField;
 
-    private Rule(RuleType rule) {
+    private RuleWrapper(RuleType rule) {
       this.rule = rule;
       selectorField = rule.getDescriptorForType().findFieldByNumber(SELECTOR_FIELD_NUM);
       List<String> subSelectors = selectorSplitter.splitToList(getUnflattenedSelector());
@@ -263,19 +267,44 @@ public class ConfigRuleSet<RuleType extends Message> {
       return name.equals(selector);
     }
 
-    /**
-     * Remove selectors if they are subsumed by any selectors of given rule list.
-     */
-    private void minimizeSelectors(List<Rule<RuleType>> rules, int startIndex) {
-      for (Iterator<String> iter = selectors.iterator(); iter.hasNext();) {
+    /** Remove selectors if they are subsumed by any selectors of given rule list. */
+    private void minimizeSelectors(List<RuleWrapper<RuleType>> rules, int startIndex) {
+      Location toBeMatchedRuleLocation = model.getLocationInConfig(rule, SELECTOR_FIELD_NAME);
+      for (Iterator<String> iter = selectors.iterator(); iter.hasNext(); ) {
         String selector = iter.next();
         for (int i = startIndex; i < rules.size(); i++) {
-          if (isSubsumed(selector, rules.get(i).selectors)) {
+          RuleWrapper<RuleType> ruleWrapper = rules.get(i);
+          if (isSubsumed(selector, ruleWrapper.selectors)) {
+            Location matchingRuleLocation =
+                model.getLocationInConfig(ruleWrapper.rule, SELECTOR_FIELD_NAME);
+            if (!maintainSelectorMinimizationBugExperimentEnabled()
+                && isSameYamlFile(matchingRuleLocation, toBeMatchedRuleLocation)) {
+              model
+                  .getDiagCollector()
+                  .addDiag(
+                      Diag.error(
+                          matchingRuleLocation,
+                          "Selector '%s' at location %s subsumes selector '%s' at location %s. "
+                              + "Subsuming selectors in the same file is not supported.",
+                          ruleWrapper.getUnflattenedSelector(),
+                          matchingRuleLocation.getDisplayString(),
+                          selector,
+                          toBeMatchedRuleLocation.getDisplayString()));
+            }
             iter.remove();
             break;
           }
         }
       }
+    }
+
+    private boolean isSameYamlFile(Location location1, Location location2) {
+      // TODO(user): Currently just restrict this to YAML files since selectors auto-generated
+      // from protos (having location as TOPLEVEL) can cause this check to be always true.
+      return location1 != null
+          && location2 != null
+          && location1.getContainerName().toLowerCase().endsWith(".yaml")
+          && location1.getContainerName().equalsIgnoreCase(location2.getContainerName());
     }
 
     /**
@@ -316,4 +345,3 @@ public class ConfigRuleSet<RuleType extends Message> {
     }
   }
 }
-

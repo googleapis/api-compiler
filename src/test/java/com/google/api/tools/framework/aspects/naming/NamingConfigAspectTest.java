@@ -17,7 +17,6 @@
 package com.google.api.tools.framework.aspects.naming;
 
 import com.google.api.tools.framework.aspects.ConfigAspectBaselineTestCase;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -34,6 +33,7 @@ public class NamingConfigAspectTest extends ConfigAspectBaselineTestCase {
   }
 
   @Test public void naming() throws Exception {
+    showDiagLocation = true;
     test("naming");
   }
 }

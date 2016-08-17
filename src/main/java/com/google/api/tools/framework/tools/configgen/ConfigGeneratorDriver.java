@@ -21,12 +21,15 @@ import com.google.api.tools.framework.importers.swagger.SwaggerImportTool;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.tools.ToolOptions;
 import com.google.api.tools.framework.tools.ToolOptions.Option;
+import com.google.api.tools.framework.tools.ToolProtoUtil;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
@@ -38,6 +41,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -179,9 +183,8 @@ public class ConfigGeneratorDriver {
     if (!Strings.isNullOrEmpty(options.get(JSON_OUT))) {
       File outFileJsonServiceConfig = new File(options.get(JSON_OUT));
       TypeRegistry registry =
-          TypeRegistry.newBuilder()
+          addPlatformExtensions(TypeRegistry.newBuilder())
               .add(Service.getDescriptor())
-              .add(com.google.api.HttpRule.getDescriptor())
               .add(com.google.protobuf.BoolValue.getDescriptor())
               .add(com.google.protobuf.BytesValue.getDescriptor())
               .add(com.google.protobuf.DoubleValue.getDescriptor())
@@ -197,6 +200,30 @@ public class ConfigGeneratorDriver {
       jsonPrinter.appendTo(serviceConfig, jsonPrintWriter);
       jsonPrintWriter.close();
     }
+  }
+
+  private static final Set<String> EXTENDED_ELEMENTS =
+      ImmutableSet.of(
+          "proto2.FileOptions",
+          "proto2.ServiceOptions",
+          "proto2.MethodOptions",
+          "proto2.MessageOptions",
+          "proto2.EnumOptions",
+          "proto2.EnumValueOptions",
+          "proto2.FieldOptions");
+
+  private TypeRegistry.Builder addPlatformExtensions(TypeRegistry.Builder registryBuilder) {
+    ExtensionRegistry extensions = ToolProtoUtil.getStandardPlatformExtensions();
+    for (String extendedType : EXTENDED_ELEMENTS) {
+      for (ExtensionRegistry.ExtensionInfo info :
+          extensions.getAllImmutableExtensionsByExtendedType(extendedType)) {
+
+        if (null != info.defaultInstance) {
+          registryBuilder.add(info.defaultInstance.getDescriptorForType());
+        }
+      }
+    }
+    return registryBuilder;
   }
 
   private boolean hasProtoDescriptorInput() {

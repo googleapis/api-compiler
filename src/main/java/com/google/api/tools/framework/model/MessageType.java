@@ -27,9 +27,10 @@ import com.google.common.collect.Sets;
 import com.google.protobuf.DescriptorProtos.DescriptorProto;
 import com.google.protobuf.DescriptorProtos.FieldDescriptorProto;
 import com.google.protobuf.DescriptorProtos.OneofDescriptorProto;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -91,7 +92,7 @@ public class MessageType extends ProtoContainerElement {
         associatedOneof.fields.add(field);
       }
     }
-    for (Entry<String, Extension> entry :
+    for (Map.Entry<String, Extension> entry :
         extensionPool.getSortedExtensionsByTypeName(getFullName())) {
       fieldsBuilder.add(Field.createAsExtension(
           this, entry.getValue(), entry.getValue().getPath(), entry.getKey()));
@@ -120,6 +121,10 @@ public class MessageType extends ProtoContainerElement {
    */
   public DescriptorProto getProto() {
     return proto;
+  }
+
+  @Override public Map<FieldDescriptor, Object> getOptionFields() {
+    return proto.getOptions().getAllFields();
   }
 
   /**

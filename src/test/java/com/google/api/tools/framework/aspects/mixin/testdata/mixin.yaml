@@ -1,0 +1,9 @@
+type: google.api.Service
+config_version: 2
+name: mixin.googleapis.com
+apis:
+- name: mixin.v2.MixinConsumer
+  mixins:
+  - name: meta.v1.Meta
+    root: acls
+

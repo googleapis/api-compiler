@@ -19,6 +19,9 @@ package com.google.api.tools.framework.model;
 import com.google.api.tools.framework.model.stages.Requires;
 import com.google.api.tools.framework.model.stages.Resolved;
 import com.google.protobuf.DescriptorProtos.EnumValueDescriptorProto;
+import com.google.protobuf.Descriptors.FieldDescriptor;
+
+import java.util.Map;
 
 /**
  * Represents an enum value.
@@ -61,6 +64,10 @@ public class EnumValue extends ProtoElement {
    */
   public EnumValueDescriptorProto getProto() {
     return proto;
+  }
+
+  @Override public Map<FieldDescriptor, Object> getOptionFields() {
+    return proto.getOptions().getAllFields();
   }
 
   /**

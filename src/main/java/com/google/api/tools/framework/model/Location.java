@@ -20,13 +20,15 @@ package com.google.api.tools.framework.model;
  * An abstraction of a source location.
  */
 public interface Location {
-
-  // TODO(user): determine whether we want to provide structure here.
-
   /**
    * Get the location as a string readable to users and interpretable by IDEs. The actual
    * semantics depends on the underlying source type. This may or not be the same as
    * toString().
    */
   String getDisplayString();
+
+  /**
+   * Get the name of the containing entity of this location, in most cases its a file name.
+   */
+  String getContainerName();
 }

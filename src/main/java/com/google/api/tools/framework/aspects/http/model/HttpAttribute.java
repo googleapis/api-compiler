@@ -159,7 +159,7 @@ public class HttpAttribute {
     }
 
     public String getFieldPath() {
-      return fieldPath;
+      return null == selector ? fieldPath : selector.toString();
     }
 
     public ImmutableList<PathSegment> getSubPath() {
@@ -184,8 +184,8 @@ public class HttpAttribute {
     public String syntax() {
       StringBuilder result = new StringBuilder();
       result.append('{');
-      result.append(fieldPath);
-      if (subPath != null) {
+      result.append(getFieldPath());
+      if (!subPath.isEmpty()) {
         result.append('=');
         result.append(PathSegment.toSyntax(subPath, false));
       }
@@ -194,7 +194,7 @@ public class HttpAttribute {
     }
   }
 
-  private final HttpRule rule;
+  private HttpRule currentRule;
   private final MethodKind methodKind;
   private final MessageType message;
   private final ImmutableList<PathSegment> path;
@@ -214,7 +214,7 @@ public class HttpAttribute {
       ImmutableList<PathSegment> path, String body, boolean isFromIdl,
       ImmutableList<HttpAttribute> additionalBindings, boolean isPrimary) {
 
-    this.rule = Preconditions.checkNotNull(rule);
+    this.currentRule = Preconditions.checkNotNull(rule);
     this.methodKind = Preconditions.checkNotNull(methodKind);
     this.message = Preconditions.checkNotNull(message);
     this.path = Preconditions.checkNotNull(path);
@@ -303,9 +303,9 @@ public class HttpAttribute {
     changedPath.addAll(path.subList(1, path.size()));
 
     // Change rule.
-    HttpRule.Builder changedRule = rule.toBuilder();
+    HttpRule.Builder changedRule = currentRule.toBuilder();
     String changedPathPattern = PathSegment.toSyntax(changedPath.build());
-    switch (rule.getPatternCase()) {
+    switch (currentRule.getPatternCase()) {
       case GET:
         changedRule.setGet(changedPathPattern);
         break;
@@ -322,6 +322,7 @@ public class HttpAttribute {
         changedRule.setDelete(changedPathPattern);
         break;
       default:
+        // TODO Shouldn't this have a case for CUSTOM?  How is this reroot() used?
         break;
     }
 
@@ -358,7 +359,7 @@ public class HttpAttribute {
    * Gets the underlying http rule.
    */
   public HttpRule getHttpRule() {
-    return rule;
+    return currentRule;
   }
 
   /**

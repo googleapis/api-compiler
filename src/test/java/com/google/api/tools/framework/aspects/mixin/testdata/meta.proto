@@ -1,0 +1,20 @@
+syntax = "proto3";
+package meta.v1;
+
+import "google/api/annotations.proto";
+
+message M {
+  string name = 1;
+}
+
+service Meta {
+  // Get the ACL.
+  rpc GetAcl (M) returns (M) {
+    option (google.api.http).get = "/v1/{name=**}:getAcl";
+  }
+
+   // Get the Banana.
+  rpc GetBanana (M) returns (M) {
+    option (google.api.http).get = "/v1/{name=**}:getBanana";
+  }
+}

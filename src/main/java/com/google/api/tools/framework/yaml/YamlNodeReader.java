@@ -120,7 +120,6 @@ class YamlNodeReader {
   private void handleMessageField(ConfigSource.Builder builder, FieldDescriptor field, Node value,
       String path){
     if (field.isMapField()) {
-
       MappingNode map = NodeConverterUtils.expectMap(helper, field, value);
       FieldDescriptor keyField = field.getMessageType().getFields().get(0);
       FieldDescriptor valueField = field.getMessageType().getFields().get(1);
@@ -154,6 +153,19 @@ class YamlNodeReader {
     } else {
       builder.withBuilder(field, new ReadNodeBuildAction(helper, value, path));
     }
+    addExplicitLocationField(builder, field, value);
+  }
+
+  /** This is mainly to add location for container fields like repeated or message fields. */
+  private void addExplicitLocationField(
+      ConfigSource.Builder builder, FieldDescriptor field, Node value) {
+    // This allows us to do get location of repeated/message field inside service config. Example:
+    //   name: "test.googleapis.com"
+    //   discovery:
+    //     public_discovery: true
+    // Without this code, we will only be able to get location of primitive types inside a message
+    // type and we won't be able to do something like: getLocation(serviceObject, "discovery")
+    builder.addLocation(field, null, helper.getLocation(value));
   }
 
   private void handleNonMessageField(ConfigSource.Builder builder, FieldDescriptor field,
@@ -166,6 +178,7 @@ class YamlNodeReader {
           builder.addValue(field, protoValue, helper.getLocation(elem));
         }
       }
+      addExplicitLocationField(builder, field, value);
     } else {
       Object protoValue = NodeConverterUtils.convert(helper, field, value);
       if (protoValue != null) {
@@ -177,5 +190,5 @@ class YamlNodeReader {
   private static String appendToPath(String path, Object element) {
     return path + PATH_SEPARATOR + element;
   }
-  
+
 }

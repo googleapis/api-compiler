@@ -1,0 +1,31 @@
+syntax = "proto3";
+package protiary.test.httpwarnings.v1;
+
+import "google/api/annotations.proto";
+
+message M {
+  string name = 1;
+  string value = 2;
+}
+
+service TestService {
+  // Silence proto warning
+  rpc Call1(M) returns (M) {
+    option (google.api.http) = {
+      get: "/notAVersion/call1";
+    };
+  };
+
+  // Be quiet!
+  rpc Call2(M) returns (M);
+
+  // Silence proto warning
+  rpc Call3(M) returns (M) {
+    option (google.api.http) = {
+      get: "/v99/call3";
+    };
+  };
+
+  // Quiet the warnings!
+  rpc Call4(M) returns (M);
+}

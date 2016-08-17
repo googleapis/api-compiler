@@ -1,8 +1,8 @@
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.json_name_ok.TestService.Call1' should specify a body.
 http {
   rules {
     selector: "protiary.test.json_name_ok.TestService.Call1"
-    post: "/v1/test/{JJJJ}"
+    post: "/v1/test/{J2}"
+    body: "*"
   }
 }
 

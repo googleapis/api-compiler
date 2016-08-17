@@ -102,13 +102,13 @@ public class HttpTemplateParserTest {
     SimpleDiagCollector diag = new SimpleDiagCollector();
     new HttpTemplateParser(diag, TEST_LOCATION, path, configVersion).parse();
 
-    List<Diag> expectedDiagErros = FluentIterable.from(Arrays.asList(expectedErrors))
+    List<Diag> expectedDiagErrors = FluentIterable.from(Arrays.asList(expectedErrors))
         .transform(new Function<String, Diag>() {
           @Override public Diag apply(String input) {
             return Diag.error(TEST_LOCATION, "In path template '" + path + "': " + input);
           }}).toList();
 
     List<Diag> actualErrors = diag.getErrors();
-    Assert.assertEquals(expectedDiagErros, actualErrors);
+    Assert.assertEquals(expectedDiagErrors, actualErrors);
   }
 }

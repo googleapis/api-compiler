@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto;
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Syntax;
 
 import java.util.List;
@@ -149,6 +150,10 @@ public class ProtoFile extends ProtoContainerElement {
    */
   public FileDescriptorProto getProto() {
     return proto;
+  }
+
+  @Override public Map<FieldDescriptor, Object> getOptionFields() {
+    return proto.getOptions().getAllFields();
   }
 
   /**

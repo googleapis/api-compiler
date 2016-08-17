@@ -1,0 +1,23 @@
+documentation {
+  rules {
+    selector: "mixin.v2.M"
+    description: "M"
+  }
+  rules {
+    selector: "mixin.v2.M.name"
+    description: "name"
+  }
+  rules {
+    selector: "mixin.v2.MixinConsumer"
+    description: "MixinConsumer"
+  }
+  rules {
+    selector: "mixin.v2.MixinConsumer.GetAcl"
+    description: "Get the ACL Meta1."
+  }
+  rules {
+    selector: "mixin.v2.MixinConsumer.GetBanana"
+    description: "Get the Banana Meta1."
+  }
+}
+

@@ -82,7 +82,7 @@ public class FieldSelector {
     return new FieldSelector(fieldsBuilder.build());
   }
 
-  private static boolean hasSinglePathElement(String path) {
+  public static boolean hasSinglePathElement(String path) {
     return !path.isEmpty() && !path.contains(".");
   }
 

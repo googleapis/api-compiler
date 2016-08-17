@@ -22,8 +22,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.DescriptorProtos.EnumDescriptorProto;
 import com.google.protobuf.DescriptorProtos.EnumValueDescriptorProto;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -78,6 +80,10 @@ public class EnumType extends ProtoElement {
    */
   public EnumDescriptorProto getProto() {
     return proto;
+  }
+
+  @Override public Map<FieldDescriptor, Object> getOptionFields() {
+    return proto.getOptions().getAllFields();
   }
 
   /**

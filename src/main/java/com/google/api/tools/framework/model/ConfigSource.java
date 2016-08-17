@@ -16,27 +16,23 @@
 
 package com.google.api.tools.framework.model;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
-
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import javax.annotation.Nullable;
 
 /**
- * Represents a configuration source. Maintains information about the configuration message,
- * the fields which have been explicitly set in the configuration, and source locations. Also
- * supports merging of configurations preserving above information, and allowing to override
- * default values (which standard proto3 merging semantics does not support).
+ * Represents a configuration source. Maintains information about the configuration message, the
+ * fields which have been explicitly set in the configuration, and source locations. Also supports
+ * merging of configurations preserving above information, and allowing to override default values
+ * (which standard proto3 merging semantics does not support).
  */
 public class ConfigSource {
 
@@ -56,15 +52,13 @@ public class ConfigSource {
   // has been performed. This is used to support proto2 semantics for merging.
   private final ImmutableMap<MessageKey, ImmutableMap<LocationKey, Location>> locations;
 
-  private ConfigSource(Message value,
-      ImmutableMap<MessageKey, ImmutableMap<LocationKey, Location>> locations) {
+  private ConfigSource(
+      Message value, ImmutableMap<MessageKey, ImmutableMap<LocationKey, Location>> locations) {
     this.configMessage = value;
     this.locations = locations;
   }
 
-  /**
-   * Returns the config message.
-   */
+  /** Returns the config message. */
   public Message getConfig() {
     return configMessage;
   }
@@ -89,22 +83,22 @@ public class ConfigSource {
     return SimpleLocation.UNKNOWN;
   }
 
-  /**
-   * Constructs a builder from this configuration message.
-   */
+  /** Constructs a builder from this configuration message. */
   public Builder toBuilder() {
     return new Builder(configMessage, configMessage.toBuilder(), new LinkedHashMap<>(locations));
   }
 
   /**
-   * Constructs a new empty builder, based on the given default instance for the underlying
-   * config message.
+   * Constructs a new empty builder, based on the given default instance for the underlying config
+   * message.
    *
-   * <p>An initialized message can also be passed, however, no source location tracking will
-   * happen for it.
+   * <p>An initialized message can also be passed, however, no source location tracking will happen
+   * for it.
    */
   public static Builder newBuilder(Message defaultInstance) {
-    return new Builder(defaultInstance, defaultInstance.toBuilder(),
+    return new Builder(
+        defaultInstance,
+        defaultInstance.toBuilder(),
         new LinkedHashMap<MessageKey, ImmutableMap<LocationKey, Location>>());
   }
 
@@ -117,9 +111,7 @@ public class ConfigSource {
     public void accept(Builder builder);
   }
 
-  /**
-   * Represents a builder for a configuration message.
-   */
+  /** Represents a builder for a configuration message. */
   public static class Builder {
     // The message from which we build. For a fresh builder, this is the default instance.
     private final Message configMessage;
@@ -137,16 +129,16 @@ public class ConfigSource {
     // Whether build() was called.
     private boolean built;
 
-    private Builder(Message message, Message.Builder messageBuilder,
-        Map<MessageKey, ImmutableMap<LocationKey, Location>>  locations) {
+    private Builder(
+        Message message,
+        Message.Builder messageBuilder,
+        Map<MessageKey, ImmutableMap<LocationKey, Location>> locations) {
       this.configMessage = message;
       this.configBuilder = messageBuilder;
       this.locations = locations;
     }
 
-    /**
-     * Return the descriptor for the message being built.
-     */
+    /** Return the descriptor for the message being built. */
     public Descriptor getDescriptorForType() {
       return configBuilder.getDescriptorForType();
     }
@@ -176,24 +168,25 @@ public class ConfigSource {
     }
 
     /**
-     * Sets the given scalar value on the field. If optional key is provided, the field
-     * must represent a map, and the value under the key is set.
+     * Sets the given scalar value on the field. If optional key is provided, the field must
+     * represent a map, and the value under the key is set.
      */
-    public Builder setValue(FieldDescriptor field, @Nullable Object key, Object value,
-        @Nullable Location location) {
+    public Builder setValue(
+        FieldDescriptor field, @Nullable Object key, Object value, @Nullable Location location) {
       if (key == null) {
         configBuilder.setField(field, value);
       } else {
-        Map<Object, Object> mutableMap = getMutableMapFromBuilder(configBuilder, field);
-        mutableMap.put(key, value);
+        putMapEntry(configBuilder, field, key, value);
       }
-      newLocations.put(new LocationKey(field, key), nonNull(location));
+      addLocation(field, key, location);
       return this;
     }
 
-    /**
-     * Adds the scalar value to the field which must be repeated.
-     */
+    public void addLocation(FieldDescriptor field, Object key, Location location) {
+      newLocations.put(new LocationKey(field, key), nonNull(location));
+    }
+
+    /** Adds the scalar value to the field which must be repeated. */
     public Builder addValue(FieldDescriptor field, Object value, @Nullable Location location) {
       int index = configBuilder.getRepeatedFieldCount(field);
       configBuilder.addRepeatedField(field, value);
@@ -227,27 +220,25 @@ public class ConfigSource {
 
     /**
      * Constructs a sub-builder for given field and calls the action on it. If optional key is
-     * provided, the field must represent a map of messages, and the builder under the key is
-     * used.
+     * provided, the field must represent a map of messages, and the builder under the key is used.
      */
-    public Builder withBuilder(FieldDescriptor field, @Nullable Object key,
-        BuildAction action) {
+    public Builder withBuilder(FieldDescriptor field, @Nullable Object key, BuildAction action) {
       // If there is no key, behave like the similar method without key.
       if (key == null) {
         return withBuilder(field, action);
       }
 
       // The reflection API for maps is rather incomplete, so we need to hack.
-      // First get the mutable map for the underlying field, and determine the field
+      // First get the map for the underlying field, and determine the field
       // for the map entry's value.
-      Map<Object, Object> protoMap = getMutableMapFromBuilder(configBuilder, field);
+      Map<Object, Object> protoMap = getMapFromProtoMapBuilder(configBuilder, field);
       FieldDescriptor valueField = field.getMessageType().getFields().get(1);
 
       // Next construct a builder for the value field. We need to get MapEntry
       // builder first from parent builder, and then use the map entry builder to get the value
       // field builder.
-      Message.Builder valueBuilder = configBuilder.newBuilderForField(field)
-          .newBuilderForField(valueField);
+      Message.Builder valueBuilder =
+          configBuilder.newBuilderForField(field).newBuilderForField(valueField);
 
       // Now merge in the current value from the proto map.
       Message currentValue;
@@ -266,14 +257,13 @@ public class ConfigSource {
       ConfigSource configMessage = fieldBuilder.build();
 
       // Update the proto map which will update the underlying builder.
-      protoMap.put(key, configMessage.configMessage);
-
+      setValue(field, key, configMessage.configMessage, null);
       return this;
     }
 
     /**
-     * Constructs a sub-builder for an added element of the repeated message field, and calls
-     * action on it.
+     * Constructs a sub-builder for an added element of the repeated message field, and calls action
+     * on it.
      */
     public Builder withAddedBuilder(FieldDescriptor field, BuildAction action) {
       Message.Builder repeatedFieldBuilder = configBuilder.newBuilderForField(field);
@@ -311,8 +301,8 @@ public class ConfigSource {
     }
 
     /**
-     * Merges values from the given config message into this builder. In contrast to proto3
-     * standard merging, this overrides default values.
+     * Merges values from the given config message into this builder. In contrast to proto3 standard
+     * merging, this overrides default values.
      */
     public Builder mergeFrom(ConfigSource config) {
       // First merge using standard algorithm.
@@ -339,30 +329,33 @@ public class ConfigSource {
     }
 
     @SuppressWarnings("unchecked")
-    private void mergeLocations(Message messageToMergeForm, final ConfigSource configToMergeForm,
-        boolean proto3) {
+    private void mergeLocations(
+        Message messageToMergeForm, final ConfigSource configToMergeForm, boolean proto3) {
 
       // Propagate locations.This also takes care of primitive fields with default value.
-      Map<LocationKey, Location> locationMap =
+      Map<LocationKey, Location> locationMapToMerge =
           configToMergeForm.locations.get(new MessageKey(messageToMergeForm));
-      if (locationMap != null) {
-        for (Map.Entry<LocationKey, Location> entry : locationMap.entrySet()) {
+      if (locationMapToMerge != null) {
+        for (Map.Entry<LocationKey, Location> entryToMerge : locationMapToMerge.entrySet()) {
           // Copy over location. For repeated fields, adjust index as they have been appended
           // at the end.
-          LocationKey key = entry.getKey();
-          FieldDescriptor field = key.field;
-          if (field.isRepeated() && !field.isMapField()) {
-            int sizeBeforeMerge =
-                configBuilder.getRepeatedFieldCount(field)
-                - messageToMergeForm.getRepeatedFieldCount(field);
-            key = new LocationKey(key.field, sizeBeforeMerge + (int) key.elementKey);
+          LocationKey keyToMerge = entryToMerge.getKey();
+          FieldDescriptor fieldInLocationsToMerge = keyToMerge.field;
+          if (fieldInLocationsToMerge.isRepeated() && !fieldInLocationsToMerge.isMapField()) {
+            if (keyToMerge.elementKey != null) {
+              int sizeBeforeMerge =
+                  configBuilder.getRepeatedFieldCount(fieldInLocationsToMerge)
+                      - messageToMergeForm.getRepeatedFieldCount(fieldInLocationsToMerge);
+              keyToMerge =
+                  new LocationKey(keyToMerge.field, sizeBeforeMerge + (int) keyToMerge.elementKey);
+            }
           }
-          newLocations.put(key, entry.getValue());
+          newLocations.put(keyToMerge, entryToMerge.getValue());
 
           // Override with default if applicable.
-          if (!field.isRepeated() && !isMessage(field)) {
-            if (!proto3 && !messageToMergeForm.hasField(field)) {
-              configBuilder.clearField(field);
+          if (!fieldInLocationsToMerge.isRepeated() && !isMessage(fieldInLocationsToMerge)) {
+            if (!proto3 && !messageToMergeForm.hasField(fieldInLocationsToMerge)) {
+              configBuilder.clearField(fieldInLocationsToMerge);
             }
           }
         }
@@ -374,49 +367,61 @@ public class ConfigSource {
       // not set, but is in the location map, will not be visited here. That seems to be okay
       // because resetting such a sub-field to its default value will not automatically collapse
       // the parent message to its default, so the parent should be set here.
-      for (Map.Entry<FieldDescriptor, Object> entry
-                : messageToMergeForm.getAllFields().entrySet()) {
+      for (Map.Entry<FieldDescriptor, Object> entry :
+          messageToMergeForm.getAllFields().entrySet()) {
         FieldDescriptor field = entry.getKey();
-        if (!isMessage(field) || field.isMapField() && !isMessage(getValueField(field))) {
+        if (!isMessage(field) || (field.isMapField() && !isMessage(getValueField(field)))) {
           // Primitive field doesn't require location merging.
           continue;
         }
-        mergeFieldLocations(field, entry.getValue(), configToMergeForm, proto3);
+        mergeMessageTypeFieldLocations(field, entry.getValue(), configToMergeForm, proto3);
       }
     }
 
     @SuppressWarnings("unchecked")
-    private void mergeFieldLocations(FieldDescriptor field, final Object value,
-        final ConfigSource config, final boolean proto3) {
+    private void mergeMessageTypeFieldLocations(
+        FieldDescriptor field,
+        final Object value,
+        final ConfigSource configToMergeFrom,
+        final boolean proto3) {
       if (field.isMapField()) {
-        for (final Map.Entry<Object, Message> mapEntry
-                : ((Map<Object, Message>) value).entrySet()) {
-          withBuilder(field, mapEntry.getKey(), new BuildAction() {
-            @Override
-            public void accept(Builder builder) {
-              builder.mergeLocations(mapEntry.getValue(), config, proto3);
-            }
-          });
+        for (final Map.Entry<Object, Message> mapEntry :
+            ((Map<Object, Message>) value).entrySet()) {
+          withBuilder(
+              field,
+              mapEntry.getKey(),
+              new BuildAction() {
+                @Override
+                public void accept(Builder builder) {
+                  builder.mergeLocations(mapEntry.getValue(), configToMergeFrom, proto3);
+                }
+              });
         }
       } else if (field.isRepeated()) {
         List<Message> listValue = (List<Message>) value;
         // Start at index where list ended before calling standard merge.
         int i = configBuilder.getRepeatedFieldCount(field) - listValue.size();
         for (final Message elem : listValue) {
-          withBuilderAt(field, i++, new BuildAction() {
-            @Override
-            public void accept(Builder builder) {
-              builder.mergeLocations(elem, config, proto3);
-            }
-          });
+          withBuilderAt(
+              field,
+              i++,
+              new BuildAction() {
+                @Override
+                public void accept(Builder builder) {
+                  builder.mergeLocations(elem, configToMergeFrom, proto3);
+                }
+              });
         }
       } else {
-        withBuilder(field, null, new BuildAction() {
-          @Override
-          public void accept(Builder builder) {
-            builder.mergeLocations((Message) value, config, proto3);
-          }
-        });
+        withBuilder(
+            field,
+            null,
+            new BuildAction() {
+              @Override
+              public void accept(Builder builder) {
+                builder.mergeLocations((Message) value, configToMergeFrom, proto3);
+              }
+            });
       }
     }
   }
@@ -446,8 +451,7 @@ public class ConfigSource {
         return false;
       }
       LocationKey other = (LocationKey) obj;
-      return Objects.equals(field, other.field)
-          && Objects.equals(elementKey, other.elementKey);
+      return Objects.equals(field, other.field) && Objects.equals(elementKey, other.elementKey);
     }
 
     @Override
@@ -462,8 +466,8 @@ public class ConfigSource {
   /**
    * Wrapper around a message which uses identity for equality, hashCode, and toString.
    *
-   * <p>Instead of this class, we could have used IdentityHashMap, however, the debugging
-   * experience is bad because that class unfortunately doesn't print identities on toString.
+   * <p>Instead of this class, we could have used IdentityHashMap, however, the debugging experience
+   * is bad because that class unfortunately doesn't print identities on toString.
    */
   private static class MessageKey {
 
@@ -489,9 +493,7 @@ public class ConfigSource {
     }
   }
 
-  /**
-   * Ensures location is either non-null or UNKNOWN.
-   */
+  /** Ensures location is either non-null or UNKNOWN. */
   private static Location nonNull(@Nullable Location location) {
     if (location == null) {
       return SimpleLocation.UNKNOWN;
@@ -499,36 +501,59 @@ public class ConfigSource {
     return location;
   }
 
-  /**
-   * Checks whether field is a message field.
-   */
+  /** Checks whether field is a message field. */
   private static boolean isMessage(FieldDescriptor field) {
     return field.getType() == FieldDescriptor.Type.MESSAGE;
   }
 
-  /**
-   * Gets the value field of a map field's entry message.
-   */
+  /** Gets the value field of a map field's entry message. */
   private static FieldDescriptor getValueField(FieldDescriptor field) {
     return field.getMessageType().getFields().get(1);
   }
 
+  @SuppressWarnings("unchecked")
+  private static void putMapEntry(
+      Message.Builder builder, FieldDescriptor field, Object key, Object value) {
+    Message.Builder entryBuilder = builder.newBuilderForField(field);
+    FieldDescriptor keyField = entryBuilder.getDescriptorForType().findFieldByName("key");
+    FieldDescriptor valueField = entryBuilder.getDescriptorForType().findFieldByName("value");
+    entryBuilder.setField(keyField, key);
+    entryBuilder.setField(valueField, value);
+    List<Message> entries =
+        removeEntryWithKeyIfPresent((List<Message>) builder.getField(field), key);
+    entries.add(entryBuilder.build());
+    builder.setField(field, entries);
+  }
+
+  private static List<Message> removeEntryWithKeyIfPresent(List<Message> messages, Object key) {
+    List<Message> messagesWithoutKey = Lists.newArrayList();
+    // This should only ever match at most one element, since the underlying proto adheres
+    // to Map<> semantics.
+    for (Message message : messages) {
+      FieldDescriptor keyField = message.getDescriptorForType().findFieldByName("key");
+      Object messageKey = message.getField(keyField);
+      if (!messageKey.equals(key)) {
+        messagesWithoutKey.add(message);
+      }
+    }
+    return messagesWithoutKey;
+  }
+
   /**
-   * Helper method to get the mutable {@link Map} from message builder for the map field using
-   * reflection. The method name is getMutableXXX and not exposed via the generic api.
+   * Helper method to get an {@link Map} from message builder for the map field. The map returned is
+   * an immutable copy, to add entries to a map field use {@link
+   * ConfigSource#putMapEntry(com.google.protobuf.Message.Builder, FieldDescriptor, Object, Object)}
    */
   @SuppressWarnings("unchecked")
-  private static Map<Object, Object> getMutableMapFromBuilder(Message.Builder builder,
-      FieldDescriptor field) {
-    try {
-      java.lang.reflect.Method method = builder.getClass().getMethod(
-          String.format("getMutable%s", CaseFormat.LOWER_UNDERSCORE.to(
-              CaseFormat.UPPER_CAMEL, field.getName())));
-      return (Map<Object, Object>) method.invoke(builder);
-    } catch (NoSuchMethodException | InvocationTargetException e) {
-      throw new RuntimeException(e);
-    } catch (IllegalAccessException e) {
-      throw Throwables.propagate(e.getCause());
+  private static ImmutableMap<Object, Object> getMapFromProtoMapBuilder(
+      Message.Builder builder, FieldDescriptor field) {
+    List<Message> entries = (List<Message>) builder.getField(field);
+    ImmutableMap.Builder<Object, Object> mapBuilder = ImmutableMap.builder();
+    for (Message entry : entries) {
+      Object key = entry.getField(entry.getDescriptorForType().findFieldByName("key"));
+      Object value = entry.getField(entry.getDescriptorForType().findFieldByName("value"));
+      mapBuilder.put(key, value);
     }
+    return mapBuilder.build();
   }
 }

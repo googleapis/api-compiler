@@ -16,12 +16,12 @@
 
 package com.google.api.tools.framework.aspects.naming;
 
+import com.google.api.Service;
 import com.google.api.tools.framework.aspects.ConfigAspectBase;
 import com.google.api.tools.framework.aspects.LintRule;
 import com.google.api.tools.framework.model.Model;
 import com.google.common.base.Strings;
 import com.google.common.net.InternetDomainName;
-
 import java.util.regex.Pattern;
 
 /**
@@ -42,7 +42,10 @@ class ServiceNameRule extends LintRule<Model> {
             // InternetDomainName.isValid does a lenient validation and allows underscores (which we
             // do not want to permit as DNS names). Therefore explicitly checking for underscores.
             || INVALID_CHARACTER_PATTERN.matcher(serviceName).find())) {
-      warning(model, "Invalid DNS name '%s'.", serviceName);
+      warning(
+          getLocationInConfig(model.getServiceConfig(), Service.NAME_FIELD_NUMBER),
+          "Invalid DNS name '%s'.",
+          serviceName);
     }
   }
 }

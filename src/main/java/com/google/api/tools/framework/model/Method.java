@@ -75,6 +75,12 @@ public class Method extends ProtoElement {
     return descriptor;
   }
 
+  /** Return this element's options from the proto. */
+  @Override
+  public Map<FieldDescriptor, Object> getOptionFields() {
+    return descriptor.optionFields;
+  }
+
   /**
    * Returns true if request is streamed.
    */
@@ -153,12 +159,12 @@ public class Method extends ProtoElement {
     private final String outputTypeName;
     private final MethodDescriptorProto methodProto;
 
-    private final Map<FieldDescriptor, Object> options;
+    private final Map<FieldDescriptor, Object> optionFields;
 
     private MethodDescriptor(MethodDescriptorProto methodProto) {
       this.inputTypeName = methodProto.getInputType();
       this.outputTypeName = methodProto.getOutputType();
-      this.options = ImmutableMap.copyOf(methodProto.getOptions().getAllFields());
+      this.optionFields = ImmutableMap.copyOf(methodProto.getOptions().getAllFields());
       this.methodProto = methodProto;
     }
 
@@ -174,13 +180,6 @@ public class Method extends ProtoElement {
      */
     public String getOutputTypeName() {
       return outputTypeName;
-    }
-
-    /**
-     * Returns the method's options as a map
-     */
-    public Map<FieldDescriptor, Object> getOptions() {
-      return options;
     }
 
     /**

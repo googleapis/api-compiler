@@ -300,20 +300,25 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
     // If a body field is provided, resolve it.
     ImmutableList.Builder<FieldSelector> bodyFields = ImmutableList.builder();
     if (binding.getBody() != null && !binding.bodyCapturesUnboundFields()) {
-      FieldSelector bodyField = resolveFieldPath(method, binding.getBody());
-      if (bodyField != null) {
-        if (!bodyField.getType().isMessage() || bodyField.getType().isRepeated()
-            || !allowedAsHttpRequestResponse(bodyField.getType().getWellKnownType())) {
-          error(method, "body field path '%s' must be a non-repeated message.", bodyField);
-        } else if (!allowedAsRequestResponseInCodeGen(bodyField.getType().getWellKnownType())) {
-          warning(
-              method,
-              "Codegen does not allow type '%s' as a body field path. Please use other "
-              + "types, else client library generation will fail.",
-              bodyField.getType().toString());
+      if (!FieldSelector.hasSinglePathElement(binding.getBody())) {
+        error(method, "body field path '%s' should not reference sub messages.", binding.getBody());
+      } else {
+        FieldSelector bodyField = resolveFieldPath(method, binding.getBody());
+        if (bodyField != null) {
+          if (!bodyField.getType().isMessage()
+              || bodyField.getType().isRepeated()
+              || !allowedAsHttpRequestResponse(bodyField.getType().getWellKnownType())) {
+            error(method, "body field path '%s' must be a non-repeated message.", bodyField);
+          } else if (!allowedAsRequestResponseInCodeGen(bodyField.getType().getWellKnownType())) {
+            warning(
+                method,
+                "Codegen does not allow type '%s' as a body field path. Please use other "
+                    + "types, else client library generation will fail.",
+                bodyField.getType().toString());
+          }
+          bodyFields.add(bodyField);
+          bound.add(bodyField);
         }
-        bodyFields.add(bodyField);
-        bound.add(bodyField);
       }
     }
 
@@ -382,7 +387,7 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
       if (result == null) {
         error(
             method,
-            "undefined field '%s' (or json_name) on message '%s'.",
+            "undefined field '%s' on message '%s'.",
             fieldPath,
             getInputMessageName(method));
       }

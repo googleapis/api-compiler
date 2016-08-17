@@ -23,6 +23,9 @@ import com.google.api.tools.framework.model.stages.Resolved;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Predicate;
 import com.google.protobuf.DescriptorProtos.FieldDescriptorProto;
+import com.google.protobuf.Descriptors.FieldDescriptor;
+
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -74,6 +77,10 @@ public class Field extends ProtoElement {
    */
   public FieldDescriptorProto getProto() {
     return proto;
+  }
+
+  @Override public Map<FieldDescriptor, Object> getOptionFields() {
+    return proto.getOptions().getAllFields();
   }
 
   /**

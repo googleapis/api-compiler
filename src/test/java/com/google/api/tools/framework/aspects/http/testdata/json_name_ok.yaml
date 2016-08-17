@@ -11,5 +11,6 @@ documentation:
 http:
   rules:
   - selector: protiary.test.json_name_ok.TestService.Call1
-    post: /v1/test/{JJJJ}
+    post: /v1/test/{J2_JSON_NAME}
+    body: "*"
 

@@ -17,10 +17,13 @@
 package com.google.api.tools.framework.model;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.protobuf.DescriptorProtos.OneofDescriptorProto;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents an oneof declaration.
@@ -49,6 +52,12 @@ public class Oneof extends ProtoElement {
       return "oneof";
     }
     return proto.getName();
+  }
+
+  /** Return this element's options from the proto. */
+  @Override
+  public Map<FieldDescriptor, Object> getOptionFields() {
+    return ImmutableMap.<FieldDescriptor, Object>of();
   }
 
   /**

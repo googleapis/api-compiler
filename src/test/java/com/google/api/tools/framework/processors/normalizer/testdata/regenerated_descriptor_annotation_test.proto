@@ -11,15 +11,10 @@ message OuterMessage {
   option deprecated = true;
   option (.google.api.message_visibility).restriction = "PUBLIC";
 
-  // MOE:begin_strip
-  // Makes sure repeated options work correctly.
-  option experimental_java_message_interface = "foo";
-  option experimental_java_message_interface = "bar";
-  // MOE:end_strip
 
   // Test field options
   optional string string1 = 1 [ctype = CORD];
-  optional string string2 = 2 [jtype = BYTES];
+  optional string string2 = 2;
   optional int64 int64 = 3 [jstype = JS_NUMBER];
   optional InnerEnum inner_enum = 4;
   optional OuterEnum outer_enum = 5;

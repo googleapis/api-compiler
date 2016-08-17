@@ -51,4 +51,9 @@ public class VersionConfigAspectTest extends ConfigAspectBaselineTestCase {
     showDiagLocation = true;
     test("invalidconfigversion");
   }
+
+  @Test public void httpwarnings() throws Exception {
+    showDiagLocation = true;
+    test("httpwarnings");
+  }
 }

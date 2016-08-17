@@ -153,7 +153,9 @@ public class ConfigGeneratorToolTest extends BaselineTestCase {
     if (isDnsNameTest(baseName)){
       options.set(ConfigGeneratorFromProtoDescriptor.NAME, "foobar");
     }
-
+    if (isSuppressWarningsTest(baseName)){
+      options.set(ConfigGeneratorFromProtoDescriptor.NAME, "test");
+    }
     ConfigGeneratorDriverForTest tool = new ConfigGeneratorDriverForTest(options);
     tool.runTest();
     if (!tool.hasErrors()) {

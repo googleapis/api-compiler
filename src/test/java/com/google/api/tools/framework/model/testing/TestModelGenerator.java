@@ -19,6 +19,7 @@ import com.google.api.tools.framework.model.Model;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.Lists;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.rules.TemporaryFolder;
 
@@ -34,6 +35,10 @@ public class TestModelGenerator {
   }
 
   public ModelTestInfo buildModel(String... basenames) throws Exception {
+    return buildModel(Arrays.asList(basenames));
+  }
+
+  public ModelTestInfo buildModel(Iterable<String> basenames) throws Exception {
     List<String> yamlFiles = getFilesWithSuffix(basenames, ".yaml");
     List<String> protoFiles = getFilesWithSuffix(basenames, ".proto");
     if (protoFiles.isEmpty()) {
@@ -54,7 +59,7 @@ public class TestModelGenerator {
     return testDataLocator;
   }
 
-  private List<String> getFilesWithSuffix(String[] baseFileNames, String suffix) {
+  private List<String> getFilesWithSuffix(Iterable<String> baseFileNames, String suffix) {
     List<String> files = Lists.newArrayList();
     for (String baseName : baseFileNames) {
       String name = baseName + suffix;

@@ -60,4 +60,12 @@ public class HttpConfigAspectTest extends ConfigAspectBaselineTestCase {
     test("custom_post_invalid_body");
   }
 
+  @Test public void bad_field_binding() throws Exception {
+    test("bad_field_binding");
+  }
+
+  @Test public void body_non_top_level() throws Exception {
+    test("body_non_top_level");
+  }
+
 }

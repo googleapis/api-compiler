@@ -33,7 +33,7 @@ class ConfigVersionRule extends LintRule<Model> {
   @Override public void run(Model model) {
     if (model.getServiceConfig().hasConfigVersion()
         && model.getConfigVersion() != Model.getDefaultConfigVersion()) {
-      warning(model.getLocationInConfig(model.getServiceConfig().getConfigVersion(), "value"),
+      warning(getLocationInConfig(model.getServiceConfig().getConfigVersion(), "value"),
           "Specified config_version value '%d' is not equal to "
           + "the current default value '%d'. Consider changing this value "
           + "to the default config version.",

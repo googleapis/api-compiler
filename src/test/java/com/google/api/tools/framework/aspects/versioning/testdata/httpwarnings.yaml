@@ -1,0 +1,19 @@
+type: google.api.Service
+config_version: 3
+name: blob.googleapis.com
+
+apis:
+- name: protiary.test.httpwarnings.v1.TestService
+
+documentation:
+  rules:
+  - selector: "*"
+    description: TBD
+
+http:
+  rules:
+  - selector: "protiary.test.httpwarnings.v1.TestService.Call2"
+    get: "/yamlNotAVersion/call2"
+
+  - selector: "protiary.test.httpwarnings.v1.TestService.Call4"
+    get: "/v99/call4"
