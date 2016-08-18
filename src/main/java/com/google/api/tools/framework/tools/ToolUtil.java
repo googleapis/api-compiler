@@ -30,8 +30,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.protobuf.Message;
+import com.google.protobuf.TextFormat;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -83,6 +86,13 @@ public class ToolUtil {
   public static void writeProto(Message content, String outputName) throws IOException {
     try (OutputStream outputStream = new FileOutputStream(outputName)) {
       content.writeTo(outputStream);
+    }
+  }
+
+  /** Writes a proto out to a file. */
+  public static void writeTextProto(Message content, String outputName) throws IOException {
+    try (BufferedWriter output = new BufferedWriter(new FileWriter(outputName))) {
+      TextFormat.print(content, output);
     }
   }
 
