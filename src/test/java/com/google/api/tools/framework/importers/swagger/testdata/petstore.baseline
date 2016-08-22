@@ -131,6 +131,10 @@ usage {
     allow_unregistered_calls: true
   }
 }
+endpoints {
+  name: "petstore.swagger.io"
+  apis: "google.example.methods"
+}
 control {
   environment: "servicecontrol.googleapis.com"
 }

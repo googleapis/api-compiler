@@ -567,6 +567,12 @@ usage {
     allow_unregistered_calls: true
   }
 }
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "google.example.methods"
+}
 control {
   environment: "servicecontrol.googleapis.com"
 }

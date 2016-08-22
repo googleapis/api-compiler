@@ -335,6 +335,10 @@ usage {
     selector: "DeleteBook"
   }
 }
+endpoints {
+  name: "bookstore.appspot.com"
+  apis: ""
+}
 control {
   environment: "servicecontrol.googleapis.com"
 }

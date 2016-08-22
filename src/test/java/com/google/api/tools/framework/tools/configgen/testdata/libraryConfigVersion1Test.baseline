@@ -918,6 +918,12 @@ context {
     requested: "google.rpc.context.ProjectContext"
   }
 }
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "google.example.library.v1.LibraryService"
+}
 config_version {
   value: 1
 }

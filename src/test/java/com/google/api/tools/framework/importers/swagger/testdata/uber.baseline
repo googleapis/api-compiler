@@ -192,6 +192,10 @@ usage {
     allow_unregistered_calls: true
   }
 }
+endpoints {
+  name: "api.uber.com"
+  apis: "google.example.methods"
+}
 control {
   environment: "servicecontrol.googleapis.com"
 }

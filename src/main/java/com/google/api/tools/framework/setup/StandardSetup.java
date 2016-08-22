@@ -20,6 +20,7 @@ import com.google.api.tools.framework.aspects.authentication.AuthConfigAspect;
 import com.google.api.tools.framework.aspects.context.ContextConfigAspect;
 import com.google.api.tools.framework.aspects.control.ControlConfigAspect;
 import com.google.api.tools.framework.aspects.documentation.DocumentationConfigAspect;
+import com.google.api.tools.framework.aspects.endpoint.EndpointConfigAspect;
 import com.google.api.tools.framework.aspects.http.HttpConfigAspect;
 import com.google.api.tools.framework.aspects.mixin.MixinConfigAspect;
 import com.google.api.tools.framework.aspects.naming.NamingConfigAspect;
@@ -59,6 +60,7 @@ public class StandardSetup {
     model.registerConfigAspect(HttpConfigAspect.create(model));
     model.registerConfigAspect(VersionConfigAspect.create(model));
     model.registerConfigAspect(NamingConfigAspect.create(model));
+    model.registerConfigAspect(EndpointConfigAspect.create(model));
     model.registerConfigAspect(SystemParameterConfigAspect.create(model));
     model.registerConfigAspect(UsageConfigAspect.create(model));
     model.registerConfigAspect(ControlConfigAspect.create(model));

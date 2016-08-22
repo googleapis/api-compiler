@@ -302,6 +302,13 @@ context {
     requested: "google.rpc.context.VisibilityContext"
   }
 }
+endpoints {
+  name: "test.googleapis.com"
+  aliases: "test.clients6.google.com"
+  aliases: "content-test.googleapis.com"
+  apis: "proto.test.v1.TestService"
+  apis: "google.discovery.Discovery"
+}
 config_version {
   value: 2
 }
