@@ -35,7 +35,7 @@ import net.sf.cglib.reflect.FastMethod;
  * A helper class for {@link GenericVisitor} which implements dispatching
  * of methods based on parameter type and annotations.
  */
-final class Dispatcher<BaseType> {
+public final class Dispatcher<BaseType> {
 
   /**
    * A helper class defining a key to lookup a dispatcher in a cache.
@@ -80,7 +80,7 @@ final class Dispatcher<BaseType> {
    * This method will reuse an existing dispatcher from a cache or construct a new one.
    */
   @SuppressWarnings("unchecked") // valid by construction
-  static <T> Dispatcher<T> getDispatcher(Class<T> baseType,
+  public static <T> Dispatcher<T> getDispatcher(Class<T> baseType,
       Class<? extends Annotation> marker, Class<?> provider) {
     try {
       return (Dispatcher<T>) CACHE.get(Key.create(baseType, marker, provider));
@@ -140,7 +140,7 @@ final class Dispatcher<BaseType> {
    * Delivers the {@link FastMethod} which can handle an object of given type.
    * Delivers the method with most specific type, or null, if none exists.
    */
-  FastMethod getMethod(Class<? extends BaseType> type) {
+  public FastMethod getMethod(Class<? extends BaseType> type) {
     Optional<FastMethod> result = dispatchTable.getUnchecked(type);
     return result.isPresent() ? result.get() : null;
   }
