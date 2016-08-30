@@ -29,7 +29,6 @@ import com.google.api.tools.framework.snippet.Doc;
 import com.google.api.tools.framework.snippet.SnippetSet;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 
 /**
@@ -37,9 +36,7 @@ import java.util.List;
  */
 public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, AuthAttribute> {
 
-  /**
-   * Splitter for oauth scopes specified in auth rule.
-   */
+  /** Splitter for oauth scopes specified in auth rule. */
   private static final Splitter OAUTH_SCOPE_SPLITTER = Splitter.on(",").omitEmptyStrings();
 
   /**
