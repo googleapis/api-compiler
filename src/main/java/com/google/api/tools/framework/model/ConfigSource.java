@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
+import com.google.protobuf.MapEntry;
 import com.google.protobuf.Message;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -385,15 +386,14 @@ public class ConfigSource {
         final ConfigSource configToMergeFrom,
         final boolean proto3) {
       if (field.isMapField()) {
-        for (final Map.Entry<Object, Message> mapEntry :
-            ((Map<Object, Message>) value).entrySet()) {
+        for (final MapEntry<Object, Message> entry : (List<MapEntry<Object, Message>>) value) {
           withBuilder(
               field,
-              mapEntry.getKey(),
+              entry.getKey(),
               new BuildAction() {
                 @Override
                 public void accept(Builder builder) {
-                  builder.mergeLocations(mapEntry.getValue(), configToMergeFrom, proto3);
+                  builder.mergeLocations(entry.getValue(), configToMergeFrom, proto3);
                 }
               });
         }

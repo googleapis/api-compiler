@@ -22,14 +22,11 @@ import com.google.api.tools.framework.model.testdata.ConfigSource.NestedConfig;
 import com.google.api.tools.framework.model.testdata.ConfigSource.SomeConfig;
 import com.google.common.truth.Truth;
 import com.google.protobuf.Descriptors.FieldDescriptor;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/**
- * Test for {@link ConfigSource}.
- */
+/** Test for {@link ConfigSource}. */
 @RunWith(JUnit4.class)
 public class ConfigSourceTest {
 
@@ -82,20 +79,23 @@ public class ConfigSourceTest {
   public void nestedSimpleField() {
     ConfigSource.Builder builder = ConfigSource.newBuilder(SomeConfig.getDefaultInstance());
     builder.setValue(STRING_VALUE_FIELD, null, "Hello World", L1);
-    builder.withBuilder(NESTED_CONFIG_FIELD, null, new BuildAction() {
-      @Override
-      public void accept(ConfigSource.Builder subBuilder) {
-        subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "Sub World", L2);
-      }
-    });
+    builder.withBuilder(
+        NESTED_CONFIG_FIELD,
+        null,
+        new BuildAction() {
+          @Override
+          public void accept(ConfigSource.Builder subBuilder) {
+            subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "Sub World", L2);
+          }
+        });
     ConfigSource source = builder.build();
     SomeConfig config = (SomeConfig) source.getConfig();
     Truth.assertThat(config.getStringValue()).isEqualTo("Hello World");
     Truth.assertThat(source.getLocation(config, STRING_VALUE_FIELD.getName(), null)).isEqualTo(L1);
     Truth.assertThat(config.getNestedConfig().getNestedStringValue()).isEqualTo("Sub World");
     Truth.assertThat(
-        source.getLocation(config.getNestedConfig(), NESTED_STRING_VALUE_FIELD.getName(), null))
-      .isEqualTo(L2);
+            source.getLocation(config.getNestedConfig(), NESTED_STRING_VALUE_FIELD.getName(), null))
+        .isEqualTo(L2);
   }
 
   @Test
@@ -109,7 +109,7 @@ public class ConfigSourceTest {
     Truth.assertThat(source.getLocation(config, REPEATED_STRING_VALUE_FIELD.getName(), 0))
         .isEqualTo(L1);
     Truth.assertThat(source.getLocation(config, REPEATED_STRING_VALUE_FIELD.getName(), 1))
-      .isEqualTo(L2);
+        .isEqualTo(L2);
 
     builder = source.toBuilder();
     builder.addValue(REPEATED_STRING_VALUE_FIELD, "c", L3);
@@ -127,19 +127,23 @@ public class ConfigSourceTest {
   @Test
   public void nestedRepeatedField() {
     ConfigSource.Builder builder = ConfigSource.newBuilder(SomeConfig.getDefaultInstance());
-    builder.withAddedBuilder(REPEATED_NESTED_CONFIG_FIELD, new BuildAction() {
-      @Override
-      public void accept(Builder nestedBuilder) {
-        nestedBuilder.addValue(NESTED_REPEATED_INT32_VALUE_FIELD, 0, L1);
-        nestedBuilder.addValue(NESTED_REPEATED_INT32_VALUE_FIELD, 1, L2);
-      }
-    });
-    builder.withAddedBuilder(REPEATED_NESTED_CONFIG_FIELD, new BuildAction() {
-      @Override
-      public void accept(Builder nestedBuilder) {
-        nestedBuilder.addValue(NESTED_REPEATED_INT32_VALUE_FIELD, 2, L3);
-      }
-    });
+    builder.withAddedBuilder(
+        REPEATED_NESTED_CONFIG_FIELD,
+        new BuildAction() {
+          @Override
+          public void accept(Builder nestedBuilder) {
+            nestedBuilder.addValue(NESTED_REPEATED_INT32_VALUE_FIELD, 0, L1);
+            nestedBuilder.addValue(NESTED_REPEATED_INT32_VALUE_FIELD, 1, L2);
+          }
+        });
+    builder.withAddedBuilder(
+        REPEATED_NESTED_CONFIG_FIELD,
+        new BuildAction() {
+          @Override
+          public void accept(Builder nestedBuilder) {
+            nestedBuilder.addValue(NESTED_REPEATED_INT32_VALUE_FIELD, 2, L3);
+          }
+        });
 
     ConfigSource source = builder.build();
     SomeConfig config = (SomeConfig) source.getConfig();
@@ -173,18 +177,24 @@ public class ConfigSourceTest {
   @Test
   public void nestedMapField() {
     ConfigSource.Builder builder = ConfigSource.newBuilder(SomeConfig.getDefaultInstance());
-    builder.withBuilder(NESTED_MAP_VALUE_FIELD, "X", new BuildAction() {
-      @Override
-      public void accept(ConfigSource.Builder subBuilder) {
-        subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "A", L1);
-      }
-    });
-    builder.withBuilder(NESTED_MAP_VALUE_FIELD, "Y", new BuildAction() {
-      @Override
-      public void accept(ConfigSource.Builder subBuilder) {
-        subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "B", L2);
-      }
-    });
+    builder.withBuilder(
+        NESTED_MAP_VALUE_FIELD,
+        "X",
+        new BuildAction() {
+          @Override
+          public void accept(ConfigSource.Builder subBuilder) {
+            subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "A", L1);
+          }
+        });
+    builder.withBuilder(
+        NESTED_MAP_VALUE_FIELD,
+        "Y",
+        new BuildAction() {
+          @Override
+          public void accept(ConfigSource.Builder subBuilder) {
+            subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "B", L2);
+          }
+        });
 
     ConfigSource source = builder.build();
     SomeConfig config = (SomeConfig) source.getConfig();
@@ -196,32 +206,38 @@ public class ConfigSourceTest {
     Truth.assertThat(nested2.getNestedStringValue()).isEqualTo("B");
 
     Truth.assertThat(source.getLocation(nested1, NESTED_STRING_VALUE_FIELD.getName(), null))
-      .isEqualTo(L1);
+        .isEqualTo(L1);
     Truth.assertThat(source.getLocation(nested2, NESTED_STRING_VALUE_FIELD.getName(), null))
-      .isEqualTo(L2);
+        .isEqualTo(L2);
   }
 
   @Test
   public void mergeTest() {
     ConfigSource.Builder builder = ConfigSource.newBuilder(SomeConfig.getDefaultInstance());
     builder.setValue(STRING_VALUE_FIELD, null, "A", L1);
-    builder.withBuilder(NESTED_CONFIG_FIELD, null, new BuildAction() {
-      @Override
-      public void accept(ConfigSource.Builder subBuilder) {
-        subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "B", L1);
-      }
-    });
+    builder.withBuilder(
+        NESTED_CONFIG_FIELD,
+        null,
+        new BuildAction() {
+          @Override
+          public void accept(ConfigSource.Builder subBuilder) {
+            subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "B", L1);
+          }
+        });
     builder.addValue(REPEATED_STRING_VALUE_FIELD, "a", L1);
     ConfigSource source = builder.build();
 
     builder = ConfigSource.newBuilder(SomeConfig.getDefaultInstance());
     builder.setValue(STRING_VALUE_FIELD, null, "", L2);
-    builder.withBuilder(NESTED_CONFIG_FIELD, null, new BuildAction() {
-      @Override
-      public void accept(ConfigSource.Builder subBuilder) {
-        subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "C", L2);
-      }
-    });
+    builder.withBuilder(
+        NESTED_CONFIG_FIELD,
+        null,
+        new BuildAction() {
+          @Override
+          public void accept(ConfigSource.Builder subBuilder) {
+            subBuilder.setValue(NESTED_STRING_VALUE_FIELD, null, "C", L2);
+          }
+        });
     builder.addValue(REPEATED_STRING_VALUE_FIELD, "b", L2);
     ConfigSource source2 = builder.build();
 
@@ -229,18 +245,17 @@ public class ConfigSourceTest {
 
     SomeConfig config = (SomeConfig) source.getConfig();
     Truth.assertThat(config.getStringValue()).isEqualTo("");
-    Truth.assertThat(source.getLocation(config, STRING_VALUE_FIELD.getName(), null))
-         .isEqualTo(L2);
+    Truth.assertThat(source.getLocation(config, STRING_VALUE_FIELD.getName(), null)).isEqualTo(L2);
 
     Truth.assertThat(config.getRepeatedStringValueList()).containsExactly("a", "b");
     Truth.assertThat(source.getLocation(config, REPEATED_STRING_VALUE_FIELD.getName(), 0))
-         .isEqualTo(L1);
+        .isEqualTo(L1);
     Truth.assertThat(source.getLocation(config, REPEATED_STRING_VALUE_FIELD.getName(), 1))
-         .isEqualTo(L2);
+        .isEqualTo(L2);
 
     NestedConfig nested = config.getNestedConfig();
     Truth.assertThat(nested.getNestedStringValue()).isEqualTo("C");
     Truth.assertThat(source.getLocation(nested, NESTED_STRING_VALUE_FIELD.getName(), null))
-         .isEqualTo(L2);
+        .isEqualTo(L2);
   }
 }
