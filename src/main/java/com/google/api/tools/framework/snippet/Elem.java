@@ -393,6 +393,25 @@ abstract class Elem {
   }
 
   /**
+   * Represents a grouping.
+   */
+  @AutoValue
+  abstract static class Group extends Elem {
+    abstract Layout layout();
+    abstract ImmutableList<Elem> elems();
+
+    static Group create(Location location, Layout layout, List<Elem> elems) {
+      return new AutoValue_Elem_Group(location, layout, ImmutableList.copyOf(elems));
+    }
+
+    @Override
+    Object eval(final Context context) {
+      Doc result = Snippet.evalElems(context, elems());
+      return result.group(layout().groupKind()).nest(layout().nest());
+    }
+  }
+
+  /**
    * Represents an iterator loop.
    */
   @AutoValue

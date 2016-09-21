@@ -81,11 +81,13 @@ public abstract class GenericToolDriverBase {
    */
   public int run() {
     // Run tool specific code.
-    try {
-      process();
-    } catch (Exception e) {
-      getDiagCollector().addDiag(Diag.error(SimpleLocation.TOPLEVEL,
-          "Unexpected exception:%n%s", Throwables.getStackTraceAsString(e)));
+    if (!getDiagCollector().hasErrors()) {
+      try {
+        process();
+      } catch (Exception e) {
+        getDiagCollector().addDiag(Diag.error(SimpleLocation.TOPLEVEL,
+            "Unexpected exception:%n%s", Throwables.getStackTraceAsString(e)));
+      }
     }
     reportDiag();
     return getDiagCollector().hasErrors() ? 1 : 0;
