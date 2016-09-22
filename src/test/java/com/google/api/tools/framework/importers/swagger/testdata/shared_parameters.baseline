@@ -42,9 +42,16 @@ types {
 types {
   name: "namespace.types.SimpleMethodRequest"
   fields {
-    kind: TYPE_MESSAGE
+    kind: TYPE_STRING
     cardinality: CARDINALITY_OPTIONAL
     number: 1
+    name: "shared_parameter"
+    json_name: "sharedParameter"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
     name: "my_body_ref"
     type_url: "type.googleapis.com/namespace.types.SimpleMethodRequestBody"
     json_name: "myBodyRef"
@@ -52,23 +59,16 @@ types {
   fields {
     kind: TYPE_STRING
     cardinality: CARDINALITY_OPTIONAL
-    number: 2
+    number: 3
     name: "param_to_override"
     json_name: "paramToOverride"
   }
   fields {
     kind: TYPE_INT32
     cardinality: CARDINALITY_OPTIONAL
-    number: 3
+    number: 4
     name: "param_at_swagger_scope"
     json_name: "paramAtSwaggerScope"
-  }
-  fields {
-    kind: TYPE_STRING
-    cardinality: CARDINALITY_OPTIONAL
-    number: 4
-    name: "shared_parameter"
-    json_name: "sharedParameter"
   }
   source_context {
     file_name: "namespace.types"
