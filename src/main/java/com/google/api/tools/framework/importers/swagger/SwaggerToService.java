@@ -35,6 +35,7 @@ import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.api.tools.framework.model.stages.Normalized;
 import com.google.api.tools.framework.setup.StandardSetup;
 import com.google.api.tools.framework.yaml.YamlReader;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -139,13 +140,14 @@ public class SwaggerToService implements DiagCollector {
   /**
    * Saves the file contents on the disk and returns the saved file paths.
    */
-  private ImmutableList<String> saveFilesOnDisk(
+  @VisibleForTesting
+  protected static ImmutableList<String> saveFilesOnDisk(
       ImmutableMap<String, String> swaggerFilePathToContentMap) {
     List<String> savedfilePaths = new ArrayList<>();
     File tempDir = Files.createTempDir();
     String tmpDirLocation = tempDir.getAbsolutePath();
     for (Entry<String, String> entry : swaggerFilePathToContentMap.entrySet()) {
-      String filePath = entry.getKey();
+      String filePath = entry.getKey().replaceAll("[\\\\/:]",  "_");
       String fileContent = entry.getValue();
 
       Preconditions.checkState(
@@ -172,7 +174,8 @@ public class SwaggerToService implements DiagCollector {
   /**
    * Saves the individual file on disk with the fileContent.
    */
-  private String saveFileOnDisk(String filePathToSave, String fileContent) throws IOException {
+  private static String saveFileOnDisk(String filePathToSave, String fileContent)
+      throws IOException {
     File file = new File(filePathToSave);
     Files.createParentDirs(file);
     Files.write(fileContent, file, Charset.defaultCharset());
