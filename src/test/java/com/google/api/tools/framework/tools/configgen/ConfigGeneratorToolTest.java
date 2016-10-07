@@ -143,7 +143,6 @@ public class ConfigGeneratorToolTest extends BaselineTestCase {
     options.set(
         ConfigGeneratorFromProtoDescriptor.SUPPRESS_WARNINGS, isSuppressWarningsTest(baseName));
     List<String> experiments = Lists.newArrayList();
-    experiments.add("empty-descriptor-defaults");
     options.set(ToolOptions.EXPERIMENTS, experiments);
     if (extensionTestConfig != null) {
       options.set(

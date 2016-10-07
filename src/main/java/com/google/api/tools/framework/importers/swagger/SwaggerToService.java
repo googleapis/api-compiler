@@ -16,6 +16,8 @@
 
 package com.google.api.tools.framework.importers.swagger;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.main.JsonSchema;
@@ -308,7 +310,6 @@ public class SwaggerToService implements DiagCollector {
    */
   private Service normalizeService(Service service) {
     Model model = createModel(service, additionalConfigs);
-    model.enableExperiment("empty-descriptor-defaults");
     model.establishStage(Normalized.KEY);
     if (model.getDiagCollector().hasErrors()) {
       diags.addAll(model.getDiagCollector().getDiags());

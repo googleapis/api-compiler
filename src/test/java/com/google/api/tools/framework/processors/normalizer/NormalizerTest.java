@@ -19,7 +19,6 @@ package com.google.api.tools.framework.processors.normalizer;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.stages.Normalized;
 import com.google.api.tools.framework.model.testing.ConfigBaselineTestCase;
-
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -45,10 +44,6 @@ public class NormalizerTest extends ConfigBaselineTestCase {
     if (suppressAllWarnings) {
       model.suppressAllWarnings();
     }
-
-    // Always avoid generating defaults for proto options to make the test more
-    // stable w.r.t. changes in proto descriptor.
-    model.enableExperiment("empty-descriptor-defaults");
 
     // Establish stage.
     model.establishStage(Normalized.KEY);
