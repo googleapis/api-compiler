@@ -107,13 +107,13 @@ public class SwaggerImportTest extends BaselineTestCase {
       return;
     }
     int errorCount = 0;
-    for (Diag diag : swaggerToService.getDiags()) {
+    for (Diag diag : swaggerToService.getDiagCollector().getDiags()) {
       testOutput().println(DiagUtils.getDiagToPrint(diag, false));
       if (diag.getKind() == Kind.ERROR) {
           errorCount++;
       }
     }
-    assertThat(swaggerToService.getErrorCount()).isEqualTo(errorCount);
+    assertThat(swaggerToService.getDiagCollector().getErrorCount()).isEqualTo(errorCount);
 
     if (service == null) {
       testOutput().println("Service config creation failed");
@@ -264,6 +264,21 @@ public class SwaggerImportTest extends BaselineTestCase {
   @Test
   public void x_google_allow_extension_all_with_existing_catchall_methods() throws Exception {
     testWithDefaults("x_google_allow_extension_all_with_existing_catchall_methods");
+  }
+
+  @Test
+  public void x_google_endpoints() throws Exception {
+    testWithDefaults("x-google-endpoints");
+  }
+
+  @Test
+  public void x_google_invalid_array_type() throws Exception {
+    testWithDefaults("x-google-invalid-array-type");
+  }
+
+  @Test
+  public void x_google_invalid_unknown_field() throws Exception {
+    testWithDefaults("x-google-invalid-unknown-field");
   }
 
   @Test

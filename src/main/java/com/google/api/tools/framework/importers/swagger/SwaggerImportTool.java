@@ -28,11 +28,14 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
 import javax.annotation.Nullable;
+
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -101,12 +104,12 @@ public class SwaggerImportTool implements ConfigGenerator {
 
   @Override
   public List<Diag> getDiags() {
-    return tool.getDiags();
+    return tool.getDiagCollector().getDiags();
   }
 
   @Override
   public boolean hasErrors() {
-    return tool.hasErrors();
+    return tool.getDiagCollector().hasErrors();
   }
 
   @Override
@@ -141,8 +144,8 @@ public class SwaggerImportTool implements ConfigGenerator {
       return null;
     }
 
-    if (!tool.getDiags().isEmpty()) {
-      printDiagnostics(tool.getDiags());
+    if (!tool.getDiagCollector().getDiags().isEmpty()) {
+      printDiagnostics(tool.getDiagCollector().getDiags());
     }
 
     return serviceConfig;

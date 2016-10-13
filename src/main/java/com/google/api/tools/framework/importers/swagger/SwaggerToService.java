@@ -29,7 +29,6 @@ import com.google.api.Service;
 import com.google.api.tools.framework.aspects.control.model.ControlConfigUtil;
 import com.google.api.tools.framework.model.ConfigSource;
 import com.google.api.tools.framework.model.Diag;
-import com.google.api.tools.framework.model.Diag.Kind;
 import com.google.api.tools.framework.model.DiagCollector;
 import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Model;
@@ -48,6 +47,7 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import com.google.protobuf.Api;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Method;
 import com.google.protobuf.Type;
 import com.google.protobuf.UInt32Value;
@@ -75,7 +75,7 @@ import org.apache.commons.io.FileUtils;
 /**
  * Class to create a {@link Service} instance from a {@link Swagger} object.
  */
-public class SwaggerToService implements DiagCollector {
+public class SwaggerToService {
 
   private static final String SCHEMA_RESOURCE_PATH = "swagger/schema2_0/schema.json";
   static final String WILDCARD_URL_PATH = "/**";
@@ -88,13 +88,12 @@ public class SwaggerToService implements DiagCollector {
   private final TypeBuilder typeBuilder;
   private final MethodBuilder methodBuilder;
   private final HttpRuleBuilder httpRuleBuilder;
+  private final TopLevelExtensionsBuilder topLevelExtensionBuilder;
   private final AuthBuilder authBuilder;
   private final String swaggerFileName;
-  private final Location swaggerFileLocation;
-  private final List<Diag> diags = Lists.newArrayList();
   private final ImmutableMap<String, String> additionalConfigs;
   private final Map<String, String> duplicateOperationIdLookup;
-  private int errorCount = 0;
+  private final SwaggerImporterDiagCollector diagCollector;
 
   /**
    * Initializes Swagger to Service config converter.
@@ -122,7 +121,6 @@ public class SwaggerToService implements DiagCollector {
     }
 
     this.swaggerFileName = (new File(swaggerFilePath)).getName();
-    swaggerFileLocation = new SimpleLocation(swaggerFileName);
     this.swagger = swaggerObject;
     this.serviceName = serviceName == null ? "" : serviceName.trim();
     typeNamespace = typeNamespace == null ? "" : typeNamespace.trim();
@@ -133,10 +131,12 @@ public class SwaggerToService implements DiagCollector {
     this.additionalConfigs = additionalConfigs;
     this.duplicateOperationIdLookup = Maps.newLinkedHashMap();
     typeBuilder = new TypeBuilder(swagger, typeNamespace);
-    methodBuilder = new MethodBuilder(this, typeBuilder);
-    httpRuleBuilder = new HttpRuleBuilder(methodNamespace, this.swagger.getBasePath(), this);
-    authBuilder = new AuthBuilder(methodNamespace, this);
+    diagCollector = new SwaggerImporterDiagCollector(swaggerFileName);
+    methodBuilder = new MethodBuilder(diagCollector, typeBuilder);
+    httpRuleBuilder = new HttpRuleBuilder(methodNamespace, swagger.getBasePath(), diagCollector);
+    authBuilder = new AuthBuilder(methodNamespace, diagCollector);
     serviceBuilder = Service.newBuilder();
+    topLevelExtensionBuilder = new TopLevelExtensionsBuilder(diagCollector);
   }
 
   /**
@@ -288,6 +288,13 @@ public class SwaggerToService implements DiagCollector {
 
     serviceBuilder.setAuthentication(authBuilder.getAuthentication());
     serviceBuilder.setUsage(authBuilder.getUsage());
+
+    ImmutableMap<FieldDescriptor, Object> allTopLevelExtensions =
+        topLevelExtensionBuilder.getTopLevelExtensions(swagger);
+    for (Entry<FieldDescriptor, Object> field : allTopLevelExtensions.entrySet()) {
+      serviceBuilder.setField(field.getKey(), field.getValue());
+    }
+
     applyThirdPartyApiSettings();
 
     return normalizeService(serviceBuilder.build());
@@ -312,8 +319,7 @@ public class SwaggerToService implements DiagCollector {
     Model model = createModel(service, additionalConfigs);
     model.establishStage(Normalized.KEY);
     if (model.getDiagCollector().hasErrors()) {
-      diags.addAll(model.getDiagCollector().getDiags());
-      errorCount += model.getDiagCollector().getErrorCount();
+      diagCollector.appendAllDiags(model.getDiagCollector());
       return null;
     }
     return model.getNormalizedConfig();
@@ -476,7 +482,10 @@ public class SwaggerToService implements DiagCollector {
    */
   private boolean isAllowAllMethodsConfigured() {
     if (VendorExtensionUtils.hasExtension(
-        swagger.getVendorExtensions(), VendorExtensionUtils.X_GOOGLE_ALLOW, String.class, this)) {
+        swagger.getVendorExtensions(),
+        VendorExtensionUtils.X_GOOGLE_ALLOW,
+        String.class,
+        diagCollector)) {
       String allowMethodsExtensionValue =
           (String) swagger.getVendorExtensions().get(VendorExtensionUtils.X_GOOGLE_ALLOW);
       if (allowMethodsExtensionValue.equalsIgnoreCase("all")) {
@@ -484,7 +493,7 @@ public class SwaggerToService implements DiagCollector {
       } else if (allowMethodsExtensionValue.equalsIgnoreCase("configured")) {
         return false;
       } else {
-        addDiag(
+        diagCollector.addDiag(
             Diag.error(
                 new SimpleLocation(VendorExtensionUtils.X_GOOGLE_ALLOW),
                 "Only allowed values for %s are %s",
@@ -501,7 +510,7 @@ public class SwaggerToService implements DiagCollector {
    */
   private boolean validateOperationId(Operation operation, String urlPath, String operationType) {
     if (Strings.isNullOrEmpty(operation.getOperationId())) {
-      addDiag(
+      diagCollector.addDiag(
           Diag.error(
               createOperationLocation(operationType, urlPath),
               "Operation does not have the required 'operationId' field. Please specify unique"
@@ -521,7 +530,7 @@ public class SwaggerToService implements DiagCollector {
             + "underlying method name '%s'. Please use unique values for operationId",
             dupeOperationId, sanitizedOperationId);
       }
-      addDiag(Diag.error(errorLocation, errorMessage));
+      diagCollector.addDiag(Diag.error(errorLocation, errorMessage));
       return false;
     }
 
@@ -555,50 +564,7 @@ public class SwaggerToService implements DiagCollector {
         operationType, path));
   }
 
-  /**
-   * Accumulates errors and warning encountered during import.
-   */
-  @Override
-  public void addDiag(Diag diag) {
-    Location loc = SimpleLocation.UNKNOWN;
-    if (diag.getLocation() == SimpleLocation.UNKNOWN
-        || diag.getLocation() == SimpleLocation.TOPLEVEL) {
-      loc = swaggerFileLocation;
-    } else {
-      loc = new SimpleLocation(
-          String.format("%s: %s", swaggerFileName, diag.getLocation().toString()));
-    }
-    diag =
-        diag.getKind() == Kind.ERROR
-            ? Diag.error(loc, diag.getMessage()) : Diag.warning(loc, diag.getMessage());
-
-    diags.add(diag);
-    if (diag.getKind() == Diag.Kind.ERROR) {
-      errorCount++;
-    }
-  }
-
-  /**
-   * Returns the number of errors and warnings.
-   */
-  @Override
-  public int getErrorCount() {
-    return errorCount;
-  }
-
-  /**
-   * Returns true if there are any diagnosed proper errors; false otherwise
-   */
-  @Override
-  public boolean hasErrors() {
-    return getErrorCount() > 0;
-  }
-
-  /**
-   * Returns the diagnosis accumulated.
-   */
-  @Override
-  public List<Diag> getDiags() {
-    return diags;
+  public DiagCollector getDiagCollector() {
+    return diagCollector;
   }
 }
