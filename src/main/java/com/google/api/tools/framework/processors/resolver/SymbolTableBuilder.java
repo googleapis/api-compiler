@@ -49,6 +49,7 @@ class SymbolTableBuilder extends Visitor {
   private final Map<String, TypeRef> types = Maps.newLinkedHashMap();
   private final Map<String, List<Method>> methods =  Maps.newLinkedHashMap();
   private final Set<String> fieldNames =  new HashSet<>();
+  private final Set<String> packageNames = new HashSet<>();
 
   SymbolTableBuilder(Model model) {
     this.model = model;
@@ -56,7 +57,7 @@ class SymbolTableBuilder extends Visitor {
 
   SymbolTable run() {
     visit(model);
-    return new SymbolTable(interfaces, types, fieldNames, methods);
+    return new SymbolTable(interfaces, types, fieldNames, methods, packageNames);
   }
 
   @VisitsBefore void visit(Interface endpointInterface) {
@@ -93,6 +94,9 @@ class SymbolTableBuilder extends Visitor {
     // Add the message to the set of known types.
     addType(message.getLocation(), message.getFullName(), TypeRef.of(message));
 
+    // Add the message's package to the set of known packages
+    addPackage(message.getFile().getFullName());
+
     // Build the field-by-name map for this message, and record field simple names.
     Map<String, Field> fieldByName = Maps.newLinkedHashMap();
     for (Field field : message.getFields()) {
@@ -123,6 +127,14 @@ class SymbolTableBuilder extends Visitor {
       }
     }
     enumType.setValueByNameMap(ImmutableMap.copyOf(valueByName));
+  }
+
+  private void addPackage(String pkg) {
+    packageNames.add(pkg);
+    int lastDot = pkg.lastIndexOf(".");
+    if (lastDot > 0) {
+      addPackage(pkg.substring(0, lastDot));
+    }
   }
 
   private void addType(Location location, String fullName, TypeRef type) {

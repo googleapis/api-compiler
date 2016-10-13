@@ -46,14 +46,17 @@ public class SymbolTable {
   private final ImmutableMap<String, Interface> interfaceByName;
   private final ImmutableMap<String, TypeRef> typeByName;
   private final ImmutableSet<String> fieldNames;
+  private final ImmutableSet<String> packageNames;
   private final ImmutableMap<String, ? extends List<Method>> methodsBySimpleName;
 
   public SymbolTable(Map<String, Interface> interfaceByName, Map<String, TypeRef> typeByName,
-      Set<String> fieldNames, Map<String, ? extends List<Method>> methodsBySimpleName) {
+      Set<String> fieldNames, Map<String, ? extends List<Method>> methodsBySimpleName,
+      Set<String> packageNames) {
     this.interfaceByName = ImmutableMap.copyOf(interfaceByName);
     this.typeByName = ImmutableMap.copyOf(typeByName);
     this.fieldNames = ImmutableSet.copyOf(fieldNames);
     this.methodsBySimpleName = ImmutableMap.copyOf(methodsBySimpleName);
+    this.packageNames = ImmutableSet.copyOf(packageNames);
   }
 
   /**
@@ -145,6 +148,9 @@ public class SymbolTable {
    * Resolves a type by its partial name within a given package context, following PB (== C++)
    * conventions. If the given name is a builtin type name for a primitive type in the PB
    * language, a reference for that type will be returned.
+   *
+   * Note that this differs from the proto compiler in that it will continue searching if a
+   * partial resolution fails; see resolveType2 for details.
    */
   @Nullable
   public TypeRef resolveType(String inPackage, String name) {
@@ -156,6 +162,53 @@ public class SymbolTable {
       type = lookupType(cand);
       if (type != null) {
         return type;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Resolves a type by its partial name within a given package context, following PB (== C++)
+   * conventions. If the given name is a builtin type name for a primitive type in the PB
+   * language, a reference for that type will be returned.
+   *
+   * This uses a stricter algorithm than resolveType, in that it fails to resolve if a partial
+   * match fails, whereas resolveType keeps looking.
+   *
+   * For example, if there exist types:
+   *   a.b.a.b.M.N
+   *   a.b.J
+   * and we try to resolve the type "b.J" in the package "a.b.a.b", then resolveType will
+   * successfully resolve "b.J" to "a.b.J".
+   *
+   * In contrast, the proto compiler and resolveType2 will first perform the partial patch of "b" in
+   * the package "a.b.a.b", which resolves to "a.b.a.b". The lookup "a.b.a.b.J" then fails.
+   *
+   * TODO (jgeiger): can resolveType be replaced safely by resolveType2?
+   */
+  @Nullable
+  public TypeRef resolveType2(String inPackage, String name) {
+    int firstDot = name.indexOf(".");
+    String firstComponent;
+    if (firstDot > 0) {
+      firstComponent = name.substring(0, name.indexOf("."));
+    } else {
+      return resolveType(inPackage, name);
+    }
+    for (String cand : nameCandidates(inPackage, firstComponent)) {
+      TypeRef outerType = lookupType(cand);
+      if (outerType != null) {
+        if (!outerType.isMessage()) {
+          return null;
+        }
+        String outerTypeName = outerType.getMessageType().getFullName();
+        int lastDot = outerTypeName.lastIndexOf(".");
+        String fullType = lastDot > 0 ? outerTypeName.substring(0, lastDot) + "." + name : name;
+        return lookupType(fullType);
+      } else if (packageNames.contains(cand)) {
+        int lastDot = cand.lastIndexOf(".");
+        String fullType = lastDot > 0 ? cand.substring(0, lastDot) + "." + name : name;
+        return lookupType(fullType);
       }
     }
     return null;
