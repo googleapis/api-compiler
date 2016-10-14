@@ -19,6 +19,7 @@ package com.google.api.tools.framework.processors.normalizer;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.stages.Normalized;
 import com.google.api.tools.framework.model.testing.ConfigBaselineTestCase;
+
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -93,6 +94,10 @@ public class NormalizerTest extends ConfigBaselineTestCase {
 
   @Test public void invalid_type_wildcard() throws Exception {
     test("invalid_type_wildcard");
+  }
+
+  @Test public void no_package_name() throws Exception {
+    test("no_package_name");
   }
 
   @Test
