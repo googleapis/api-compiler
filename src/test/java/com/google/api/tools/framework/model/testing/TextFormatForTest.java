@@ -70,8 +70,8 @@ public class TextFormatForTest {
     for (FieldDescriptor field : getFieldsInNumberOrder(message.getDescriptorForType())) {
 
       // Skip empty fields.
-      if (field.isRepeated() && message.getRepeatedFieldCount(field) == 0
-          || !field.isRepeated() && !message.hasField(field)) {
+      if ((field.isRepeated() && message.getRepeatedFieldCount(field) == 0)
+          || (!field.isRepeated() && !message.hasField(field))) {
         continue;
       }
 
