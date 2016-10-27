@@ -16,6 +16,8 @@
 
 package com.google.api.tools.framework.snippet;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.api.tools.framework.model.testing.BaselineTestCase;
 import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.api.tools.framework.snippet.SnippetSet.EvalException;
@@ -26,7 +28,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import junit.framework.Assert;
@@ -47,6 +51,17 @@ public class SnippetTest extends BaselineTestCase {
     TestDataLocator locator = TestDataLocator.create(getClass());
     try {
       return snippets = SnippetSet.parse(locator.getTestDataAsFile(fileName).toFile());
+    } catch (ParseException e) {
+      testOutput().println("errors!!");
+      testOutput().println(e.getMessage());
+      return snippets = null;
+    }
+  }
+
+  private SnippetSet createFromResource(String fileName) {
+    try {
+      final String root = getClass().getPackage().getName().replace('.', '/') + "/testdata";
+      return snippets = SnippetSet.parse(SnippetSet.resourceInputSupplier(root), fileName);
     } catch (ParseException e) {
       testOutput().println("errors!!");
       testOutput().println(e.getMessage());
@@ -592,6 +607,12 @@ public class SnippetTest extends BaselineTestCase {
 
   @Test public void file() throws IOException {
     createFromFile("file.snip");
+    eval("foo", "Hello", "World");
+    eval("unary", "NOT", 43);
+  }
+
+  @Test public void resource() {
+    createFromResource("resource.snip");
     eval("foo", "Hello", "World");
     eval("unary", "NOT", 43);
   }

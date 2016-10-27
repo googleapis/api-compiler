@@ -1,0 +1,6 @@
+---- eval foo(Hello,World) ==>
+Hello + World
+---- end
+---- eval unary(NOT,43) ==>
+!43
+---- end

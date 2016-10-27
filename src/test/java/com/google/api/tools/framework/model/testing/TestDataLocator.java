@@ -135,9 +135,9 @@ public abstract class TestDataLocator {
       for (int i = classContexts.size() - 1; i >= 0; i--) {
         Class<?> classContext = classContexts.get(i);
         String testDataDir = testDataDirs.get(i);
-        String relativeToThis = classContext.getPackage().getName().replace(".", File.separator);
-        candidates.add(relativeToThis + File.separator + name);
-        candidates.add(relativeToThis + File.separator + testDataDir + File.separator + name);
+        String relativeToThis = classContext.getPackage().getName().replace(".", "/");
+        candidates.add(relativeToThis + "/" + name);
+        candidates.add(relativeToThis + "/" + testDataDir + "/" + name);
         candidates.add(name);
       }
     }
