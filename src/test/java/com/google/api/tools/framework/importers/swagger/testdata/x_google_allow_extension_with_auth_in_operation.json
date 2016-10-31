@@ -1,0 +1,59 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.googleapis.com",
+    "securityDefinitions": {
+      "api_key": {
+        "type": "apiKey",
+          "name": "key",
+          "in": "query"
+      }
+    },
+    "x-google-allow" : "all",
+    "paths": {
+        "/**": {
+            "post": {
+                "operationId": "simpleMethod",
+                "parameters": [
+                    {
+                        "name": "myBodyRef",
+                        "in": "body",
+                          "schema": {
+                              "properties": {
+                                  "myStringA": {
+                                      "type": "string"
+                                  }
+                              }
+                          }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "schema": {
+                                "$ref": "#/definitions/SimpleDef"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "SimpleDef": {
+            "properties": {
+                "myStringA": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

@@ -54,6 +54,17 @@ public class SnippetTest extends BaselineTestCase {
     }
   }
 
+  private SnippetSet createFromResource(String fileName) {
+    try {
+      final String root = getClass().getPackage().getName().replace('.', '/') + "/testdata";
+      return snippets = SnippetSet.parse(SnippetSet.resourceInputSupplier(root), fileName);
+    } catch (ParseException e) {
+      testOutput().println("errors!!");
+      testOutput().println(e.getMessage());
+      return snippets = null;
+    }
+  }
+
   private SnippetSet create(String... lines) {
     // Split up the lines into virtual input sources.
     final Map<String, List<String>> input = Maps.newLinkedHashMap();
@@ -592,6 +603,12 @@ public class SnippetTest extends BaselineTestCase {
 
   @Test public void file() throws IOException {
     createFromFile("file.snip");
+    eval("foo", "Hello", "World");
+    eval("unary", "NOT", 43);
+  }
+
+  @Test public void resource() {
+    createFromResource("resource.snip");
     eval("foo", "Hello", "World");
     eval("unary", "NOT", 43);
   }

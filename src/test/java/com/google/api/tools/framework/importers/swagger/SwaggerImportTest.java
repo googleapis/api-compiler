@@ -30,10 +30,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -259,6 +261,16 @@ public class SwaggerImportTest extends BaselineTestCase {
   @Test
   public void x_google_allow_extension_all() throws Exception {
     testWithDefaults("x_google_allow_extension_all");
+  }
+
+  @Test
+  public void x_google_allow_extension_with_auth() throws Exception {
+    testWithDefaults("x_google_allow_extension_with_auth");
+  }
+
+  @Test
+  public void x_google_allow_extension_with_auth_in_operation() throws Exception {
+    testWithDefaults("x_google_allow_extension_with_auth_in_operation");
   }
 
   @Test

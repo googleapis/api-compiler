@@ -434,7 +434,7 @@ public class SnippetSet {
     return new InputSupplier() {
       @Override public Iterable<String> readInput(String snippetSetName) throws IOException {
         try {
-          return Resources.readLines(Resources.getResource(root + File.separator + snippetSetName),
+          return Resources.readLines(Resources.getResource(root + "/" + snippetSetName),
               UTF_8);
         } catch (Exception e) {
           throw new IOException(e);

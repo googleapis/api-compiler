@@ -1,0 +1,24 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.googleapis.com",
+    "securityDefinitions": {
+      "api_key": {
+        "type": "apiKey",
+          "name": "key",
+          "in": "query"
+      }
+    },
+    "security": [
+      {
+        "api_key": []
+      }
+    ],
+    "x-google-allow" : "all",
+    "paths": {
+    }
+}

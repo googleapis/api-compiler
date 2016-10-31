@@ -1,0 +1,14 @@
+# Some basic snippet definitions
+
+@snippet foo(a,b)
+  {@a} + {@b}
+@end
+
+@snippet unary(x, a)
+  @switch x
+  @case "NOT"
+    !{@a}
+  @case "NEGATE"
+    -{@a}
+  @end
+@end
