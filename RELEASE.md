@@ -6,7 +6,7 @@ This document states how we plan to version and release the Google Api Compiler.
 ## Branches
 This Api Compiler repo contains only _one_ branch:
 
-`master` : This has the lastest code into which all the contribution
+`master` : This has the latest code into which all the contribution
 (pull requests) goes. From this branch we will create a temporary release branch
 through which we will do the release to the central repository. After the
 release the temporary release branch will be deleted.
@@ -41,7 +41,7 @@ errors on the [travis PR build status page](https://travis-ci.org/googleapis/api
    privateOssrhUsername=<username that has access to the central repository>
    privateOssrhPassword=<password associated with the above username>
    ```
-   
+
    Step2: Push the changes to the central repository using after_success.sh.
    This script uses the information in the  ~/.gradle/gradle.properties to
    successfully deploy jars to the central repository.
