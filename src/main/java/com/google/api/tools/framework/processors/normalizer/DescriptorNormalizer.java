@@ -49,7 +49,8 @@ class DescriptorNormalizer extends Visitor {
    * instances for default values derived from the proto2 descriptor. Consumers of the service
    * descriptor must compute those defaults.
    */
-  private static final String EMPTY_DESCRIPTOR_DEFAULTS_EXPERIMENT = "empty-descriptor-defaults";
+  private static final String INCLUDE_DESCRIPTOR_DEFAULTS_EXPERIMENT =
+      "include-descriptor-defaults";
 
   private final Model model;
   private final boolean includeDefaults;
@@ -60,7 +61,7 @@ class DescriptorNormalizer extends Visitor {
   DescriptorNormalizer(Model model) {
     super(model.getScoper(), false);
     this.model = model;
-    this.includeDefaults = !model.isExperimentEnabled(EMPTY_DESCRIPTOR_DEFAULTS_EXPERIMENT);
+    this.includeDefaults = model.isExperimentEnabled(INCLUDE_DESCRIPTOR_DEFAULTS_EXPERIMENT);
 
   }
 

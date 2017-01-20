@@ -26,8 +26,9 @@ import com.google.api.tools.framework.model.testing.DiagUtils;
 import com.google.api.tools.framework.model.testing.ServiceConfigTestingUtil;
 import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.api.tools.framework.model.testing.TextFormatForTest;
+import com.google.api.tools.framework.tools.FileWrapper;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
 import java.io.IOException;
@@ -42,26 +43,28 @@ import org.junit.runners.JUnit4;
 
 public class SwaggerImportTest extends BaselineTestCase {
   private static final String DEFAULT_TYPE_NAMESPACE = "namespace.types";
-  private static final String DEFAULT_METHOD_NAMESPACE = "google.example.methods";
   private static final String DEFAULT_SERVICE_NAME = "";
+  private static final String[] ALLOWED_EXTENSIONS =
+      new String[] {"json", "yaml", "yml", "invalid"};
 
   private static final ImmutableSet<String> EMPTY_VISIBILITY_LABELS = ImmutableSet.<String>of();
-  private static final ImmutableMap<String, String> NO_ADDITIONAL_CONFIGS =
-      ImmutableMap.<String, String>of();
+  private static final ImmutableList<FileWrapper> NO_ADDITIONAL_CONFIGS =
+      ImmutableList.<FileWrapper>of();
 
-  private  static final TestDataLocator testDataLocator =
+  private static final TestDataLocator testDataLocator =
       TestDataLocator.create(SwaggerImportTest.class);
 
   private static final String ENDPOINTS_YAML = "google/serviceconfig/endpoints/endpoints.yaml";
-  private static final ImmutableMap<String, String> ADDITIONAL_CONFIGS;
+  private static final ImmutableList<FileWrapper> ADDITIONAL_CONFIGS;
 
   static {
-    ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
+    ImmutableList.Builder<FileWrapper> builder = ImmutableList.<FileWrapper>builder();
 
     try {
-      builder.put(
-          ENDPOINTS_YAML,
-          Resources.toString(Resources.getResource(ENDPOINTS_YAML), StandardCharsets.UTF_8));
+      builder.add(
+          FileWrapper.create(
+              ENDPOINTS_YAML,
+              Resources.toString(Resources.getResource(ENDPOINTS_YAML), StandardCharsets.UTF_8)));
     } catch (IOException e) {
       throw new ExceptionInInitializerError(e);
     }
@@ -73,73 +76,84 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   private void testWithDefaults(String... files) {
-    test(DEFAULT_SERVICE_NAME, DEFAULT_TYPE_NAMESPACE, DEFAULT_METHOD_NAMESPACE,
-        ImmutableSet.<String>of(), ImmutableList.<String>copyOf(files),
-        ImmutableMap.<String, String>of());
+    test(
+        DEFAULT_SERVICE_NAME,
+        DEFAULT_TYPE_NAMESPACE,
+        ImmutableSet.<String>of(),
+        ImmutableList.<String>copyOf(files),
+        ImmutableList.<FileWrapper>of());
   }
 
-  private void test(String serviceName, String typeNamespace, String methodNamespace,
-      Set<String> visibility, ImmutableList<String> files,
-      ImmutableMap<String, String> additional) {
-    Service service = null;
-    SwaggerToService swaggerToService = null;
+  private void test(
+      String serviceName,
+      String typeNamespace,
+      Set<String> visibility,
+      ImmutableList<String> files,
+      ImmutableList<FileWrapper> additional) {
     try {
-      ImmutableMap.Builder<String, String> fileContentMap = new ImmutableMap.Builder<>();
+      ImmutableList.Builder<FileWrapper> fileContents = new ImmutableList.Builder<>();
       for (String file : files) {
-        String fileName = file;
-        URL fileUrl = getFileResourceUrl(file);
-        if (fileUrl == null) {
-          fileName = file + ".json";
-          fileUrl = getFileResourceUrl(fileName);
-        }
-        if (fileUrl == null) {
-          fileName = file + ".yaml";
-          fileUrl = getFileResourceUrl(fileName);
-        }
+        String fileName = findFile(file);
+        URL fileUrl = getFileResourceUrl(fileName);
         String swaggerSpec = testDataLocator.readTestData(fileUrl);
-        fileContentMap.put(fileName, swaggerSpec);
+        fileContents.add(FileWrapper.create(fileName, swaggerSpec));
       }
-      swaggerToService = new SwaggerToService(
-          fileContentMap.build(), serviceName, typeNamespace, methodNamespace, additional);
-      service = swaggerToService.createServiceConfig();
+      SwaggerToService swaggerToService =
+          new SwaggerToService(fileContents.build(), serviceName, typeNamespace, additional);
+      Service service = swaggerToService.createServiceConfig();
+
+      int errorCount = 0;
+      for (Diag diag : swaggerToService.getDiagCollector().getDiags()) {
+        testOutput().println(DiagUtils.getDiagToPrint(diag, false));
+        if (diag.getKind() == Kind.ERROR) {
+          errorCount++;
+        }
+      }
+      assertThat(swaggerToService.getDiagCollector().getErrorCount()).isEqualTo(errorCount);
+
+      if (service == null) {
+        testOutput().println("Service config creation failed");
+        return;
+      }
+
+      // Remove the predefined types from the Service Object to make the baseline clean.
+      Service.Builder printableServiceBuilder = service.toBuilder();
+      printableServiceBuilder.clearTypes();
+      for (int i = 0; i < service.getTypesCount(); ++i) {
+        if (!service.getTypes(i).getName().startsWith("google.protobuf.")) {
+          printableServiceBuilder.addTypes(service.getTypes(i).toBuilder());
+        }
+      }
+      printableServiceBuilder.clearEnums();
+      for (int i = 0; i < service.getEnumsCount(); ++i) {
+        if (!service.getEnums(i).getName().startsWith("google.protobuf.")) {
+          printableServiceBuilder.addEnums(service.getEnums(i).toBuilder());
+        }
+      }
+      // Remove the config version too.
+      printableServiceBuilder.clearConfigVersion();
+      printableServiceBuilder =
+          ServiceConfigTestingUtil.clearIrrelevantData(printableServiceBuilder);
+      testOutput().println(TextFormatForTest.INSTANCE.printToString(printableServiceBuilder));
+
     } catch (Exception e) {
       testOutput().println(e.getMessage());
       return;
     }
-    int errorCount = 0;
-    for (Diag diag : swaggerToService.getDiags()) {
-      testOutput().println(DiagUtils.getDiagToPrint(diag, false));
-      if (diag.getKind() == Kind.ERROR) {
-          errorCount++;
+  }
+
+  private String findFile(String filenameWithoutExtension) {
+    for (String allowedExtension : ALLOWED_EXTENSIONS) {
+      String filename = filenameWithoutExtension + "." + allowedExtension;
+      URL fileUrl = getFileResourceUrl(filename);
+      if (fileUrl != null) {
+        return filename;
       }
     }
-    assertThat(swaggerToService.getErrorCount()).isEqualTo(errorCount);
-
-    if (service == null) {
-      testOutput().println("Service config creation failed");
-      return;
-    }
-
-    // Remove the predefined types from the Service Object to make the baseline clean.
-    Service.Builder printableServiceBuilder = service.toBuilder();
-    printableServiceBuilder.clearTypes();
-    for (int i = 0; i < service.getTypesCount(); ++i) {
-      if (!service.getTypes(i).getName().startsWith("google.protobuf.")) {
-        printableServiceBuilder.addTypes(service.getTypes(i).toBuilder());
-      }
-    }
-    printableServiceBuilder.clearEnums();
-    for (int i = 0; i < service.getEnumsCount(); ++i) {
-      if (!service.getEnums(i).getName().startsWith("google.protobuf.")) {
-        printableServiceBuilder.addEnums(service.getEnums(i).toBuilder());
-      }
-    }
-    // Remove the config version too.
-    printableServiceBuilder.clearConfigVersion();
-    printableServiceBuilder = ServiceConfigTestingUtil.clearIrrelevantData(printableServiceBuilder);
-    testOutput().println(
-        TextFormatForTest.INSTANCE.printToString(printableServiceBuilder));
-
+    throw new IllegalArgumentException(
+        String.format(
+            "No testfile for filename '%s' with a valid extension. Valid extensions are {%s}.",
+            filenameWithoutExtension, Joiner.on(",").join(ALLOWED_EXTENSIONS)));
   }
 
   @Test
@@ -232,6 +246,16 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void auth_multiple_oauth_logicalAND_error() throws Exception {
+    testWithDefaults("auth_multiple_oauth_logicalAND_error");
+  }
+
+  @Test
+  public void oauth_in_security() throws Exception {
+    testWithDefaults("oauth_in_security");
+  }
+
+  @Test
   public void auth_default() throws Exception {
     testWithDefaults("auth_default");
   }
@@ -244,6 +268,16 @@ public class SwaggerImportTest extends BaselineTestCase {
   @Test
   public void petstore() throws Exception {
     testWithDefaults("petstore");
+  }
+
+  @Test
+  public void missing_host() throws Exception {
+    testWithDefaults("missing_host");
+  }
+
+  @Test
+  public void yml_extension() throws Exception {
+    testWithDefaults("yml_extension");
   }
 
   @Test
@@ -262,8 +296,43 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void x_google_allow_extension_with_auth() throws Exception {
+    testWithDefaults("x_google_allow_extension_with_auth");
+  }
+
+  @Test
+  public void x_google_allow_extension_with_auth_in_operation() throws Exception {
+    testWithDefaults("x_google_allow_extension_with_auth_in_operation");
+  }
+
+  @Test
   public void x_google_allow_extension_all_with_existing_catchall_methods() throws Exception {
     testWithDefaults("x_google_allow_extension_all_with_existing_catchall_methods");
+  }
+
+  @Test
+  public void x_google_endpoints() throws Exception {
+    testWithDefaults("x-google-endpoints");
+  }
+
+  @Test
+  public void error_multiple_extension_for_same_property() throws Exception {
+    testWithDefaults("error_multiple_extension_for_same_property");
+  }
+
+  @Test
+  public void x_google_audiences() throws Exception {
+    testWithDefaults("x_google_audiences");
+  }
+
+  @Test
+  public void x_google_invalid_array_type() throws Exception {
+    testWithDefaults("x-google-invalid-array-type");
+  }
+
+  @Test
+  public void x_google_invalid_unknown_field() throws Exception {
+    testWithDefaults("x-google-invalid-unknown-field");
   }
 
   @Test
@@ -278,44 +347,87 @@ public class SwaggerImportTest extends BaselineTestCase {
 
   @Test
   public void invalid_opertion_id() throws Exception {
-    test("", "", "", EMPTY_VISIBILITY_LABELS, ImmutableList.of("invalid_opertion_id"),
+    test(
+        "",
+        "",
+        EMPTY_VISIBILITY_LABELS,
+        ImmutableList.of("invalid_opertion_id"),
         NO_ADDITIONAL_CONFIGS);
   }
 
   @Test
   public void corrupt_json() throws Exception {
-    test("", "", "", EMPTY_VISIBILITY_LABELS, ImmutableList.of("corrupt_json"),
-        NO_ADDITIONAL_CONFIGS);
+    test("", "", EMPTY_VISIBILITY_LABELS, ImmutableList.of("corrupt_json"), NO_ADDITIONAL_CONFIGS);
   }
 
   @Test
   public void invalid_extension() throws Exception {
-    test("", "", "", EMPTY_VISIBILITY_LABELS, ImmutableList.of("invalid_extension.invalid"),
+    test(
+        "",
+        "",
+        EMPTY_VISIBILITY_LABELS,
+        ImmutableList.of("invalid_extension"),
+        NO_ADDITIONAL_CONFIGS);
+  }
+
+  @Test
+  public void multiple_swagger_hosts() throws Exception {
+    test(
+        "",
+        "",
+        EMPTY_VISIBILITY_LABELS,
+        ImmutableList.of("petstore", "uber"),
+        NO_ADDITIONAL_CONFIGS);
+  }
+
+  @Test
+  public void multiple_swagger_duplicate_versions() throws Exception {
+    test(
+        "",
+        "",
+        EMPTY_VISIBILITY_LABELS,
+        ImmutableList.of("library_example", "library_example_v2"),
         NO_ADDITIONAL_CONFIGS);
   }
 
   @Test
   public void multiple_swagger() throws Exception {
-    test("", "", "", EMPTY_VISIBILITY_LABELS, ImmutableList.of("petstore", "uber"),
+    test(
+        "",
+        "",
+        EMPTY_VISIBILITY_LABELS,
+        ImmutableList.of("petstore", "petstore_v2"),
         NO_ADDITIONAL_CONFIGS);
   }
 
   @Test
   public void top_level_security_ext() throws Exception {
-    test("", "", "", EMPTY_VISIBILITY_LABELS, ImmutableList.of("top_level_security_ext"),
+    test(
+        "",
+        "",
+        EMPTY_VISIBILITY_LABELS,
+        ImmutableList.of("top_level_security_ext"),
         NO_ADDITIONAL_CONFIGS);
   }
 
   @Test
   public void bookstore() throws Exception {
-    test("bookstore.appspot.com", "", "", EMPTY_VISIBILITY_LABELS, ImmutableList.of("bookstore"),
+    test(
+        "bookstore.appspot.com",
+        "",
+        EMPTY_VISIBILITY_LABELS,
+        ImmutableList.of("bookstore"),
         ADDITIONAL_CONFIGS);
   }
 
   @Test
   public void bookstore_visibility() throws Exception {
-    test("bookstore.appspot.com", "", "", ImmutableSet.<String>of("EARLY_ACCESS_PROGRAM"),
-        ImmutableList.of("bookstore"), ADDITIONAL_CONFIGS);
+    test(
+        "bookstore.appspot.com",
+        "",
+        ImmutableSet.<String>of("EARLY_ACCESS_PROGRAM"),
+        ImmutableList.of("bookstore"),
+        ADDITIONAL_CONFIGS);
   }
 
 }

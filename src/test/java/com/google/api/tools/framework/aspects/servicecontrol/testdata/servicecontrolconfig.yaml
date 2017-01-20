@@ -49,6 +49,11 @@ logs:
 
 - name: "" # Log name must not be empty
 
+- name: "cloudaudit.googleapis.com" # invalid cloud audit log name.
+- name: "cloudaudit.googleapis.com/producer_activity" # invalid cloud audit log name.
+- name: "cloudaudit.googleapis.com/data_access"
+- name: "cloudaudit.googleapis.com/activity/create"
+
 metrics:
 - name: "metric0" # Unused metric
   display_name: "metric0"

@@ -1,0 +1,131 @@
+WARNING: auth_multiple_oauth_logicalAND_error.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
+WARNING: auth_multiple_oauth_logicalAND_error.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
+WARNING: auth_multiple_oauth_logicalAND_error.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
+WARNING: auth_multiple_oauth_logicalAND_error.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
+WARNING: auth_multiple_oauth_logicalAND_error.json: Operation 'get' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+ERROR: auth_multiple_oauth_logicalAND_error.json: Operation 'post' in path '/v1/pets': x-security section contains multiple security definitions 'test_auth2,test_auth3' within the scope (Security Requirement Object) that get logically ANDed (both requirements need to be satisfied to allow the request). We only support allowing logical OR between security definitions. Therefore, please write requirements in different objects inside the array (which would mean logical OR, that is, any of the requirement should be sufficient to allow the request.)
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "library_example_googleapis_com_v1"
+  methods {
+    name: "ApiKeyNotReqOverride"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  methods {
+    name: "ApiKeyReqInherit"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  methods {
+    name: "SimpleMethod"
+    request_type_url: "type.googleapis.com/namespace.types.SimpleMethodRequest"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  version: "v1"
+  source_context {
+    file_name: "auth_multiple_oauth_logicalAND_error.json"
+  }
+}
+types {
+  name: "namespace.types.SimpleDef"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.SimpleMethodRequestBody"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.SimpleMethodRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_body_ref"
+    type_url: "type.googleapis.com/namespace.types.SimpleMethodRequestBody"
+    json_name: "myBodyRef"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "library_example_googleapis_com_v1.ApiKeyNotReqOverride"
+    get: "/v1/pets"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.ApiKeyReqInherit"
+    delete: "/v1/pets"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    post: "/v1/pets"
+    body: "my_body_ref"
+  }
+}
+authentication {
+  rules {
+    selector: "library_example_googleapis_com_v1.ApiKeyNotReqOverride"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
+  }
+  providers {
+    id: "test_auth"
+    issuer: "1234567-compute@developer.gserviceaccount.com"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+  }
+  providers {
+    id: "test_auth2"
+    issuer: "1234567-compute@developer.gserviceaccount2.com"
+  }
+  providers {
+    id: "test_auth3"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs3"
+  }
+}
+usage {
+  rules {
+    selector: "library_example_googleapis_com_v1.ApiKeyNotReqOverride"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.ApiKeyReqInherit"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
+  }
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+

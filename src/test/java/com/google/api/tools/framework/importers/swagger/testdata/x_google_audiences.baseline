@@ -1,0 +1,98 @@
+WARNING: x_google_audiences.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
+WARNING: x_google_audiences.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
+WARNING: x_google_audiences.json: Operation 'post' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "library_example_googleapis_com_v1"
+  methods {
+    name: "SimpleMethod"
+    request_type_url: "type.googleapis.com/namespace.types.SimpleMethodRequest"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  version: "v1"
+  source_context {
+    file_name: "x_google_audiences.json"
+  }
+}
+types {
+  name: "namespace.types.SimpleDef"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.SimpleMethodRequestBody"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.SimpleMethodRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_body_ref"
+    type_url: "type.googleapis.com/namespace.types.SimpleMethodRequestBody"
+    json_name: "myBodyRef"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    post: "/v1/pets"
+    body: "my_body_ref"
+  }
+}
+authentication {
+  rules {
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    requirements {
+      provider_id: "test_auth"
+      audiences: "www.test_auth.com, www.test2_auth.com"
+    }
+  }
+  providers {
+    id: "test_auth"
+    issuer: "1234567-compute@developer.gserviceaccount.com"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+    audiences: "www.test_auth.com, www.test2_auth.com"
+  }
+}
+usage {
+  rules {
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    allow_unregistered_calls: true
+  }
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+

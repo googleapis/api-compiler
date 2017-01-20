@@ -1,5 +1,2 @@
 ERROR: http: Field path 'J' is ambiguous: protiary.test.json_name_conflict.In has field 'J' and also has field 'J2' with json_name='J'
 WARNING: http: POST/PATCH/PUT method for 'protiary.test.json_name_conflict.TestService.Call1' should specify a body.
-WARNING: (lint) http-rest: 'rpc Call1 as HTTP POST /v1/test/*' is not a recognized REST pattern. Did you mean one of:
-  rpc Call1 as HTTP GET <prefix>:<literal>
-  rpc Call1 as HTTP POST <prefix>:<literal>

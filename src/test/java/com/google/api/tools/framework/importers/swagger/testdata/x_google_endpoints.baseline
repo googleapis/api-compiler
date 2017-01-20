@@ -1,0 +1,29 @@
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "library_example_googleapis_com_v1"
+  version: "v1"
+  source_context {
+    file_name: "x-google-endpoints.json"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
+  allow_cors: true
+}
+endpoints {
+  name: "library-example2.googleapis.com"
+  aliases: "library-example2.clients6.google.com"
+  aliases: "content-library-example2.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+

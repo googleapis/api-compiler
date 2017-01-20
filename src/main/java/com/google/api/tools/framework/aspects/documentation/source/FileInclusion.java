@@ -20,11 +20,9 @@ import com.google.api.tools.framework.model.DiagCollector;
 import com.google.api.tools.framework.model.Location;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
 import javax.annotation.Nullable;
 
 /**
@@ -93,7 +91,7 @@ public class FileInclusion extends ContentElement {
 
   private String readFileContent() {
     try {
-      return Files.toString(new File(resolvedFilePath), StandardCharsets.UTF_8);
+      return Files.asCharSource(new File(resolvedFilePath), StandardCharsets.UTF_8).read();
     } catch (IOException e) {
       error("Failed to read file: '%s'.", resolvedFilePath);
       return null;

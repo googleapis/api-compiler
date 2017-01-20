@@ -1,0 +1,1212 @@
+============== file: normalized config without derived data ==============
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "google.example.library.v1.LibraryService"
+  methods {
+    name: "CreateShelf"
+    request_type_url: "type.googleapis.com/google.example.library.v1.CreateShelfRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.Shelf"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\"\v/v1/shelves:\005shelf"
+      }
+    }
+  }
+  methods {
+    name: "GetShelf"
+    request_type_url: "type.googleapis.com/google.example.library.v1.GetShelfRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.Shelf"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\022\024/v1/{name=shelves/*}"
+      }
+    }
+  }
+  methods {
+    name: "RestrictedGetShelf"
+    request_type_url: "type.googleapis.com/google.example.library.v1.GetShelfRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.Shelf"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\022\037/v1/restricted/{name=shelves/*}"
+      }
+    }
+  }
+  methods {
+    name: "ListShelves"
+    request_type_url: "type.googleapis.com/google.example.library.v1.ListShelvesRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.ListShelvesResponse"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\022\v/v1/shelves"
+      }
+    }
+  }
+  methods {
+    name: "DeleteShelf"
+    request_type_url: "type.googleapis.com/google.example.library.v1.DeleteShelfRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Empty"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "*\024/v1/{name=shelves/*}"
+      }
+    }
+  }
+  methods {
+    name: "MergeShelves"
+    request_type_url: "type.googleapis.com/google.example.library.v1.MergeShelvesRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.Shelf"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\"\032/v1/{name=shelves/*}:merge:\001*"
+      }
+    }
+  }
+  methods {
+    name: "CreateBook"
+    request_type_url: "type.googleapis.com/google.example.library.v1.CreateBookRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.Book"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\"\032/v1/{name=shelves/*}/books:\004book"
+      }
+    }
+  }
+  methods {
+    name: "GetBook"
+    request_type_url: "type.googleapis.com/google.example.library.v1.GetBookRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.Book"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\022\034/v1/{name=shelves/*/books/*}"
+      }
+    }
+  }
+  methods {
+    name: "ListBooks"
+    request_type_url: "type.googleapis.com/google.example.library.v1.ListBooksRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.ListBooksResponse"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\022\032/v1/{name=shelves/*}/books"
+      }
+    }
+  }
+  methods {
+    name: "DeleteBook"
+    request_type_url: "type.googleapis.com/google.example.library.v1.DeleteBookRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Empty"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "*\034/v1/{name=shelves/*/books/*}"
+      }
+    }
+  }
+  methods {
+    name: "UpdateBook"
+    request_type_url: "type.googleapis.com/google.example.library.v1.UpdateBookRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.Book"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\032\034/v1/{name=shelves/*/books/*}:\004book"
+      }
+    }
+  }
+  methods {
+    name: "MoveBook"
+    request_type_url: "type.googleapis.com/google.example.library.v1.MoveBookRequest"
+    response_type_url: "type.googleapis.com/google.example.library.v1.Book"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\"!/v1/{name=shelves/*/books/*}:move:\001*"
+      }
+    }
+  }
+  version: "v1"
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+apis {
+  name: "google.discovery.Discovery"
+  methods {
+    name: "GetDiscovery"
+    request_type_url: "type.googleapis.com/google.discovery.GetDiscoveryRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Any"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\022\026/v1/discovery/{format}"
+      }
+    }
+  }
+  methods {
+    name: "GetDiscoveryRest"
+    request_type_url: "type.googleapis.com/google.discovery.GetDiscoveryRequest"
+    response_type_url: "type.googleapis.com/google.protobuf.Struct"
+    options {
+      name: "google.api.http"
+      value {
+        type_url: "type.googleapis.com/google.api.HttpRule"
+        value: "\022\033/v1/discovery/{format}/rest"
+      }
+    }
+  }
+  version: "v1"
+  source_context {
+    file_name: "discovery_for_test.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.protobuf.Empty"
+  source_context {
+    file_name: "google/protobuf/empty.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.Book"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "author"
+    json_name: "author"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "title"
+    json_name: "title"
+  }
+  fields {
+    kind: TYPE_BOOL
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "read"
+    json_name: "read"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.Shelf"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "theme"
+    json_name: "theme"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "internal_theme"
+    json_name: "internalTheme"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "restricted_theme"
+    json_name: "restrictedTheme"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.CreateShelfRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelf"
+    type_url: "type.googleapis.com/google.example.library.v1.Shelf"
+    json_name: "shelf"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.GetShelfRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.ListShelvesRequest"
+  fields {
+    kind: TYPE_INT32
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "page_size"
+    json_name: "pageSize"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "page_token"
+    json_name: "pageToken"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.ListShelvesResponse"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "shelves"
+    type_url: "type.googleapis.com/google.example.library.v1.Shelf"
+    json_name: "shelves"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "next_page_token"
+    json_name: "nextPageToken"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.DeleteShelfRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.MergeShelvesRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "other_shelf_name"
+    json_name: "otherShelfName"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.CreateBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "book"
+    type_url: "type.googleapis.com/google.example.library.v1.Book"
+    json_name: "book"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.GetBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.ListBooksRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_INT32
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "page_size"
+    json_name: "pageSize"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "page_token"
+    json_name: "pageToken"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.ListBooksResponse"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "books"
+    type_url: "type.googleapis.com/google.example.library.v1.Book"
+    json_name: "books"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "next_page_token"
+    json_name: "nextPageToken"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.UpdateBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "book"
+    type_url: "type.googleapis.com/google.example.library.v1.Book"
+    json_name: "book"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.DeleteBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.example.library.v1.MoveBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "other_shelf_name"
+    json_name: "otherShelfName"
+  }
+  source_context {
+    file_name: "library_config_version_0.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.protobuf.Any"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "type_url"
+    options {
+      name: "google.protobuf.FieldOptions.ctype"
+      value {
+        type_url: "type.googleapis.com/google.protobuf.StringValue"
+        value: "\n\fSTRING_PIECE"
+      }
+    }
+    json_name: "typeUrl"
+  }
+  fields {
+    kind: TYPE_BYTES
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "value"
+    options {
+      name: "google.protobuf.FieldOptions.ctype"
+      value {
+        type_url: "type.googleapis.com/google.protobuf.StringValue"
+        value: "\n\004CORD"
+      }
+    }
+    json_name: "value"
+  }
+  source_context {
+    file_name: "google/protobuf/any.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.protobuf.Struct"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "fields"
+    type_url: "type.googleapis.com/google.protobuf.Struct.FieldsEntry"
+    json_name: "fields"
+  }
+  source_context {
+    file_name: "google/protobuf/struct.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.protobuf.Struct.FieldsEntry"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "key"
+    json_name: "key"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "value"
+    type_url: "type.googleapis.com/google.protobuf.Value"
+    json_name: "value"
+  }
+  options {
+    name: "google.protobuf.MessageOptions.map_entry"
+    value {
+      type_url: "type.googleapis.com/google.protobuf.BoolValue"
+      value: "\b\001"
+    }
+  }
+  source_context {
+    file_name: "google/protobuf/struct.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.protobuf.Value"
+  fields {
+    kind: TYPE_ENUM
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "null_value"
+    type_url: "type.googleapis.com/google.protobuf.NullValue"
+    oneof_index: 1
+    json_name: "nullValue"
+  }
+  fields {
+    kind: TYPE_DOUBLE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "number_value"
+    oneof_index: 1
+    json_name: "numberValue"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "string_value"
+    oneof_index: 1
+    json_name: "stringValue"
+  }
+  fields {
+    kind: TYPE_BOOL
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "bool_value"
+    oneof_index: 1
+    json_name: "boolValue"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 5
+    name: "struct_value"
+    type_url: "type.googleapis.com/google.protobuf.Struct"
+    oneof_index: 1
+    json_name: "structValue"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 6
+    name: "list_value"
+    type_url: "type.googleapis.com/google.protobuf.ListValue"
+    oneof_index: 1
+    json_name: "listValue"
+  }
+  oneofs: "kind"
+  source_context {
+    file_name: "google/protobuf/struct.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.protobuf.ListValue"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "values"
+    type_url: "type.googleapis.com/google.protobuf.Value"
+    json_name: "values"
+  }
+  source_context {
+    file_name: "google/protobuf/struct.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+types {
+  name: "google.discovery.GetDiscoveryRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "format"
+    json_name: "format"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_REPEATED
+    number: 2
+    name: "labels"
+    json_name: "labels"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_REPEATED
+    number: 3
+    name: "args"
+    json_name: "args"
+  }
+  source_context {
+    file_name: "discovery_for_test.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+enums {
+  name: "google.protobuf.NullValue"
+  enumvalue {
+    name: "NULL_VALUE"
+  }
+  source_context {
+    file_name: "google/protobuf/struct.proto"
+  }
+  syntax: SYNTAX_PROTO3
+}
+documentation {
+  summary: "A simple Google Example Library API."
+  rules {
+    selector: "google.example.library.v1.Book"
+    description: "A single book in the library."
+  }
+  rules {
+    selector: "google.example.library.v1.Book.name"
+    description: "The resource name of the book.\nBook names have the form `shelves/{shelf_id}/books/{book_id}`.\nThe name is ignored when creating a book."
+  }
+  rules {
+    selector: "google.example.library.v1.Book.author"
+    description: "The name of the book author."
+  }
+  rules {
+    selector: "google.example.library.v1.Book.title"
+    description: "The title of the book."
+  }
+  rules {
+    selector: "google.example.library.v1.Book.read"
+    description: "Value indicating whether the book has been read."
+  }
+  rules {
+    selector: "google.example.library.v1.Shelf"
+    description: "A Shelf contains a collection of books with a theme."
+  }
+  rules {
+    selector: "google.example.library.v1.Shelf.name"
+    description: "The resource name of the shelf.\nShelf names have the form `shelves/{shelf_id}`.\nThe name is ignored when creating a shelf."
+  }
+  rules {
+    selector: "google.example.library.v1.Shelf.theme"
+    description: "The theme of the shelf"
+  }
+  rules {
+    selector: "google.example.library.v1.Shelf.internal_theme"
+    description: "A field that the backend filters based on visibility."
+  }
+  rules {
+    selector: "google.example.library.v1.Shelf.restricted_theme"
+    description: "A field that is filtered based on visibility."
+  }
+  rules {
+    selector: "google.example.library.v1.CreateShelfRequest"
+    description: "Request message for LibraryService.CreateShelf."
+  }
+  rules {
+    selector: "google.example.library.v1.CreateShelfRequest.shelf"
+    description: "The shelf to create."
+  }
+  rules {
+    selector: "google.example.library.v1.GetShelfRequest"
+    description: "Request message for LibraryService.GetShelf."
+  }
+  rules {
+    selector: "google.example.library.v1.GetShelfRequest.name"
+    description: "The name of the shelf to retrieve."
+  }
+  rules {
+    selector: "google.example.library.v1.ListShelvesRequest"
+    description: "Request message for LibraryService.ListShelves."
+  }
+  rules {
+    selector: "google.example.library.v1.ListShelvesRequest.page_size"
+    description: "Requested page size. Server may return fewer shelves than requested.\nIf unspecified, server will pick an appropriate default."
+  }
+  rules {
+    selector: "google.example.library.v1.ListShelvesRequest.page_token"
+    description: "A token identifying a page of results the server should return.\nTypically, this is the value of\n[ListShelvesResponse.next_page_token][google.example.library.v1.ListShelvesResponse.next_page_token]\nreturned from the previous call to `ListShelves` method."
+  }
+  rules {
+    selector: "google.example.library.v1.ListShelvesResponse"
+    description: "Response message for LibraryService.ListShelves."
+  }
+  rules {
+    selector: "google.example.library.v1.ListShelvesResponse.shelves"
+    description: "The list of shelves."
+  }
+  rules {
+    selector: "google.example.library.v1.ListShelvesResponse.next_page_token"
+    description: "A token to retrieve next page of results.\nPass this value in the\n[ListShelvesRequest.page_token][google.example.library.v1.ListShelvesRequest.page_token]\nfield in the subsequent call to `ListShelves` method to retrieve the next\npage of results."
+  }
+  rules {
+    selector: "google.example.library.v1.DeleteShelfRequest"
+    description: "Request message for LibraryService.DeleteShelf."
+  }
+  rules {
+    selector: "google.example.library.v1.DeleteShelfRequest.name"
+    description: "The name of the shelf to delete."
+  }
+  rules {
+    selector: "google.example.library.v1.MergeShelvesRequest"
+    description: "Describes the shelf being removed (other_shelf_name) and updated\n(name) in this merge."
+  }
+  rules {
+    selector: "google.example.library.v1.MergeShelvesRequest.name"
+    description: "The name of the shelf we\'re adding books to."
+  }
+  rules {
+    selector: "google.example.library.v1.MergeShelvesRequest.other_shelf_name"
+    description: "The name of the shelf we\'re removing books from and deleting."
+  }
+  rules {
+    selector: "google.example.library.v1.CreateBookRequest"
+    description: "Request message for LibraryService.CreateBook."
+  }
+  rules {
+    selector: "google.example.library.v1.CreateBookRequest.name"
+    description: "The name of the shelf in which the book is created."
+  }
+  rules {
+    selector: "google.example.library.v1.CreateBookRequest.book"
+    description: "The book to create."
+  }
+  rules {
+    selector: "google.example.library.v1.GetBookRequest"
+    description: "Request message for LibraryService.GetBook."
+  }
+  rules {
+    selector: "google.example.library.v1.GetBookRequest.name"
+    description: "The name of the book to retrieve."
+  }
+  rules {
+    selector: "google.example.library.v1.ListBooksRequest"
+    description: "Request message for LibraryService.ListBooks."
+  }
+  rules {
+    selector: "google.example.library.v1.ListBooksRequest.name"
+    description: "The name of the shelf whose books we\'d like to list."
+  }
+  rules {
+    selector: "google.example.library.v1.ListBooksRequest.page_size"
+    description: "Requested page size. Server may return fewer books than requested.\nIf unspecified, server will pick an appropriate default."
+  }
+  rules {
+    selector: "google.example.library.v1.ListBooksRequest.page_token"
+    description: "A token identifying a page of results the server should return.\nTypically, this is the value of\n[ListBooksResponse.next_page_token][google.example.library.v1.ListBooksResponse.next_page_token].\nreturned from the previous call to `ListBooks` method."
+  }
+  rules {
+    selector: "google.example.library.v1.ListBooksResponse"
+    description: "Response message for LibraryService.ListBooks."
+  }
+  rules {
+    selector: "google.example.library.v1.ListBooksResponse.books"
+    description: "The list of books."
+  }
+  rules {
+    selector: "google.example.library.v1.ListBooksResponse.next_page_token"
+    description: "A token to retrieve next page of results.\nPass this value in the\n[ListBooksRequest.page_token][google.example.library.v1.ListBooksRequest.page_token]\nfield in the subsequent call to `ListBooks` method to retrieve the next\npage of results."
+  }
+  rules {
+    selector: "google.example.library.v1.UpdateBookRequest"
+    description: "Request message for LibraryService.UpdateBook."
+  }
+  rules {
+    selector: "google.example.library.v1.UpdateBookRequest.name"
+    description: "The name of the book to update."
+  }
+  rules {
+    selector: "google.example.library.v1.UpdateBookRequest.book"
+    description: "The book to update with. The name must match or be empty."
+  }
+  rules {
+    selector: "google.example.library.v1.DeleteBookRequest"
+    description: "Request message for LibraryService.DeleteBook."
+  }
+  rules {
+    selector: "google.example.library.v1.DeleteBookRequest.name"
+    description: "The name of the book to delete."
+  }
+  rules {
+    selector: "google.example.library.v1.MoveBookRequest"
+    description: "Describes what book to move (name) and what shelf we\'re moving it\nto (other_shelf_name)."
+  }
+  rules {
+    selector: "google.example.library.v1.MoveBookRequest.name"
+    description: "The name of the book to move."
+  }
+  rules {
+    selector: "google.example.library.v1.MoveBookRequest.other_shelf_name"
+    description: "The name of the destination shelf."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService"
+    description: "This API represents a simple digital library.  It lets you manage Shelf\nresources and Book resources in the library. It defines the following\nresource model:\n\n- The API has a collection of [Shelf][google.example.library.v1.Shelf]\n  resources, named `shelves/*`\n\n- Each Shelf has a collection of [Book][google.example.library.v1.Book]\n  resources, named `shelves/*/books/*`"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.CreateShelf"
+    description: "Creates a shelf, and returns the new Shelf."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.GetShelf"
+    description: "Gets a shelf. Returns NOT_FOUND if the shelf does not exist."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.RestrictedGetShelf"
+    description: "Gets a shelf. Returns NOT_FOUND if the shelf does not exist. This method\nhas restricted visibility."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.ListShelves"
+    description: "Lists shelves. The order is unspecified but deterministic. Newly created\nshelves will not necessarily be added to the end of this list."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.DeleteShelf"
+    description: "Deletes a shelf. Returns NOT_FOUND if the shelf does not exist."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.MergeShelves"
+    description: "Merges two shelves by adding all books from the shelf named\n`other_shelf_name` to shelf `name`, and deletes\n`other_shelf_name`. Returns the updated shelf.\nThe book ids of the moved books may not be the same as the original books.\n\nReturns NOT_FOUND if either shelf does not exist.\nThis call is a no-op if the specified shelves are the same."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.CreateBook"
+    description: "Creates a book, and returns the new Book."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.GetBook"
+    description: "Gets a book. Returns NOT_FOUND if the book does not exist."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.ListBooks"
+    description: "Lists books in a shelf. The order is unspecified but deterministic. Newly\ncreated books will not necessarily be added to the end of this list.\nReturns NOT_FOUND if the shelf does not exist."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.DeleteBook"
+    description: "Deletes a book. Returns NOT_FOUND if the book does not exist."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.UpdateBook"
+    description: "Updates a book. Returns INVALID_ARGUMENT if the name of the book\nis non-empty and does equal the previous name."
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.MoveBook"
+    description: "Moves a book to another shelf, and returns the new book. The book\nid of the new book may not be the same as the original book."
+  }
+  rules {
+    selector: "google.discovery.GetDiscoveryRequest"
+    description: "Request message for [Discovery.GetDiscovery][google.discovery.Discovery.GetDiscovery] and [Discovery.GetDiscoveryRest][google.discovery.Discovery.GetDiscoveryRest]."
+  }
+  rules {
+    selector: "google.discovery.GetDiscoveryRequest.format"
+    description: "The format requested for discovery."
+  }
+  rules {
+    selector: "google.discovery.GetDiscoveryRequest.labels"
+    description: "A list of labels (like visibility) influencing the scope of the requested doc."
+  }
+  rules {
+    selector: "google.discovery.GetDiscoveryRequest.args"
+    description: "Any additional arguments."
+  }
+  rules {
+    selector: "google.discovery.Discovery"
+    description: "`Discovery` is an API which a service can implement to describe itself. The\ndescription can be given in multiple formats, and is generally referred to\nas a **discovery document**. This API is generic regards the description\nformat.\n\n(-- API_PRODUCER\nAPIs which are based on the Google API platform implement this API\nautomatically.\n--)"
+  }
+  rules {
+    selector: "google.discovery.Discovery.GetDiscovery"
+    description: "Returns a discovery document in the specified `format`. The typeurl in the\nreturned [google.protobuf.Any][google.protobuf.Any] value depends on the requested format."
+  }
+  rules {
+    selector: "google.discovery.Discovery.GetDiscoveryRest"
+    description: "Returns a JSON REST view of discovery document in the specified \'format\'.\nThe returned value is an object which has a direct representation in JSON."
+  }
+}
+http {
+  rules {
+    selector: "google.example.library.v1.LibraryService.CreateShelf"
+    post: "/v1/shelves"
+    body: "shelf"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.GetShelf"
+    get: "/v1/{name=shelves/*}"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.RestrictedGetShelf"
+    get: "/v1/restricted/{name=shelves/*}"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.ListShelves"
+    get: "/v1/shelves"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.DeleteShelf"
+    delete: "/v1/{name=shelves/*}"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.MergeShelves"
+    post: "/v1/{name=shelves/*}:merge"
+    body: "*"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.CreateBook"
+    post: "/v1/{name=shelves/*}/books"
+    body: "book"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.GetBook"
+    get: "/v1/{name=shelves/*/books/*}"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.ListBooks"
+    get: "/v1/{name=shelves/*}/books"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.DeleteBook"
+    delete: "/v1/{name=shelves/*/books/*}"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.UpdateBook"
+    put: "/v1/{name=shelves/*/books/*}"
+    body: "book"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.MoveBook"
+    post: "/v1/{name=shelves/*/books/*}:move"
+    body: "*"
+  }
+  rules {
+    selector: "google.discovery.Discovery.GetDiscovery"
+    get: "/$discovery/{format}"
+  }
+  rules {
+    selector: "google.discovery.Discovery.GetDiscoveryRest"
+    get: "/$discovery/{format}/rest"
+  }
+}
+authentication {
+  rules {
+    selector: "google.example.library.v1.LibraryService.CreateShelf"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.GetShelf"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.RestrictedGetShelf"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.ListShelves"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.DeleteShelf"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.MergeShelves"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.CreateBook"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.GetBook"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.ListBooks"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.DeleteBook"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.UpdateBook"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.MoveBook"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.discovery.Discovery.GetDiscovery"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+  rules {
+    selector: "google.discovery.Discovery.GetDiscoveryRest"
+    oauth {
+      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
+    }
+    allow_without_credential: true
+  }
+}
+context {
+  rules {
+    selector: "google.example.library.v1.LibraryService.CreateShelf"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.GetShelf"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.RestrictedGetShelf"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.ListShelves"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.DeleteShelf"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.MergeShelves"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.CreateBook"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.GetBook"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.ListBooks"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.DeleteBook"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.UpdateBook"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.example.library.v1.LibraryService.MoveBook"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.discovery.Discovery.GetDiscovery"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+  rules {
+    selector: "google.discovery.Discovery.GetDiscoveryRest"
+    requested: "google.rpc.context.VisibilityContext"
+    requested: "google.rpc.context.ProjectContext"
+  }
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "google.example.library.v1.LibraryService"
+  apis: "google.discovery.Discovery"
+}
+
+============== Successfully regenerated service config ==============

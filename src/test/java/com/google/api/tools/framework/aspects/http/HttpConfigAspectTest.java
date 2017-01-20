@@ -17,7 +17,6 @@
 package com.google.api.tools.framework.aspects.http;
 
 import com.google.api.tools.framework.aspects.ConfigAspectBaselineTestCase;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

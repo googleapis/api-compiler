@@ -1,0 +1,23 @@
+type: google.api.Service
+config_version: 3
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.TestService
+http:
+  rules:
+  - selector: protiary.test.TestService.Test1
+    post: /v1/tests/test
+    body: '*'
+  - selector: protiary.test.TestService.Test2
+    post: /v1/tests:test
+    body: '*'
+  - selector: protiary.test.TestService.Test3
+    post: /v1/tests/test
+    body: '*'
+
+  - selector: protiary.test.TestService.Test4
+    post: /v1/tests/test4
+    body: '*'
+    additional_bindings:
+    - post: /v1/tests:test4
+      body: '*'

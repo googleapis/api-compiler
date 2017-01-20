@@ -1,0 +1,10 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Bookstore",
+        "description": "A simple Bookstore example."
+    },
+    "paths": {
+    }
+}

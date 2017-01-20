@@ -1,11 +1,11 @@
-WARNING: petstore.json: Operation 'get' in path '/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: petstore.json: Operation 'post' in path '/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: petstore.json: Operation 'get' in path '/pets/{id}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: petstore.json: Operation 'delete' in path '/pets/{id}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: petstore.json: Operation 'get' in path '/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: petstore.json: Operation 'post' in path '/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: petstore.json: Operation 'get' in path '/pets/{id}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: petstore.json: Operation 'delete' in path '/pets/{id}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 name: "petstore.swagger.io"
 title: "Swagger Petstore"
 apis {
-  name: "google.example.methods"
+  name: "petstore_swagger_io_1_0_0"
   methods {
     name: "FindPets"
     request_type_url: "type.googleapis.com/namespace.types.FindPetsRequest"
@@ -26,9 +26,9 @@ apis {
     request_type_url: "type.googleapis.com/namespace.types.DeletePetRequest"
     response_type_url: "type.googleapis.com/google.protobuf.Value"
   }
-  version: "v1"
+  version: "1.0.0"
   source_context {
-    file_name: "google.example.methods"
+    file_name: "petstore.json"
   }
 }
 types {
@@ -96,40 +96,44 @@ documentation {
 }
 http {
   rules {
-    selector: "google.example.methods.FindPets"
+    selector: "petstore_swagger_io_1_0_0.FindPets"
     get: "/v1/api/pets"
   }
   rules {
-    selector: "google.example.methods.AddPet"
+    selector: "petstore_swagger_io_1_0_0.AddPet"
     post: "/v1/api/pets"
     body: "pet"
   }
   rules {
-    selector: "google.example.methods.FindPetById"
+    selector: "petstore_swagger_io_1_0_0.FindPetById"
     get: "/v1/api/pets/{id}"
   }
   rules {
-    selector: "google.example.methods.DeletePet"
+    selector: "petstore_swagger_io_1_0_0.DeletePet"
     delete: "/v1/api/pets/{id}"
   }
 }
 usage {
   rules {
-    selector: "google.example.methods.FindPets"
+    selector: "petstore_swagger_io_1_0_0.FindPets"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "google.example.methods.AddPet"
+    selector: "petstore_swagger_io_1_0_0.AddPet"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "google.example.methods.FindPetById"
+    selector: "petstore_swagger_io_1_0_0.FindPetById"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "google.example.methods.DeletePet"
+    selector: "petstore_swagger_io_1_0_0.DeletePet"
     allow_unregistered_calls: true
   }
+}
+endpoints {
+  name: "petstore.swagger.io"
+  apis: "petstore_swagger_io_1_0_0"
 }
 control {
   environment: "servicecontrol.googleapis.com"

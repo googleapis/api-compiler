@@ -1,0 +1,1 @@
+Multiple OpenApi files cannot have the same 'info.version' value. Files and Versions found: {library_example.json:v1, library_example_v2.json:v1}

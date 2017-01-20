@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+option java_package = "com.google.api.server.tools.protiary";
+
+// test
+message BucketName {
+  // test
+  optional string bucket_id = 1;
+}
+
+// test
+service Storage {
+  // test
+  rpc GetBucket(BucketName) returns (BucketName);
+}

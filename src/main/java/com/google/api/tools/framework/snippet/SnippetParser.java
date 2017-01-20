@@ -76,6 +76,7 @@ class SnippetParser {
   private static final String END_COMMAND = "end";
   private static final String IF_COMMAND = "if";
   private static final String ELSE_COMMAND = "else";
+  private static final String GROUP_COMMAND = "group";
   private static final String JOIN_COMMAND = "join";
   private static final String LET_COMMAND = "let";
   private static final String SWITCH_COMMAND = "switch";
@@ -428,6 +429,9 @@ class SnippetParser {
           case IF_COMMAND:
             parseIf(effectiveIndent, firstContent, rest, layout, elems);
             break;
+          case GROUP_COMMAND:
+            parseGroup(effectiveIndent, firstContent, rest, layout, elems);
+            break;
           case JOIN_COMMAND:
             parseJoin(effectiveIndent, firstContent, rest, layout, elems);
             break;
@@ -491,7 +495,23 @@ class SnippetParser {
   }
 
   /**
-   * Parse a for command.
+   * Parse a group command.
+   */
+  private void parseGroup(int indent, boolean firstContent, String header,
+      @SuppressWarnings("unused") Layout layout, List<Elem> elems) {
+    TokenStream tokens = new TokenStream(header);
+    Layout groupLayout = parseLayout(tokens);
+    tokens.checkAtEnd();
+    List<Elem> bodyElems = parseUntil(indent, groupLayout, END_COMMAND);
+    if (bodyElems != null && groupLayout != null) {
+      elems.add(
+          Block.create(!firstContent,
+              Elem.Group.create(input.location(), groupLayout, bodyElems)));
+    }
+  }
+
+  /**
+   * Parse a join command.
    */
   private void parseJoin(int indent, boolean firstContent, String header, Layout layout,
       List<Elem> elems) {

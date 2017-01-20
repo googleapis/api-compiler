@@ -1,0 +1,16 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.googleapis.com",
+    "x-google-endpoints":
+      {
+        "name": "library-example.googleapis.com",
+        "allowCors": "true"
+      },
+    "paths": {
+    }
+}

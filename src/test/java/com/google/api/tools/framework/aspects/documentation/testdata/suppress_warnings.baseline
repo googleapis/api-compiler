@@ -1,10 +1,3 @@
-WARNING: (lint) http-rest: 'rpc Rpc2 as HTTP GET /v1/nonconforming1' is not a recognized REST pattern. Did you mean one of:
-  rpc List.* as HTTP GET <prefix>/<literal>
-  rpc Get.* as HTTP GET <prefix>:<literal>
-  rpc List.* as HTTP GET <prefix>:<literal>
-  rpc Rpc2 as HTTP GET <prefix>:<literal>
-  rpc Rpc2 as HTTP POST <prefix>:<literal>
-WARNING: (lint) http-rest-shadowed: REST method 'nonconforming1' from rpc method 'protiary.test.Service.Rpc1' at 'suppress_warning.proto:23:3' on collection 'v1' is shadowed by REST method of same name from this rpc. The original method will not be available in REST discovery and derived artifacts.
 documentation {
   rules {
     selector: "protiary.test"

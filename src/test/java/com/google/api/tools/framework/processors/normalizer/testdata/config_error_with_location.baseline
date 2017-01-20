@@ -1,8 +1,8 @@
 ERROR: config_error_with_location.yaml:19: http rule has bad syntax in selector 'tech.env.framework.testing.MultipleHttpBindings*BadSyntax?'. See documentation for information on selector syntax.
 ERROR: config_error_with_location.yaml:8: Cannot resolve api 'tech.env.framework.testing.MultipleHttpBindings2'.
 ERROR: config_error_with_location.yaml:27 (at document line 1): Unexpected end tag '--)' with missing begin tag.
-ERROR: config_error_with_location.yaml:8: mixin: The API 'tech.env.framework.testing.MultipleHttpBindings2' cannot be resolved.
 WARNING: toplevel: (lint) control-presence: Service multiplebindings.googleapis.com does not have control environment configured.
+ERROR: config_error_with_location.yaml:8: mixin: The API 'tech.env.framework.testing.MultipleHttpBindings2' cannot be resolved.
 ERROR: config_error_with_location.yaml:40: servicecontrol: The 'type1' monitored resource 'res1_______' label key must not be empty.
 ERROR: config_error_with_location.yaml:52: servicecontrol: The monitored resource type must not be empty.
 ERROR: config_error_with_location.yaml:89: servicecontrol: The 'metric1' metric label key must not be empty.

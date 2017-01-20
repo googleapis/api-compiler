@@ -1,0 +1,1 @@
+WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.Call1' should specify a body.

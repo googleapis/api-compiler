@@ -129,7 +129,8 @@ public class Model extends Element implements ConfigLocationResolver {
     Service.Builder builder = normalizedConfig.toBuilder();
     ImmutableList.Builder<Api> strippedApis = ImmutableList.builder();
     for (Api api : normalizedConfig.getApisList()) {
-      strippedApis.add(Api.newBuilder().setName(api.getName()).build());
+      strippedApis.add(
+          Api.newBuilder().setName(api.getName()).setVersion(api.getVersion()).build());
     }
     // NOTE: Documentation may still contain text from the original protos.
     builder.clearEnums();
@@ -159,8 +160,13 @@ public class Model extends Element implements ConfigLocationResolver {
   private final List<ConfigAspect> configAspects = Lists.newArrayList();
   private final DiagCollector diagCollector;
   private final DiagSuppressor diagSuppressor;
-  private Set<String> visibilityLabels;
-  private Set<Set<String>> declaredVisibilityCombinations;
+  private Set<String> visibilityLabels = Sets.newLinkedHashSet();
+  private Set<Set<String>> declaredVisibilityCombinations = Sets.newLinkedHashSet();;
+  private Scoper scoper = Scoper.UNRESTRICTED;
+  private final List<ProtoElement> roots = Lists.newArrayList();
+
+  /** List of validators registered with this model. */
+  private final List<ConfigValidator<? extends Element>> validators = Lists.newArrayList();
 
   private Model(
       FileDescriptorSet proto,
@@ -261,17 +267,38 @@ public class Model extends Element implements ConfigLocationResolver {
   }
 
   /**
-   * Get a collection of declared visibility combinations.
-   * TODO(user): Once we no longer create old derived visibilty data,
-   * we should remove entire presence of declaredVisibilityCombination.
+   * Get a collection of declared visibility combinations. TODO(user): Once we no longer create
+   * old derived visibilty data, we should remove entire presence of declaredVisibilityCombination.
    */
   public Set<Set<String>> getDeclaredVisibilityCombinations() {
     return declaredVisibilityCombinations;
   }
 
-  /** Set a collection of declared visibility combinations. */
-  public void setDeclaredVisibilityCombinations(Set<Set<String>> declaredVisibilityCombinations) {
-    this.declaredVisibilityCombinations = declaredVisibilityCombinations;
+  public Set<Set<String>> clearDeclaredVisibilityCombinations() {
+    this.declaredVisibilityCombinations = Sets.newLinkedHashSet();
+    this.declaredVisibilityCombinations.add(Sets.<String>newLinkedHashSet());
+    return this.declaredVisibilityCombinations;
+  }
+
+  /** add to Set of a collection of declared visibility combinations. */
+  public Set<Set<String>> addDeclaredVisibilityCombinations(
+      Set<Set<String>> declaredVisibilityCombinations) {
+    if (this.declaredVisibilityCombinations == null) {
+      this.declaredVisibilityCombinations = declaredVisibilityCombinations;
+    } else {
+      this.declaredVisibilityCombinations.addAll(declaredVisibilityCombinations);
+    }
+    return declaredVisibilityCombinations;
+  }
+
+  public Set<Set<String>> addDeclaredVisibilityCombination(
+      Set<String> declaredVisibilityCombination) {
+    if (this.declaredVisibilityCombinations == null) {
+      this.declaredVisibilityCombinations = Sets.newLinkedHashSet();
+      this.declaredVisibilityCombinations.add(Sets.<String>newLinkedHashSet());
+    }
+    this.declaredVisibilityCombinations.add(declaredVisibilityCombination);
+    return declaredVisibilityCombinations;
   }
 
   /** Checks whether a given experiment is enabled. */
@@ -320,9 +347,6 @@ public class Model extends Element implements ConfigLocationResolver {
 
   @Requires(Merged.class)
   private ConfigSource serviceConfig;
-
-  private Scoper scoper = Scoper.UNRESTRICTED;
-  private List<ProtoElement> roots = Lists.newArrayList();
 
   /**
    * Add a root element to the model. Root elements are collected during merging and used to compute
@@ -501,6 +525,10 @@ public class Model extends Element implements ConfigLocationResolver {
     diagSuppressor.addPattern(this, ".*");
   }
 
+  public DiagSuppressor getDiagSuppressor() {
+    return diagSuppressor;
+  }
+
   /**
    * Adds a user-level suppression directive. The directive must be given in the form 'aspect-rule',
    * or 'aspect-*' to match any rule. Is used in comments such as '(== suppress_warning http-* ==)'
@@ -508,15 +536,6 @@ public class Model extends Element implements ConfigLocationResolver {
    */
   public void addSupressionDirective(Element elem, String directive) {
     diagSuppressor.addSuppressionDirective(elem, directive, configAspects);
-  }
-
-  /**
-   * Checks whether the given diagnosis is suppressed for the given element. This checks the
-   * suppression pattern for this element and all elements, inserting the model for global
-   * suppressions as a virtual parent.
-   */
-  public boolean isSuppressedDiag(Diag diag, Element elem) {
-    return diagSuppressor.isSuppressedWarning(diag, elem);
   }
 
   /**
@@ -543,13 +562,9 @@ public class Model extends Element implements ConfigLocationResolver {
 
   /** Adds diagnosis to the model if it is not suppressed. */
   public void addDiagIfNotSuppressed(Object elementOrLocation, Diag diag) {
-    if (elementOrLocation instanceof Element
-        && isSuppressedDiag(diag, (Element) elementOrLocation)) {
-      return;
-    } else if (elementOrLocation instanceof Location && isSuppressedDiag(diag, getModel())) {
-      return;
+    if (!diagSuppressor.isDiagSuppressed(diag, elementOrLocation)) {
+      diagCollector.addDiag(diag);
     }
-    diagCollector.addDiag(diag);
   }
 
   // -------------------------------------------------------------------------
@@ -563,6 +578,25 @@ public class Model extends Element implements ConfigLocationResolver {
   /** Returns the registered configuration aspects. */
   public Iterable<ConfigAspect> getConfigAspects() {
     return configAspects;
+  }
+
+  // -------------------------------------------------------------------------
+  // Configuration validators
+
+  /**
+   * Registers a {@link ConfigValidator} with this model.
+   *
+   * <p>During the merge phase, the merged information is attached as attributes to the
+   * ProtoElements. The {@link ConfigValidator}, for most cases, will validate the content of those
+   * attributes and create error/warnings.
+   */
+  public <E extends Element> void registerValidator(ConfigValidator<E> validator) {
+    validators.add(validator);
+  }
+
+  /** Returns a list of {@link ConfigValidator}s that are registered with this model. */
+  public ImmutableList<ConfigValidator<? extends Element>> getValidators() {
+    return ImmutableList.copyOf(this.validators);
   }
 
   // -------------------------------------------------------------------------

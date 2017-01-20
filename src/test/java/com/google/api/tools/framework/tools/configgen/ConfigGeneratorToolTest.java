@@ -50,10 +50,6 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 
 public class ConfigGeneratorToolTest extends BaselineTestCase {
-
-  // TODO(user): this test should not directly use the tool driver, because that one
-  // calls System.exit on errors.
-
   private static final class ConfigGeneratorDriverForTest extends ConfigGeneratorDriver {
 
     protected ConfigGeneratorDriverForTest(ToolOptions options) {
@@ -102,8 +98,8 @@ public class ConfigGeneratorToolTest extends BaselineTestCase {
     test("suppress_warnings", null, true);
   }
 
-  private void test(String baseName, @Nullable String extensionName, boolean outputWarnings)
-      throws Exception {
+  private void test(String baseName, @Nullable String extensionName, boolean outputWarnings,
+      List<String> experiments) throws Exception {
     TestDataLocator locator = TestDataLocator.create(getClass());
 
     ImmutableList.Builder<String> protoFilesBuilder = ImmutableList.builder();
@@ -142,14 +138,15 @@ public class ConfigGeneratorToolTest extends BaselineTestCase {
     options.set(ToolOptions.CONFIG_FILES, configFiles);
     options.set(
         ConfigGeneratorFromProtoDescriptor.SUPPRESS_WARNINGS, isSuppressWarningsTest(baseName));
-    List<String> experiments = Lists.newArrayList();
-    experiments.add("empty-descriptor-defaults");
     options.set(ToolOptions.EXPERIMENTS, experiments);
     if (extensionTestConfig != null) {
       options.set(
           ToolOptions.EXTENSION_DESCRIPTOR_SET, extensionTestConfig.getDescriptorFile().toString());
     }
 
+    if (isLibraryWithError(baseName)) {
+      options.set(ConfigGeneratorFromProtoDescriptor.NAME, "foobar");
+    }
     if (isDnsNameTest(baseName)){
       options.set(ConfigGeneratorFromProtoDescriptor.NAME, "foobar");
     }
@@ -181,7 +178,14 @@ public class ConfigGeneratorToolTest extends BaselineTestCase {
         testOutput().println(
             "============== Successfully regenerated service config ==============");
       }
+    } else {
+      printDiags(tool.getDiags(), true);
     }
+  }
+
+  private void test(String baseName, @Nullable String extensionName, boolean outputWarnings)
+      throws Exception {
+    test(baseName, extensionName, outputWarnings, Lists.<String>newArrayList());
   }
 
   private void printDiags(List<Diag> diags, boolean printWarnings) {
@@ -202,5 +206,9 @@ public class ConfigGeneratorToolTest extends BaselineTestCase {
 
   private boolean isDnsNameTest(String baseName){
     return baseName.equals("library_abnormal_dns");
+  }
+
+  private static boolean isLibraryWithError(String baseName) {
+    return baseName.equals("library_with_error");
   }
 }

@@ -2,14 +2,20 @@ ERROR: invalid_vendor_extension_type.json: x-google-allow: Extension x-google-al
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
-  name: "google.example.methods"
+  name: "library_example_googleapis_com_v1"
   version: "v1"
   source_context {
-    file_name: "google.example.methods"
+    file_name: "invalid_vendor_extension_type.json"
   }
 }
 documentation {
   summary: "A simple Google Example Library API."
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
 }
 control {
   environment: "servicecontrol.googleapis.com"

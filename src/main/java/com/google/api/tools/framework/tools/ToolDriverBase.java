@@ -16,12 +16,10 @@
 
 package com.google.api.tools.framework.tools;
 
-import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.setup.StandardSetup;
 import com.google.api.tools.framework.tools.ModelBuilder.ModelBuildResult;
 import com.google.protobuf.ExtensionRegistry;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nullable;
@@ -68,16 +66,6 @@ public abstract class ToolDriverBase extends GenericToolDriverBase implements Mo
     return true;
   }
 
-  /** Check if there are any errors. */
-  public boolean hasErrors() {
-    return getDiagCollector().hasErrors();
-  }
-
-  /** Returns diagnosis, including errors and warnings. */
-  public List<Diag> getDiags() {
-    return getDiagCollector().getDiags();
-  }
-
   /** Runs the tool. Returns a non-zero exit code on errors. */
   @Override
   public int run() {
@@ -91,9 +79,7 @@ public abstract class ToolDriverBase extends GenericToolDriverBase implements Mo
     Logger.getLogger("").setLevel(Level.WARNING);
 
     ModelBuildResult buildResult = new ModelBuilder().setup(options, this, getDataPath());
-    if (buildResult.getModel() != null) {
-      this.diags = buildResult.getDiagCollector();
-    }
+    this.diags = buildResult.getDiagCollector();
     return buildResult.getModel();
   }
 }

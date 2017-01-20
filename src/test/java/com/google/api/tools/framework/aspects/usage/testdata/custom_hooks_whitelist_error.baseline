@@ -1,1 +1,0 @@
-ERROR: custom_hooks_whitelist_error.yaml:11: usage: Using activation/deactivation hooks require service to be whitelisted here google/api/whitelist/allow_activation_deactivation_hooks_whitelist. Please contact api-design@ if you would like to be added to this list.

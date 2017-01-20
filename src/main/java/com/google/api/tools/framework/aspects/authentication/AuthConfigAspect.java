@@ -16,6 +16,8 @@
 
 package com.google.api.tools.framework.aspects.authentication;
 
+import com.google.api.AuthProvider;
+import com.google.api.AuthRequirement;
 import com.google.api.Authentication;
 import com.google.api.AuthenticationRule;
 import com.google.api.Service;
@@ -29,7 +31,6 @@ import com.google.api.tools.framework.snippet.Doc;
 import com.google.api.tools.framework.snippet.SnippetSet;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 
 /**
@@ -37,9 +38,7 @@ import java.util.List;
  */
 public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, AuthAttribute> {
 
-  /**
-   * Splitter for oauth scopes specified in auth rule.
-   */
+  /** Splitter for oauth scopes specified in auth rule. */
   private static final Splitter OAUTH_SCOPE_SPLITTER = Splitter.on(",").omitEmptyStrings();
 
   /**
@@ -97,10 +96,47 @@ public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, 
   }
 
   @Override
-  protected AuthAttribute evaluate(ProtoElement element, AuthenticationRule rule,
-      boolean isFromIdl) {
+  public void startMerging() {
+    for (AuthenticationRule rule :
+        getModel().getServiceConfig().getAuthentication().getRulesList()) {
+      validateRequirements(rule.getRequirementsList());
+    }
+  }
+
+  @Override
+  protected AuthAttribute evaluate(
+      ProtoElement element, AuthenticationRule rule, boolean isFromIdl) {
     return new AuthAttribute(rule);
 
+  }
+
+  private void validateRequirements(List<AuthRequirement> requirementsList) {
+    for (AuthRequirement requirement : requirementsList) {
+      AuthProvider authProvider = getAuthProvider(requirement.getProviderId());
+      if (authProvider == null) {
+        error(
+            getLocationInConfig(requirement, AuthRequirement.PROVIDER_ID_FIELD_NUMBER),
+            "Cannot find auth provider with id '%s'",
+            requirement.getProviderId());
+      } else {
+        if (!requirement.getAudiences().isEmpty() && !authProvider.getAudiences().isEmpty()) {
+          error(
+              getLocationInConfig(requirement, AuthRequirement.AUDIENCES_FIELD_NUMBER),
+              "Setting 'audiences' field inside both 'requirement' and 'provider' is not allowed. "
+                  + "Please set the 'audiences' field only inside the 'provider'.");
+        }
+      }
+    }
+  }
+
+  private AuthProvider getAuthProvider(String providerId) {
+    for (AuthProvider authProvider :
+        getModel().getServiceConfig().getAuthentication().getProvidersList()) {
+      if (!authProvider.getId().isEmpty() && authProvider.getId().equals(providerId)) {
+        return authProvider;
+      }
+    }
+    return null;
   }
 
   @Override
@@ -112,8 +148,26 @@ public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, 
   protected void addToRuleBuilder(Service.Builder serviceBuilder, String selector,
       AuthAttribute binding) {
     // Add AuthenticationRule.
-    serviceBuilder.getAuthenticationBuilder().addRules(
-        binding.getAuthenticationRule().toBuilder().setSelector(selector).build());
+
+    // Copy the audiences field value from AuthProvider into AuthRequirements.
+    AuthenticationRule.Builder authRuleBuilder = binding.getAuthenticationRule().toBuilder();
+    for (AuthRequirement.Builder requirement : authRuleBuilder.getRequirementsBuilderList()) {
+      String authProviderAudience = getProviderAudience(requirement.getProviderId());
+      if (!authProviderAudience.isEmpty()) {
+        requirement.setAudiences(authProviderAudience);
+      }
+    }
+    serviceBuilder
+        .getAuthenticationBuilder()
+        .addRules(authRuleBuilder.setSelector(selector).build());
+  }
+
+  private String getProviderAudience(String providerId) {
+    AuthProvider authProvider = getAuthProvider(providerId);
+    if (authProvider != null) {
+      return authProvider.getAudiences();
+    }
+    return "";
   }
 
   @Override

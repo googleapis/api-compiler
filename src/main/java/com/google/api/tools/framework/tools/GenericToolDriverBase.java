@@ -24,7 +24,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +45,11 @@ public abstract class GenericToolDriverBase {
   protected GenericToolDriverBase(ToolOptions options, DiagCollector diags) {
     this.options = Preconditions.checkNotNull(options);
     this.diags = Preconditions.checkNotNull(diags);
+    // Link the option with its belonged options, so that we can keep use Option#get() to fetch
+    // the value.
+    for (ToolOptions.Option<?> option : ToolOptions.allOptions()) {
+      option.setToolOptions(options);
+    }
   }
 
   /**
@@ -81,14 +85,26 @@ public abstract class GenericToolDriverBase {
    */
   public int run() {
     // Run tool specific code.
-    try {
-      process();
-    } catch (Exception e) {
-      getDiagCollector().addDiag(Diag.error(SimpleLocation.TOPLEVEL,
-          "Unexpected exception:%n%s", Throwables.getStackTraceAsString(e)));
+    if (!getDiagCollector().hasErrors()) {
+      try {
+        process();
+      } catch (Exception e) {
+        getDiagCollector().addDiag(Diag.error(SimpleLocation.TOPLEVEL,
+            "Unexpected exception:%n%s", Throwables.getStackTraceAsString(e)));
+      }
     }
     reportDiag();
     return getDiagCollector().hasErrors() ? 1 : 0;
+  }
+
+  /** Check if there are any errors. */
+  public boolean hasErrors() {
+    return getDiagCollector().hasErrors();
+  }
+
+  /** Returns diagnosis, including errors and warnings. */
+  public List<Diag> getDiags() {
+    return getDiagCollector().getDiags();
   }
 
   /**

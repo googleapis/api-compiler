@@ -1,0 +1,5 @@
+type: google.api.Service
+config_version: 3
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.TestService

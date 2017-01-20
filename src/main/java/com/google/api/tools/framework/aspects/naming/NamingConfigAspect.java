@@ -49,6 +49,7 @@ public class NamingConfigAspect extends ConfigAspectBase {
   private static final String LOWER_UNDERSCORE_REGEX = "[a-z][a-z0-9_]*";
   private static final String PACKAGE_REGEX = String.format("%s([.]%s)*",
       LOWER_UNDERSCORE_REGEX, LOWER_UNDERSCORE_REGEX);
+  private static final String PROTO_FILE_REGEX = String.format("%s.proto", LOWER_UNDERSCORE_REGEX);
 
   /**
    * Returns an empty list since this aspect does not depend on any other aspects.
@@ -69,6 +70,18 @@ public class NamingConfigAspect extends ConfigAspectBase {
         new Function<ProtoFile, String>() {
           @Override public String apply(ProtoFile elem) {
             return elem.getFullName();
+          }
+    }));
+
+    // Proto file name.
+    registerLintRule(new RegexRule<>(ProtoFile.class, "lower-underscore-proto", PROTO_FILE_REGEX,
+        new Function<ProtoFile, String>() {
+          @Override public String apply(ProtoFile protoFile) {
+            String fileName = protoFile.getSimpleName();
+            if (fileName.contains("/")) {  // Extract the file name from relative path.
+              fileName = fileName.substring(fileName.lastIndexOf("/") + 1, fileName.length());
+            }
+            return fileName;
           }
     }));
 

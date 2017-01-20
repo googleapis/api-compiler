@@ -16,19 +16,25 @@
 
 package com.google.api.tools.framework.tools;
 
-import com.google.auto.value.AutoValue;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -48,20 +54,76 @@ public class ToolOptions {
   private ToolOptions() {}
 
   /** Represents an option. */
-  @AutoValue
-  public abstract static class Option<T> {
-    public abstract Key<T> key();
+  public static class Option<T> {
+    private final Key<T> key;
+    private final String name;
+    private final String description;
+    private final T defaultValue;
+    private final boolean acceptsRemainingArgs;
+    private final boolean createFlag;
+    private ToolOptions options = ToolOptions.create();
 
-    public abstract String name();
+    public Option(Key<T> key, String name, String description, T defaultValue,
+        boolean acceptsRemainingArgs, boolean createFlag) {
+      this.key = key;
+      this.name = name;
+      this.description = description;
+      this.defaultValue = defaultValue;
+      this.acceptsRemainingArgs = acceptsRemainingArgs;
+      this.createFlag = createFlag;
+    }
 
-    public abstract String description();
+    public Key<T> key() {
+      return key;
+    };
+
+    public String name() {
+      return name;
+    };
+
+    public String description() {
+      return description;
+    };
 
     @Nullable
-    public abstract T defaultValue();
+    public T defaultValue() {
+      return defaultValue;
+    };
 
-    public abstract boolean acceptsRemainingArgs();
+    public boolean acceptsRemainingArgs() {
+      return acceptsRemainingArgs;
+    };
 
-    public abstract boolean createFlag();
+    public boolean createFlag() {
+      return createFlag;
+    };
+
+    public void setToolOptions(ToolOptions options) {
+      this.options = options;
+    }
+
+    public T get() {
+      return options.get(this);
+    }
+
+    public void setForTest(T value) {
+      options.<T>set(this, value);
+    }
+
+    @VisibleForTesting
+    public void resetForTest() {
+      options.<T>set(this, defaultValue);
+    }
+  }
+
+  /**
+   * Input type based on CLI options.
+   * TODO(user): Support Discovery doc input.
+   */
+  public enum InputType {
+    DESCRIPTOR_SET,
+    OPEN_API,
+    UNKNOWN
   }
 
   private static final List<Option<?>> registeredOptions = Lists.newArrayList();
@@ -78,9 +140,7 @@ public class ToolOptions {
   public static <T> Option<T> createOption(
       TypeLiteral<T> type, String name, String description, @Nullable T defaultValue) {
     Option<T> option =
-        (Option<T>)
-            (Object)
-                new AutoValue_ToolOptions_Option<T>(
+                new Option<T>(
                     Key.get(type, Names.named(name)), name, description, defaultValue, false, true);
     registeredOptions.add(option);
     return option;
@@ -93,7 +153,7 @@ public class ToolOptions {
   public static Option<List<String>> createRemainingArgsOption(
       String name, String description, @Nullable List<String> defaultValue) {
     Option<List<String>> option =
-        new AutoValue_ToolOptions_Option<List<String>>(
+        new Option<>(
             Key.get(new TypeLiteral<List<String>>() {}, Names.named(name)),
             name,
             description,
@@ -108,9 +168,7 @@ public class ToolOptions {
   public static <T> Option<T> createOptionNoFlag(
       TypeLiteral<T> type, String name, String description, @Nullable T defaultValue) {
     Option<T> option =
-        (Option<T>)
-            (Object)
-                new AutoValue_ToolOptions_Option<T>(
+        new Option<T>(
                     Key.get(type, Names.named(name)),
                     name,
                     description,
@@ -217,13 +275,12 @@ public class ToolOptions {
 
   /** Sets an option. */
   @SuppressWarnings("unchecked")
-  public <T> ToolOptions set(Option<T> option, @Nullable T value) {
+  public <T> void set(Option<T> option, @Nullable T value) {
     if (value == null) {
       options.remove(option.key());
     } else {
       options.put(option.key(), value);
     }
-    return this;
   }
 
   /** Gets an option, or its default value if it is not set. */
@@ -242,25 +299,37 @@ public class ToolOptions {
    */
   @SuppressWarnings("unchecked")
   public static ToolOptions getToolOptionsFromCommandLine(
-      CommandLine cmd, ImmutableList<Option<?>> frameworkOptions) {
+      CommandLine cmd, List<Option<?>> frameworkOptions) {
     ToolOptions toolOptions = ToolOptions.create();
-
+    for (Option option : registeredOptions) {
+      toolOptions.set(option, option.defaultValue());
+    }
     for (Option<?> frameworkOption : frameworkOptions) {
       if (cmd.hasOption(frameworkOption.name())) {
         String value = cmd.getOptionValue(frameworkOption.name());
         TypeLiteral<?> type = frameworkOption.key().getTypeLiteral();
         if (type.equals(new TypeLiteral<List<String>>() {})) {
-          String[] values = cmd.getOptionValues(frameworkOption.name());
-          toolOptions.set((Option<List<String>>) frameworkOption, Arrays.asList(values));
+          // Apache CLI doesn't support comma-separated list values. Getting the option value as
+          // String type, and split it when setting the value.
+          toolOptions.set((Option<List<String>>) frameworkOption, Arrays.asList(value.split(",")));
+        } else if (type.equals(new TypeLiteral<Set<String>>() {})) {
+          // Apache CLI doesn't support comma-separated set values. Getting the option value as
+          // String type, and split it when setting the value.
+          toolOptions.set(
+              (Option<Set<String>>) frameworkOption, Sets.newHashSet(value.split(",")));
         } else if (type.equals(new TypeLiteral<Map<String, String>>() {})) {
-          try {
-            toolOptions.set(
-                (Option<Map<String, String>>) frameworkOption,
-                (Map<String, String>) cmd.getParsedOptionValue(frameworkOption.name()));
-          } catch (ParseException e) {
-            throw new IllegalArgumentException(
-                String.format("Failed to parse map option '%s'", frameworkOption.name()), e);
-          }
+          Map<String, String> result = new LinkedHashMap<>();
+          if (!value.trim().isEmpty()) {
+              for (String s : value.split(",")) {
+                final int index = s.indexOf('=');
+                if (index == -1) {
+                  throw new IllegalArgumentException("Invalid map entry syntax " + s);
+                } else {
+                  result.put(s.substring(0, index).trim(), s.substring(index + 1).trim());
+                }
+              }
+            }
+            toolOptions.set((Option<Map<String, String>>) frameworkOption, result);
         } else if (type.equals(TypeLiteral.get(String.class))) {
           toolOptions.set((Option<String>) frameworkOption, value);
         } else if (type.equals(TypeLiteral.get(Integer.class))) {
@@ -291,21 +360,61 @@ public class ToolOptions {
    *
    * <p>This also adds a help options by default. This can be used for printing usage text.
    */
-  public static Options convertToApacheCliOptions(ImmutableList<Option<?>> frameworkOptions) {
+  public static Options convertToApacheCliOptions(List<Option<?>> frameworkOptions) {
     Options options = new Options();
     for (Option<?> frameworkOption : frameworkOptions) {
       org.apache.commons.cli.Option option =
           new org.apache.commons.cli.Option(
-              frameworkOption.name(), true, frameworkOption.description());
+              frameworkOption.name(), frameworkOption.name(), true, frameworkOption.description());
       options.addOption(option);
     }
     options.addOption("h", "help", false, "show usage");
     return options;
   }
 
+  public static ToolOptions createFromArgs(String[] args) throws ParseException {
+    Options apacheCliOptions = convertToApacheCliOptions(registeredOptions);
+    CommandLineParser parser = new DefaultParser();
+    CommandLine apacheCli = parser.parse(apacheCliOptions, args);
+    return getToolOptionsFromCommandLine(apacheCli, registeredOptions);
+  }
+
   /** Print usage statement. */
   public static void printUsage(String cmdLineSyntax, Options options) {
     HelpFormatter formater = new HelpFormatter();
     formater.printHelp(cmdLineSyntax, options);
+  }
+
+  /** Print usage statement. */
+  public void printUsage(String cmdLineSyntax) {
+    printUsage(cmdLineSyntax, convertToApacheCliOptions(registeredOptions));
+  }
+
+  /**
+   * Return input type based on the options passed to the tool.
+   */
+  public InputType getInputType() {
+    if (!Strings.isNullOrEmpty(get(ToolOptions.DESCRIPTOR_SET))) {
+      return InputType.DESCRIPTOR_SET;
+    } else if (!Strings.isNullOrEmpty(get(SwaggerToolDriverBase.OPEN_API))) {
+      return InputType.OPEN_API;
+    }
+    return InputType.UNKNOWN;
+  }
+
+  @VisibleForTesting
+  @SuppressWarnings("unchecked")
+  public static void reset() {
+    ToolOptions options = ToolOptions.create();
+    for (Option<?> option : registeredOptions) {
+      option.setToolOptions(options);
+      reset(option, options);
+    }
+  }
+
+  // Helper method created so that the wildcard can be captured
+  // through type inference.
+  private static <T> void reset(Option<T> option, ToolOptions options) {
+    options.set(option, option.defaultValue());
   }
 }

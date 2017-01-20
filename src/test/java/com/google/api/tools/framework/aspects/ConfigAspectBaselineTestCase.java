@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Google Inc.
+ * Copyright (C) 2016 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,13 @@ package com.google.api.tools.framework.aspects;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.ConfigAspect;
 import com.google.api.tools.framework.model.Diag;
-import com.google.api.tools.framework.model.ProtoElement;
-import com.google.api.tools.framework.model.Visitor;
 import com.google.api.tools.framework.model.stages.Linted;
 import com.google.api.tools.framework.model.testing.ConfigBaselineTestCase;
-import com.google.api.tools.framework.util.VisitsBefore;
+import com.google.api.tools.framework.processors.normalizer.Normalizer;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
-
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -41,7 +38,7 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
   private final Class<? extends ConfigAspectBase> aspectType;
   protected ConfigAspectBase testedAspect;
   private final List<Class<? extends ConfigAspectBase>> baselineAspectTypes = Lists.newArrayList();
-
+  protected boolean printExistingYamlConfigInOutput = false;
   protected ConfigAspectBaselineTestCase(Class<? extends ConfigAspectBase> type) {
     this.aspectType = type;
     this.showDiagLocation = false;
@@ -68,7 +65,7 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
     testedAspect = findAspect(aspectType);
 
     // Create the list of aspects we want to see baseline output for.
-    List<ConfigAspectBase> baselineAspects = Lists.newArrayList();
+    List<ConfigAspect> baselineAspects = Lists.newArrayList();
     baselineAspects.add(testedAspect);
     for (Class<?> type : baselineAspectTypes) {
       baselineAspects.add(findAspect(type));
@@ -106,16 +103,12 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
     // We don't need to run the other normalizers because they are independent.
     // Also note we work with an empty config in the builder instead of a copy of
     // the original one, so baseline output is more compact.
-    final Service.Builder config = Service.newBuilder();
-    for (final ConfigAspectBase aspect : baselineAspects) {
-      aspect.startNormalization(config);
-      new Visitor(model.getScoper(), false/*ignoreMapEntry*/) {
-        @VisitsBefore void normalize(ProtoElement element) {
-          aspect.normalize(element, config);
-        }
-      }.visit(model);
-      aspect.endNormalization(config);
-    }
+    final Service.Builder config =
+        printExistingYamlConfigInOutput
+            ? model.getServiceConfig().toBuilder()
+            : Service.newBuilder();
+
+    new Normalizer().normalizeAspects(model, baselineAspects, config);
 
     // Start from processedIndex so that we don't print the warnings that we already printed out.
     List<Diag> diags = model.getDiagCollector().getDiags();

@@ -36,7 +36,6 @@ import com.google.common.collect.Sets;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.google.protobuf.Api;
-
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -124,8 +123,11 @@ public class VersionConfigAspect extends ConfigAspectBase {
       // Validate that the version in the package name is consistent with what user provides.
       String apiVersionFromPackageName =
           ApiVersionUtil.extractDefaultMajorVersionFromPackageName(packageName);
-      if (!apiVersionFromPackageName.equals(
-          ApiVersionUtil.extractMajorVersionFromSemanticVersion(apiVersion))) {
+      // Workaround for OpenApi builds which do not use package names and set version
+      // explicitly.
+      if (!packageName.isEmpty()
+          && !apiVersionFromPackageName.equals(
+              ApiVersionUtil.extractMajorVersionFromSemanticVersion(apiVersion))) {
         error(iface,
             "User-defined api version '%s' is inconsistent with the one in package name '%s'.",
             apiVersion, packageName);

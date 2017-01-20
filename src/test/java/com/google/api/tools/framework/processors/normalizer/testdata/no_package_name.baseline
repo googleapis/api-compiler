@@ -1,0 +1,54 @@
+name: "blob.googleapis.com"
+title: "Blob Service"
+apis {
+  name: "Storage"
+  methods {
+    name: "GetBucket"
+    request_type_url: "type.googleapis.com/BucketName"
+    response_type_url: "type.googleapis.com/BucketName"
+  }
+  version: "v1"
+  source_context {
+    file_name: "no_package_name"
+  }
+}
+types {
+  name: "BucketName"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "bucket_id"
+    json_name: "bucketId"
+  }
+  source_context {
+    file_name: "no_package_name"
+  }
+}
+documentation {
+  rules {
+    selector: "BucketName"
+    description: "foo bar"
+  }
+  rules {
+    selector: "BucketName.bucket_id"
+    description: "foo bar"
+  }
+  rules {
+    selector: "Storage"
+    description: "foo bar"
+  }
+  rules {
+    selector: "Storage.GetBucket"
+    description: "foo bar"
+  }
+}
+endpoints {
+  name: "blob.googleapis.com"
+  aliases: "blob.clients6.google.com"
+  aliases: "content-blob.googleapis.com"
+  apis: "Storage"
+}
+config_version {
+  value: 2
+}

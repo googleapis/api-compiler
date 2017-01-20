@@ -9,6 +9,11 @@ documentation {
 }
 authentication {
 }
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+}
 config_version {
   value: 2
 }

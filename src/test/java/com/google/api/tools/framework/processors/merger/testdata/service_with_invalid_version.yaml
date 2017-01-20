@@ -3,4 +3,4 @@ config_version: 1
 name: blob.googleapis.com
 apis:
 - name: protiary.test.Storage
-  version: 1.1
+  version: 1.1.1.1

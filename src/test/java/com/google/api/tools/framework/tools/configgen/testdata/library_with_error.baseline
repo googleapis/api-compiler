@@ -1,0 +1,3 @@
+ERROR: library_with_error.yaml:7: Cannot resolve api 'google.example.library.v1.INVALID'.
+WARNING: toplevel: (lint) control-presence: Service foobar.googleprod.com does not have control environment configured.
+ERROR: library_with_error.yaml:7: mixin: The API 'google.example.library.v1.INVALID' cannot be resolved.

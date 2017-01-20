@@ -1,9 +1,2 @@
-ERROR: http: rules in additional_bindings must not specify additional_bindings
-WARNING: (lint) http-rest: 'rpc Call1 as HTTP GET /v1/test' is not a recognized REST pattern. Did you mean one of:
-  rpc List.* as HTTP GET <prefix>/<literal>
-  rpc Get.* as HTTP GET <prefix>:<literal>
-  rpc List.* as HTTP GET <prefix>:<literal>
-  rpc Call1 as HTTP GET <prefix>:<literal>
-  rpc Call1 as HTTP POST <prefix>:<literal>
 WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.Call1' should specify a body.
-WARNING: (lint) http-rest-shadowed: REST method 'test' from rpc method 'protiary.test.TestService.Call1' at 'recursive_bindings.proto:12:3' on collection 'v1' is shadowed by REST method of same name from this rpc. The original method will not be available in REST discovery and derived artifacts.
+ERROR: http: rules in additional_bindings must not specify additional_bindings

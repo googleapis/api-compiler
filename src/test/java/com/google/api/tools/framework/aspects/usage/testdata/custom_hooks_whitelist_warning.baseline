@@ -1,0 +1,4 @@
+WARNING: custom_hooks_whitelist_warning.yaml:11: usage: Services using activation/deactivation hooks should be whitelisted here google/api/whitelist/allow_activation_deactivation_hooks_whitelist. Please contact api-design@ if you would like to be added to this list.
+usage {
+}
+

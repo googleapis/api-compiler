@@ -16,11 +16,12 @@
 
 package com.google.api.tools.framework.model.testing;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -33,7 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Nullable;
 
 /**
@@ -135,7 +135,7 @@ public abstract class TestDataLocator {
       for (int i = classContexts.size() - 1; i >= 0; i--) {
         Class<?> classContext = classContexts.get(i);
         String testDataDir = testDataDirs.get(i);
-        String relativeToThis = classContext.getPackage().getName().replace(".", "/");
+        String relativeToThis = classContext.getPackage().getName().replace('.', '/');
         candidates.add(relativeToThis + "/" + name);
         candidates.add(relativeToThis + "/" + testDataDir + "/" + name);
         candidates.add(name);
@@ -171,7 +171,7 @@ public abstract class TestDataLocator {
     int lastSlashIndex = filePath.lastIndexOf(File.separator);
     String fileName = lastSlashIndex == -1 ? filePath : filePath.substring(lastSlashIndex + 1);
     Path tempFile = Files.createTempFile(fileName, fileName);
-    Files.write(tempFile, readTestData(data).getBytes());
+    Files.write(tempFile, readTestData(data).getBytes(UTF_8));
     return tempFile;
   }
 

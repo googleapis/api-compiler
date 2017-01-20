@@ -19,18 +19,16 @@ package com.google.api.tools.framework.model;
 import com.google.api.tools.framework.model.Diag.Kind;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.annotation.Nullable;
 
 /**
- * Manages the set of rules for suppressing {@link Kind#WARNING} Diags.
- * TODO(user): Change DiagSuppressor to implement DiagCollector and use this as the
- * DiagCollector in Model.java, pending work in cl/121629221
+ * Manages the set of rules for suppressing {@link Kind#WARNING} Diags. TODO(user): Change
+ * DiagSuppressor to implement DiagCollector and use this as the DiagCollector in Model.java,
+ * pending work in cl/121629221
  */
 public class DiagSuppressor {
 
@@ -44,6 +42,11 @@ public class DiagSuppressor {
 
   // The same as above, but with compiled patterns.
   private Map<Element, Pattern> compiledSuppressions = Maps.newHashMap();
+
+  // Global suppression pattern that is not tied to any Element.
+  // This is useful to check if a warning is suppressed when the caller
+  // does not have an instance of the model and only has instance of Diag and the Location.
+  private Pattern compilerGlobalSuppressionPattern = Pattern.compile("");
 
   private final DiagCollector diagCollector;
 
@@ -103,6 +106,19 @@ public class DiagSuppressor {
     addPattern(elem, suppressionPattern(aspectName, ruleName));
   }
 
+  // TODO(user): See if we can avoid the type case.
+  public boolean isDiagSuppressed(Diag diag, Object elementOrLocation) {
+    if (elementOrLocation instanceof Element
+        && isSuppressedWarning(diag, (Element) elementOrLocation)) {
+      return true;
+    } else if (elementOrLocation instanceof Location
+        && compilerGlobalSuppressionPattern.matcher(diag.getMessage()).matches()) {
+      return true;
+    }
+
+    return false;
+  }
+
   /**
    * Checks whether the given diagnosis is suppressed for the given element. This checks the
    * suppression pattern for this element and all elements, inserting the model for global
@@ -145,6 +161,11 @@ public class DiagSuppressor {
       compiledSuppressions.remove(elem);
     }
     suppressions.put(elem, elemPattern);
+
+    // Check if suppression is on global model element.
+    if (elem instanceof Model && elemPattern != null) {
+      compilerGlobalSuppressionPattern = Pattern.compile(elemPattern, Pattern.DOTALL);
+    }
   }
 
   // Gets a pattern for given element. This compiles the pattern on demand.

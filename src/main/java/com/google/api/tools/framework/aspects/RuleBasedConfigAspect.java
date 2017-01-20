@@ -19,6 +19,7 @@ package com.google.api.tools.framework.aspects;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
+import com.google.common.base.Strings;
 import com.google.inject.Key;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Message;
@@ -73,7 +74,7 @@ public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeT
       Descriptor ruleDescriptor, List<RuleType> rules) {
     super(model, aspectName);
     this.key = key;
-    this.rules = new ConfigRuleSet<RuleType>(ruleDescriptor, rules, model);
+    this.rules = new ConfigRuleSet<>(ruleDescriptor, rules, model);
     this.rules.reportBadSelectors(getModel().getDiagCollector(), getModel(), getAspectName());
   }
 
@@ -111,12 +112,18 @@ public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeT
 
   @Override
   public void normalize(ProtoElement element, Service.Builder builder) {
-    if (!isApplicable(element)) {
+    if (!isApplicable(element) || hasEmptySelector(element)) {
       return;
     }
     AttributeType attribute = element.getAttribute(key);
     if (attribute != null) {
       addToRuleBuilder(builder, element.getFullName(), attribute);
     }
+  }
+
+  private boolean hasEmptySelector(ProtoElement element) {
+    // In case of proto files without package name, the generated selector will be empty,
+    // we do not want to normalize such rules.
+    return Strings.isNullOrEmpty(element.getFullName());
   }
 }

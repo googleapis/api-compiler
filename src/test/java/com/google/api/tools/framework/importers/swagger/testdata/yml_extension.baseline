@@ -1,0 +1,579 @@
+WARNING: yml_extension.yml: Operation 'get' in path '/v1/restricted/shelves/{shelvesId}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'get' in path '/v1/shelves': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'post' in path '/v1/shelves': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'get' in path '/v1/shelves/{shelvesId}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'delete' in path '/v1/shelves/{shelvesId}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'get' in path '/v1/shelves/{shelvesId}/books': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'post' in path '/v1/shelves/{shelvesId}/books': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'get' in path '/v1/shelves/{shelvesId}/books/{booksId}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'delete' in path '/v1/shelves/{shelvesId}/books/{booksId}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'put' in path '/v1/shelves/{shelvesId}/books/{booksId}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'post' in path '/v1/shelves/{shelvesId}/books/{booksId}:move': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: yml_extension.yml: Operation 'post' in path '/v1/shelves/{shelvesId}:merge': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "library_example_googleapis_com_v1"
+  methods {
+    name: "RestrictedGetShelf"
+    request_type_url: "type.googleapis.com/namespace.types.RestrictedGetShelfRequest"
+    response_type_url: "type.googleapis.com/namespace.types.Shelf"
+  }
+  methods {
+    name: "ListShelves"
+    request_type_url: "type.googleapis.com/namespace.types.ListShelvesRequest"
+    response_type_url: "type.googleapis.com/namespace.types.ListShelvesResponse"
+  }
+  methods {
+    name: "CreateShelf"
+    request_type_url: "type.googleapis.com/namespace.types.CreateShelfRequest"
+    response_type_url: "type.googleapis.com/namespace.types.Shelf"
+  }
+  methods {
+    name: "GetShelf"
+    request_type_url: "type.googleapis.com/namespace.types.GetShelfRequest"
+    response_type_url: "type.googleapis.com/namespace.types.Shelf"
+  }
+  methods {
+    name: "DeleteShelf"
+    request_type_url: "type.googleapis.com/namespace.types.DeleteShelfRequest"
+    response_type_url: "type.googleapis.com/namespace.types.Empty"
+  }
+  methods {
+    name: "ListBooks"
+    request_type_url: "type.googleapis.com/namespace.types.ListBooksRequest"
+    response_type_url: "type.googleapis.com/namespace.types.ListBooksResponse"
+  }
+  methods {
+    name: "CreateBook"
+    request_type_url: "type.googleapis.com/namespace.types.CreateBookRequest"
+    response_type_url: "type.googleapis.com/namespace.types.Book"
+  }
+  methods {
+    name: "GetBook"
+    request_type_url: "type.googleapis.com/namespace.types.GetBookRequest"
+    response_type_url: "type.googleapis.com/namespace.types.Book"
+  }
+  methods {
+    name: "DeleteBook"
+    request_type_url: "type.googleapis.com/namespace.types.DeleteBookRequest"
+    response_type_url: "type.googleapis.com/namespace.types.Empty"
+  }
+  methods {
+    name: "UpdateBook"
+    request_type_url: "type.googleapis.com/namespace.types.UpdateBookRequest"
+    response_type_url: "type.googleapis.com/namespace.types.Book"
+  }
+  methods {
+    name: "MoveBook"
+    request_type_url: "type.googleapis.com/namespace.types.MoveBookRequest1"
+    response_type_url: "type.googleapis.com/namespace.types.Book"
+  }
+  methods {
+    name: "MergeShelves"
+    request_type_url: "type.googleapis.com/namespace.types.MergeShelvesRequest1"
+    response_type_url: "type.googleapis.com/namespace.types.Shelf"
+  }
+  version: "v1"
+  source_context {
+    file_name: "yml_extension.yml"
+  }
+}
+types {
+  name: "namespace.types.Book"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "author"
+    json_name: "author"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "title"
+    json_name: "title"
+  }
+  fields {
+    kind: TYPE_BOOL
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "read"
+    json_name: "read"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.Empty"
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.ListBooksResponse"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "books"
+    type_url: "type.googleapis.com/namespace.types.Book"
+    json_name: "books"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "next_page_token"
+    json_name: "nextPageToken"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.Shelf"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "name"
+    json_name: "name"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "theme"
+    json_name: "theme"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "internal_theme"
+    json_name: "internalTheme"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 4
+    name: "restricted_theme"
+    json_name: "restrictedTheme"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.ListShelvesResponse"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_REPEATED
+    number: 1
+    name: "shelves"
+    type_url: "type.googleapis.com/namespace.types.Shelf"
+    json_name: "shelves"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "next_page_token"
+    json_name: "nextPageToken"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.MergeShelvesRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "other_shelf_name"
+    json_name: "otherShelfName"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.MoveBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "other_shelf_name"
+    json_name: "otherShelfName"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.RestrictedGetShelfRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.ListShelvesRequest"
+  fields {
+    kind: TYPE_INT32
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "page_size"
+    json_name: "pageSize"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "page_token"
+    json_name: "pageToken"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.CreateShelfRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelf"
+    type_url: "type.googleapis.com/namespace.types.Shelf"
+    json_name: "shelf"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.GetShelfRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.DeleteShelfRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.ListBooksRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  fields {
+    kind: TYPE_INT32
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "page_size"
+    json_name: "pageSize"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "page_token"
+    json_name: "pageToken"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.CreateBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "book"
+    type_url: "type.googleapis.com/namespace.types.Book"
+    json_name: "book"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.GetBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "books_id"
+    json_name: "booksId"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.DeleteBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "books_id"
+    json_name: "booksId"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.UpdateBookRequest"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "books_id"
+    json_name: "booksId"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "book"
+    type_url: "type.googleapis.com/namespace.types.Book"
+    json_name: "book"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.MoveBookRequest1"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "books_id"
+    json_name: "booksId"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 3
+    name: "body"
+    type_url: "type.googleapis.com/namespace.types.MoveBookRequest"
+    json_name: "body"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.MergeShelvesRequest1"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "shelves_id"
+    json_name: "shelvesId"
+  }
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 2
+    name: "body"
+    type_url: "type.googleapis.com/namespace.types.MergeShelvesRequest"
+    json_name: "body"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "library_example_googleapis_com_v1.RestrictedGetShelf"
+    get: "/v1/restricted/shelves/{shelves_id}"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.ListShelves"
+    get: "/v1/shelves"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.CreateShelf"
+    post: "/v1/shelves"
+    body: "shelf"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.GetShelf"
+    get: "/v1/shelves/{shelves_id}"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.DeleteShelf"
+    delete: "/v1/shelves/{shelves_id}"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.ListBooks"
+    get: "/v1/shelves/{shelves_id}/books"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.CreateBook"
+    post: "/v1/shelves/{shelves_id}/books"
+    body: "book"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.GetBook"
+    get: "/v1/shelves/{shelves_id}/books/{books_id}"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.DeleteBook"
+    delete: "/v1/shelves/{shelves_id}/books/{books_id}"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.UpdateBook"
+    put: "/v1/shelves/{shelves_id}/books/{books_id}"
+    body: "book"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.MoveBook"
+    post: "/v1/shelves/{shelves_id}/books/{books_id}:move"
+    body: "body"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.MergeShelves"
+    post: "/v1/shelves/{shelves_id}:merge"
+    body: "body"
+  }
+}
+usage {
+  rules {
+    selector: "library_example_googleapis_com_v1.RestrictedGetShelf"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.ListShelves"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.CreateShelf"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.GetShelf"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.DeleteShelf"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.ListBooks"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.CreateBook"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.GetBook"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.DeleteBook"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.UpdateBook"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.MoveBook"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.MergeShelves"
+    allow_unregistered_calls: true
+  }
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+

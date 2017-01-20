@@ -147,39 +147,18 @@ GET FindTallestTree /orchard/tallestTree
 Rest Kind:   CUSTOM
 Collection:  orchard
 Custom Name: tallestTree
-Diagnostics:
-  WARNING: toplevel: (lint) http-rest: 'rpc FindTallestTree as HTTP GET /orchard/tallestTree' is not a recognized REST pattern. Did you mean one of:
-  rpc List.* as HTTP GET <prefix>/<literal>
-  rpc Get.* as HTTP GET <prefix>:<literal>
-  rpc List.* as HTTP GET <prefix>:<literal>
-  rpc FindTallestTree as HTTP GET <prefix>:<literal>
-  rpc FindTallestTree as HTTP POST <prefix>:<literal>
 
 GET FindTrees /findTrees
 ======================================================================
 Rest Kind:   CUSTOM
 Collection:  (empty)
 Custom Name: findTrees
-Diagnostics:
-  WARNING: toplevel: (lint) http-rest: 'rpc FindTrees as HTTP GET /findTrees' is not a recognized REST pattern. Did you mean one of:
-  rpc List.* as HTTP GET <prefix>/<literal>
-  rpc Get.* as HTTP GET <prefix>:<literal>
-  rpc List.* as HTTP GET <prefix>:<literal>
-  rpc FindTrees as HTTP GET <prefix>:<literal>
-  rpc FindTrees as HTTP POST <prefix>:<literal>
 
 GET FindRipeFruit /trees/{tree_id}/findRipeFruit
 ======================================================================
 Rest Kind:   CUSTOM
 Collection:  trees
 Custom Name: findRipeFruit
-Diagnostics:
-  WARNING: toplevel: (lint) http-rest: 'rpc FindRipeFruit as HTTP GET /trees/*/findRipeFruit' is not a recognized REST pattern. Did you mean one of:
-  rpc List.* as HTTP GET <prefix>/<literal>
-  rpc Get.* as HTTP GET <prefix>:<literal>
-  rpc List.* as HTTP GET <prefix>:<literal>
-  rpc FindRipeFruit as HTTP GET <prefix>:<literal>
-  rpc FindRipeFruit as HTTP POST <prefix>:<literal>
 
 GET FindRipeFruit /trees/{tree_id}:findRipeFruit
 ======================================================================
@@ -192,13 +171,6 @@ GET FindWorm /trees/{tree_id}/fruits/{fruit_id}/findWorm
 Rest Kind:   CUSTOM
 Collection:  trees.fruits
 Custom Name: findWorm
-Diagnostics:
-  WARNING: toplevel: (lint) http-rest: 'rpc FindWorm as HTTP GET /trees/*/fruits/*/findWorm' is not a recognized REST pattern. Did you mean one of:
-  rpc List.* as HTTP GET <prefix>/<literal>
-  rpc Get.* as HTTP GET <prefix>:<literal>
-  rpc List.* as HTTP GET <prefix>:<literal>
-  rpc FindWorm as HTTP GET <prefix>:<literal>
-  rpc FindWorm as HTTP POST <prefix>:<literal>
 
 PUT CreateBush /bushes/{bush_id}
 ======================================================================
@@ -260,20 +232,10 @@ GET MethodNotStartingWithGet /projects/{project}
 Rest Kind:   CUSTOM
 Collection:  projects
 Custom Name: get
-Diagnostics:
-  WARNING: toplevel: (lint) http-rest: 'rpc MethodNotStartingWithGet as HTTP GET /projects/*' is not a recognized REST pattern. Did you mean one of:
-  rpc Get.* as HTTP GET <prefix>/<wildcard>
-  rpc MethodNotStartingWithGet as HTTP GET <prefix>:<literal>
-  rpc MethodNotStartingWithGet as HTTP POST <prefix>:<literal>
 
 GET MethodNotStartingWithGet /projects/{project}
 ======================================================================
 Rest Kind:   CUSTOM
 Collection:  projects
 Custom Name: methodNotStartingWithGet
-Diagnostics:
-  WARNING: toplevel: (lint) http-rest: 'rpc MethodNotStartingWithGet as HTTP GET /projects/*' is not a recognized REST pattern. Did you mean one of:
-  rpc Get.* as HTTP GET <prefix>/<wildcard>
-  rpc MethodNotStartingWithGet as HTTP GET <prefix>:<literal>
-  rpc MethodNotStartingWithGet as HTTP POST <prefix>:<literal>
 

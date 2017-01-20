@@ -1,25 +1,3 @@
-WARNING: http: Codegen does not allow type 'google.protobuf.ListValue' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.ListValue' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.Value' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.Value' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.StringValue' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.StringValue' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.BoolValue' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.BoolValue' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.Int32Value' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.Int32Value' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.DoubleValue' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.DoubleValue' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.FloatValue' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.FloatValue' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.Int64Value' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.Int64Value' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.UInt64Value' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.UInt64Value' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.UInt32Value' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.UInt32Value' as a response of a method. Please use other message types for response, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.BytesValue' as a body field path. Please use other types, else client library generation will fail.
-WARNING: http: Codegen does not allow type 'google.protobuf.BytesValue' as a response of a method. Please use other message types for response, else client library generation will fail.
 http {
   rules {
     selector: "protiary.test.TestService.Call1"
@@ -82,4 +60,3 @@ http {
     body: "value"
   }
 }
-

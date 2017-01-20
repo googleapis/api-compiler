@@ -1,0 +1,19 @@
+syntax = "proto2";
+package protiary.test;
+
+message In {
+}
+
+message Out {
+}
+
+service TestService {
+  // test
+  rpc Test1(In) returns (Out);
+  // test
+  rpc Test2(In) returns (Out);
+  // test
+  rpc Test3(In) returns (Out);
+  // test
+  rpc Test4(In) returns (Out);
+}

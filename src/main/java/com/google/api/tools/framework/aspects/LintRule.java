@@ -81,7 +81,6 @@ public abstract class LintRule<E extends Element> {
    * Returns the service config file location of the given field number in the (sub)message.
    */
   public Location getLocationInConfig(Message message, int fieldNumber) {
-    return aspect.getLocationInConfig(
-        message, message.getDescriptorForType().findFieldByNumber(fieldNumber).getName());
+    return aspect.getLocationInConfig(message, fieldNumber);
   }
 }

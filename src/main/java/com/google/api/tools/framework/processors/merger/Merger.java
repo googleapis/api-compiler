@@ -19,7 +19,9 @@ package com.google.api.tools.framework.processors.merger;
 import com.google.api.Service;
 import com.google.api.tools.framework.aspects.visibility.model.ScoperImpl;
 import com.google.api.tools.framework.model.ConfigAspect;
+import com.google.api.tools.framework.model.ConfigValidator;
 import com.google.api.tools.framework.model.Diag;
+import com.google.api.tools.framework.model.Element;
 import com.google.api.tools.framework.model.Interface;
 import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Model;
@@ -32,6 +34,8 @@ import com.google.api.tools.framework.model.stages.Resolved;
 import com.google.api.tools.framework.util.VisitsBefore;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -40,7 +44,6 @@ import com.google.common.collect.Sets;
 import com.google.inject.Key;
 import com.google.protobuf.Api;
 import com.google.protobuf.DescriptorProtos.FieldDescriptorProto.Type;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -112,6 +115,8 @@ public class Merger implements Processor {
       }
     }
 
+    runValidators(model);
+
     // Resolve types and enums specified in the service config as additional inclusions to
     // the tool chain, but not reachable from the service IDL, such as types associated with
     // Any type.
@@ -134,6 +139,36 @@ public class Merger implements Processor {
       return true;
     }
     return false;
+  }
+
+  private void runValidators(Model model) {
+    final List<ConfigValidator<? extends Element>> validators = model.getValidators();
+
+    new Visitor() {
+      @SuppressWarnings("unchecked")
+      @VisitsBefore
+      void validate(Element element) {
+        final Class<?> elementType = element.getClass();
+        Iterable<ConfigValidator<? extends Element>> validatorsToRun =
+            getValidatorsToRun(validators, elementType);
+        for (ConfigValidator<? extends Element> validator : validatorsToRun) {
+          ConfigValidator<Element> castedValidator = (ConfigValidator<Element>) validator;
+          castedValidator.run(element);
+        }
+      }
+    }.visit(model);
+  }
+
+  private static FluentIterable<ConfigValidator<? extends Element>> getValidatorsToRun(
+      List<ConfigValidator<? extends Element>> validators, final Class<?> elementType) {
+    return FluentIterable.from(validators)
+        .filter(
+            new Predicate<ConfigValidator<? extends Element>>() {
+              @Override
+              public boolean apply(ConfigValidator<? extends Element> validator) {
+                return validator.getElementClass().isAssignableFrom(elementType);
+              }
+            });
   }
 
   /**

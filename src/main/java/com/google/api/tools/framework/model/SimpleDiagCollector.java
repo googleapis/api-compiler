@@ -20,7 +20,6 @@ import com.google.api.tools.framework.model.Diag.Kind;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,5 +63,42 @@ public class SimpleDiagCollector implements DiagCollector {
       @Override public boolean apply(Diag input) {
         return input.getKind() == Kind.ERROR;
       }}).toList();
+  }
+
+  /** Helper to report an error. */
+  public static void error(
+      DiagCollector diagCollector,
+      Object elementOrLocation,
+      String diagPrefix,
+      String message,
+      Object... params) {
+    diagCollector.addDiag(
+        Diag.error(getLocation(elementOrLocation), Model.diagPrefix(diagPrefix) + message, params));
+  }
+
+  /** Helper to report a warning. */
+  public static void warning(
+      DiagCollector diagCollector,
+      DiagSuppressor diagSuppressor,
+      Object elementOrLocation,
+      String diagPrefix,
+      String message,
+      Object... params) {
+    Diag warningDiag =
+        Diag.warning(
+            getLocation(elementOrLocation), Model.diagPrefix(diagPrefix) + message, params);
+    if (!diagSuppressor.isDiagSuppressed(warningDiag, elementOrLocation)) {
+      diagCollector.addDiag(warningDiag);
+    }
+  }
+
+  private static Location getLocation(Object elementOrLocation) {
+    if (elementOrLocation instanceof Location) {
+      return (Location) elementOrLocation;
+    }
+    if (elementOrLocation instanceof Element) {
+      return ((Element) elementOrLocation).getLocation();
+    }
+    return SimpleLocation.TOPLEVEL;
   }
 }

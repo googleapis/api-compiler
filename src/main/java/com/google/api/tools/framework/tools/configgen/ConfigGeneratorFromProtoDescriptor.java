@@ -65,7 +65,6 @@ public class ConfigGeneratorFromProtoDescriptor extends ToolDriverBase implement
 
     // Generate the normalized config.
     model.establishStage(Normalized.KEY);
-    onErrorsExit();
   }
 
   /**

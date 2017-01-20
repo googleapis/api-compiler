@@ -18,10 +18,9 @@ package com.google.api.tools.framework.tools.configgen;
 
 import com.google.api.Service;
 import com.google.api.tools.framework.model.Diag;
-
+import com.google.api.tools.framework.model.Model;
 import java.io.IOException;
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 /**
@@ -44,4 +43,9 @@ public interface ConfigGenerator {
    * Returns true if there were any errors during the run; false otherwise.
    */
   boolean hasErrors();
+
+  /**
+   * Returns the model.
+   */
+  Model getModel();
 }

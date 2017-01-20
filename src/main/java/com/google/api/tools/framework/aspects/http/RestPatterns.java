@@ -20,10 +20,8 @@ import com.google.api.tools.framework.aspects.http.model.MethodKind;
 import com.google.api.tools.framework.aspects.http.model.RestKind;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-
 import java.io.PrintStream;
 import java.util.regex.Pattern;
-
 import javax.annotation.Nullable;
 
 /**
@@ -31,21 +29,23 @@ import javax.annotation.Nullable;
  */
 public class RestPatterns {
 
-  // Represents a rest method pattern.
+  /** Represents various valid method patterns. */
   @AutoValue
-  abstract static class MethodPattern {
+  public abstract static class MethodPattern {
 
     // The http method.
-    abstract MethodKind httpMethod();
+    public abstract MethodKind httpMethod();
 
     // A regular expression which the rpc name must match.
-    abstract Pattern nameRegexp();
+    public abstract Pattern nameRegexp();
 
     // A pattern which the last segment of the path must match.
-    @Nullable abstract SegmentPattern lastSegmentPattern();
+    @Nullable
+    public abstract SegmentPattern lastSegmentPattern();
 
     // The implied rest kind.
-    @Nullable abstract RestKind restKind();
+    @Nullable
+    public abstract RestKind restKind();
 
     // The implied prefix to use for custom methods.
     abstract String customPrefix();
@@ -59,8 +59,12 @@ public class RestPatterns {
           lastSegment, restKind, customPrefix, description);
     }
 
-    static MethodPattern create(MethodKind methodKind, String nameRegexp,
-          SegmentPattern lastSegment, RestKind restKind, String description) {
+    public static MethodPattern create(
+        MethodKind methodKind,
+        String nameRegexp,
+        SegmentPattern lastSegment,
+        RestKind restKind,
+        String description) {
       return create(methodKind, nameRegexp, lastSegment, restKind, "", description);
     }
 
@@ -109,135 +113,112 @@ public class RestPatterns {
 
   // Declares all the currently allowed rest method patterns. If none of those
   // matches, a warning will be produced.
-  static final ImmutableList<MethodPattern> METHOD_PATTERNS =
-      ImmutableList.<MethodPattern>builder()
-
-        // First list all standard methods. They have priority in matching.
-        // Note that the only source of ambiguity here is a legacy custom
-        // method which uses <prefix>/<literal> instead of <prefix>:<literal>, otherwise
-        // our patterns would be unique.
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            "Get.*",
-            SegmentPattern.VARIABLE,
-            RestKind.GET,
-            "Gets a resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            "List.*",
-            SegmentPattern.LITERAL,
-            RestKind.LIST,
-            "Lists all resources"
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PUT,
-            "Update.*",
-            SegmentPattern.VARIABLE,
-            RestKind.UPDATE,
-            "Update a resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PUT,
-            "(Create|Insert).*",
-            SegmentPattern.VARIABLE,
-            RestKind.CREATE,
-            "Create a resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PATCH,
-            "(Update|Patch).*",
-            SegmentPattern.VARIABLE,
-            RestKind.PATCH,
-            "Patch a resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.DELETE,
-            "Delete.*",
-            SegmentPattern.VARIABLE,
-            RestKind.DELETE,
-            "Delete a resource"
-        ))
-        .add(MethodPattern.create(
-            MethodKind.POST,
-            "(Create|Insert).*",
-            SegmentPattern.LITERAL,
-            RestKind.CREATE,
-            "Create a resource"
-        ))
-
-        // Next list all custom methods.
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            "Get.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "get",
-            "Custom get resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            "List.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "list",
-            "Custom list resources."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.GET,
-            ".*",
-            SegmentPattern.CUSTOM_VERB_WITH_COLON,
-            RestKind.CUSTOM,
-            "General custom get method."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PUT,
-            "Update.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "update",
-            "Custom update resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PUT,
-            "Create.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "create",
-            "Custom create resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PATCH,
-            "Patch.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "patch",
-            "Custom patch resource."
-        ))
-        .add(MethodPattern.create(
-            MethodKind.PATCH,
-            "Update.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "update",
-            "Custom update resource"
-        ))
-        .add(MethodPattern.create(
-            MethodKind.DELETE,
-            "Delete.*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "delete",
-            "Custom delete resource"
-        ))
-        .add(MethodPattern.create(
-            MethodKind.POST,
-            ".*",
-            SegmentPattern.CUSTOM_VERB,
-            RestKind.CUSTOM,
-            "General custom method."
-        ))
-        .build();
+  public static final ImmutableList<MethodPattern> METHOD_PATTERNS =
+      // First list all standard methods. They have priority in matching.
+      // Note that the only source of ambiguity here is a legacy custom
+      // method which uses <prefix>/<literal> instead of <prefix>:<literal>, otherwise
+      // our patterns would be unique.
+      ImmutableList.of(
+          MethodPattern.create(
+              MethodKind.GET, "Get.*", SegmentPattern.VARIABLE, RestKind.GET, "Gets a resource."),
+          MethodPattern.create(
+              MethodKind.GET,
+              "List.*",
+              SegmentPattern.LITERAL,
+              RestKind.LIST,
+              "Lists all resources"),
+          MethodPattern.create(
+              MethodKind.PUT,
+              "Update.*",
+              SegmentPattern.VARIABLE,
+              RestKind.UPDATE,
+              "Update a resource."),
+          MethodPattern.create(
+              MethodKind.PUT,
+              "(Create|Insert).*",
+              SegmentPattern.VARIABLE,
+              RestKind.CREATE,
+              "Create a resource."),
+          MethodPattern.create(
+              MethodKind.PATCH,
+              "(Update|Patch).*",
+              SegmentPattern.VARIABLE,
+              RestKind.PATCH,
+              "Patch a resource."),
+          MethodPattern.create(
+              MethodKind.DELETE,
+              "Delete.*",
+              SegmentPattern.VARIABLE,
+              RestKind.DELETE,
+              "Delete a resource"),
+          MethodPattern.create(
+              MethodKind.POST,
+              "(Create|Insert).*",
+              SegmentPattern.LITERAL,
+              RestKind.CREATE,
+              "Create a resource"),
+          // Next list all custom methods.
+          MethodPattern.create(
+              MethodKind.GET,
+              "Get.*",
+              SegmentPattern.CUSTOM_VERB,
+              RestKind.CUSTOM,
+              "get",
+              "Custom get resource."),
+          MethodPattern.create(
+              MethodKind.GET,
+              "List.*",
+              SegmentPattern.CUSTOM_VERB,
+              RestKind.CUSTOM,
+              "list",
+              "Custom list resources."),
+          MethodPattern.create(
+              MethodKind.GET,
+              ".*",
+              SegmentPattern.CUSTOM_VERB_WITH_COLON,
+              RestKind.CUSTOM,
+              "General custom get method."),
+          MethodPattern.create(
+              MethodKind.PUT,
+              "Update.*",
+              SegmentPattern.CUSTOM_VERB,
+              RestKind.CUSTOM,
+              "update",
+              "Custom update resource."),
+          MethodPattern.create(
+              MethodKind.PUT,
+              "Create.*",
+              SegmentPattern.CUSTOM_VERB,
+              RestKind.CUSTOM,
+              "create",
+              "Custom create resource."),
+          MethodPattern.create(
+              MethodKind.PATCH,
+              "Patch.*",
+              SegmentPattern.CUSTOM_VERB,
+              RestKind.CUSTOM,
+              "patch",
+              "Custom patch resource."),
+          MethodPattern.create(
+              MethodKind.PATCH,
+              "Update.*",
+              SegmentPattern.CUSTOM_VERB,
+              RestKind.CUSTOM,
+              "update",
+              "Custom update resource"),
+          MethodPattern.create(
+              MethodKind.DELETE,
+              "Delete.*",
+              SegmentPattern.CUSTOM_VERB,
+              RestKind.CUSTOM,
+              "delete",
+              "Custom delete resource"),
+          MethodPattern.create(
+              MethodKind.POST,
+              ".*",
+              SegmentPattern.CUSTOM_VERB,
+              RestKind.CUSTOM,
+              "General custom method."));
 
   /**
    * Main entry point for generating a table of supported REST patterns.

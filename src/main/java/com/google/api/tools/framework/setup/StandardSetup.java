@@ -20,7 +20,10 @@ import com.google.api.tools.framework.aspects.authentication.AuthConfigAspect;
 import com.google.api.tools.framework.aspects.context.ContextConfigAspect;
 import com.google.api.tools.framework.aspects.control.ControlConfigAspect;
 import com.google.api.tools.framework.aspects.documentation.DocumentationConfigAspect;
+import com.google.api.tools.framework.aspects.endpoint.EndpointConfigAspect;
 import com.google.api.tools.framework.aspects.http.HttpConfigAspect;
+import com.google.api.tools.framework.aspects.http.linters.HttpParameterReservedKeywordRule;
+import com.google.api.tools.framework.aspects.http.validators.HttpConfigAspectValidator;
 import com.google.api.tools.framework.aspects.mixin.MixinConfigAspect;
 import com.google.api.tools.framework.aspects.naming.NamingConfigAspect;
 import com.google.api.tools.framework.aspects.servicecontrol.ServiceControlConfigAspect;
@@ -39,9 +42,7 @@ import com.google.api.tools.framework.processors.resolver.Resolver;
 public class StandardSetup {
   private StandardSetup() {}
 
-  /**
-   * Registers all standard processors.
-   */
+  /** Registers all standard processors. */
   public static void registerStandardProcessors(Model model) {
     model.registerProcessor(new Resolver());
     model.registerProcessor(new Merger());
@@ -56,9 +57,14 @@ public class StandardSetup {
   public static void registerStandardConfigAspects(Model model) {
     model.registerConfigAspect(DocumentationConfigAspect.create(model));
     model.registerConfigAspect(ContextConfigAspect.create(model));
-    model.registerConfigAspect(HttpConfigAspect.create(model));
+
+    HttpConfigAspect http = HttpConfigAspect.create(model);
+    http.registerLintRule(new HttpParameterReservedKeywordRule(http));
+    model.registerConfigAspect(http);
+
     model.registerConfigAspect(VersionConfigAspect.create(model));
     model.registerConfigAspect(NamingConfigAspect.create(model));
+    model.registerConfigAspect(EndpointConfigAspect.create(model));
     model.registerConfigAspect(SystemParameterConfigAspect.create(model));
     model.registerConfigAspect(UsageConfigAspect.create(model));
     model.registerConfigAspect(ControlConfigAspect.create(model));
@@ -66,5 +72,13 @@ public class StandardSetup {
     model.registerConfigAspect(ServiceControlConfigAspect.create(model));
     model.registerConfigAspect(MixinConfigAspect.create(model));
 
+    registerValidators(model);
+
   }
+
+  private static void registerValidators(Model model) {
+    model.registerValidator(
+        new HttpConfigAspectValidator(model.getDiagCollector(), model.getDiagSuppressor()));
+  }
+
 }

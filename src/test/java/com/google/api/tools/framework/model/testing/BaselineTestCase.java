@@ -22,10 +22,12 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -186,7 +188,7 @@ public abstract class BaselineTestCase {
    */
   @Before public void before() throws Exception {
     output = new ByteArrayOutputStream();
-    writer = new PrintWriter(output);
+    writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(output, UTF_8)));
   }
 
   /**
@@ -219,14 +221,15 @@ public abstract class BaselineTestCase {
       writer.flush();
       output.flush();
       String actual = new String(((ByteArrayOutputStream) output).toByteArray(), UTF_8);
+
       URL expectedUrl = getTestDataLocator().findTestData(baselineFileName());
       String expected = expectedUrl != null ? getTestDataLocator().readTestData(expectedUrl) : null;
       if (expected == null) {
         String actualLocation = tryCreateNewBaseline(actual);
-        throw new BaselineComparisonError(testName.getMethodName(), baselineFileName(),
-            null, actual, actualLocation);
+        throw new BaselineComparisonError(
+            testName.getMethodName(), baselineFileName(), null, actual, actualLocation);
       }
-      if (!expected.equals(actual)) {
+      if (!expected.trim().equals(actual.trim())) {
         String actualLocation = tryCreateNewBaseline(actual);
         throw new BaselineComparisonError(testName.getMethodName(), baselineFileName(),
             expected, actual, actualLocation);
@@ -258,7 +261,7 @@ public abstract class BaselineTestCase {
         + File.separator + getSubDirectoryPathForNewBaseline() + File.separator
         + baselineFileName());
     Files.createParentDirs(file);
-    Files.write(actual, file, Charset.defaultCharset());
+    Files.asCharSink(file, Charset.defaultCharset()).write(actual);
     return file.toString();
   }
 

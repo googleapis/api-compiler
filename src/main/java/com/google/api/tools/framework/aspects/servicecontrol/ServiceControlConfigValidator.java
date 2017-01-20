@@ -32,9 +32,11 @@ import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
+import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,6 +57,14 @@ class ServiceControlConfigValidator {
 
   private static final String UNUSED_METRICS_RULE = "unused-metrics";
   private static final String UNUSED_LOGS_RULE = "unused-logs";
+
+  // The log name prefix for Cloud Audit Logs.
+  private static final String CLOUD_AUDIT_LOG_PREFIX = "cloudaudit.googleapis.com";
+
+  // The allowed log name prefixes for Cloud Audit logs.
+  private final List<String> allowedCloudAuditLogNamePrefixes =
+      ImmutableList.of(
+          "cloudaudit.googleapis.com/activity", "cloudaudit.googleapis.com/data_access");
 
   // The allowed billing status values.
   private final Set<String> allowedBillingStatuses = ImmutableSet.of("current", "delinquent");
@@ -235,6 +245,11 @@ class ServiceControlConfigValidator {
     // - Label key value cannot be empty while the label keys list can be empty.
     validateLabels(configAspect.getLocationInConfig(log, "name"),
         String.format("'%s' log", log.getName()), log.getLabelsList());
+
+    // Cloud Audit log names must have the allowed prefixes.
+    if (log.getName().startsWith(CLOUD_AUDIT_LOG_PREFIX)) {
+      validateCloudAuditLogName(configAspect.getLocationInConfig(log, "name"), log.getName());
+    }
   }
 
   private void validateMonitoring(Monitoring monitoring) {
@@ -434,6 +449,24 @@ class ServiceControlConfigValidator {
     if (labelOrName.length() > bounds.getMaxStringLength()) {
       error(location, "The %s '%s' is too long. It must not be longer than %d characters.",
           fieldRef, labelOrName, bounds.getMaxStringLength());
+    }
+  }
+
+  private void validateCloudAuditLogName(Location location, final String logName) {
+    boolean isAllowed =
+        Iterables.any(
+            allowedCloudAuditLogNamePrefixes, new Predicate<String>() {
+              @Override
+              public boolean apply(String allowedPrefix) {
+                return logName.startsWith(allowedPrefix);
+              }
+            });
+    if (!isAllowed) {
+      error(
+          location,
+          "%s is not a valid Cloud Audit log name. Valid Cloud Audit log name prefixes are: %s.",
+          logName,
+          Joiner.on(", ").join(allowedCloudAuditLogNamePrefixes));
     }
   }
 

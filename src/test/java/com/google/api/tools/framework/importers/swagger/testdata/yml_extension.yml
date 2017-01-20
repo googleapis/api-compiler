@@ -1,0 +1,408 @@
+swagger: '2.0'
+info:
+  title: Google Example Library API
+  description: A simple Google Example Library API.
+  version: v1
+host: library-example.googleapis.com
+schemes:
+  - http
+  - https
+basePath: /
+x-google-allow: configured
+paths:
+  /v1/shelves:
+    post:
+      operationId: CreateShelf
+      description: 'Creates a shelf, and returns the new Shelf.'
+      parameters:
+        - name: shelf
+          description: The shelf to create.
+          in: body
+          schema:
+            $ref: '#/definitions/Shelf'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Shelf'
+    get:
+      operationId: ListShelves
+      description: >-
+        Lists shelves. The order is unspecified but deterministic. Newly created
+
+        shelves will not necessarily be added to the end of this list.
+      parameters:
+        - name: pageSize
+          description: >-
+            Requested page size. Server may return fewer shelves than requested.
+
+            If unspecified, server will pick an appropriate default.
+          in: query
+          type: integer
+          format: int32
+        - name: pageToken
+          description: >-
+            A token identifying a page of results the server should return.
+
+            Typically, this is the value of
+
+            [ListShelvesResponse.next_page_token][google.example.library.v1.ListShelvesResponse.next_page_token]
+
+            returned from the previous call to `ListShelves` method.
+          in: query
+          type: string
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/ListShelvesResponse'
+  '/v1/shelves/{shelvesId}':
+    get:
+      operationId: GetShelf
+      description: Gets a shelf. Returns NOT_FOUND if the shelf does not exist.
+      parameters:
+        - name: shelvesId
+          description: Part of `name`. The name of the shelf to retrieve.
+          in: path
+          required: true
+          type: string
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Shelf'
+    delete:
+      operationId: DeleteShelf
+      description: Deletes a shelf. Returns NOT_FOUND if the shelf does not exist.
+      parameters:
+        - name: shelvesId
+          description: Part of `name`. The name of the shelf to delete.
+          in: path
+          required: true
+          type: string
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Empty'
+  '/v1/restricted/shelves/{shelvesId}':
+    get:
+      operationId: RestrictedGetShelf
+      description: >-
+        Gets a shelf. Returns NOT_FOUND if the shelf does not exist. This method
+
+        has restricted visibility.
+      parameters:
+        - name: shelvesId
+          description: Part of `name`. The name of the shelf to retrieve.
+          in: path
+          required: true
+          type: string
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Shelf'
+  '/v1/shelves/{shelvesId}:merge':
+    post:
+      operationId: MergeShelves
+      description: >-
+        Merges two shelves by adding all books from the shelf named
+
+        `other_shelf_name` to shelf `name`, and deletes
+
+        `other_shelf_name`. Returns the updated shelf.
+
+        The book ids of the moved books may not be the same as the original
+        books.
+
+
+
+        Returns NOT_FOUND if either shelf does not exist.
+
+        This call is a no-op if the specified shelves are the same.
+      parameters:
+        - name: shelvesId
+          description: "Part of `name`. The name of the shelf we're adding books to."
+          in: path
+          required: true
+          type: string
+        - name: body
+          description: The request body.
+          in: body
+          schema:
+            $ref: '#/definitions/MergeShelvesRequest'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Shelf'
+  '/v1/shelves/{shelvesId}/books':
+    post:
+      operationId: CreateBook
+      description: 'Creates a book, and returns the new Book.'
+      parameters:
+        - name: shelvesId
+          description: Part of `name`. The name of the shelf in which the book is created.
+          in: path
+          required: true
+          type: string
+        - name: book
+          description: The book to create.
+          in: body
+          schema:
+            $ref: '#/definitions/Book'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Book'
+    get:
+      operationId: ListBooks
+      description: >-
+        Lists books in a shelf. The order is unspecified but deterministic.
+        Newly
+
+        created books will not necessarily be added to the end of this list.
+
+        Returns NOT_FOUND if the shelf does not exist.
+      parameters:
+        - name: shelvesId
+          description: "Part of `name`. The name of the shelf whose books we'd like to list."
+          in: path
+          required: true
+          type: string
+        - name: pageSize
+          description: |-
+            Requested page size. Server may return fewer books than requested.
+            If unspecified, server will pick an appropriate default.
+          in: query
+          type: integer
+          format: int32
+        - name: pageToken
+          description: >-
+            A token identifying a page of results the server should return.
+
+            Typically, this is the value of
+
+            [ListBooksResponse.next_page_token][google.example.library.v1.ListBooksResponse.next_page_token].
+
+            returned from the previous call to `ListBooks` method.
+          in: query
+          type: string
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/ListBooksResponse'
+  '/v1/shelves/{shelvesId}/books/{booksId}':
+    get:
+      operationId: GetBook
+      description: Gets a book. Returns NOT_FOUND if the book does not exist.
+      parameters:
+        - name: shelvesId
+          description: Part of `name`. The name of the book to retrieve.
+          in: path
+          required: true
+          type: string
+        - name: booksId
+          description: Part of `name`. See documentation of `shelvesId`.
+          in: path
+          required: true
+          type: string
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Book'
+    delete:
+      operationId: DeleteBook
+      description: Deletes a book. Returns NOT_FOUND if the book does not exist.
+      parameters:
+        - name: shelvesId
+          description: Part of `name`. The name of the book to delete.
+          in: path
+          required: true
+          type: string
+        - name: booksId
+          description: Part of `name`. See documentation of `shelvesId`.
+          in: path
+          required: true
+          type: string
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Empty'
+    put:
+      operationId: UpdateBook
+      description: |-
+        Updates a book. Returns INVALID_ARGUMENT if the name of the book
+        is non-empty and does equal the previous name.
+      parameters:
+        - name: shelvesId
+          description: Part of `name`. The name of the book to update.
+          in: path
+          required: true
+          type: string
+        - name: booksId
+          description: Part of `name`. See documentation of `shelvesId`.
+          in: path
+          required: true
+          type: string
+        - name: book
+          description: The book to update with. The name must match or be empty.
+          in: body
+          schema:
+            $ref: '#/definitions/Book'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Book'
+  '/v1/shelves/{shelvesId}/books/{booksId}:move':
+    post:
+      operationId: MoveBook
+      description: |-
+        Moves a book to another shelf, and returns the new book. The book
+        id of the new book may not be the same as the original book.
+      parameters:
+        - name: shelvesId
+          description: Part of `name`. The name of the book to move.
+          in: path
+          required: true
+          type: string
+        - name: booksId
+          description: Part of `name`. See documentation of `shelvesId`.
+          in: path
+          required: true
+          type: string
+        - name: body
+          description: The request body.
+          in: body
+          schema:
+            $ref: '#/definitions/MoveBookRequest'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Book'
+definitions:
+  Shelf:
+    description: A Shelf contains a collection of books with a theme.
+    type: object
+    properties:
+      name:
+        description: |-
+          The resource name of the shelf.
+          Shelf names have the form `shelves/{shelf_id}`.
+          The name is ignored when creating a shelf.
+        type: string
+      theme:
+        description: The theme of the shelf
+        type: string
+      internalTheme:
+        description: A field that the backend filters based on visibility.
+        type: string
+      restrictedTheme:
+        description: some restricted field.
+        type: string
+  ListShelvesResponse:
+    description: Response message for LibraryService.ListShelves.
+    type: object
+    properties:
+      shelves:
+        description: The list of shelves.
+        type: array
+        items:
+          $ref: '#/definitions/Shelf'
+      nextPageToken:
+        description: >-
+          A token to retrieve next page of results.
+
+          Pass this value in the
+
+          [ListShelvesRequest.page_token][google.example.library.v1.ListShelvesRequest.page_token]
+
+          field in the subsequent call to `ListShelves` method to retrieve the
+          next
+
+          page of results.
+        type: string
+  Empty:
+    description: >-
+      A generic empty message that you can re-use to avoid defining duplicated
+
+      empty messages in your APIs. A typical example is to use it as the request
+
+      or the response type of an API method. For instance:
+
+
+
+          service Foo {
+
+            rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);
+
+          }
+    type: object
+    x-test: test
+    properties: {}
+  MergeShelvesRequest:
+    description: |-
+      Describes the shelf being removed (other_shelf_name) and updated
+      (name) in this merge.
+    type: object
+    properties:
+      otherShelfName:
+        description: "The name of the shelf we're removing books from and deleting."
+        type: string
+  Book:
+    description: A single book in the library.
+    type: object
+    properties:
+      name:
+        description: |-
+          The resource name of the book.
+          Book names have the form `shelves/{shelf_id}/books/{book_id}`.
+          The name is ignored when creating a book.
+        type: string
+      author:
+        description: The name of the book author.
+        type: string
+      title:
+        description: The title of the book.
+        type: string
+      read:
+        description: Value indicating whether the book has been read.
+        type: boolean
+  ListBooksResponse:
+    description: Response message for LibraryService.ListBooks.
+    type: object
+    properties:
+      books:
+        description: The list of books.
+        type: array
+        items:
+          $ref: '#/definitions/Book'
+      nextPageToken:
+        description: >-
+          A token to retrieve next page of results.
+
+          Pass this value in the
+
+          [ListBooksRequest.page_token][google.example.library.v1.ListBooksRequest.page_token]
+
+          field in the subsequent call to `ListBooks` method to retrieve the
+          next
+
+          page of results.
+        type: string
+  MoveBookRequest:
+    description: |-
+      Describes what book to move (name) and what shelf we're moving it
+      to (other_shelf_name).
+    type: object
+    properties:
+      otherShelfName:
+        description: The name of the destination shelf.
+        type: string

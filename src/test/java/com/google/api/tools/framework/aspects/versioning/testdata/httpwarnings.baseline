@@ -1,5 +1,4 @@
-WARNING: httpwarnings.proto:13:3: (lint) versioning-http-version-prefix: 'method protiary.test.httpwarnings.v1.TestService.Call1' has a HTTP path that does not start with version, which must match '^(v\d+(\w+)?)$'.
-WARNING: httpwarnings.yaml:15: (lint) versioning-http-version-prefix: 'method protiary.test.httpwarnings.v1.TestService.Call2' has a HTTP path that does not start with version, which must match '^(v\d+(\w+)?)$'.
+WARNING: httpwarnings.proto:13:3: (lint) versioning-http-version-prefix: 'method protiary.test.httpwarnings.v1.TestService.Call1' has a HTTP path that does not start with version, which must match '^(v?\d+(\w+)?)$'.
+WARNING: httpwarnings.yaml:15: (lint) versioning-http-version-prefix: 'method protiary.test.httpwarnings.v1.TestService.Call2' has a HTTP path that does not start with version, which must match '^(v?\d+(\w+)?)$'.
 WARNING: httpwarnings.proto:23:3: (lint) versioning-http-version-prefix: method 'protiary.test.httpwarnings.v1.TestService.Call3' has a different version prefix in HTTP path ('v99') than api version 'v1'.
 WARNING: httpwarnings.proto:30:3: (lint) versioning-http-version-prefix: method 'protiary.test.httpwarnings.v1.TestService.Call4' has a different version prefix in HTTP path ('v99') than api version 'v1'.
-

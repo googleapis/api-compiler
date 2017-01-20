@@ -16,7 +16,7 @@
 
 package com.google.api.tools.framework.tools.configgen;
 
-import com.google.api.tools.framework.importers.swagger.SwaggerImportTool;
+import com.google.api.tools.framework.tools.SwaggerToolDriverBase;
 import com.google.api.tools.framework.tools.ToolOptions;
 import com.google.api.tools.framework.tools.ToolOptions.Option;
 import com.google.common.collect.ImmutableList;
@@ -55,10 +55,10 @@ public class ServiceConfigGeneratorTool {
     frameworkOptions.add(ConfigGeneratorDriver.TXT_OUT);
     frameworkOptions.add(ConfigGeneratorDriver.JSON_OUT);
     frameworkOptions.add(ConfigGeneratorFromProtoDescriptor.SUPPRESS_WARNINGS);
-    frameworkOptions.add(SwaggerImportTool.OPEN_API);
-    frameworkOptions.add(SwaggerImportTool.SERVICE_NAME);
-    frameworkOptions.add(SwaggerImportTool.METHOD_NAMESPACE);
-    frameworkOptions.add(SwaggerImportTool.TYPE_NAMESPACE);
+    frameworkOptions.add(SwaggerToolDriverBase.OPEN_API);
+    frameworkOptions.add(SwaggerToolDriverBase.SERVICE_NAME);
+    frameworkOptions.add(SwaggerToolDriverBase.TYPE_NAMESPACE);
+
     return frameworkOptions.build();
   }
 }

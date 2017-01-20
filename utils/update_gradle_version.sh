@@ -4,7 +4,7 @@
 # This script is meant to be run manually (not by Travis)
 
 # Argument (optional): new version number for build.gradle files
-# Providing no argument defaults to incrementing revision number to 
+# Providing no argument defaults to incrementing revision number to
 # x.y.z+1-SNAPSHOT if the current version is x.y.z OR to x.y.z if the
 # current version is x.y.z-SNAPSHOT.
 
@@ -21,6 +21,7 @@ else
 fi
 
 echo "Changing version from $CURRENT_VERSION to $NEW_VERSION in build.gradle"
-sed -i "s/version = \"$CURRENT_VERSION\"/version = \"$NEW_VERSION\"/" build.gradle
+sed -i "s/version = \"$CURRENT_VERSION\"/version = \"$NEW_VERSION\"/" \
+build.gradle
 git add build.gradle
 

@@ -22,6 +22,7 @@ import com.google.api.tools.framework.model.ConfigAspect;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.Processor;
 import com.google.api.tools.framework.model.ProtoElement;
+import com.google.api.tools.framework.model.Scoper;
 import com.google.api.tools.framework.model.Visitor;
 import com.google.api.tools.framework.model.stages.Linted;
 import com.google.api.tools.framework.model.stages.Normalized;
@@ -54,34 +55,43 @@ public class Normalizer implements Processor {
     // Normalize descriptor.
     new DescriptorNormalizer(model).run(normalizedConfig);
 
-    // Run aspect normalizers.
-    for (ConfigAspect aspect : model.getConfigAspects()) {
-      aspect.startNormalization(normalizedConfig);
-    }
-    new AspectNormalizer(model, normalizedConfig).visit(model);
-    for (ConfigAspect aspect : model.getConfigAspects()) {
-      aspect.endNormalization(normalizedConfig);
-    }
+    normalizeAspects(model, model.getConfigAspects(), normalizedConfig);
 
-    // Set result.
     model.setNormalizedConfig(normalizedConfig.build());
+
     model.putAttribute(Normalized.KEY, new Normalized());
     return true;
   }
 
-  private static class AspectNormalizer extends Visitor {
+  public void normalizeAspects(
+      Model model, Iterable<ConfigAspect> aspects, Service.Builder normalizedConfig) {
 
-    private final Model model;
-    private final Service.Builder normalizedConfig;
-
-    private AspectNormalizer(Model model, Builder normalizedConfig) {
-      super(model.getScoper(), false/*ignoreMapEntry*/);
-      this.model = model;
-      this.normalizedConfig = normalizedConfig;
+    // Run aspect normalizers.
+    for (ConfigAspect aspect : aspects) {
+      aspect.startNormalization(normalizedConfig);
+    }
+    new AspectNormalizer(model.getScoper(), aspects, normalizedConfig).visit(model);
+    for (ConfigAspect aspect : aspects) {
+      aspect.endNormalization(normalizedConfig);
     }
 
-    @VisitsBefore void normalize(ProtoElement element) {
-      for (ConfigAspect aspect : model.getConfigAspects()) {
+  }
+
+  private static class AspectNormalizer extends Visitor {
+
+    private final Service.Builder normalizedConfig;
+    private final Iterable<ConfigAspect> configAspects;
+
+    private AspectNormalizer(
+        Scoper scoper, Iterable<ConfigAspect> aspects, Builder normalizedConfig) {
+      super(scoper, false /*ignoreMapEntry*/);
+      this.normalizedConfig = normalizedConfig;
+      this.configAspects = aspects;
+    }
+
+    @VisitsBefore
+    void normalize(ProtoElement element) {
+      for (ConfigAspect aspect : this.configAspects) {
         aspect.normalize(element, normalizedConfig);
       }
     }

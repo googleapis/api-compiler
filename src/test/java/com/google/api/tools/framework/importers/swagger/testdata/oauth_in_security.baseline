@@ -1,0 +1,171 @@
+WARNING: oauth_in_security.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
+WARNING: oauth_in_security.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
+WARNING: oauth_in_security.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
+WARNING: oauth_in_security.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
+WARNING: oauth_in_security.json: Operation 'get' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: oauth_in_security.json: Operation 'delete' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: oauth_in_security.json: Operation 'post' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: oauth_in_security.json: Operation 'put' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+name: "library-example.googleapis.com"
+title: "Google Example Library API"
+apis {
+  name: "library_example_googleapis_com_v1"
+  methods {
+    name: "RemoveSecurityByXSecurity"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  methods {
+    name: "InheritSecurityAndXSecurity"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  methods {
+    name: "RedefiningSecurityAndXSecurity"
+    request_type_url: "type.googleapis.com/namespace.types.RedefiningSecurityAndXSecurityRequest"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  methods {
+    name: "RemoveSecurityBySecurity"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  version: "v1"
+  source_context {
+    file_name: "oauth_in_security.json"
+  }
+}
+types {
+  name: "namespace.types.SimpleDef"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.RedefiningSecurityAndXSecurityRequestBody"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+types {
+  name: "namespace.types.RedefiningSecurityAndXSecurityRequest"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_body_ref"
+    type_url: "type.googleapis.com/namespace.types.RedefiningSecurityAndXSecurityRequestBody"
+    json_name: "myBodyRef"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "library_example_googleapis_com_v1.RemoveSecurityByXSecurity"
+    get: "/v1/pets"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.InheritSecurityAndXSecurity"
+    delete: "/v1/pets"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.RedefiningSecurityAndXSecurity"
+    post: "/v1/pets"
+    body: "my_body_ref"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.RemoveSecurityBySecurity"
+    put: "/v1/pets"
+  }
+}
+authentication {
+  rules {
+    selector: "library_example_googleapis_com_v1.RemoveSecurityByXSecurity"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.InheritSecurityAndXSecurity"
+    requirements {
+      provider_id: "test_auth2"
+    }
+    requirements {
+      provider_id: "test_auth3"
+      audiences: "foobar"
+    }
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.RedefiningSecurityAndXSecurity"
+    requirements {
+      provider_id: "test_auth"
+    }
+    requirements {
+      provider_id: "test_auth2"
+    }
+    requirements {
+      provider_id: "test_auth3"
+      audiences: "foobar_second"
+    }
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.RemoveSecurityBySecurity"
+  }
+  providers {
+    id: "test_auth"
+    issuer: "1234567-compute@developer.gserviceaccount.com"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+  }
+  providers {
+    id: "test_auth2"
+    issuer: "1234567-compute@developer.gserviceaccount2.com"
+  }
+  providers {
+    id: "test_auth3"
+    jwks_uri: "https://www.googleapis.com/oauth2/v1/certs3"
+  }
+}
+usage {
+  rules {
+    selector: "library_example_googleapis_com_v1.RemoveSecurityByXSecurity"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.InheritSecurityAndXSecurity"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.RedefiningSecurityAndXSecurity"
+    allow_unregistered_calls: true
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.RemoveSecurityBySecurity"
+    allow_unregistered_calls: true
+  }
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+

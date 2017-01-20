@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # This script updates the READMEs with the latest non-SNAPSHOT version number.
-# Example: Suppose that before running this script, the build.gradle reads 7.8.9.  This script will replace 
-# all occurrences of #.#.# with 7.8.9 in the README files.
+# Example: Suppose that before running this script, the build.gradle reads
+# 7.8.9.  This script will replace all occurrences of #.#.# with 7.8.9 in the
+# README files.
 
 # Get the current project version.
 RELEASED_VERSION=$(./gradlew properties | sed -n -e 's/^\s*version: //p')

@@ -610,10 +610,15 @@ context {
     requested: "google.rpc.context.AbuseContext"
   }
 }
+endpoints {
+  name: "blob.googleapis.com"
+  aliases: "blob.clients6.google.com"
+  aliases: "content-blob.googleapis.com"
+  apis: "protiary.test.Storage"
+}
 config_version {
   value: 2
 }
 control {
   environment: "servicecontrol.googleapis.com"
 }
-

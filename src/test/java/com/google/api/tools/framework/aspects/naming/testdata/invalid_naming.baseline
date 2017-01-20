@@ -1,0 +1,1 @@
+WARNING: InvalidNaming.proto: (lint) naming-lower-underscore-proto: Name 'InvalidNaming.proto' is not matching lower-underscore-proto conventions (pattern '[a-z][a-z0-9_]*.proto')

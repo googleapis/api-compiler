@@ -36,4 +36,9 @@ public class NamingConfigAspectTest extends ConfigAspectBaselineTestCase {
     showDiagLocation = true;
     test("naming");
   }
+
+  @Test public void invalid_naming() throws Exception {
+    showDiagLocation = true;
+    test("InvalidNaming");
+  }
 }

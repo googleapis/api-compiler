@@ -38,6 +38,10 @@ public abstract class FileWrapper {
   public static FileWrapper create(String filename, ByteString fileContents) {
     return new AutoValue_FileWrapper(filename, fileContents);
   }
+  
+  public static FileWrapper create(String filename, String fileContentsUtf8) {
+    return create(filename, ByteString.copyFromUtf8(fileContentsUtf8));
+  }
 
   public abstract String getFilename();
 

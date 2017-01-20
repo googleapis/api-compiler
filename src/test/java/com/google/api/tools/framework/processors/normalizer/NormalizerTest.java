@@ -46,10 +46,6 @@ public class NormalizerTest extends ConfigBaselineTestCase {
       model.suppressAllWarnings();
     }
 
-    // Always avoid generating defaults for proto options to make the test more
-    // stable w.r.t. changes in proto descriptor.
-    model.enableExperiment("empty-descriptor-defaults");
-
     // Establish stage.
     model.establishStage(Normalized.KEY);
 
@@ -98,6 +94,10 @@ public class NormalizerTest extends ConfigBaselineTestCase {
 
   @Test public void invalid_type_wildcard() throws Exception {
     test("invalid_type_wildcard");
+  }
+
+  @Test public void no_package_name() throws Exception {
+    test("no_package_name");
   }
 
   @Test

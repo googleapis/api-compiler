@@ -32,7 +32,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.protobuf.Message;
-
 import java.util.List;
 import java.util.Set;
 
@@ -250,6 +249,12 @@ public abstract class ConfigAspectBase implements ConfigAspect {
     return model.getLocationInConfig(message, fieldName);
   }
 
+  /** Returns the service config file location of the given field number in the (sub)message. */
+  public Location getLocationInConfig(Message message, int fieldNumber) {
+    return model.getLocationInConfig(
+        message, message.getDescriptorForType().findFieldByNumber(fieldNumber).getName());
+  }
+
   /**
    * Returns the service config file location of the given named field in the (sub)message. The key
    * identifies the key of the map. For repeated fields, the element key is a
@@ -294,4 +299,5 @@ public abstract class ConfigAspectBase implements ConfigAspect {
       }
     };
   }
+
 }

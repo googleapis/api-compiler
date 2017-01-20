@@ -1,7 +1,8 @@
-WARNING: bookstore.json: Operation 'get' in path '/shelves': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: bookstore.json: Operation 'get' in path '/shelves': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 name: "bookstore.appspot.com"
 title: "Bookstore"
 apis {
+  name: "bookstore_cloudendpointsapis_com_1_0_0"
   methods {
     name: "ListShelves"
     request_type_url: "type.googleapis.com/google.protobuf.Empty"
@@ -42,8 +43,9 @@ apis {
     request_type_url: "type.googleapis.com/DeleteBookRequest"
     response_type_url: "type.googleapis.com/google.protobuf.Value"
   }
-  version: "v1"
+  version: "1.0.0"
   source_context {
+    file_name: "bookstore.json"
   }
 }
 types {
@@ -229,43 +231,46 @@ documentation {
 }
 http {
   rules {
-    selector: "ListShelves"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListShelves"
     get: "/shelves"
   }
   rules {
-    selector: "CreateShelf"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateShelf"
     post: "/shelves"
     body: "shelf"
   }
   rules {
-    selector: "GetShelf"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetShelf"
     get: "/shelves/{shelf}"
   }
   rules {
-    selector: "DeleteShelf"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.DeleteShelf"
     delete: "/shelves/{shelf}"
   }
   rules {
-    selector: "ListBooks"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListBooks"
     get: "/shelves/{shelf}/books"
   }
   rules {
-    selector: "CreateBook"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateBook"
     post: "/shelves/{shelf}/books"
     body: "book"
   }
   rules {
-    selector: "GetBook"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetBook"
     get: "/shelves/{shelf}/books/{book}"
   }
   rules {
-    selector: "DeleteBook"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.DeleteBook"
     delete: "/shelves/{shelf}/books/{book}"
   }
 }
 authentication {
   rules {
-    selector: "CreateShelf"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListShelves"
+  }
+  rules {
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateShelf"
     requirements {
       provider_id: "google_id_token"
       audiences: "848149964201.apps.googleusercontent.com,841077041629.apps.googleusercontent.com"
@@ -279,7 +284,7 @@ authentication {
     }
   }
   rules {
-    selector: "GetShelf"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetShelf"
     requirements {
       provider_id: "google_id_token"
       audiences: "848149964201.apps.googleusercontent.com,841077041629.apps.googleusercontent.com"
@@ -310,30 +315,34 @@ authentication {
 }
 usage {
   rules {
-    selector: "ListShelves"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListShelves"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "CreateShelf"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateShelf"
   }
   rules {
-    selector: "GetShelf"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetShelf"
   }
   rules {
-    selector: "DeleteShelf"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.DeleteShelf"
   }
   rules {
-    selector: "ListBooks"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListBooks"
   }
   rules {
-    selector: "CreateBook"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateBook"
   }
   rules {
-    selector: "GetBook"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetBook"
   }
   rules {
-    selector: "DeleteBook"
+    selector: "bookstore_cloudendpointsapis_com_1_0_0.DeleteBook"
   }
+}
+endpoints {
+  name: "bookstore.appspot.com"
+  apis: "bookstore_cloudendpointsapis_com_1_0_0"
 }
 control {
   environment: "servicecontrol.googleapis.com"
@@ -629,6 +638,56 @@ metrics {
   metric_kind: DELTA
   value_type: DISTRIBUTION
 }
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/streaming_request_message_counts"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/streaming_response_message_counts"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/streaming_request_message_counts"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/streaming_response_message_counts"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/streaming_durations"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/streaming_durations"
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/request_bytes"
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/producer/response_bytes"
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/request_bytes"
+  metric_kind: DELTA
+  value_type: INT64
+}
+metrics {
+  name: "serviceruntime.googleapis.com/api/consumer/response_bytes"
+  metric_kind: DELTA
+  value_type: INT64
+}
 monitored_resources {
   type: "api"
   labels {
@@ -672,6 +731,11 @@ monitoring {
     metrics: "serviceruntime.googleapis.com/api/producer/top_request_count_by_consumer"
     metrics: "serviceruntime.googleapis.com/api/producer/top_request_sizes_by_consumer"
     metrics: "serviceruntime.googleapis.com/api/producer/top_response_sizes_by_consumer"
+    metrics: "serviceruntime.googleapis.com/api/producer/streaming_request_message_counts"
+    metrics: "serviceruntime.googleapis.com/api/producer/streaming_response_message_counts"
+    metrics: "serviceruntime.googleapis.com/api/producer/streaming_durations"
+    metrics: "serviceruntime.googleapis.com/api/producer/request_bytes"
+    metrics: "serviceruntime.googleapis.com/api/producer/response_bytes"
     metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/request_count"
     metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/error_count"
     metrics: "serviceruntime.googleapis.com/api/producer/by_consumer/total_latencies"
@@ -694,6 +758,11 @@ monitoring {
     metrics: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_end_user"
     metrics: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_end_user_country"
     metrics: "serviceruntime.googleapis.com/api/consumer/top_request_count_by_referer"
+    metrics: "serviceruntime.googleapis.com/api/consumer/streaming_request_message_counts"
+    metrics: "serviceruntime.googleapis.com/api/consumer/streaming_response_message_counts"
+    metrics: "serviceruntime.googleapis.com/api/consumer/streaming_durations"
+    metrics: "serviceruntime.googleapis.com/api/consumer/request_bytes"
+    metrics: "serviceruntime.googleapis.com/api/consumer/response_bytes"
   }
 }
 

@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.api.tools.framework.aspects.versioning.model.ApiVersionUtil;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -57,9 +56,9 @@ public class ApiVersionUtilTest {
         ApiVersionUtil.extractMajorVersionFromSemanticVersion("v2b1.10"));
     assertEquals("v2",
         ApiVersionUtil.extractMajorVersionFromSemanticVersion("v2.10.3"));
+    assertEquals("2", ApiVersionUtil.extractMajorVersionFromSemanticVersion("2"));
 
     // Invalid semantic versions
-    assertNull(ApiVersionUtil.extractMajorVersionFromSemanticVersion("2"));
     assertNull(ApiVersionUtil.extractMajorVersionFromSemanticVersion("V2"));
 
     assertNull(ApiVersionUtil.extractMajorVersionFromSemanticVersion("abc"));
@@ -74,9 +73,9 @@ public class ApiVersionUtilTest {
     assertTrue(ApiVersionUtil.isValidApiVersion("v2b1"));
     assertTrue(ApiVersionUtil.isValidApiVersion("v2.10"));
     assertTrue(ApiVersionUtil.isValidApiVersion("v2.10.3"));
+    assertTrue(ApiVersionUtil.isValidApiVersion("2"));
 
     // Invalid api version
-    assertTrue(!ApiVersionUtil.isValidApiVersion("2"));
     assertTrue(!ApiVersionUtil.isValidApiVersion("abc"));
     assertTrue(!ApiVersionUtil.isValidApiVersion("v1.2.3.4"));
     assertTrue(!ApiVersionUtil.isValidApiVersion(""));

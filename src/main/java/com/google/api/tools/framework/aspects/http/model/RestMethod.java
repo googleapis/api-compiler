@@ -24,7 +24,6 @@ import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.TypeRef;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-
 import javax.annotation.Nullable;
 
 /**
@@ -56,6 +55,7 @@ public class RestMethod extends Element {
 
   private RestKind restKind;
   private String restCustomMethodName;
+  private boolean hasValidRestPattern = true;
   private String restCollectionName = "";
 
   private final Method method;
@@ -209,5 +209,13 @@ public class RestMethod extends Element {
    */
   public String getVersionWithDefault() {
     return ApiVersionUtil.extractDefaultMajorVersionFromRestName(getRestFullMethodName());
+  }
+
+  public void setHasValidRestPattern(boolean hasValidRestPattern) {
+    this.hasValidRestPattern = hasValidRestPattern;
+  }
+
+  public boolean hasValidRestPattern() {
+    return hasValidRestPattern;
   }
 }

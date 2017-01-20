@@ -1,0 +1,7 @@
+type: google.api.Service
+config_version: 3
+name: foobar.googleprod.com
+title: Google Foobar
+
+apis:
+- name: google.example.library.v1.INVALID

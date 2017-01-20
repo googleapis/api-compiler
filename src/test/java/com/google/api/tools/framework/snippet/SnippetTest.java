@@ -16,8 +16,6 @@
 
 package com.google.api.tools.framework.snippet;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import com.google.api.tools.framework.model.testing.BaselineTestCase;
 import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.api.tools.framework.snippet.SnippetSet.EvalException;
@@ -28,9 +26,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import junit.framework.Assert;

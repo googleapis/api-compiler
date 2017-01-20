@@ -1,9 +1,13 @@
-WARNING: auth_default.json: Operation 'delete' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: auth_default.json: Operation 'put' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: auth_default.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
+WARNING: auth_default.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
+WARNING: auth_default.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
+WARNING: auth_default.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
+WARNING: auth_default.json: Operation 'delete' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: auth_default.json: Operation 'put' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
-  name: "google.example.methods"
+  name: "library_example_googleapis_com_v1"
   methods {
     name: "ApiKeyReqOverride"
     request_type_url: "type.googleapis.com/google.protobuf.Empty"
@@ -26,7 +30,7 @@ apis {
   }
   version: "v1"
   source_context {
-    file_name: "google.example.methods"
+    file_name: "auth_default.json"
   }
 }
 types {
@@ -74,26 +78,29 @@ documentation {
 }
 http {
   rules {
-    selector: "google.example.methods.ApiKeyReqOverride"
+    selector: "library_example_googleapis_com_v1.ApiKeyReqOverride"
     get: "/v1/pets"
   }
   rules {
-    selector: "google.example.methods.ApiKeyNotReqInherit"
+    selector: "library_example_googleapis_com_v1.ApiKeyNotReqInherit"
     delete: "/v1/pets"
   }
   rules {
-    selector: "google.example.methods.SimpleMethod"
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
     post: "/v1/pets"
     body: "my_body_ref"
   }
   rules {
-    selector: "google.example.methods.SecuritySectionEmpty"
+    selector: "library_example_googleapis_com_v1.SecuritySectionEmpty"
     put: "/v1/pets"
   }
 }
 authentication {
   rules {
-    selector: "google.example.methods.SimpleMethod"
+    selector: "library_example_googleapis_com_v1.ApiKeyReqOverride"
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
     requirements {
       provider_id: "test_auth3"
       audiences: "www.test_auth3.com,www.test_auth3_2.com"
@@ -102,6 +109,9 @@ authentication {
       provider_id: "test_auth"
       audiences: "www.test_auth.com"
     }
+  }
+  rules {
+    selector: "library_example_googleapis_com_v1.SecuritySectionEmpty"
   }
   providers {
     id: "test_auth"
@@ -119,19 +129,25 @@ authentication {
 }
 usage {
   rules {
-    selector: "google.example.methods.ApiKeyReqOverride"
+    selector: "library_example_googleapis_com_v1.ApiKeyReqOverride"
   }
   rules {
-    selector: "google.example.methods.ApiKeyNotReqInherit"
+    selector: "library_example_googleapis_com_v1.ApiKeyNotReqInherit"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "google.example.methods.SimpleMethod"
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
   }
   rules {
-    selector: "google.example.methods.SecuritySectionEmpty"
+    selector: "library_example_googleapis_com_v1.SecuritySectionEmpty"
     allow_unregistered_calls: true
   }
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
 }
 control {
   environment: "servicecontrol.googleapis.com"

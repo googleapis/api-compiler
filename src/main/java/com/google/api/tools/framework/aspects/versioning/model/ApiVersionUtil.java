@@ -24,23 +24,26 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.annotation.Nullable;
 
 /**
  * Util class that handles api version in //google/protobuf/api.proto
  */
 public class ApiVersionUtil {
-  public static final Pattern MAJOR_VERSION_REGEX_PATTERN =
-      Pattern.compile("^(v\\d+(\\w+)?)$");
+  public static final Pattern MAJOR_VERSION_REGEX_PATTERN = Pattern.compile("^(v?\\d+(\\w+)?)$");
 
   public static final Pattern SEMANTIC_VERSION_REGEX_PATTERN =
-      Pattern.compile("^(v\\d+(\\w+)?)(\\.\\d+){0,2}$"); // major-version.minor-version
+      Pattern.compile("^(?<majorversion>v?"
+        + "(?<majornumber>\\d+)"
+        + "((?<releaselevelname>[a-zA-Z_]+)"
+        + "(?<releaselevelnumber>[0-9]*)"
+        + "(?<releaseleveltrailing>[a-zA-Z_]\\w*)?)?)"
+        + "(\\.\\d+){0,2}$"); // major-version.minor-version.patch
 
   /**
    * Extract major version from package name. The major version is reflected in the package name of
@@ -96,7 +99,7 @@ public class ApiVersionUtil {
   public static String extractMajorVersionFromSemanticVersion(String semanticVersion) {
     Matcher matcher = SEMANTIC_VERSION_REGEX_PATTERN.matcher(semanticVersion);
     if (matcher.find()) {
-      return matcher.group(1);
+      return matcher.group("majorversion");
     } else {
       return null;
     }
@@ -137,6 +140,8 @@ public class ApiVersionUtil {
         }
       }
     }
-    return Lists.newLinkedList(versions);
+    List<String> versionsList = Lists.newArrayList(versions);
+    Collections.sort(versionsList, Collections.reverseOrder(new VersionComparator()));
+    return versionsList;
   }
 }

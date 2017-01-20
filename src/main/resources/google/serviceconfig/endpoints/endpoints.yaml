@@ -203,6 +203,46 @@ metrics:
   labels:
     - key: /credential_id
 
+- name: serviceruntime.googleapis.com/api/producer/streaming_request_message_counts
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+
+- name: serviceruntime.googleapis.com/api/producer/streaming_response_message_counts
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+
+- name: serviceruntime.googleapis.com/api/consumer/streaming_request_message_counts
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+
+- name: serviceruntime.googleapis.com/api/consumer/streaming_response_message_counts
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+
+- name: serviceruntime.googleapis.com/api/producer/streaming_durations
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+
+- name: serviceruntime.googleapis.com/api/consumer/streaming_durations
+  metric_kind: DELTA
+  value_type: DISTRIBUTION
+
+- name: serviceruntime.googleapis.com/api/producer/request_bytes
+  metric_kind: DELTA
+  value_type: INT64
+
+- name: serviceruntime.googleapis.com/api/producer/response_bytes
+  metric_kind: DELTA
+  value_type: INT64
+
+- name: serviceruntime.googleapis.com/api/consumer/request_bytes
+  metric_kind: DELTA
+  value_type: INT64
+
+- name: serviceruntime.googleapis.com/api/consumer/response_bytes
+  metric_kind: DELTA
+  value_type: INT64
+
 monitoring:
   producer_destinations:
   - monitored_resource: api
@@ -217,6 +257,11 @@ monitoring:
       - serviceruntime.googleapis.com/api/producer/top_request_count_by_consumer
       - serviceruntime.googleapis.com/api/producer/top_request_sizes_by_consumer
       - serviceruntime.googleapis.com/api/producer/top_response_sizes_by_consumer
+      - serviceruntime.googleapis.com/api/producer/streaming_request_message_counts
+      - serviceruntime.googleapis.com/api/producer/streaming_response_message_counts
+      - serviceruntime.googleapis.com/api/producer/streaming_durations
+      - serviceruntime.googleapis.com/api/producer/request_bytes
+      - serviceruntime.googleapis.com/api/producer/response_bytes
       - serviceruntime.googleapis.com/api/producer/by_consumer/request_count
       - serviceruntime.googleapis.com/api/producer/by_consumer/error_count
       - serviceruntime.googleapis.com/api/producer/by_consumer/total_latencies
@@ -240,6 +285,12 @@ monitoring:
       - serviceruntime.googleapis.com/api/consumer/top_request_count_by_end_user
       - serviceruntime.googleapis.com/api/consumer/top_request_count_by_end_user_country
       - serviceruntime.googleapis.com/api/consumer/top_request_count_by_referer
+      - serviceruntime.googleapis.com/api/consumer/streaming_request_message_counts
+      - serviceruntime.googleapis.com/api/consumer/streaming_response_message_counts
+      - serviceruntime.googleapis.com/api/consumer/streaming_durations
+      - serviceruntime.googleapis.com/api/consumer/request_bytes
+      - serviceruntime.googleapis.com/api/consumer/response_bytes
+
 
 logs:
   - name: endpoints_log
@@ -249,3 +300,7 @@ logging:
   - monitored_resource: api
     logs:
     - endpoints_log
+
+control:
+    environment:  servicecontrol.googleapis.com
+

@@ -16,22 +16,22 @@
             "type": "oauth2",
             "authorizationUrl": "",
             "flow": "implicit",
-            "x-issuer": "accounts.google.com",
-            "x-jwks_uri": "https://www.googleapis.com/oauth2/v1/certs"
+            "x-google-issuer": "accounts.google.com",
+            "x-google-jwks_uri": "https://www.googleapis.com/oauth2/v1/certs"
         },
         "google_identity_toolkit": {
             "type": "oauth2",
             "authorizationUrl": "",
             "flow": "implicit",
-            "x-issuer": "https://securetoken.google.com",
-            "x-jwks_uri": "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+            "x-google-issuer": "https://securetoken.google.com",
+            "x-google-jwks_uri": "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
         },
         "auth0_jwk": {
             "type": "oauth2",
             "authorizationUrl": "https://esp-jwk.auth0.com/authorize",
             "flow": "implicit",
-            "x-issuer": "https://esp-jwk.auth0.com/",
-            "x-jwks_uri": "https://esp-jwk.auth0.com/.well-known/jwks.json"
+            "x-google-issuer": "https://esp-jwk.auth0.com/",
+            "x-google-jwks_uri": "https://esp-jwk.auth0.com/.well-known/jwks.json"
         }
     },
     "security": [

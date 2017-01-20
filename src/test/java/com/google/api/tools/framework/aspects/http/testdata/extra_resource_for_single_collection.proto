@@ -1,0 +1,19 @@
+syntax = "proto2";
+package protiary.test;
+
+// (== resource_for v1.tests ==)
+message In {
+}
+
+// (== resource_for v1.tests ==)
+message Out {
+}
+
+// (== resource_for v2.tests ==)
+message Test {
+}
+
+service TestService {
+  // test
+  rpc Test1(In) returns (Out);
+}

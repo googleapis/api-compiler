@@ -1,5 +1,2 @@
 ERROR: http: undefined field 'X' on message 'protiary.test.bad_name_binding.In'.
 WARNING: http: POST/PATCH/PUT method for 'protiary.test.bad_name_binding.TestService.Call1' should specify a body.
-WARNING: (lint) http-rest: 'rpc Call1 as HTTP POST /v1/test/*' is not a recognized REST pattern. Did you mean one of:
-  rpc Call1 as HTTP GET <prefix>:<literal>
-  rpc Call1 as HTTP POST <prefix>:<literal>

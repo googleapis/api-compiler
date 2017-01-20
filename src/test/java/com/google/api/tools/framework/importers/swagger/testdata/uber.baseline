@@ -1,12 +1,12 @@
-WARNING: uber.json: Operation 'get' in path '/estimates/price': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: uber.json: Operation 'get' in path '/estimates/time': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: uber.json: Operation 'get' in path '/history': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: uber.json: Operation 'get' in path '/me': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: uber.json: Operation 'get' in path '/products': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: uber.json: Operation 'get' in path '/estimates/price': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: uber.json: Operation 'get' in path '/estimates/time': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: uber.json: Operation 'get' in path '/history': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: uber.json: Operation 'get' in path '/me': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: uber.json: Operation 'get' in path '/products': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 name: "api.uber.com"
 title: "Uber API"
 apis {
-  name: "google.example.methods"
+  name: "api_uber_com_1_0_0"
   methods {
     name: "GetPrices"
     request_type_url: "type.googleapis.com/namespace.types.GetPricesRequest"
@@ -32,9 +32,9 @@ apis {
     request_type_url: "type.googleapis.com/namespace.types.GetProductsRequest"
     response_type_url: "type.googleapis.com/google.protobuf.Value"
   }
-  version: "v1"
+  version: "1.0.0"
   source_context {
-    file_name: "google.example.methods"
+    file_name: "uber.json"
   }
 }
 types {
@@ -150,47 +150,51 @@ documentation {
 }
 http {
   rules {
-    selector: "google.example.methods.GetPrices"
+    selector: "api_uber_com_1_0_0.GetPrices"
     get: "/v1/estimates/price"
   }
   rules {
-    selector: "google.example.methods.GetEstimates"
+    selector: "api_uber_com_1_0_0.GetEstimates"
     get: "/v1/estimates/time"
   }
   rules {
-    selector: "google.example.methods.GetMyHistory"
+    selector: "api_uber_com_1_0_0.GetMyHistory"
     get: "/v1/history"
   }
   rules {
-    selector: "google.example.methods.GetMyProfile"
+    selector: "api_uber_com_1_0_0.GetMyProfile"
     get: "/v1/me"
   }
   rules {
-    selector: "google.example.methods.GetProducts"
+    selector: "api_uber_com_1_0_0.GetProducts"
     get: "/v1/products"
   }
 }
 usage {
   rules {
-    selector: "google.example.methods.GetPrices"
+    selector: "api_uber_com_1_0_0.GetPrices"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "google.example.methods.GetEstimates"
+    selector: "api_uber_com_1_0_0.GetEstimates"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "google.example.methods.GetMyHistory"
+    selector: "api_uber_com_1_0_0.GetMyHistory"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "google.example.methods.GetMyProfile"
+    selector: "api_uber_com_1_0_0.GetMyProfile"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "google.example.methods.GetProducts"
+    selector: "api_uber_com_1_0_0.GetProducts"
     allow_unregistered_calls: true
   }
+}
+endpoints {
+  name: "api.uber.com"
+  apis: "api_uber_com_1_0_0"
 }
 control {
   environment: "servicecontrol.googleapis.com"

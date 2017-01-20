@@ -1,0 +1,11 @@
+type: google.api.Service
+config_version: 2
+title: Blob Service
+name: blob.googleapis.com
+apis:
+- name: Storage
+
+documentation:
+  rules:
+  - selector: '*'
+    description: foo bar

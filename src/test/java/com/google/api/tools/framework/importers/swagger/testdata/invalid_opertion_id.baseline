@@ -1,10 +1,11 @@
-WARNING: invalid_opertion_id.json: Operation 'get' in path '/v1/pets/{name}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: invalid_opertion_id.json: Operation 'get' in path '/v1/pets/{name}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 ERROR: invalid_opertion_id.json: Operation 'delete' in path '/v1/pets/{name}': operationId 'test' has duplicate entry
 ERROR: invalid_opertion_id.json: Operation 'post' in path '/v1/pets/{name}': Operation does not have the required 'operationId' field. Please specify unique value for 'operationId' field for all operations.
 ERROR: invalid_opertion_id.json: operationId 'test.' has duplicate entry. Duplicate operationId found is 'test'. The two operationIds result into same underlying method name 'Test'. Please use unique values for operationId
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
+  name: "library_example_googleapis_com_v1"
   methods {
     name: "Test"
     request_type_url: "type.googleapis.com/TestRequest"
@@ -12,6 +13,7 @@ apis {
   }
   version: "v1"
   source_context {
+    file_name: "invalid_opertion_id.json"
   }
 }
 types {
@@ -43,15 +45,21 @@ documentation {
 }
 http {
   rules {
-    selector: "Test"
+    selector: "library_example_googleapis_com_v1.Test"
     get: "/v1/pets/{name}"
   }
 }
 usage {
   rules {
-    selector: "Test"
+    selector: "library_example_googleapis_com_v1.Test"
     allow_unregistered_calls: true
   }
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
 }
 control {
   environment: "servicecontrol.googleapis.com"

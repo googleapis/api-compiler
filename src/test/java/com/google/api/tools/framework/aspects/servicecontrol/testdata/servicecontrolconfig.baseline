@@ -39,6 +39,12 @@ ERROR: servicecontrol: The 'log1' log label key must not be empty.
 ERROR: servicecontrol: The 'log1' log is already defined. The log name must be unique.
 ERROR: servicecontrol: The log name 'log2_______' is too long. It must not be longer than 10 characters.
 ERROR: servicecontrol: The log name must not be empty.
+ERROR: servicecontrol: The log name 'cloudaudit.googleapis.com' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: cloudaudit.googleapis.com is not a valid Cloud Audit log name. Valid Cloud Audit log name prefixes are: cloudaudit.googleapis.com/activity, cloudaudit.googleapis.com/data_access.
+ERROR: servicecontrol: The log name 'cloudaudit.googleapis.com/producer_activity' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: cloudaudit.googleapis.com/producer_activity is not a valid Cloud Audit log name. Valid Cloud Audit log name prefixes are: cloudaudit.googleapis.com/activity, cloudaudit.googleapis.com/data_access.
+ERROR: servicecontrol: The log name 'cloudaudit.googleapis.com/data_access' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: The log name 'cloudaudit.googleapis.com/activity/create' is too long. It must not be longer than 10 characters.
 ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type' resource refers to the monitored resource that cannot be resolved.
 ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type' resource must contain at least one metric name.
 ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type1' resource metric names list has more than the allowed size of 3 elements.
@@ -64,4 +70,4 @@ ERROR: servicecontrol: The The 'producer' logging destination for 'type1' resour
 ERROR: servicecontrol: The The 'producer' logging destination for 'type1' resource uses 'log3' metric more than once.
 ERROR: servicecontrol: Multiple producer logging destinations use the same monitored resource type 'type1'.
 WARNING: (lint) servicecontrol-unused-metrics: The metric(s) '', 'bool_cumulative', 'bool_delta', 'metric0', 'string_cumulative', 'string_delta' are not used.
-WARNING: (lint) servicecontrol-unused-logs: The log(s) '', 'log0' are not used.
+WARNING: (lint) servicecontrol-unused-logs: The log(s) '', 'cloudaudit.googleapis.com', 'cloudaudit.googleapis.com/activity/create', 'cloudaudit.googleapis.com/data_access', 'cloudaudit.googleapis.com/producer_activity', 'log0' are not used.

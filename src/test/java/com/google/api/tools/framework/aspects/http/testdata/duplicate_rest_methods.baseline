@@ -1,0 +1,27 @@
+http {
+  rules {
+    selector: "protiary.test.TestService.Test1"
+    post: "/v1/tests/test"
+    body: "*"
+  }
+  rules {
+    selector: "protiary.test.TestService.Test2"
+    post: "/v1/tests:test"
+    body: "*"
+  }
+  rules {
+    selector: "protiary.test.TestService.Test3"
+    post: "/v1/tests/test"
+    body: "*"
+  }
+  rules {
+    selector: "protiary.test.TestService.Test4"
+    post: "/v1/tests/test4"
+    body: "*"
+    additional_bindings {
+      post: "/v1/tests:test4"
+      body: "*"
+    }
+  }
+}
+

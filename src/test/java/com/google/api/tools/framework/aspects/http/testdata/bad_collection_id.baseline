@@ -1,8 +1,4 @@
 WARNING: http: POST/PATCH/PUT method for 'protiary.test.bad_name_binding.TestService.Call1' should specify a body.
-WARNING: (lint) http-invalid-collection-id: path segment 'test_something' contains '_'; instead, please use camelCase.
-WARNING: (lint) http-rest: 'rpc Call1 as HTTP POST /v1/test_something/*' is not a recognized REST pattern. Did you mean one of:
-  rpc Call1 as HTTP GET <prefix>:<literal>
-  rpc Call1 as HTTP POST <prefix>:<literal>
 http {
   rules {
     selector: "protiary.test.bad_name_binding.TestService.Call1"

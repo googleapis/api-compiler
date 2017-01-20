@@ -1,3 +1,3 @@
 WARNING: httpconfig.yaml:10: auth rule has selector(s) 'protiary.test.Storage.GetUndefined' that do not match and are not shadowed by other rules.
-WARNING: httpconfig.yaml:23: (lint) versioning-http-version-prefix: 'method protiary.test.Storage.GetBucket' has a HTTP path that does not start with version, which must match '^(v\d+(\w+)?)$'.
+WARNING: httpconfig.yaml:23: (lint) versioning-http-version-prefix: 'method protiary.test.Storage.GetBucket' has a HTTP path that does not start with version, which must match '^(v?\d+(\w+)?)$'.
 WARNING: httpconfig.proto:50:3: (lint) versioning-http-version-prefix: method 'protiary.test.Storage.GetObject' has a different version prefix in HTTP path ('v2') than api version 'v1'.

@@ -1,0 +1,14 @@
+type: google.api.Service
+config_version: 2
+name: blob.sandbox.googleapis.com
+apis:
+- name: protiary.test.TestService
+- name: protiary.test.TestService2
+http:
+  rules:
+  - selector: protiary.test.TestService.Call1
+    post: /v1/test
+    media_upload:
+      enabled: true
+
+

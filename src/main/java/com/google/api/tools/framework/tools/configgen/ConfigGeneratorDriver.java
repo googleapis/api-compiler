@@ -17,8 +17,10 @@
 package com.google.api.tools.framework.tools.configgen;
 
 import com.google.api.Service;
-import com.google.api.tools.framework.importers.swagger.SwaggerImportTool;
 import com.google.api.tools.framework.model.Diag;
+import com.google.api.tools.framework.model.SimpleLocation;
+import com.google.api.tools.framework.tools.SwaggerToolDriverBase;
+import com.google.api.tools.framework.tools.ToolDriverBase;
 import com.google.api.tools.framework.tools.ToolOptions;
 import com.google.api.tools.framework.tools.ToolOptions.Option;
 import com.google.api.tools.framework.tools.ToolProtoUtil;
@@ -33,34 +35,36 @@ import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.TypeRegistry;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
-
 import javax.annotation.Nullable;
 
 /**
  * This tool generate the normalized config for an API service (defined using either proto
  * descriptors or swagger spec) and outputs it in binary proto, text or json format.
  */
-public class ConfigGeneratorDriver {
+public class ConfigGeneratorDriver extends ToolDriverBase {
 
   ////// Output location flags ///////
 
-  public static final Option<String> TXT_OUT = ToolOptions.createOption(
-      String.class, "txt_out", "The text output filename of the generated config.", "");
+  public static final Option<String> TXT_OUT =
+      ToolOptions.createOption(
+          String.class, "txt_out", "The text output filename of the generated config.", "");
 
-  public static final Option<String> BIN_OUT = ToolOptions.createOption(
-      String.class, "bin_out", "The protobuf output filename of the generated config.", "");
+  public static final Option<String> BIN_OUT =
+      ToolOptions.createOption(
+          String.class, "bin_out", "The protobuf output filename of the generated config.", "");
 
-  public static final Option<String> JSON_OUT = ToolOptions.createOption(
-      String.class, "json_out", "The json output filename of the generated config.", "");
+  public static final Option<String> JSON_OUT =
+      ToolOptions.createOption(
+          String.class, "json_out", "The json output filename of the generated config.", "");
 
   ////// Misc Flags ////////
   public static final Option<String> PROJECT_ID =
@@ -70,31 +74,35 @@ public class ConfigGeneratorDriver {
   private final ToolOptions options;
   private final ConfigGenerator configGenerator;
   private Service generatedServiceConfig = null;
+
   public ConfigGeneratorDriver(ToolOptions options) {
+    super(options);
     this.options = Preconditions.checkNotNull(options, "options cannot be null");
     if (hasProtoDescriptorInput()) {
       configGenerator = new ConfigGeneratorFromProtoDescriptor(options);
     } else {
-      configGenerator = new SwaggerImportTool(options);
+      configGenerator = new ConfigGeneratorFromSwagger(options);
     }
   }
 
-  public int run() throws IOException {
+  @Override
+  public void process() throws IOException {
     if (!validateInputs()) {
-      System.out.println("Invalid arguments passed to the tool. Please see usage of this tool"
-          + " by passing --help option");
-      return 1;
+      getDiagCollector().addDiag(Diag.error(SimpleLocation.TOPLEVEL,
+          "Invalid arguments passed to the tool. Please see usage of this tool"
+          + " by passing --help option"));
     }
 
-      generatedServiceConfig = configGenerator.generateServiceConfig();
-      if (generatedServiceConfig == null) {
-        return 1;
-      }
-
-    generatedServiceConfig = updateProducerProjectId(generatedServiceConfig);
+    generatedServiceConfig = configGenerator.generateServiceConfig();
+    if (generatedServiceConfig == null) {
+      getDiagCollector().addDiag(
+          Diag.error(SimpleLocation.TOPLEVEL, "Service config cannot be generated"));
+      return;
+    }
+    Service.Builder builder = generatedServiceConfig.toBuilder();
+    updateProducerProjectId(builder);
+    generatedServiceConfig = builder.build();
     generateOutputFiles(generatedServiceConfig);
-
-    return 0;
   }
 
   @Nullable
@@ -102,11 +110,10 @@ public class ConfigGeneratorDriver {
     return generatedServiceConfig;
   }
 
-  private Service updateProducerProjectId(Service service) {
+  private void updateProducerProjectId(Service.Builder builder) {
     if (!Strings.isNullOrEmpty(options.get(PROJECT_ID))) {
-      return service.toBuilder().setProducerProjectId(options.get(PROJECT_ID)).build();
+      builder.setProducerProjectId(options.get(PROJECT_ID));
     }
-    return service;
   }
 
   private boolean validateInputs() {
@@ -115,29 +122,28 @@ public class ConfigGeneratorDriver {
       System.out.println(
           String.format(
               "Has to specify either '%s' or '%s' option",
-              ToolOptions.DESCRIPTOR_SET.name(),
-              SwaggerImportTool.OPEN_API.name()));
+              ToolOptions.DESCRIPTOR_SET.name(), SwaggerToolDriverBase.OPEN_API.name()));
       return false;
     }
 
     if (hasProtoDescriptorInput() && hasInputSpecificToSwaggerSpec()) {
-      String invalidFlags = Joiner.on(",")
-          .join(
-              FluentIterable.from(getOptionsSpecificToSwaggerSpec())
-                  .transform(
-                      new Function<Option<String>, String>() {
-                        @Override
-                        public String apply(Option<String> option) {
-                          return option.name();
-                        }
-                      }));
+      String invalidFlags =
+          Joiner.on(",")
+              .join(
+                  FluentIterable.from(getOptionsSpecificToSwaggerSpec())
+                      .transform(
+                          new Function<Option<String>, String>() {
+                            @Override
+                            public String apply(Option<String> option) {
+                              return option.name();
+                            }
+                          }));
       System.out.println(
           String.format(
               "Options '%s' are only applicable when input has swagger spec (specified by "
                   + "swagger_spec option). They are not applicable when specifying proto descriptor"
                   + "flag '%s'",
-              invalidFlags,
-              ToolOptions.DESCRIPTOR_SET.name()));
+              invalidFlags, ToolOptions.DESCRIPTOR_SET.name()));
       return false;
     }
 
@@ -154,18 +160,16 @@ public class ConfigGeneratorDriver {
   }
 
   private static ImmutableList<Option<String>> getOptionsSpecificToSwaggerSpec() {
+
     return ImmutableList.of(
-        SwaggerImportTool.SERVICE_NAME,
-        SwaggerImportTool.TYPE_NAMESPACE,
-        SwaggerImportTool.METHOD_NAMESPACE);
+        SwaggerToolDriverBase.SERVICE_NAME, SwaggerToolDriverBase.TYPE_NAMESPACE);
   }
 
   private void generateOutputFiles(Service serviceConfig)
       throws FileNotFoundException, IOException {
     // Create normalized service proto, in binary form.
     if (!Strings.isNullOrEmpty(options.get(BIN_OUT))) {
-      File outFileBinaryServiceConfig =
-          new File(options.get(BIN_OUT));
+      File outFileBinaryServiceConfig = new File(options.get(BIN_OUT));
       OutputStream normalizedOut = new FileOutputStream(outFileBinaryServiceConfig);
       serviceConfig.writeTo(normalizedOut);
       normalizedOut.close();
@@ -174,9 +178,10 @@ public class ConfigGeneratorDriver {
     // Create normalized service proto, in text form.
     if (!Strings.isNullOrEmpty(options.get(TXT_OUT))) {
       File outFileTxtServiceConfig = new File(options.get(TXT_OUT));
-      PrintWriter textPrintWriter = new PrintWriter(outFileTxtServiceConfig);
-      TextFormat.print(serviceConfig, textPrintWriter);
-      textPrintWriter.close();
+      try (PrintWriter textPrintWriter =
+          new PrintWriter(outFileTxtServiceConfig, StandardCharsets.UTF_8.name())) {
+        TextFormat.print(serviceConfig, textPrintWriter);
+      }
     }
 
     // Create normalized service proto, in json form.
@@ -196,9 +201,10 @@ public class ConfigGeneratorDriver {
               .add(com.google.protobuf.UInt64Value.getDescriptor())
               .build();
       JsonFormat.Printer jsonPrinter = JsonFormat.printer().usingTypeRegistry(registry);
-      PrintWriter jsonPrintWriter = new PrintWriter(outFileJsonServiceConfig);
-      jsonPrinter.appendTo(serviceConfig, jsonPrintWriter);
-      jsonPrintWriter.close();
+      try (PrintWriter jsonPrintWriter =
+          new PrintWriter(outFileJsonServiceConfig, StandardCharsets.UTF_8.name())) {
+        jsonPrinter.appendTo(serviceConfig, jsonPrintWriter);
+      }
     }
   }
 
@@ -231,7 +237,7 @@ public class ConfigGeneratorDriver {
   }
 
   private boolean hasSwaggerSpecInput() {
-    return hasNonDefaultStringOption(SwaggerImportTool.OPEN_API);
+    return hasNonDefaultStringOption(SwaggerToolDriverBase.OPEN_API);
   }
 
   private boolean hasNonDefaultStringOption(Option<String> option) {
@@ -239,18 +245,20 @@ public class ConfigGeneratorDriver {
   }
 
   /**
-   * An empty method to ensure statics in this class are initialized even if a constructor
-   * has not yet been called.
+   * An empty method to ensure statics in this class are initialized even if a constructor has not
+   * yet been called.
    */
   static void ensureStaticsInitialized() {
     ConfigGeneratorFromProtoDescriptor.ensureStaticsInitialized();
-    SwaggerImportTool.ensureStaticsInitialized();
+    SwaggerToolDriverBase.ensureStaticsInitialized();
   }
 
+  @Override
   public List<Diag> getDiags() {
     return configGenerator.getDiags();
   }
 
+  @Override
   public boolean hasErrors() {
     return configGenerator.hasErrors();
   }

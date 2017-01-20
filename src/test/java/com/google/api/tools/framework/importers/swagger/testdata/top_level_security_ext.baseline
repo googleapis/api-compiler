@@ -1,9 +1,14 @@
-WARNING: top_level_security_ext.json: Operation 'get' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: top_level_security_ext.json: Operation 'delete' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
-WARNING: top_level_security_ext.json: Operation 'post' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: top_level_security_ext.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
+WARNING: top_level_security_ext.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
+WARNING: top_level_security_ext.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
+WARNING: top_level_security_ext.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
+WARNING: top_level_security_ext.json: Operation 'get' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: top_level_security_ext.json: Operation 'delete' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: top_level_security_ext.json: Operation 'post' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
+  name: "library_example_googleapis_com_v1"
   methods {
     name: "SecurityExtOverrideWithEmpty"
     request_type_url: "type.googleapis.com/google.protobuf.Empty"
@@ -21,6 +26,7 @@ apis {
   }
   version: "v1"
   source_context {
+    file_name: "top_level_security_ext.json"
   }
 }
 types {
@@ -65,32 +71,32 @@ documentation {
 }
 http {
   rules {
-    selector: "SecurityExtOverrideWithEmpty"
+    selector: "library_example_googleapis_com_v1.SecurityExtOverrideWithEmpty"
     get: "/v1/pets"
   }
   rules {
-    selector: "SecurityExtInherit"
+    selector: "library_example_googleapis_com_v1.SecurityExtInherit"
     delete: "/v1/pets"
   }
   rules {
-    selector: "SecurityExtRedefine"
+    selector: "library_example_googleapis_com_v1.SecurityExtRedefine"
     post: "/v1/pets"
     body: "my_body_ref"
   }
 }
 authentication {
   rules {
-    selector: "SecurityExtOverrideWithEmpty"
+    selector: "library_example_googleapis_com_v1.SecurityExtOverrideWithEmpty"
   }
   rules {
-    selector: "SecurityExtInherit"
+    selector: "library_example_googleapis_com_v1.SecurityExtInherit"
     requirements {
       provider_id: "test_auth"
       audiences: "www.test_auth.com"
     }
   }
   rules {
-    selector: "SecurityExtRedefine"
+    selector: "library_example_googleapis_com_v1.SecurityExtRedefine"
     requirements {
       provider_id: "test_auth3"
       audiences: "www.test_auth3.com,www.test_auth3_2.com"
@@ -116,17 +122,23 @@ authentication {
 }
 usage {
   rules {
-    selector: "SecurityExtOverrideWithEmpty"
+    selector: "library_example_googleapis_com_v1.SecurityExtOverrideWithEmpty"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "SecurityExtInherit"
+    selector: "library_example_googleapis_com_v1.SecurityExtInherit"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "SecurityExtRedefine"
+    selector: "library_example_googleapis_com_v1.SecurityExtRedefine"
     allow_unregistered_calls: true
   }
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
 }
 control {
   environment: "servicecontrol.googleapis.com"

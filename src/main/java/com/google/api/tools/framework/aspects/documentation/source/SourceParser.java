@@ -101,22 +101,28 @@ public class SourceParser {
       // rather than the expected two.
       "((?<=\\n)(?:(\\s*\\n\\s*)?)|)"
       + "(?<htmlcodeblocksource>"
-      + "<pre(|\\s.*)>[\\S\\s]*?"
-      + "</pre>)"
+      + "<(?<tag>pre|code)(|\\s.*)>[\\S\\s]*?"
+      + "</\\k<tag>>)"
       + "((?:\\s*\\n)?(?=\\s*\\n)|)"); // Ignore possible following newline to prevent duplication
                                        // by G3doc; see preceeding comment.
 
+  private static final Pattern FENCED_CODE_BLOCK =
+      Pattern.compile("(?<fencedcodeblocksource>```.*\\n[\\S\\s]*?```)");
+
   private static final Pattern CONTENT_PARSING_PATTERNS =
-      Pattern.compile(String.format("(?<instr>%s)|(?<codeblock>%s)|(?<htmlcodeblock>%s)",
+      Pattern.compile(String.format(
+          "(?<instr>%s)|(?<codeblock>%s)|(?<htmlcodeblock>%s)|(?<fencedcodeblock>%s)",
                       INSTRUCTION,
                       CODE_BLOCK,
-                      HTML_CODE_BLOCK));
+                      HTML_CODE_BLOCK,
+                      FENCED_CODE_BLOCK));
 
   private static final String INSTRUCTION_GROUP = "instr";
   private static final String INSTRUCTION_CODE = "instrcode";
   private static final String INSTRUCTION_ARG = "instrarg";
   private static final String CODE_BLOCK_SOURCE_GROUP = "codeblocksource";
   private static final String HTML_CODE_BLOCK_SOURCE_GROUP = "htmlcodeblocksource";
+  private static final String FENCED_CODE_BLOCK_SOURCE_GROUP = "fencedcodeblocksource";
   private static final String INCLUSION_CODE = "include";
 
   private final DiagCollector diagCollector;
@@ -209,17 +215,23 @@ public class SourceParser {
           newElement = new Instruction(code, unescapeInstructions(matcher.group(INSTRUCTION_ARG)),
               matcher.start(), matcher.end(), diagCollector, sourceLocation);
         }
-      } else {
+      } else if (matcher.group(CODE_BLOCK_SOURCE_GROUP) != null) {
         // Create content element for code block.
-        if (matcher.group(CODE_BLOCK_SOURCE_GROUP) != null) {
-          newElement = new CodeBlock(
-              unescapeInstructions(matcher.group(CODE_BLOCK_SOURCE_GROUP)), matcher.start(),
-              matcher.end(), diagCollector, sourceLocation);
-        } else {
-          newElement = new CodeBlock(
-              unescapeInstructions(matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP)),
-              matcher.start(), matcher.end(), diagCollector, sourceLocation);
-        }
+        newElement = new CodeBlock(
+            unescapeInstructions(matcher.group(CODE_BLOCK_SOURCE_GROUP)), matcher.start(),
+            matcher.end(), diagCollector, sourceLocation);
+      } else if (matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP) != null) {
+        newElement = new CodeBlock(
+            unescapeInstructions(matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP)),
+            matcher.start(), matcher.end(), diagCollector, sourceLocation);
+      } else if (matcher.group(FENCED_CODE_BLOCK_SOURCE_GROUP) != null) {
+        newElement = new CodeBlock(
+            unescapeInstructions(matcher.group(FENCED_CODE_BLOCK_SOURCE_GROUP)),
+            matcher.start(), matcher.end(), diagCollector, sourceLocation);
+      } else {
+        // If the matcher matched, we should have been in one of the cases handled above;
+        // this line should never be reached.
+        throw new IllegalStateException("Internal error: no valid regex subgroup found");
       }
 
       contents.add(newElement);

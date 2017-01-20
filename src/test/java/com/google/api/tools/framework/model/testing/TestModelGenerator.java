@@ -18,6 +18,7 @@ package com.google.api.tools.framework.model.testing;
 import com.google.api.tools.framework.model.Model;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.Lists;
+
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +42,12 @@ public class TestModelGenerator {
   public ModelTestInfo buildModel(Iterable<String> basenames) throws Exception {
     List<String> yamlFiles = getFilesWithSuffix(basenames, ".yaml");
     List<String> protoFiles = getFilesWithSuffix(basenames, ".proto");
+    // Some tests might have proto files without .proto extensions. This
+    // is to bypass certain presubmit check. Therefore, for such cases protoFiles
+    // is defaulted to all files without any extensions.
+    if (protoFiles.isEmpty()) {
+      protoFiles = getFilesWithSuffix(basenames, "");
+    }
     if (protoFiles.isEmpty()) {
       throw new IllegalArgumentException("No proto files found");
     }

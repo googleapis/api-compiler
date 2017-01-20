@@ -16,9 +16,7 @@
 
 package com.google.api.tools.framework.aspects.control.model;
 
-/**
- * Public constants and utility methods related to ControlConfigAspect.
- */
+/** Public constants and utility methods related to ControlConfigAspect. */
 public class ControlConfigUtil {
 
   public static final String ENDPOINTS_SERVICE_CONTROL =

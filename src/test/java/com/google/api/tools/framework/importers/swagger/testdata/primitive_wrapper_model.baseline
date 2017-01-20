@@ -1,8 +1,8 @@
-WARNING: primitive_wrapper_model.json: Operation 'post' in path '/v1/pets/{name}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project.
+WARNING: primitive_wrapper_model.json: Operation 'post' in path '/v1/pets/{name}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
-  name: "google.example.methods"
+  name: "library_example_googleapis_com_v1"
   methods {
     name: "SimpleMethod"
     request_type_url: "type.googleapis.com/namespace.types.SimpleMethodRequest"
@@ -10,7 +10,7 @@ apis {
   }
   version: "v1"
   source_context {
-    file_name: "google.example.methods"
+    file_name: "primitive_wrapper_model.json"
   }
 }
 types {
@@ -31,15 +31,21 @@ documentation {
 }
 http {
   rules {
-    selector: "google.example.methods.SimpleMethod"
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
     post: "/v1/pets/{name}"
   }
 }
 usage {
   rules {
-    selector: "google.example.methods.SimpleMethod"
+    selector: "library_example_googleapis_com_v1.SimpleMethod"
     allow_unregistered_calls: true
   }
+}
+endpoints {
+  name: "library-example.googleapis.com"
+  aliases: "library-example.clients6.google.com"
+  aliases: "content-library-example.googleapis.com"
+  apis: "library_example_googleapis_com_v1"
 }
 control {
   environment: "servicecontrol.googleapis.com"
