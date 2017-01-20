@@ -259,11 +259,15 @@ signing {
   sign configurations.archives
 }
 
-tasks.withType(Javadoc) {
-    // disable the crazy super-strict doclint tool
-    options.addStringOption('Xdoclint:none', '-quiet')
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            // disable the crazy super-strict doclint tool
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
 }
-
+    
 if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
   uploadArchives {
     repositories {
