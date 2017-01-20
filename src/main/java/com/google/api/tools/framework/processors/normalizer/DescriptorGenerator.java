@@ -45,14 +45,13 @@ import com.google.protobuf.EnumValue;
 import com.google.protobuf.Field;
 import com.google.protobuf.Field.Cardinality;
 import com.google.protobuf.Field.Kind;
-import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
 import com.google.protobuf.Method;
 import com.google.protobuf.Option;
 import com.google.protobuf.Parser;
 import com.google.protobuf.SourceContext;
 import com.google.protobuf.Type;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -335,15 +334,13 @@ public class DescriptorGenerator {
     return builder.build();
   }
 
-  private void setOptions(
-      GeneratedMessage.Builder<?> builder, List<Option> optionsList, String optionPrefix) {
+  private void setOptions(Message.Builder builder, List<Option> optionsList, String optionPrefix) {
     for (Option option : optionsList) {
       setOption(builder, option, optionPrefix);
     }
   }
 
-  private void setOption(
-      GeneratedMessage.Builder<?> builder, Option option, String expectedPrefix) {
+  private void setOption(Message.Builder builder, Option option, String expectedPrefix) {
     if (!option.getName().startsWith(expectedPrefix)) {
       return;
     }
