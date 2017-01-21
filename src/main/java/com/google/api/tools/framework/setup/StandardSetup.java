@@ -24,12 +24,13 @@ import com.google.api.tools.framework.aspects.endpoint.EndpointConfigAspect;
 import com.google.api.tools.framework.aspects.http.HttpConfigAspect;
 import com.google.api.tools.framework.aspects.http.linters.HttpParameterReservedKeywordRule;
 import com.google.api.tools.framework.aspects.http.validators.HttpConfigAspectValidator;
-import com.google.api.tools.framework.aspects.mixin.MixinConfigAspect;
 import com.google.api.tools.framework.aspects.naming.NamingConfigAspect;
+import com.google.api.tools.framework.aspects.naming.linters.ServiceNameRule;
 import com.google.api.tools.framework.aspects.servicecontrol.ServiceControlConfigAspect;
 import com.google.api.tools.framework.aspects.systemparameter.SystemParameterConfigAspect;
 import com.google.api.tools.framework.aspects.usage.UsageConfigAspect;
 import com.google.api.tools.framework.aspects.versioning.VersionConfigAspect;
+import com.google.api.tools.framework.aspects.versioning.linters.ConfigVersionRule;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.processors.linter.Linter;
 import com.google.api.tools.framework.processors.merger.Merger;
@@ -55,22 +56,33 @@ public class StandardSetup {
    * attached to the model.
    */
   public static void registerStandardConfigAspects(Model model) {
+
     model.registerConfigAspect(DocumentationConfigAspect.create(model));
+
     model.registerConfigAspect(ContextConfigAspect.create(model));
+
+    VersionConfigAspect versionAspect = VersionConfigAspect.create(model);
+    versionAspect.registerLintRule(new ConfigVersionRule(versionAspect));
+    model.registerConfigAspect(versionAspect);
+
+    model.registerConfigAspect(EndpointConfigAspect.create(model));
 
     HttpConfigAspect http = HttpConfigAspect.create(model);
     http.registerLintRule(new HttpParameterReservedKeywordRule(http));
     model.registerConfigAspect(http);
 
-    model.registerConfigAspect(VersionConfigAspect.create(model));
-    model.registerConfigAspect(NamingConfigAspect.create(model));
-    model.registerConfigAspect(EndpointConfigAspect.create(model));
+    NamingConfigAspect namingAspect = NamingConfigAspect.create(model);
+    namingAspect.registerLintRule(new ServiceNameRule(namingAspect));
+    model.registerConfigAspect(namingAspect);
+
     model.registerConfigAspect(SystemParameterConfigAspect.create(model));
+
     model.registerConfigAspect(UsageConfigAspect.create(model));
+
     model.registerConfigAspect(ControlConfigAspect.create(model));
+
     model.registerConfigAspect(AuthConfigAspect.create(model));
     model.registerConfigAspect(ServiceControlConfigAspect.create(model));
-    model.registerConfigAspect(MixinConfigAspect.create(model));
 
     registerValidators(model);
 

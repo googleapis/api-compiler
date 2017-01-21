@@ -55,11 +55,8 @@ public class HttpConfigAspectTest extends ConfigAspectBaselineTestCase {
     test("same_name_collection_and_method");
   }
 
-  @Test public void custom_post_invalid_body() throws Exception {
-    test("custom_post_invalid_body");
-  }
-
-  @Test public void bad_field_binding() throws Exception {
+  @Test
+  public void bad_field_binding() throws Exception {
     test("bad_field_binding");
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Google Inc.
+ * Copyright (C) 2016 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.api.tools.framework.aspects.naming;
+package com.google.api.tools.framework.aspects.naming.linters;
 
 import com.google.api.Service;
 import com.google.api.tools.framework.aspects.ConfigAspectBase;
@@ -24,13 +24,11 @@ import com.google.common.base.Strings;
 import com.google.common.net.InternetDomainName;
 import java.util.regex.Pattern;
 
-/**
- * Style rule to verify if the name of the service is valid.
- */
-class ServiceNameRule extends LintRule<Model> {
+/** Style rule to verify if the name of the service is valid. */
+public class ServiceNameRule extends LintRule<Model> {
   private static final Pattern INVALID_CHARACTER_PATTERN = Pattern.compile("[_]");
 
-  ServiceNameRule(ConfigAspectBase aspect) {
+  public ServiceNameRule(ConfigAspectBase aspect) {
     super(aspect, "service-dns-name", Model.class);
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Google Inc.
+ * Copyright (C) 2016 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package com.google.api.tools.framework.aspects.versioning;
+package com.google.api.tools.framework.aspects.versioning.linters;
 
 import com.google.api.tools.framework.aspects.ConfigAspectBase;
 import com.google.api.tools.framework.aspects.LintRule;
 import com.google.api.tools.framework.model.Model;
 
-/**
- * Checks if config_version value is not less than
- * Model.CURRENT_CONFIG_DEFAULT_VERSION.
- */
-class ConfigVersionRule extends LintRule<Model> {
+/** Checks if config_version value is not less than Model.CURRENT_CONFIG_DEFAULT_VERSION. */
+public class ConfigVersionRule extends LintRule<Model> {
 
-  ConfigVersionRule(ConfigAspectBase aspect) {
+  public ConfigVersionRule(ConfigAspectBase aspect) {
     super(aspect, "config", Model.class);
   }
 

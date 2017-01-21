@@ -58,8 +58,6 @@ public class DocumentationConfigAspect
           DocumentationRule.getDescriptor(),
           model.getServiceConfig().getDocumentation().getRulesList());
     processorSet = DocumentationProcessorSet.standardSetup(model);
-    registerLintRule(new DocumentationPresentRule(this));
-    registerLintRule(new DeprecationDocumentationRule(this));
   }
 
   /**

@@ -39,6 +39,8 @@ import java.util.Set;
  */
 public class EndpointConfigAspect extends ConfigAspectBase {
 
+  public static final String NAME = "endpoint";
+
   private static final Features ENDPOINT_FEATURES = new Features(
       );
 
@@ -52,7 +54,7 @@ public class EndpointConfigAspect extends ConfigAspectBase {
   }
 
   private EndpointConfigAspect(Model model) {
-    super(model, "endpoint");
+    super(model, NAME);
   }
 
   /**
@@ -195,7 +197,7 @@ public class EndpointConfigAspect extends ConfigAspectBase {
     for (String alias : endpoint.getAliasesList()) {
       result = result && validateDns(alias, "Endpoint '" + endpoint.getName() + "''s alias");
     }
+
     return result;
   }
-
 }

@@ -1,8 +1,3 @@
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.ListBookResource' should specify a body.
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.CreateBook' should specify a body.
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.ListShelveResource' should specify a body.
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.CreateShelve' should specify a body.
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.CreateItem' should specify a body.
 http {
   rules {
     selector: "protiary.test.TestService.ListBookResource"

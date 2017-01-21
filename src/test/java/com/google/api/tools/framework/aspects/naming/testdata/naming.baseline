@@ -1,9 +1,2 @@
-WARNING: naming.proto:15:1: (lint) naming-upper-camel: Name 'bucket' is not matching upper-camel conventions (pattern '[A-Z][A-Za-z0-9]*')
-WARNING: naming.proto:24:1: (lint) naming-name-abbreviation: Use of full name(s) 'specification' in 'BucketSpecification' is not recommended, use 'spec' instead.
-WARNING: naming.proto:25:3: (lint) naming-name-abbreviation: Use of full name(s) 'specification' in 'field_specification' is not recommended, use 'spec' instead.
-WARNING: naming.proto:29:3: (lint) naming-upper-underscore: Name 'this' is not matching upper-underscore conventions (pattern '[A-Z][A-Z0-9_]*')
-WARNING: naming.proto:46:3: (lint) naming-upper-camel: Name 'get_object' is not matching upper-camel conventions (pattern '[A-Z][A-Za-z0-9]*')
-WARNING: naming.proto:50:1: (lint) naming-name-abbreviation: Use of full name(s) 'identifier' in 'StorageIdentifier' is not recommended, use 'id' instead.
-WARNING: naming.proto:52:3: (lint) naming-name-abbreviation: Use of full name(s) 'identifier,configuration' in 'GetBucketConfigurationIdentifier' is not recommended, use 'id,config' instead.
-WARNING: naming.yaml:3: (lint) naming-service-dns-name: Invalid DNS name 'blob.google_apis.com'.
+WARNING: naming.yaml:3: (lint) naming-service-dns-name: Invalid DNS name 'blob.google_apis.googleapis.com'.
 

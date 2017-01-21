@@ -18,7 +18,6 @@ package com.google.api.tools.framework.aspects.documentation;
 
 import com.google.api.tools.framework.aspects.ConfigAspectBaselineTestCase;
 import com.google.api.tools.framework.aspects.http.HttpConfigAspect;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -39,11 +38,8 @@ public class DocumentationConfigAspectTest extends ConfigAspectBaselineTestCase 
     test("docpresence");
   }
 
-  @Test public void suppress_warnings() throws Exception {
-    test("suppress_warning");
-  }
-
-  @Test public void doc_pages_nested() throws Exception {
+  @Test
+  public void doc_pages_nested() throws Exception {
     test("doc_pages_nested");
   }
 

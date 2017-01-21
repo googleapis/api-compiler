@@ -1,2 +1,1 @@
 ERROR: http: undefined field 'X' on message 'protiary.test.bad_name_binding.In'.
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.bad_name_binding.TestService.Call1' should specify a body.

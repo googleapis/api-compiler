@@ -21,7 +21,6 @@ import com.google.api.tools.framework.model.DiagCollector;
 import com.google.api.tools.framework.model.Location;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +31,7 @@ import java.util.TreeSet;
  * particular service config element.
  */
 public class Features {
+  private static final String FEATURE_DISABLE_CHARACTER_PREFIX = "~";
   private final Map<String, Feature> featuresByName;
 
   public Features(Feature... features) {
@@ -40,6 +40,10 @@ public class Features {
       feature.addSelfAndChildren(featuresByNameBuilder);
     }
     featuresByName = featuresByNameBuilder.build();
+  }
+
+  public static String getFeatureNameStringToDisable(String featureName) {
+    return FEATURE_DISABLE_CHARACTER_PREFIX + featureName;
   }
 
   /**

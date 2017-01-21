@@ -23,7 +23,7 @@ sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
 group = "com.google.api"
-version = "0.0.7-SNAPSHOT"
+version = "0.0.7"
 archivesBaseName = "api-compiler"
 mainClassName = "com.google.api.tools.framework.tools.configgen.ServiceConfigGeneratorTool"
 
@@ -46,10 +46,10 @@ ext {
       guice: 'com.google.inject:guice:4.0',
       commonsLang: 'org.apache.commons:commons-lang3:3.4',
       snakeyaml: 'org.yaml:snakeyaml:1.16',
-      swaggerModel: 'io.swagger:swagger-models:1.5.4',
-      swaggerParser: 'io.swagger:swagger-parser:1.0.11',
-      grpcCore: 'com.google.api.grpc:grpc-core-proto:0.0.5',
-      apacheCommonCli: 'commons-cli:commons-cli:1.2',
+      swaggerModel: 'io.swagger:swagger-models:1.5.9',
+      swaggerParser: 'io.swagger:swagger-parser:1.0.22',
+      grpcCore: 'com.google.api.grpc:grpc-google-common-protos:0.1.6',
+      apacheCommonCli: 'commons-cli:commons-cli:1.3',
       jsonSchemaValidator: 'com.github.fge:json-schema-validator:2.0.0',
 
       // Testing
@@ -59,9 +59,9 @@ ext {
       jodaTime: 'joda-time:joda-time:2.9',
 
       // Protobuf
-      protobuf: 'com.google.protobuf:protobuf-java:3.0.0-beta-3',
-      protobufUtil: 'com.google.protobuf:protobuf-java-util:3.0.0-beta-3',
-      protoc:  'com.google.protobuf:protoc:3.0.0-beta-3'
+      protobuf: 'com.google.protobuf:protobuf-java:3.0.0',
+      protobufUtil: 'com.google.protobuf:protobuf-java-util:3.0.0',
+      protoc:  'com.google.protobuf:protoc:3.0.0'
   ]
 }
 
@@ -257,6 +257,15 @@ tasks.cleanEclipseJdt {
 signing {
   required { gradle.taskGraph.hasTask("uploadArchives") }
   sign configurations.archives
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            // disable the crazy super-strict doclint tool
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
 }
 
 if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {

@@ -1,4 +1,0 @@
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.WriteInvalidEntries1' should specify a body.
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.WriteInvalidEntries2' should specify a body.
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.WriteInvalidEntries3' should specify a body.
-ERROR: http: get/delete methods cannot have a body.

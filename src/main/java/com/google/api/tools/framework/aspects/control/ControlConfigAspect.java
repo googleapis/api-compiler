@@ -37,6 +37,8 @@ public class ControlConfigAspect extends ConfigAspectBase {
       ControlConfigUtil.ENDPOINTS_SERVICE_CONTROL,
       ControlConfigUtil.PROD_SERVICE_CONTROL);
 
+  public static final String NAME = "control";
+
   private final String environment;
 
   public static ControlConfigAspect create(Model model) {
@@ -44,7 +46,7 @@ public class ControlConfigAspect extends ConfigAspectBase {
   }
 
   private ControlConfigAspect(Model model) {
-    super(model, "control");
+    super(model, NAME);
     environment = model.getControlEnvironment();
     registerLintRuleName(NO_CONTROL_ENV);
   }

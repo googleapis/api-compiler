@@ -1,6 +1,0 @@
-ERROR: mixin: The method 'method mixin.v2.MixinConsumer.GetAcl' must have response type 'meta.v1.M' as required by the mixin configuration.
-ERROR: mixin: The API 'mixin.v2.MixinConsumer' does not redeclare method 'method meta.v1.Meta.GetAclMore' as required by the mixin configuration.
-ERROR: mixin: The API 'unknown' cannot be resolved.
-WARNING: http: POST/PATCH/PUT method for 'meta.v1.Meta.GetAcl' should specify a body.
-WARNING: http: POST/PATCH/PUT method for 'meta.v1.Meta.GetAclMore' should specify a body.
-WARNING: http: POST/PATCH/PUT method for 'mixin.v2.MixinConsumer.GetObject' should specify a body.

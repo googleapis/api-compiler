@@ -44,7 +44,6 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.inject.Key;
 import com.google.protobuf.TextFormat;
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -248,13 +247,8 @@ public class MergerTest {
     assertError("start with leading");
   }
 
-  @Test public void httpBodyNotAllowed() throws Exception {
-    createApiWithHttpConfig("get", "{a=/some/*}", "b");
-    model.establishStage(Merged.KEY);
-    assertError("cannot have a body");
-  }
-
-  @Test public void httpBodyNotMessage() throws Exception {
+  @Test
+  public void httpBodyNotMessage() throws Exception {
     createApiWithHttpConfig("put", "{a=/some/*}", "a");
     model.establishStage(Merged.KEY);
     assertError("non-repeated message");

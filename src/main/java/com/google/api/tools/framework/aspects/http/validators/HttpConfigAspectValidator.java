@@ -30,7 +30,6 @@ import com.google.api.tools.framework.model.Method;
 import com.google.api.tools.framework.model.TypeRef;
 import com.google.api.tools.framework.model.TypeRef.WellKnownType;
 import com.google.common.base.Function;
-import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -62,7 +61,7 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
 
   private void validate(Method method, HttpAttribute binding) {
     MethodKind kind = binding.getMethodKind();
-    checkBodyConstraints(binding, kind, method);
+    checkBodyConstraints(binding, method);
 
     checkOverlappingPathSelectors(method, binding);
 
@@ -116,27 +115,7 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
     }
   }
 
-  private void checkBodyConstraints(HttpAttribute binding, MethodKind kind, Method method) {
-    switch (kind) {
-      case GET:
-      case DELETE:
-        if (!Strings.isNullOrEmpty(binding.getBody())) {
-          error(method, "get/delete methods cannot have a body.");
-        }
-        break;
-      case PATCH:
-      case POST:
-      case PUT:
-        if (Strings.isNullOrEmpty(binding.getBody())) {
-          warning(
-              method,
-              "POST/PATCH/PUT method for '%s' should specify a body.",
-              method.getFullName());
-        }
-        break;
-      default:
-        break;
-    }
+  private void checkBodyConstraints(HttpAttribute binding, Method method) {
 
     if (binding.getBody() != null && !binding.bodyCapturesUnboundFields()) {
       if (!FieldSelector.hasSinglePathElement(binding.getBody())) {

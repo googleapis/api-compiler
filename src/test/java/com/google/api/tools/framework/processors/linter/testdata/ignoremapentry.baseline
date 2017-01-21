@@ -1,2 +1,0 @@
-WARNING: ignoremapentry.proto:23:1: (lint) documentation-presence: 'message protiary.test.Model' has no documentation, neither in IDL nor config.
-WARNING: ignoremapentry.proto:16:1: (lint) documentation-presence: 'enum protiary.test.Enum' has no documentation, neither in IDL nor config.

@@ -55,8 +55,6 @@ public class VersionConfigAspect extends ConfigAspectBase {
 
   private VersionConfigAspect(Model model) {
     super(model, "versioning");
-    registerLintRule(new ConfigVersionRule(this));
-    registerLintRule(new HttpVersionRule(this));
   }
 
   /**
