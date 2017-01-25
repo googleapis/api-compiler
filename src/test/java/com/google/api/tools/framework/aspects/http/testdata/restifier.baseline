@@ -214,10 +214,8 @@ Diagnostics:
 GET GetFruit /
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  *error*
-Custom Name: *error*
-Diagnostics:
-  ERROR: toplevel: In path template '/': unexpected end of input '/'.
+Collection:  (empty)
+Custom Name: get
 
 GET GetFruit /:fruit
 ======================================================================

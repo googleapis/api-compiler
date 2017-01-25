@@ -36,6 +36,8 @@ public final class ExtensionNames {
 
   // allow unregistered calls
   public static final String X_GOOGLE_ALLOW = addGooglePrefix("allow");
+  
+  public static final String X_GOOGLE_DEPRECATED = addGooglePrefix("deprecated");
 
   private static String addGooglePrefix(String extensionShortName) {
     return GOOGLE_EXTENSION_PREFIX + extensionShortName;

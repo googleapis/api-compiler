@@ -39,10 +39,15 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.protobuf.Any;
 import com.google.protobuf.Api;
+import com.google.protobuf.BoolValue;
+import com.google.protobuf.DescriptorProtos.MethodOptions;
+import com.google.protobuf.DescriptorProtos.ServiceOptions;
 import com.google.protobuf.Field.Cardinality;
 import com.google.protobuf.Field.Kind;
 import com.google.protobuf.Method;
+import com.google.protobuf.Option;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Response;
@@ -80,18 +85,12 @@ public class ApiFromSwagger {
     this.authBuilder = authBuilder;
   }
 
-  public void addFromSwagger(
-      Service.Builder serviceBuilder,
-      Swagger swagger) {
+  public void addFromSwagger(Service.Builder serviceBuilder, Swagger swagger) {
     Map<String, String> duplicateOperationIdLookup = Maps.newHashMap();
     TreeSet<String> urlPaths = Sets.newTreeSet(swagger.getPaths().keySet());
     for (String urlPath : urlPaths) {
       Path pathObj = swagger.getPath(urlPath);
-      createServiceMethodsFromPath(
-          serviceBuilder,
-          urlPath,
-          pathObj,
-          duplicateOperationIdLookup);
+      createServiceMethodsFromPath(serviceBuilder, urlPath, pathObj, duplicateOperationIdLookup);
     }
 
     if (isAllowAllMethodsConfigured(swagger, diagCollector)) {
@@ -106,6 +105,14 @@ public class ApiFromSwagger {
           duplicateOperationIdLookup);
     }
     coreApiBuilder.setVersion(swagger.getInfo().getVersion());
+    if (isDeprecated(swagger)) {
+      coreApiBuilder.addOptions(
+          createBoolOption(
+              ServiceOptions.getDescriptor()
+                  .findFieldByNumber(ServiceOptions.DEPRECATED_FIELD_NUMBER)
+                  .getFullName(),
+              true));
+    }
     serviceBuilder.addApis(coreApiBuilder);
   }
 
@@ -199,9 +206,7 @@ public class ApiFromSwagger {
       }
       serviceBuilder
           .getUsageBuilder()
-          .addRules(
-              authBuilder.createUsageRule(
-                  operation, operationType, urlPath));
+          .addRules(authBuilder.createUsageRule(operation, operationType, urlPath));
     }
   }
 
@@ -309,11 +314,20 @@ public class ApiFromSwagger {
             operation,
             parentPath,
             SwaggerLocations.createOperationLocation(operationType, path));
+
     com.google.protobuf.Method.Builder coreMethodBuilder =
         com.google.protobuf.Method.newBuilder()
             .setName(NameConverter.operationIdToMethodName(operation.getOperationId()))
             .setRequestTypeUrl(requestType.typeUrl())
             .setResponseTypeUrl(responseTypeInfo.typeUrl());
+    if (operation.isDeprecated() != null && operation.isDeprecated()) {
+      coreMethodBuilder.addOptions(
+          createBoolOption(
+              MethodOptions.getDescriptor()
+                  .findFieldByNumber(MethodOptions.DEPRECATED_FIELD_NUMBER)
+                  .getFullName(),
+              true));
+    }
     coreApiBuilder.addMethods(coreMethodBuilder);
   }
 
@@ -348,13 +362,14 @@ public class ApiFromSwagger {
                   @Override
                   public boolean apply(Parameter parameter) {
                     if (parameter instanceof RefParameter) {
-                  /*
-                   * This is an invalid state. Reference parameters should automatically get
-                   * resolved into parameter objects by the swagger core parser, because only
-                   * references that are allowed are to parameters that are defined at the Swagger
-                   * Object's parameters which are in the same file. If we reach here it would mean
-                   * the reference cannot be resolved and nothing this converter can do.
-                   */
+                      /*
+                       * This is an invalid state. Reference parameters should automatically get
+                       * resolved into parameter objects by the swagger core parser, because only
+                       * references that are allowed are to parameters that are defined at the
+                       * Swagger Object's parameters which are in the same file. If we reach here
+                       * it would mean the reference cannot be resolved and nothing this converter
+                       * can do.
+                       */
                       diagCollector.addDiag(
                           Diag.warning(
                               location,
@@ -400,7 +415,8 @@ public class ApiFromSwagger {
 
     if (successCodeCount == 1 && successResponse != null && successResponse.getSchema() != null) {
       TypeInfo responseTypeInfo =
-          typeBuilder.ensureNamed(serviceBuilder,
+          typeBuilder.ensureNamed(
+              serviceBuilder,
               typeBuilder.getTypeInfo(serviceBuilder, successResponse.getSchema()),
               NameConverter.operationIdToResponseMessageName(operation.getOperationId()));
       if (responseTypeInfo.cardinality() == Cardinality.CARDINALITY_REPEATED) {
@@ -421,6 +437,24 @@ public class ApiFromSwagger {
     }
   }
 
+  private boolean isDeprecated(Swagger swagger) {
+    if (swagger.getVendorExtensions() != null
+        && swagger.getVendorExtensions().containsKey(ExtensionNames.X_GOOGLE_DEPRECATED)) {
+      return VendorExtensionUtils.getExtensionValue(
+          swagger.getVendorExtensions(),
+          Boolean.class,
+          diagCollector,
+          ExtensionNames.X_GOOGLE_DEPRECATED);
+    }
+    return false;
+  }
+
+  private static Option createBoolOption(String optionName, boolean value) {
+    return Option.newBuilder()
+        .setName(optionName)
+        .setValue(Any.pack(BoolValue.newBuilder().setValue(value).build()))
+        .build();
+  }
   /** Returns true if the responseCode represents a success code; false otherwise. */
   private boolean isSuccessCode(String responseCode) {
     return responseCode.equalsIgnoreCase("default") || responseCode.startsWith("2");

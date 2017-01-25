@@ -130,6 +130,7 @@ public class SwaggerImportTest extends BaselineTestCase {
           printableServiceBuilder.addEnums(service.getEnums(i).toBuilder());
         }
       }
+
       // Remove the config version too.
       printableServiceBuilder.clearConfigVersion();
       printableServiceBuilder =
@@ -137,6 +138,7 @@ public class SwaggerImportTest extends BaselineTestCase {
       testOutput().println(TextFormatForTest.INSTANCE.printToString(printableServiceBuilder));
 
     } catch (Exception e) {
+      e.printStackTrace();
       testOutput().println(e.getMessage());
       return;
     }
@@ -276,6 +278,11 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void operation_name_slash() throws Exception {
+    testWithDefaults("operation_name_slash");
+  }
+
+  @Test
   public void yml_extension() throws Exception {
     testWithDefaults("yml_extension");
   }
@@ -333,6 +340,11 @@ public class SwaggerImportTest extends BaselineTestCase {
   @Test
   public void x_google_invalid_unknown_field() throws Exception {
     testWithDefaults("x-google-invalid-unknown-field");
+  }
+
+  @Test
+  public void api_deprecated_false() throws Exception {
+    testWithDefaults("api_deprecated_false");
   }
 
   @Test

@@ -50,13 +50,13 @@ public class HttpTemplateParserTest {
   private static final PathSegment CUSTOM_VERB = new LiteralSegment("custom", true);
   private static final PathSegment BOUNDED_WILDCARD = new WildcardSegment(false);
   private static final PathSegment UNBOUNDED_WILDCARD = new WildcardSegment(true);
+  private static final PathSegment EMPTY_SEGMENT = new LiteralSegment("");
   private static final int CONFIG_VERSION_0 = 0;
   private static final int CONFIG_VERSION_1 = 1;
 
   @Test public void testParser() {
     assertParsingFailure("", CONFIG_VERSION_1, "unexpected end of input ''.",
         "effective path must start with leading '/'.");
-    assertParsingFailure("/", CONFIG_VERSION_1, "unexpected end of input '/'.");
     assertParsingFailure("buckets", CONFIG_VERSION_1,
         "effective path must start with leading '/'.");
     assertParsingFailure("buckets/{name=/objects/*}",
@@ -64,6 +64,7 @@ public class HttpTemplateParserTest {
         "effective path must start with leading '/'.");
     assertParsingFailure("/buckets/{bucket_name.bucket_id}/:objects",
         CONFIG_VERSION_1, "invalid token '/:' before the custom verb.");
+    assertParsingSuccess("/", CONFIG_VERSION_1, EMPTY_SEGMENT);
     assertParsingSuccess("/*", CONFIG_VERSION_1, BOUNDED_WILDCARD);
     assertParsingSuccess("/**", CONFIG_VERSION_1, UNBOUNDED_WILDCARD);
     assertParsingSuccess("/buckets", CONFIG_VERSION_1, BUCKETS);
