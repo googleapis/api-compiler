@@ -9,6 +9,13 @@ schemes:
   - https
 basePath: /
 x-google-allow: configured
+x-google-metric-definitions:
+  - name: bookstore/write_requests
+    valueType: INT64 # default
+    metricKind: GAUGE # default
+  - name: bookstore/read_requests
+    valueType: INT64 # default
+    metricKind: GAUGE # default
 paths:
   /v1/shelves:
     post:
@@ -25,6 +32,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Shelf'
+      x-google-quota:
+        metricCosts:
+          bookstore/write_requests: 1
     get:
       operationId: ListShelves
       description: >-

@@ -64,6 +64,11 @@ public class ApiFromSwagger {
   private final TypeBuilder typeBuilder;
   private final DiagCollector diagCollector;
   private final Api.Builder coreApiBuilder;
+  /*
+   * TODO(user): this could use a refactor. Probably need a 'rule builder' interface similar
+   * to aspect builder, which builds an aspect rule based on a single API method.
+   * Then here we just for:each over the set.
+   */
   private final HttpRuleGenerator httpRuleGenerator;
   private final AuthRuleGenerator authRuleGenerator;
   private final AuthBuilder authBuilder;

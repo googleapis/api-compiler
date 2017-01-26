@@ -1114,20 +1114,6 @@ authentication {
     }
     allow_without_credential: true
   }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscovery"
-    oauth {
-      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
-    }
-    allow_without_credential: true
-  }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscoveryRest"
-    oauth {
-      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
-    }
-    allow_without_credential: true
-  }
 }
 context {
   rules {
@@ -1187,16 +1173,6 @@ context {
   }
   rules {
     selector: "google.example.library.v1.LibraryService.MoveBook"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscovery"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscoveryRest"
     requested: "google.rpc.context.VisibilityContext"
     requested: "google.rpc.context.ProjectContext"
   }

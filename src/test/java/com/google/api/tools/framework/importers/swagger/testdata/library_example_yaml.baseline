@@ -576,4 +576,14 @@ endpoints {
 control {
   environment: "servicecontrol.googleapis.com"
 }
+metrics {
+  name: "bookstore/write_requests"
+  metric_kind: GAUGE
+  value_type: INT64
+}
+metrics {
+  name: "bookstore/read_requests"
+  metric_kind: GAUGE
+  value_type: INT64
+}
 

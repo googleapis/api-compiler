@@ -56,6 +56,10 @@ public class ConfigRuleSet<RuleType extends Message> {
   private static final Joiner SELECTOR_JOINER = Joiner.on(',');
   private static final String MAINTAIN_SELECTOR_MINIMIZATION_BUG =
       "maintain_selector_minimization_bug";
+  private static final List<String> SYSTEM_PROTO_PREFIXES =
+      ImmutableList.of(
+      "google.protobuf."
+  );
 
   // This pattern is: <segment>('.' <segment>)*(('.' '*')|'(.<segment>('.' <segment>)*)')? OR '*'
   private static final Pattern SELECTOR_PATTERN =
@@ -258,6 +262,12 @@ public class ConfigRuleSet<RuleType extends Message> {
      * Check whether a name matches selector.
      */
     private boolean matches(String selector, String name) {
+      // If the proto element name represents a system element, the selector must be a system
+      // selector as well. Otherwise, return false.
+      if (isSystemElementOrSelector(name) && !isSystemElementOrSelector(selector)) {
+        return false;
+      }
+
       if (selector.equals("*")) {
         return true;
       }
@@ -265,6 +275,19 @@ public class ConfigRuleSet<RuleType extends Message> {
         return name.startsWith(selector.substring(0, selector.length() - 1));
       }
       return name.equals(selector);
+    }
+
+    /**
+     * Returns true if protoElementNameOrSelector is a system proto element or system element
+     * selector.
+     */
+    private boolean isSystemElementOrSelector(String protoElementNameOrSelector) {
+      for (String systemProtoPrefix : SYSTEM_PROTO_PREFIXES) {
+        if (protoElementNameOrSelector.startsWith(systemProtoPrefix)) {
+          return true;
+        }
+      }
+      return false;
     }
 
     /** Remove selectors if they are subsumed by any selectors of given rule list. */
@@ -324,6 +347,12 @@ public class ConfigRuleSet<RuleType extends Message> {
      * other selector will also match this selector.
      */
     private boolean subsumes(String selector, String other) {
+      // If the other selector is a system element selector, the selector must be a system element
+      // selector as well. Otherwise, return false.
+      if (isSystemElementOrSelector(other) && !isSystemElementOrSelector(selector)) {
+        return false;
+      }
+
       if (selector.equals("*")) {
         return true;
       }
