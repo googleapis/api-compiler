@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 /** Style rule to verify if the name of the service is valid. */
 public class ServiceNameRule extends LintRule<Model> {
+
   private static final Pattern INVALID_CHARACTER_PATTERN = Pattern.compile("[_]");
 
   public ServiceNameRule(ConfigAspectBase aspect) {
@@ -45,5 +46,6 @@ public class ServiceNameRule extends LintRule<Model> {
           "Invalid DNS name '%s'.",
           serviceName);
     }
+
   }
 }

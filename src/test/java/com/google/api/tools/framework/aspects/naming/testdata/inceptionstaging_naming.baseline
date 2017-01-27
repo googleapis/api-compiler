@@ -1,0 +1,1 @@
+WARNING: (lint) naming-service-dns-name: Service name cannot start with 'inceptionstaging-'; it is reserved for One Platform use.
