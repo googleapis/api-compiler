@@ -128,13 +128,13 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
     this.model = modelTestInfo.getModel();
     this.testConfig = modelTestInfo.getTestConfig();
 
-    // Setup
-    setupModel();
-
     // Enable the experiments on the model.
     for (String experiment : experiments) {
       model.enableExperiment(experiment);
     }
+
+    // Setup
+    setupModel();
 
     if (suppressionDirectives != null) {
       for (String suppressionDirective : suppressionDirectives) {
