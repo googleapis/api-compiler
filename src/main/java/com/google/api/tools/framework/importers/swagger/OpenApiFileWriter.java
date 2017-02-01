@@ -27,7 +27,7 @@ import java.util.Map;
 import java.nio.charset.Charset;
 
 /** File write utilities for Swagger to service conversion. */
-public class SwaggerFileWriter {
+public class OpenApiFileWriter {
   /** Saves the file contents on the disk and returns the saved file paths. */
   public static Map<String, FileWrapper> saveFilesOnDisk(List<FileWrapper> inputFiles) {
 
@@ -39,15 +39,15 @@ public class SwaggerFileWriter {
 
       Preconditions.checkState(
           !Strings.isNullOrEmpty(inputFile.getFileContents().toString()),
-          "swagger spec file contents empty");
+          "OpenAPI file contents empty");
       Preconditions.checkState(
-          !Strings.isNullOrEmpty(filePath), "swagger spec file path not provided");
+          !Strings.isNullOrEmpty(filePath), "OpenAPI file path not provided");
 
       String filePathToSave =
           File.separator
               + tmpDirLocation
               + File.separator
-              + "swagger_spec_files"
+              + "open_api_files"
               + File.separator
               + filePath;
       FileWrapper fileToSave = FileWrapper.create(filePathToSave, inputFile.getFileContents());
@@ -57,7 +57,7 @@ public class SwaggerFileWriter {
       } catch (IOException ex) {
         throw new IllegalStateException(
             String.format(
-                "Unable to save the swagger spec contents on the disk at %s", filePathToSave),
+                "Unable to save the OpenAPI contents on the disk at %s", filePathToSave),
             ex);
       }
     }

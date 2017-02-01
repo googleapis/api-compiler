@@ -17,13 +17,13 @@
 package com.google.api.tools.framework.importers.swagger.merger;
 
 import com.google.api.Service;
-import com.google.api.tools.framework.importers.swagger.MultiSwaggerParser.SwaggerFile;
+import com.google.api.tools.framework.importers.swagger.MultiOpenApiParser.OpenApiFile;
 import java.util.List;
 
 /** Merger for converted Swagger to {@link Service} objects. */
 public class ServiceMerger {
 
-  /** Merges multiple built {@link SwaggerFile}s into a single {@link Service} */
+  /** Merges multiple built {@link OpenApiFile}s into a single {@link Service} */
   public Service merge(List<Service.Builder> serviceBuliders) {
     Service.Builder serviceBuilder = serviceBuliders.get(0);
     serviceBuilder.addAllTypes(TypesBuilderFromDescriptor.createAdditionalServiceTypes());

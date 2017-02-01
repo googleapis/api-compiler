@@ -46,10 +46,10 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.CharUtils;
 
 /**
- * Converts Multiple swagger files from in memory {@link FileWrapper}s to {@link SwaggerFile}
+ * Converts Multiple swagger files from in memory {@link FileWrapper}s to {@link OpenApiFile}
  * objects.
  */
-public class MultiSwaggerParser {
+public class MultiOpenApiParser {
 
   private static final String SCHEMA_RESOURCE_PATH = "swagger/schema2_0/schema.json";
   private static final Map<String, ObjectMapper> mapperForExtension =
@@ -60,7 +60,7 @@ public class MultiSwaggerParser {
 
   /** Build resources for a single Swagger file. */
   @AutoValue
-  public abstract static class SwaggerFile {
+  public abstract static class OpenApiFile {
 
     public abstract Service.Builder serviceBuilder();
 
@@ -70,19 +70,19 @@ public class MultiSwaggerParser {
 
     public abstract String apiName();
 
-    public abstract SwaggerConversionResources conversionResources();
+    public abstract OpenApiConversionResources conversionResources();
 
-    public static SwaggerFile create(
+    public static OpenApiFile create(
         Service.Builder serviceBuilder, Swagger swagger, String filename, String typeNamespace) {
       String hostname = Strings.nullToEmpty(swagger.getHost());
       String version = Strings.nullToEmpty(swagger.getInfo().getVersion());
       String apiName = generateApiName(hostname, version);
-      return new AutoValue_MultiSwaggerParser_SwaggerFile(
+      return new AutoValue_MultiOpenApiParser_OpenApiFile(
           serviceBuilder,
           swagger,
           filename,
           apiName,
-          SwaggerConversionResources.create(swagger, filename, apiName, typeNamespace));
+          OpenApiConversionResources.create(swagger, filename, apiName, typeNamespace));
     }
   }
 
@@ -116,31 +116,31 @@ public class MultiSwaggerParser {
     return alphaNumeric.toString();
   }
 
-  public static List<SwaggerFile> convert(List<FileWrapper> swaggerFiles, String typeNamespace)
-      throws SwaggerConversionException {
-    Map<String, FileWrapper> savedFilePaths = SwaggerFileWriter.saveFilesOnDisk(swaggerFiles);
-    Map<String, File> swaggerFilesMap = validateInputFiles(savedFilePaths);
+  public static List<OpenApiFile> convert(List<FileWrapper> openApiFiles, String typeNamespace)
+      throws OpenApiConversionException {
+    Map<String, FileWrapper> savedFilePaths = OpenApiFileWriter.saveFilesOnDisk(openApiFiles);
+    Map<String, File> openApiFilesMap = validateInputFiles(savedFilePaths);
     Service.Builder serviceBuilder = Service.newBuilder();
-    ImmutableList.Builder<SwaggerFile> swaggerObjects = ImmutableList.builder();
-    for (Entry<String, File> swaggerFile : swaggerFilesMap.entrySet()) {
-      swaggerObjects.add(
-          buildSwaggerFile(
-              serviceBuilder, swaggerFile.getKey(), swaggerFile.getValue(), typeNamespace));
+    ImmutableList.Builder<OpenApiFile> openApiObjects = ImmutableList.builder();
+    for (Entry<String, File> openApiFile : openApiFilesMap.entrySet()) {
+      openApiObjects.add(
+          buildOpenApiFile(
+              serviceBuilder, openApiFile.getKey(), openApiFile.getValue(), typeNamespace));
     }
 
-    return swaggerObjects.build();
+    return openApiObjects.build();
   }
 
-  private static SwaggerFile buildSwaggerFile(
+  private static OpenApiFile buildOpenApiFile(
       Service.Builder serviceToBuild, String userDefinedFilename, File file, String typeNamespace)
-      throws SwaggerConversionException {
+      throws OpenApiConversionException {
     Swagger swagger = new SwaggerParser().read(file.getAbsolutePath());
     if (swagger == null) {
-      throw new SwaggerConversionException(
+      throw new OpenApiConversionException(
           String.format(
-              "Swagger spec in file {%s} is ill formed and cannot be parsed", userDefinedFilename));
+              "OpenAPI spec in file {%s} is ill formed and cannot be parsed", userDefinedFilename));
     }
-    return SwaggerFile.create(serviceToBuild, swagger, userDefinedFilename, typeNamespace);
+    return OpenApiFile.create(serviceToBuild, swagger, userDefinedFilename, typeNamespace);
   }
 
   /**
@@ -148,21 +148,21 @@ public class MultiSwaggerParser {
    *
    * <p>the valid swagger file.
    *
-   * @throws SwaggerConversionException
+   * @throws OpenApiConversionException
    */
   private static Map<String, File> validateInputFiles(Map<String, FileWrapper> savedFilePaths)
-      throws SwaggerConversionException {
-    Map<String, File> topLevelSwaggerFiles = getTopLevelSwaggerFiles(savedFilePaths);
-    if (topLevelSwaggerFiles.isEmpty()) {
-      throw new SwaggerConversionException(
+      throws OpenApiConversionException {
+    Map<String, File> topLevelOpenApiFiles = getTopLevelOpenApiFiles(savedFilePaths);
+    if (topLevelOpenApiFiles.isEmpty()) {
+      throw new OpenApiConversionException(
           String.format(
-              "Cannot find a valid swagger %s spec in the input files", CURRENT_SWAGGER_VERSION));
+              "Cannot find a valid OpenAPI %s spec in the input files", CURRENT_SWAGGER_VERSION));
     }
-    return topLevelSwaggerFiles;
+    return topLevelOpenApiFiles;
   }
 
-  private static Map<String, File> getTopLevelSwaggerFiles(Map<String, FileWrapper> savedFiles)
-      throws SwaggerConversionException {
+  private static Map<String, File> getTopLevelOpenApiFiles(Map<String, FileWrapper> savedFiles)
+      throws OpenApiConversionException {
     ImmutableMap.Builder<String, File> topLevelFiles = ImmutableMap.builder();
     for (Entry<String, FileWrapper> savedFile : savedFiles.entrySet()) {
 
@@ -172,31 +172,31 @@ public class MultiSwaggerParser {
         ObjectMapper objMapper = createObjectMapperForExtension(inputFile);
         JsonNode data = objMapper.readTree(inputFileContent);
 
-        if (isTopLevelSwaggerFile(data)) {
+        if (isTopLevelOpenApiFile(data)) {
           validateSwaggerSpec(data);
           topLevelFiles.put(savedFile.getKey(), inputFile);
         }
       } catch (IOException ex) {
-        throw new SwaggerConversionException("Unable to parse the content. " + ex.getMessage(), ex);
+        throw new OpenApiConversionException("Unable to parse the content. " + ex.getMessage(), ex);
       }
     }
     return topLevelFiles.build();
   }
 
-  private static boolean isTopLevelSwaggerFile(JsonNode data) {
+  private static boolean isTopLevelOpenApiFile(JsonNode data) {
     return data.get(SWAGGER_VERSION_PROPERTY) != null
         && data.get(SWAGGER_VERSION_PROPERTY).toString().contains(CURRENT_SWAGGER_VERSION);
   }
 
   private static ObjectMapper createObjectMapperForExtension(File file)
-      throws SwaggerConversionException {
+      throws OpenApiConversionException {
     String fileExtension = Files.getFileExtension(file.getAbsolutePath());
     if (mapperForExtension.containsKey(fileExtension)) {
       return mapperForExtension.get(fileExtension);
     }
-    throw new SwaggerConversionException(
+    throw new OpenApiConversionException(
         String.format(
-            "Swagger spec file '%s' has invalid extension '%s'. Only files with {%s} file "
+            "OpenAPI file '%s' has invalid extension '%s'. Only files with {%s} file "
                 + "extensions are allowed.",
             file.getName(), fileExtension, Joiner.on(", ").join(mapperForExtension.keySet())));
   }
@@ -204,10 +204,10 @@ public class MultiSwaggerParser {
   /**
    * Validates the input Swagger JsonNode against Swagger Specification schema.
    *
-   * @throws SwaggerConversionException
+   * @throws OpenApiConversionException
    */
   private static void validateSwaggerSpec(JsonNode swaggerJsonNode)
-      throws SwaggerConversionException {
+      throws OpenApiConversionException {
     ProcessingReport report = null;
     try {
       URL url = Resources.getResource(SCHEMA_RESOURCE_PATH);
@@ -216,7 +216,7 @@ public class MultiSwaggerParser {
       JsonSchema schema = JsonSchemaFactory.byDefault().getJsonSchema(schemaNode);
       report = schema.validate(swaggerJsonNode);
     } catch (Exception ex) {
-      throw new SwaggerConversionException("Unable to parse the content. " + ex.getMessage(), ex);
+      throw new OpenApiConversionException("Unable to parse the content. " + ex.getMessage(), ex);
     }
     if (!report.isSuccess()) {
       String message = "";
@@ -228,8 +228,8 @@ public class MultiSwaggerParser {
       {
         message += "," + ((ProcessingMessage) itr.next()).toString();
       }
-      throw new SwaggerConversionException(
-          String.format("Invalid Swagger spec. Please fix the schema errors:\n%s", message));
+      throw new OpenApiConversionException(
+          String.format("Invalid OpenAPI file. Please fix the schema errors:\n%s", message));
     }
   }
 }

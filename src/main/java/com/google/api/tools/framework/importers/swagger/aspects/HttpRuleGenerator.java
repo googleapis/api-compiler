@@ -17,7 +17,7 @@
 package com.google.api.tools.framework.importers.swagger.aspects;
 
 import com.google.api.HttpRule;
-import com.google.api.tools.framework.importers.swagger.SwaggerLocations;
+import com.google.api.tools.framework.importers.swagger.OpenApiLocations;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.NameConverter;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagCollector;
@@ -27,8 +27,8 @@ import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.parameters.Parameter;
 
-/** Class to create {@link HttpRule} from swagger operations. */
-public class HttpRuleGenerator{
+/** Class to create {@link HttpRule} from OpenAPI operations. */
+public class HttpRuleGenerator {
   private final DiagCollector diagCollector;
   private final String namespacePrefix;
   private final String basePath;
@@ -48,11 +48,11 @@ public class HttpRuleGenerator{
     HttpRule.Builder httpRuleBuilder = HttpRule.newBuilder();
 
     ImmutableList<Parameter> allParameters =
-        ApiFromSwagger.getAllResolvedParameters(
+        ProtoApiFromOpenApi.getAllResolvedParameters(
             operation,
             parentPath,
             diagCollector,
-            SwaggerLocations.createOperationLocation(operationType, path));
+            OpenApiLocations.createOperationLocation(operationType, path));
     httpRuleBuilder.setSelector(
         namespacePrefix + NameConverter.operationIdToMethodName(operation.getOperationId()));
     for (Parameter parameter : allParameters) {
@@ -90,7 +90,7 @@ public class HttpRuleGenerator{
       default:
         diagCollector.addDiag(
             Diag.warning(
-                SwaggerLocations.createOperationLocation(operationType, httpRulePath),
+                OpenApiLocations.createOperationLocation(operationType, httpRulePath),
                 "Operation is invalid. Default to 'post' operation"));
         httpRuleBuilder.setPost(httpRulePath);
     }

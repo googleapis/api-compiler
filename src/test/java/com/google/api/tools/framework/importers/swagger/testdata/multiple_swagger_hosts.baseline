@@ -1,1 +1,1 @@
-Different 'host' values cannot be set in multiple Swagger files, found Hosts: {petstore.swagger.io, api.uber.com}
+Different 'host' values cannot be set in multiple OpenAPI files. Found Hosts: {petstore.swagger.io, api.uber.com}

@@ -22,7 +22,7 @@ import com.google.api.tools.framework.importers.swagger.aspects.utils.VendorExte
 import com.google.api.tools.framework.model.DiagCollector;
 import io.swagger.models.Swagger;
 
-/** Builder for the {@link Quota} section of service config, from swagger spec. */
+/** Builder for the {@link Quota} section of service config, from OpenAPI. */
 public class QuotaBuilder implements AspectBuilder {
 
   private static final String METRIC_DEFINITIONS_SWAGGER_EXTENSION = "x-google-metric-definitions";

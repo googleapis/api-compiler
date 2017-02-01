@@ -16,10 +16,8 @@
 
 package com.google.api.tools.framework.importers.swagger.aspects.utils;
 
-/**
- * General utilities for Swagger conversion.
- */
-public class SwaggerUtils {
+/** General utilities for Swagger conversion. */
+public class OpenApiUtils {
 
   public static final String WILDCARD_URL_PATH = "/**";
 }

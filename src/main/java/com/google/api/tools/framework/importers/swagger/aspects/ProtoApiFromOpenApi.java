@@ -18,7 +18,7 @@ package com.google.api.tools.framework.importers.swagger.aspects;
 
 import com.google.api.AuthenticationRule;
 import com.google.api.Service;
-import com.google.api.tools.framework.importers.swagger.SwaggerLocations;
+import com.google.api.tools.framework.importers.swagger.OpenApiLocations;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthRuleGenerator;
 import com.google.api.tools.framework.importers.swagger.aspects.type.TypeBuilder;
@@ -26,7 +26,7 @@ import com.google.api.tools.framework.importers.swagger.aspects.type.TypeInfo;
 import com.google.api.tools.framework.importers.swagger.aspects.type.WellKnownTypeUtils.WellKnownType;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.ExtensionNames;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.NameConverter;
-import com.google.api.tools.framework.importers.swagger.aspects.utils.SwaggerUtils;
+import com.google.api.tools.framework.importers.swagger.aspects.utils.OpenApiUtils;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.VendorExtensionUtils;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagCollector;
@@ -59,8 +59,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-/** Class to create {@link Api} from swagger operations. */
-public class ApiFromSwagger {
+/** Class to create {@link Api} from OpenAPI operations. */
+public class ProtoApiFromOpenApi {
   private final TypeBuilder typeBuilder;
   private final DiagCollector diagCollector;
   private final Api.Builder coreApiBuilder;
@@ -73,7 +73,7 @@ public class ApiFromSwagger {
   private final AuthRuleGenerator authRuleGenerator;
   private final AuthBuilder authBuilder;
 
-  public ApiFromSwagger(
+  public ProtoApiFromOpenApi(
       DiagCollector diagCollector,
       TypeBuilder typeBuilder,
       String filename,
@@ -100,12 +100,12 @@ public class ApiFromSwagger {
 
     if (isAllowAllMethodsConfigured(swagger, diagCollector)) {
       Path userDefinedWildCardPathObject = new Path();
-      if (urlPaths.contains(SwaggerUtils.WILDCARD_URL_PATH)) {
-        userDefinedWildCardPathObject = swagger.getPath(SwaggerUtils.WILDCARD_URL_PATH);
+      if (urlPaths.contains(OpenApiUtils.WILDCARD_URL_PATH)) {
+        userDefinedWildCardPathObject = swagger.getPath(OpenApiUtils.WILDCARD_URL_PATH);
       }
       createServiceMethodsFromPath(
           serviceBuilder,
-          SwaggerUtils.WILDCARD_URL_PATH,
+          OpenApiUtils.WILDCARD_URL_PATH,
           getNewWildCardPathObject(userDefinedWildCardPathObject),
           duplicateOperationIdLookup);
     }
@@ -267,7 +267,7 @@ public class ApiFromSwagger {
     if (Strings.isNullOrEmpty(operation.getOperationId())) {
       diagCollector.addDiag(
           Diag.error(
-              SwaggerLocations.createOperationLocation(operationType, urlPath),
+              OpenApiLocations.createOperationLocation(operationType, urlPath),
               "Operation does not have the required 'operationId' field. Please specify unique"
                   + " value for 'operationId' field for all operations."));
       return false;
@@ -276,7 +276,7 @@ public class ApiFromSwagger {
     String sanitizedOperationId = NameConverter.operationIdToMethodName(operationId);
     if (duplicateOperationIdLookup.containsKey(sanitizedOperationId)) {
       String dupeOperationId = duplicateOperationIdLookup.get(sanitizedOperationId);
-      Location errorLocation = SwaggerLocations.createOperationLocation(operationType, urlPath);
+      Location errorLocation = OpenApiLocations.createOperationLocation(operationType, urlPath);
       String errorMessage = String.format("operationId '%s' has duplicate entry", operationId);
       if (!operationId.equals(dupeOperationId)) {
         errorLocation = SimpleLocation.TOPLEVEL;
@@ -318,7 +318,7 @@ public class ApiFromSwagger {
             serviceBuilder,
             operation,
             parentPath,
-            SwaggerLocations.createOperationLocation(operationType, path));
+            OpenApiLocations.createOperationLocation(operationType, path));
 
     com.google.protobuf.Method.Builder coreMethodBuilder =
         com.google.protobuf.Method.newBuilder()

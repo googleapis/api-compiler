@@ -19,8 +19,8 @@ package com.google.api.tools.framework.importers.swagger;
 import com.google.api.tools.framework.model.SimpleLocation;
 import io.swagger.models.parameters.Parameter;
 
-/** Utilities for creating {@link SimpleLocation}s from Swagger parameters. */
-public class SwaggerLocations {
+/** Utilities for creating {@link SimpleLocation}s from OpenAPI parameters. */
+public class OpenApiLocations {
 
   public static SimpleLocation createParameterLocation(
       Parameter parameter, String operationType, String path) {

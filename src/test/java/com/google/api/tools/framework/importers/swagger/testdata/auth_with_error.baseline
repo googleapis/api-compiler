@@ -1,7 +1,7 @@
 WARNING: auth_with_error.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
 WARNING: auth_with_error.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
 WARNING: auth_with_error.json: x-issuer: Extension name x-issuer has been deprecated, please rename it to x-google-issuer.
-ERROR: auth_with_error.json: Swagger Spec: Schema 'invalidSchema' referenced in extension x-security does not have a valid value. Please check the documentation for its schema.
+ERROR: auth_with_error.json: OpenAPI: Schema 'invalidSchema' referenced in extension x-security does not have a valid value. Please check the documentation for its schema.
 ERROR: auth_with_error.json: Operation 'get' in path '/v1/pets': Extension x-security does not have a valid value. Please check the documentation for its schema.
 WARNING: auth_with_error.json: Operation 'get' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 ERROR: auth_with_error.json: Operation 'post' in path '/v1/pets': Schema 'invalidSchema' referenced in extension x-security does not have a valid value. Please check the documentation for its schema.

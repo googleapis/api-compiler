@@ -23,17 +23,15 @@ import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.common.collect.Lists;
 import java.util.List;
 
-/**
- * An {@link DiagCollector} with default logic for locations in Swagger files.
- */
-public class SwaggerImporterDiagCollector implements DiagCollector {
+/** An {@link DiagCollector} with default logic for locations in OpenAPI files. */
+public class OpenApiImporterDiagCollector implements DiagCollector {
 
   private final List<Diag> diags = Lists.newArrayList();
   private final Location swaggerFileLocation;
   private final String swaggerFileName;
   private int errorCount = 0;
 
-  public SwaggerImporterDiagCollector(String swaggerFileName) {
+  public OpenApiImporterDiagCollector(String swaggerFileName) {
     this.swaggerFileName = swaggerFileName;
     this.swaggerFileLocation = new SimpleLocation(swaggerFileName);
   }

@@ -16,9 +16,9 @@
 
 package com.google.api.tools.framework.importers.swagger;
 
-import com.google.api.tools.framework.importers.swagger.aspects.ApiFromSwagger;
 import com.google.api.tools.framework.importers.swagger.aspects.AspectBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.HttpRuleGenerator;
+import com.google.api.tools.framework.importers.swagger.aspects.ProtoApiFromOpenApi;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthRuleGenerator;
 import com.google.api.tools.framework.importers.swagger.aspects.extensions.TopLevelExtensionsBuilder;
@@ -31,25 +31,25 @@ import java.util.List;
 
 /** Conversion resources for a single swagger file. */
 @AutoValue
-public abstract class SwaggerConversionResources {
+public abstract class OpenApiConversionResources {
 
   public abstract List<AspectBuilder> aspectBuilders();
 
-  public abstract ApiFromSwagger apiFromSwagger();
+  public abstract ProtoApiFromOpenApi apiFromSwagger();
 
-  public abstract SwaggerImporterDiagCollector diagCollector();
+  public abstract OpenApiImporterDiagCollector diagCollector();
 
-  public static SwaggerConversionResources create(
+  public static OpenApiConversionResources create(
       Swagger swagger, String filename, String methodNamespace, String typeNamespace) {
-    SwaggerImporterDiagCollector diagCollector = new SwaggerImporterDiagCollector(filename);
+    OpenApiImporterDiagCollector diagCollector = new OpenApiImporterDiagCollector(filename);
     TypeBuilder typeBuilder = new TypeBuilder(swagger, typeNamespace);
     HttpRuleGenerator httpRuleGenerator =
         new HttpRuleGenerator(methodNamespace, swagger.getBasePath(), diagCollector);
     AuthRuleGenerator authRuleGenerator = new AuthRuleGenerator(methodNamespace, diagCollector);
     AuthBuilder authBuilder = new AuthBuilder(methodNamespace, diagCollector, authRuleGenerator);
     QuotaBuilder quotaBuilder = new QuotaBuilder(diagCollector);
-    ApiFromSwagger apiBuilder =
-        new ApiFromSwagger(
+    ProtoApiFromOpenApi apiBuilder =
+        new ProtoApiFromOpenApi(
             diagCollector,
             typeBuilder,
             filename,
@@ -62,6 +62,6 @@ public abstract class SwaggerConversionResources {
     List<AspectBuilder> aspectBuilders =
         Lists.newArrayList(typeBuilder, authBuilder, topLevelExtensionBuilder);
     aspectBuilders.add(quotaBuilder);
-    return new AutoValue_SwaggerConversionResources(aspectBuilders, apiBuilder, diagCollector);
+    return new AutoValue_OpenApiConversionResources(aspectBuilders, apiBuilder, diagCollector);
   }
 }

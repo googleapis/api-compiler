@@ -98,8 +98,8 @@ public class SwaggerImportTest extends BaselineTestCase {
         String swaggerSpec = testDataLocator.readTestData(fileUrl);
         fileContents.add(FileWrapper.create(fileName, swaggerSpec));
       }
-      SwaggerToService swaggerToService =
-          new SwaggerToService(fileContents.build(), serviceName, typeNamespace, additional);
+      OpenApiToService swaggerToService =
+          new OpenApiToService(fileContents.build(), serviceName, typeNamespace, additional);
       Service service = swaggerToService.createServiceConfig();
 
       int errorCount = 0;

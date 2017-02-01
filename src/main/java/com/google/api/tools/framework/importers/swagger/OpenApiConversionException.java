@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Google Inc.
+ * Copyright (C) 2016 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,18 @@
 
 package com.google.api.tools.framework.importers.swagger;
 
-/**
- * Exception indicating failure during conversion of swagger to service config.
- */
-public class SwaggerConversionException extends Exception {
+/** Exception indicating failure during conversion of swagger to service config. */
+public class OpenApiConversionException extends Exception {
 
-  public SwaggerConversionException(String message) {
+  public OpenApiConversionException(String message) {
     super(message);
   }
 
-  public SwaggerConversionException(String message, Throwable cause) {
+  public OpenApiConversionException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public SwaggerConversionException(Throwable cause) {
+  public OpenApiConversionException(Throwable cause) {
     super(cause);
   }
 }

@@ -25,7 +25,7 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 
-/** Class representing authentication schema in security requirement extension in swagger. */
+/** Class representing authentication schema in security requirement extension in OpenAPI. */
 public class SecurityRequirementModel {
 
   // List of audiences

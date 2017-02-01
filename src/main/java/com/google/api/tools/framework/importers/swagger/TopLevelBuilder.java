@@ -18,7 +18,7 @@ package com.google.api.tools.framework.importers.swagger;
 
 import com.google.api.Service;
 import com.google.api.tools.framework.aspects.control.model.ControlConfigUtil;
-import com.google.api.tools.framework.importers.swagger.MultiSwaggerParser.SwaggerFile;
+import com.google.api.tools.framework.importers.swagger.MultiOpenApiParser.OpenApiFile;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -33,19 +33,19 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Sets top level fields such as configVersion in a {@link Service}, based on fields in {@link
- * SwaggerFile}s
+ * OpenApiFile}s
  */
 public class TopLevelBuilder {
 
   private static final int TOOLS_CONFIG_VERSION = 3;
 
   public void setTopLevelFields(
-      Service.Builder serviceBuilder, List<SwaggerFile> swaggers, String defaultName)
-      throws SwaggerConversionException {
-    createServiceInfoFromSwagger(serviceBuilder, swaggers);
-    setServiceName(serviceBuilder, swaggers, defaultName);
+      Service.Builder serviceBuilder, List<OpenApiFile> openApiFiles, String defaultName)
+      throws OpenApiConversionException {
+    createServiceInfoFromOpenApi(serviceBuilder, openApiFiles);
+    setServiceName(serviceBuilder, openApiFiles, defaultName);
     //TODO: this and the host validation belong in a merge phase that does not exist yet.
-    validateVersions(swaggers);
+    validateVersions(openApiFiles);
     applyThirdPartyApiSettings(serviceBuilder);
   }
 
@@ -61,51 +61,51 @@ public class TopLevelBuilder {
   /**
    * Adds additional information to {@link Service} object.
    *
-   * @throws SwaggerConversionException
+   * @throws OpenApiConversionException
    */
-  private void createServiceInfoFromSwagger(
-      Service.Builder serviceBuilder, List<SwaggerFile> swaggers)
-      throws SwaggerConversionException {
-    for (SwaggerFile swagger : swaggers) {
+  private void createServiceInfoFromOpenApi(
+      Service.Builder serviceBuilder, List<OpenApiFile> openApiFiles)
+      throws OpenApiConversionException {
+    for (OpenApiFile openApiFile : openApiFiles) {
       //TODO(user): need better way to resolve conflicts here
-      if (swagger.swagger().getInfo() != null) {
-        Info swaggerInfo = swagger.swagger().getInfo();
-        if (swaggerInfo.getTitle() != null) {
-          serviceBuilder.setTitle(swaggerInfo.getTitle());
+      if (openApiFile.swagger().getInfo() != null) {
+        Info info = openApiFile.swagger().getInfo();
+        if (info.getTitle() != null) {
+          serviceBuilder.setTitle(info.getTitle());
         }
-        if (swaggerInfo.getDescription() != null) {
-          serviceBuilder.getDocumentationBuilder().setSummary(swaggerInfo.getDescription());
+        if (info.getDescription() != null) {
+          serviceBuilder.getDocumentationBuilder().setSummary(info.getDescription());
         }
       }
     }
   }
 
   private void setServiceName(
-      Service.Builder serviceBuilder, List<SwaggerFile> swaggerFiles, String defaultName)
-      throws SwaggerConversionException {
+      Service.Builder serviceBuilder, List<OpenApiFile> openApiFiles, String defaultName)
+      throws OpenApiConversionException {
     String serviceName = defaultName; // Try explicitly provided service name first.
     if (Strings.isNullOrEmpty(serviceName)) {
-      Set<String> uniqueSwaggerHostNames = getSwaggerHosts(swaggerFiles);
-      if (uniqueSwaggerHostNames.isEmpty()) {
-        throw new SwaggerConversionException(
-            "Service name must be provided either explicitly or in Swagger 'host' value.");
-      } else if (uniqueSwaggerHostNames.size() > 1) {
-        throw new SwaggerConversionException(
+      Set<String> definedHostNames = getHosts(openApiFiles);
+      if (definedHostNames.isEmpty()) {
+        throw new OpenApiConversionException(
+            "Service name must be provided either explicitly or in OpenAPI 'host' value.");
+      } else if (definedHostNames.size() > 1) {
+        throw new OpenApiConversionException(
             String.format(
-                "Different 'host' values cannot be set in multiple Swagger files, "
-                    + "found Hosts: {%s}",
-                Joiner.on(", ").join(uniqueSwaggerHostNames)));
+                "Different 'host' values cannot be set in multiple OpenAPI files. "
+                    + "Found Hosts: {%s}",
+                Joiner.on(", ").join(definedHostNames)));
       } else {
-        serviceName = Iterables.getOnlyElement(uniqueSwaggerHostNames);
+        serviceName = Iterables.getOnlyElement(definedHostNames);
       }
     }
     serviceBuilder.setName(serviceName);
   }
 
-  private static Set<String> getSwaggerHosts(List<SwaggerFile> swaggers) {
+  private static Set<String> getHosts(List<OpenApiFile> openApiFiles) {
     ImmutableSet.Builder<String> hostNames = ImmutableSet.builder();
-    for (SwaggerFile swagger : swaggers) {
-      String hostname = swagger.swagger().getHost();
+    for (OpenApiFile openApiFile : openApiFiles) {
+      String hostname = openApiFile.swagger().getHost();
       if (!StringUtils.isBlank(hostname)) {
         hostNames.add(hostname.trim());
       }
@@ -113,19 +113,19 @@ public class TopLevelBuilder {
     return hostNames.build();
   }
 
-  private static void validateVersions(List<SwaggerFile> swaggers)
-      throws SwaggerConversionException {
+  private static void validateVersions(List<OpenApiFile> openApiFiles)
+      throws OpenApiConversionException {
     List<String> versions = Lists.newArrayList();
     List<String> versionLocations = Lists.newArrayList();
-    for (SwaggerFile swagger : swaggers) {
-      String version = swagger.swagger().getInfo().getVersion();
+    for (OpenApiFile openApiFile : openApiFiles) {
+      String version = openApiFile.swagger().getInfo().getVersion();
       versions.add(version);
-      versionLocations.add(String.format("%s:%s", swagger.filename(), version));
+      versionLocations.add(String.format("%s:%s", openApiFile.filename(), version));
     }
     if (listHasDuplicates(versions)) {
-      throw new SwaggerConversionException(
+      throw new OpenApiConversionException(
           String.format(
-              "Multiple OpenApi files cannot have the same 'info.version' value. "
+              "Multiple OpenAPI files cannot have the same 'info.version' value. "
                   + "Files and Versions found: {%s}",
               Joiner.on(", ").join(versionLocations)));
     }
