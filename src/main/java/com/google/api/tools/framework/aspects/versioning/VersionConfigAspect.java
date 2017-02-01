@@ -17,6 +17,7 @@
 package com.google.api.tools.framework.aspects.versioning;
 
 import com.google.api.tools.framework.aspects.ConfigAspectBase;
+import com.google.api.tools.framework.aspects.ConfigRuleSet;
 import com.google.api.tools.framework.aspects.http.HttpConfigAspect;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.LiteralSegment;
@@ -36,7 +37,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.google.protobuf.Api;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -135,21 +136,25 @@ public class VersionConfigAspect extends ConfigAspectBase {
   }
 
   private void merge(Method method) {
-    String restVersion = deriveApiVersion(method);
-    method.putAttribute(VersionAttribute.KEY, VersionAttribute.create(restVersion));
+    // TODO(user): Cleanup the use of apiVersion restVersions (VersionAttribute vs
+    // RestVersionsAttribute) in the tools framework. Some references are using the attributes
+    // incorrectly due to the confusion caused by the names.
+    String apiVersion = deriveApiVersion(method);
+    Set<String> restVersions = calculateRestVersions(method);
+    method.putAttribute(VersionAttribute.KEY, VersionAttribute.create(apiVersion));
     // UM uses the logical version with a suffix appended, if defined.
     String versionSuffix = method.getModel().getApiV1VersionSuffix();
     method.putAttribute(VersionAttribute.USAGE_MANAGER_KEY,
-        VersionAttribute.create(ApiVersionUtil.appendVersionSuffix(restVersion, versionSuffix)));
+        VersionAttribute.create(ApiVersionUtil.appendVersionSuffix(apiVersion, versionSuffix)));
 
-    // Add the rest version into RestVersionsAttribute only if parent of the method is included in
+    // Add the rest versions into RestVersionsAttribute only if parent of the method is included in
     // the model roots.
     if (roots.contains(method.getParent())) {
       if (getModel().hasAttribute(RestVersionsAttribute.KEY)) {
-        getModel().getAttribute(RestVersionsAttribute.KEY).getVersions().add(restVersion);
+        getModel().getAttribute(RestVersionsAttribute.KEY).getVersions().addAll(restVersions);
       } else {
         getModel().putAttribute(RestVersionsAttribute.KEY,
-            new RestVersionsAttribute(new LinkedHashSet<>(ImmutableList.of(restVersion))));
+            new RestVersionsAttribute(restVersions));
       }
     }
   }
@@ -166,5 +171,28 @@ public class VersionConfigAspect extends ConfigAspectBase {
       return "v1";
     }
     return ((LiteralSegment) http.getPath().get(0)).getLiteral();
+  }
+
+  /*
+   * The rest versions are calculated based on RestMethod(s) this proto method maps to.
+   */
+  private static Set<String> calculateRestVersions(Method method) {
+    Set<String> restVersions = Sets.newHashSet();
+    if (!method.hasAttribute(HttpAttribute.KEY)) {
+      // Return an empty set if the proto method doesn't have http binding.
+      return restVersions;
+    }
+
+    // Exclude rest version introduced by System APIs.
+    for (String prefix : ConfigRuleSet.SYSTEM_PROTO_PREFIXES) {
+      if (method.getFullName().startsWith(prefix)) {
+        return Collections.emptySet();
+      }
+    }
+
+    for (HttpAttribute binding : method.getAttribute(HttpAttribute.KEY).getAllBindings()) {
+      restVersions.add(binding.getRestMethod().getVersionWithDefault());
+    }
+    return restVersions;
   }
 }
