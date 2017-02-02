@@ -62,8 +62,6 @@ public class HttpTemplateParserTest {
     assertParsingFailure("buckets/{name=/objects/*}",
         CONFIG_VERSION_1, "leading '/' only allowed for first segment of path.",
         "effective path must start with leading '/'.");
-    assertParsingFailure("/buckets/{bucket_name.bucket_id}/:objects",
-        CONFIG_VERSION_1, "invalid token '/:' before the custom verb.");
     assertParsingSuccess("/", CONFIG_VERSION_1, EMPTY_SEGMENT);
     assertParsingSuccess("/*", CONFIG_VERSION_1, BOUNDED_WILDCARD);
     assertParsingSuccess("/**", CONFIG_VERSION_1, UNBOUNDED_WILDCARD);
@@ -81,6 +79,13 @@ public class HttpTemplateParserTest {
     assertParsingSuccess("/buckets/{bucket_name.bucket_id}/objects/{object_id=**}",
         CONFIG_VERSION_1, BUCKETS, BUCKET_NAME_ID, OBJECTS,
         new FieldSegment("object_id", ImmutableList.of(UNBOUNDED_WILDCARD)));
+   
+    assertParsingSuccess(
+        "/buckets/{bucket_name.bucket_id}/:custom",
+        CONFIG_VERSION_1,
+        BUCKETS,
+        BUCKET_NAME_ID,
+        CUSTOM_VERB);
     assertParsingSuccess("/{name=buckets/*/objects/**}",
         CONFIG_VERSION_1, new FieldSegment("name",
             ImmutableList.of(BUCKETS, BOUNDED_WILDCARD, OBJECTS, UNBOUNDED_WILDCARD)));

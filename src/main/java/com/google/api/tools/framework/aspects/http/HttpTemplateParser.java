@@ -35,7 +35,7 @@ public class HttpTemplateParser {
   private static final Pattern TOKEN_PATTERN =
       Pattern.compile(String.format("%s|[/*}{=]", LITERAL_PATTERN));
   private static final Pattern CUSTOM_VERB_PATTERN =
-      Pattern.compile(String.format("(?<!/):(%s)$", LITERAL_PATTERN));
+      Pattern.compile(String.format("(?<!/)/?:(%s)$", LITERAL_PATTERN));
   private static final Pattern CUSTOM_VERB_PATTERN_ILLEGAL =
       Pattern.compile(String.format("/:(%s)$", LITERAL_PATTERN));
 
@@ -87,7 +87,7 @@ public class HttpTemplateParser {
       addError("unrecognized input at '%s'.", current);
     }
     if (configVersion > 0 && CUSTOM_VERB_PATTERN_ILLEGAL.matcher(template).find()) {
-      addError("invalid token '/:' before the custom verb.");
+      addWarning("Token '/:' before a custom verb is not currently supported.");
     }
     if (hadErrors) {
       return null;
@@ -132,10 +132,10 @@ public class HttpTemplateParser {
       // No longer processing the first segment.
       firstSegment = false;
 
-      if (!lookingAt("/")) {
-        break;
-      } else {
+      if (lookingAt("/")) {
         getCurrentAndShift();
+      } else {
+        break;
       }
     }
     return segments.build();
@@ -180,6 +180,11 @@ public class HttpTemplateParser {
     }
   }
 
+  private void addWarning(String message, Object... params) {
+    diagCollector.addDiag(
+        Diag.warning(location, "In path template '" + template + "': " + message, params));
+  }
+  
   private void addError(String message, Object... params) {
     diagCollector.addDiag(
         Diag.error(location, "In path template '" + template + "': " + message, params));

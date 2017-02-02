@@ -223,7 +223,9 @@ Rest Kind:   CUSTOM
 Collection:  *error*
 Custom Name: *error*
 Diagnostics:
-  ERROR: toplevel: In path template '/:fruit': invalid token '/:' before the custom verb.
+  ERROR: toplevel: In path template '/:fruit': unexpected end of input ''.
+  ERROR: toplevel: In path template '/:fruit': effective path must start with leading '/'.
+  WARNING: toplevel: In path template '/:fruit': Token '/:' before a custom verb is not currently supported.
 
 GET MethodNotStartingWithGet /projects/{project}
 ======================================================================
