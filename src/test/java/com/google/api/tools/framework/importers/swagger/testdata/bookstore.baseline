@@ -483,14 +483,6 @@ metrics {
   value_type: INT64
 }
 metrics {
-  name: "serviceruntime.googleapis.com/api/consumer/quota_billable_count"
-  labels {
-    key: "/quota_group_name"
-  }
-  metric_kind: DELTA
-  value_type: INT64
-}
-metrics {
   name: "serviceruntime.googleapis.com/api/consumer/request_overhead_latencies"
   labels {
     key: "/credential_id"
