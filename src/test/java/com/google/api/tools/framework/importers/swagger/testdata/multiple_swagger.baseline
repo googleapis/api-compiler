@@ -157,6 +157,10 @@ http {
     delete: "/v2/api/pets/{id}"
   }
 }
+authentication {
+}
+context {
+}
 usage {
   rules {
     selector: "petstore_swagger_io_1_0_0.FindPets"
@@ -198,5 +202,7 @@ endpoints {
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
 }
 

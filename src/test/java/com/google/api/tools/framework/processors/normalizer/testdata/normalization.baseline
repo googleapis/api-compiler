@@ -610,6 +610,8 @@ context {
     requested: "google.rpc.context.AbuseContext"
   }
 }
+usage {
+}
 endpoints {
   name: "blob.googleapis.com"
   aliases: "blob.clients6.google.com"
@@ -622,3 +624,6 @@ config_version {
 control {
   environment: "servicecontrol.googleapis.com"
 }
+system_parameters {
+}
+

@@ -103,6 +103,8 @@ authentication {
     issuer: "1234567-compute@developer.gserviceaccount2.com"
   }
 }
+context {
+}
 usage {
   rules {
     selector: "library_example_googleapis_com_v1.SecondMethod"
@@ -121,5 +123,7 @@ endpoints {
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
 }
 

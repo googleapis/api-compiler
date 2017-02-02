@@ -16,4 +16,6 @@ documentation {
     content: "example content"
   }
 }
+http {
+}
 

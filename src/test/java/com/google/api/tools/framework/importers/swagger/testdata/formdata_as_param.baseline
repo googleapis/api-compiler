@@ -48,6 +48,10 @@ http {
     post: "/v1/pets"
   }
 }
+authentication {
+}
+context {
+}
 usage {
   rules {
     selector: "library_example_googleapis_com_v1.SimpleMethod"
@@ -62,5 +66,7 @@ endpoints {
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
 }
 

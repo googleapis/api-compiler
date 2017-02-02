@@ -49,6 +49,10 @@ http {
     get: "/v1/pets/{name}"
   }
 }
+authentication {
+}
+context {
+}
 usage {
   rules {
     selector: "library_example_googleapis_com_v1.Test"
@@ -63,5 +67,7 @@ endpoints {
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
 }
 

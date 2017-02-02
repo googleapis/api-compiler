@@ -127,6 +127,8 @@ authentication {
     jwks_uri: "https://www.googleapis.com/oauth2/v1/certs3"
   }
 }
+context {
+}
 usage {
   rules {
     selector: "library_example_googleapis_com_v1.ApiKeyReqOverride"
@@ -151,5 +153,7 @@ endpoints {
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
 }
 

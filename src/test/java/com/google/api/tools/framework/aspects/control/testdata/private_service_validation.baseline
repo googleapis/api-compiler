@@ -1,2 +1,4 @@
 WARNING: (lint) control-presence: Service foobar.corp.googleapis.com does not have control environment configured.
+documentation {
+}
 

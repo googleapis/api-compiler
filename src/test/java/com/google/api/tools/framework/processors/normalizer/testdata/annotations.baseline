@@ -85,11 +85,19 @@ enums {
     file_name: "annotations.proto"
   }
 }
+documentation {
+}
 http {
   rules {
     selector: "protiary.test.Storage.GetBucket"
     get: "/buckets/{bucket_id}"
   }
+}
+authentication {
+}
+context {
+}
+usage {
 }
 endpoints {
   name: "blob.googleapis.com"
@@ -99,5 +107,7 @@ endpoints {
 }
 config_version {
   value: 1
+}
+system_parameters {
 }
 

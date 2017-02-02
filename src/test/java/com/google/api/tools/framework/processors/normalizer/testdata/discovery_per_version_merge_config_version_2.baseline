@@ -81,6 +81,12 @@ http {
     post: "/v4/reverseecho"
   }
 }
+authentication {
+}
+context {
+}
+usage {
+}
 endpoints {
   name: "echo.googleapis.com"
   aliases: "echo.clients6.google.com"
@@ -90,3 +96,6 @@ endpoints {
 config_version {
   value: 2
 }
+system_parameters {
+}
+

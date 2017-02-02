@@ -11,6 +11,14 @@ apis {
 documentation {
   summary: "A simple Google Example Library API."
 }
+http {
+}
+authentication {
+}
+context {
+}
+usage {
+}
 endpoints {
   name: "library-example.googleapis.com"
   aliases: "library-example.clients6.google.com"
@@ -19,5 +27,7 @@ endpoints {
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
 }
 

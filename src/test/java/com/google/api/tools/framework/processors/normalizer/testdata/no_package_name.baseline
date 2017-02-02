@@ -43,6 +43,14 @@ documentation {
     description: "foo bar"
   }
 }
+http {
+}
+authentication {
+}
+context {
+}
+usage {
+}
 endpoints {
   name: "blob.googleapis.com"
   aliases: "blob.clients6.google.com"
@@ -51,5 +59,7 @@ endpoints {
 }
 config_version {
   value: 2
+}
+system_parameters {
 }
 

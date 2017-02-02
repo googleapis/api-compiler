@@ -1,3 +1,5 @@
+documentation {
+}
 usage {
   rules {
     selector: "protiary.test.TestService1.Call2"

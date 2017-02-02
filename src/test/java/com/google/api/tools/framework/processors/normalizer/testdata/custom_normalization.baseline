@@ -122,6 +122,12 @@ http {
     }
   }
 }
+authentication {
+}
+context {
+}
+usage {
+}
 endpoints {
   name: "blob.googleapis.com"
   aliases: "blob.clients6.google.com"
@@ -130,5 +136,7 @@ endpoints {
 }
 config_version {
   value: 1
+}
+system_parameters {
 }
 

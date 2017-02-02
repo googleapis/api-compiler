@@ -7,7 +7,13 @@ title: "Google Example Library API"
 documentation {
   summary: "A simple Google Example Library API."
 }
+http {
+}
 authentication {
+}
+context {
+}
+usage {
 }
 endpoints {
   name: "library-example.googleapis.com"
@@ -16,6 +22,8 @@ endpoints {
 }
 config_version {
   value: 2
+}
+system_parameters {
 }
 
 ============== Successfully regenerated service config ==============

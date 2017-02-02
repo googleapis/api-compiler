@@ -8,4 +8,6 @@ documentation {
     description: "1"
   }
 }
+http {
+}
 

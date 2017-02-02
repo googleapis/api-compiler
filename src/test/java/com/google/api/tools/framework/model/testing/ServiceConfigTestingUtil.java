@@ -21,8 +21,6 @@ import com.google.api.Service;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
-import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.google.protobuf.Message;
 
 import java.util.List;
 
@@ -37,7 +35,6 @@ public class ServiceConfigTestingUtil {
 
   public static Service.Builder clearIrrelevantData(Service.Builder builder) {
     clearSystemDataDocumentation(builder);
-    clearEmptyFields(builder);
     return builder;
   }
 
@@ -62,19 +59,6 @@ public class ServiceConfigTestingUtil {
       }
     }
     return builder;
-  }
-
-  private static void clearIfEmptyMessage(Service.Builder builder, FieldDescriptor field) {
-    if (!field.isRepeated() && field.getType() == FieldDescriptor.Type.MESSAGE
-        && ((Message) builder.getField(field)).getAllFields().size() == 0) {
-      builder.clearField(field);
-    }
-  }
-
-  private static void clearEmptyFields(Service.Builder builder) {
-    for (FieldDescriptor field : Service.getDescriptor().getFields()) {
-      clearIfEmptyMessage(builder, field);
-    }
   }
 }
 

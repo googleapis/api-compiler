@@ -284,6 +284,10 @@ http {
     }
   }
 }
+authentication {
+}
+context {
+}
 usage {
   requirements: "invalidserviceusage.googleapis.com/tos/universal"
 }
@@ -295,5 +299,7 @@ endpoints {
 }
 config_version {
   value: 1
+}
+system_parameters {
 }
 

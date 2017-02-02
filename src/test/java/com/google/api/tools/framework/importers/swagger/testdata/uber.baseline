@@ -170,6 +170,10 @@ http {
     get: "/v1/products"
   }
 }
+authentication {
+}
+context {
+}
 usage {
   rules {
     selector: "api_uber_com_1_0_0.GetPrices"
@@ -198,5 +202,7 @@ endpoints {
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
 }
 

@@ -517,6 +517,10 @@ http {
     body: "body"
   }
 }
+authentication {
+}
+context {
+}
 usage {
   rules {
     selector: "library_example_googleapis_com_v1.RestrictedGetShelf"
@@ -585,5 +589,7 @@ metrics {
   name: "bookstore/read_requests"
   metric_kind: GAUGE
   value_type: INT64
+}
+system_parameters {
 }
 

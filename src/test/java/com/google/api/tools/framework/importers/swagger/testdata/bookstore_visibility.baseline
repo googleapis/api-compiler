@@ -313,6 +313,8 @@ authentication {
     jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
   }
 }
+context {
+}
 usage {
   rules {
     selector: "bookstore_cloudendpointsapis_com_1_0_0.ListShelves"
@@ -764,5 +766,7 @@ monitoring {
     metrics: "serviceruntime.googleapis.com/api/consumer/request_bytes"
     metrics: "serviceruntime.googleapis.com/api/consumer/response_bytes"
   }
+}
+system_parameters {
 }
 

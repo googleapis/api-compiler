@@ -114,6 +114,8 @@ authentication {
     id: "test_auth3"
   }
 }
+context {
+}
 usage {
   rules {
     selector: "library_example_googleapis_com_v1.ApiKeyNotReqOverride"
@@ -134,5 +136,7 @@ endpoints {
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
 }
 
