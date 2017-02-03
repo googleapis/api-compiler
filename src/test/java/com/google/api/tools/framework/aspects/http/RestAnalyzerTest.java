@@ -122,6 +122,7 @@ public class RestAnalyzerTest extends BaselineTestCase {
 
   private void restify(MethodKind httpKind, String simpleName, String template) {
     Model model = Model.create(FileDescriptorSet.getDefaultInstance());
+
     model.setServiceConfig(
         ConfigSource.newBuilder(Service.getDefaultInstance())
             .setValue(

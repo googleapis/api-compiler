@@ -89,7 +89,7 @@ public class MethodMatcher {
     return RestMethod.create(
         method,
         pattern.restKind(),
-        RestAnalyzer.buildCollectionName(httpConfig.getFlatPath()),
+        RestAnalyzer.buildCollectionName(httpConfig.getFlatPath(), method.getModel()),
         null);
   }
 

@@ -27,6 +27,7 @@ import com.google.api.tools.framework.aspects.http.model.RestKind;
 import com.google.api.tools.framework.aspects.http.model.RestMethod;
 import com.google.api.tools.framework.model.MessageType;
 import com.google.api.tools.framework.model.Method;
+import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.TypeRef;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -45,6 +46,7 @@ import java.util.TreeMap;
  * produce errors or warnings and always returns well-defined output for each method.
  */
 public class RestAnalyzer {
+
   private final HttpConfigAspect aspect;
   private final Map<String, CollectionAttribute> collectionMap = new TreeMap<>();
 
@@ -170,7 +172,8 @@ public class RestAnalyzer {
     // Ensure effective start is lower case.
     customName = ensureLowerCase(customName);
 
-    return RestMethod.create(method, RestKind.CUSTOM, buildCollectionName(path), customName);
+    return RestMethod.create(
+        method, RestKind.CUSTOM, buildCollectionName(path, method.getModel()), customName);
   }
 
   private static String ensureUpperCase(String name) {
@@ -188,7 +191,7 @@ public class RestAnalyzer {
   }
 
   // Builds the collection name from a path.
-  static String buildCollectionName(Iterable<PathSegment> segments) {
+  static String buildCollectionName(Iterable<PathSegment> segments, Model model) {
     return Joiner.on('.').skipNulls().join(FluentIterable.from(segments).transform(
         new Function<PathSegment, String>() {
           @Override
@@ -204,4 +207,5 @@ public class RestAnalyzer {
           }
         }));
   }
+
 }
