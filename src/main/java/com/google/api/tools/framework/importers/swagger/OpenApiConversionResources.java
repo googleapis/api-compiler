@@ -21,6 +21,7 @@ import com.google.api.tools.framework.importers.swagger.aspects.HttpRuleGenerato
 import com.google.api.tools.framework.importers.swagger.aspects.ProtoApiFromOpenApi;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthRuleGenerator;
+import com.google.api.tools.framework.importers.swagger.aspects.authz.AuthzBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.extensions.TopLevelExtensionsBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.quota.QuotaBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.type.TypeBuilder;
@@ -48,6 +49,9 @@ public abstract class OpenApiConversionResources {
     AuthRuleGenerator authRuleGenerator = new AuthRuleGenerator(methodNamespace, diagCollector);
     AuthBuilder authBuilder = new AuthBuilder(methodNamespace, diagCollector, authRuleGenerator);
     QuotaBuilder quotaBuilder = new QuotaBuilder(diagCollector);
+    TopLevelExtensionsBuilder topLevelExtensionBuilder =
+        new TopLevelExtensionsBuilder(diagCollector);
+    AuthzBuilder authzBuilder = new AuthzBuilder(diagCollector);
     ProtoApiFromOpenApi apiBuilder =
         new ProtoApiFromOpenApi(
             diagCollector,
@@ -57,11 +61,8 @@ public abstract class OpenApiConversionResources {
             httpRuleGenerator,
             authRuleGenerator,
             authBuilder);
-    TopLevelExtensionsBuilder topLevelExtensionBuilder =
-        new TopLevelExtensionsBuilder(diagCollector);
-    List<AspectBuilder> aspectBuilders =
-        Lists.newArrayList(typeBuilder, authBuilder, topLevelExtensionBuilder);
-    aspectBuilders.add(quotaBuilder);
+    List<AspectBuilder> aspectBuilders = Lists.newArrayList(
+        typeBuilder, authBuilder, topLevelExtensionBuilder, quotaBuilder, authzBuilder);
     return new AutoValue_OpenApiConversionResources(aspectBuilders, apiBuilder, diagCollector);
   }
 }

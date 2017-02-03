@@ -4,5 +4,5 @@ title: Blob Service
 name: blob.googleapis.com
 apis:
 - name: protiary.test.Storage
-
+experimental:
 

@@ -1,11 +1,10 @@
-ERROR: invalid_google_allow_extension_value.json: x-google-allow: Only allowed values for x-google-allow are all|configured
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
   name: "library_example_googleapis_com_v1"
   version: "v1"
   source_context {
-    file_name: "invalid_google_allow_extension_value.json"
+    file_name: "x_google_experimental_authorization.json"
   }
 }
 documentation {
@@ -31,5 +30,8 @@ control {
 system_parameters {
 }
 experimental {
+  authorization {
+    provider: "firebaserules.googleapis.com"
+  }
 }
 

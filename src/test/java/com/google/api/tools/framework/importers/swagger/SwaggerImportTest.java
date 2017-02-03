@@ -133,6 +133,10 @@ public class SwaggerImportTest extends BaselineTestCase {
 
       // Remove the config version too.
       printableServiceBuilder.clearConfigVersion();
+      // This is a temporary hack, and https://b/34954570 is created to remove the hack.
+      if (!printableServiceBuilder.hasExperimental()) {
+        printableServiceBuilder.getExperimentalBuilder().clearAuthorization();
+      }
       printableServiceBuilder =
           ServiceConfigTestingUtil.clearIrrelevantData(printableServiceBuilder);
       testOutput().println(TextFormatForTest.INSTANCE.printToString(printableServiceBuilder));
@@ -315,6 +319,16 @@ public class SwaggerImportTest extends BaselineTestCase {
   @Test
   public void x_google_allow_extension_all_with_existing_catchall_methods() throws Exception {
     testWithDefaults("x_google_allow_extension_all_with_existing_catchall_methods");
+  }
+
+  @Test
+  public void x_google_experimental_authorization() throws Exception {
+    testWithDefaults("x_google_experimental_authorization");
+  }
+
+  @Test
+  public void x_google_experimental_authorization_invalid() throws Exception {
+    testWithDefaults("x_google_experimental_authorization_invalid");
   }
 
   @Test

@@ -1,11 +1,11 @@
-ERROR: invalid_google_allow_extension_value.json: x-google-allow: Only allowed values for x-google-allow are all|configured
+ERROR: x_google_experimental_authorization_invalid.json: x-google-experimental-authorization: Extension x-google-experimental-authorization cannot be converted into proto type google.api.AuthorizationConfig.
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
   name: "library_example_googleapis_com_v1"
   version: "v1"
   source_context {
-    file_name: "invalid_google_allow_extension_value.json"
+    file_name: "x_google_experimental_authorization_invalid.json"
   }
 }
 documentation {
