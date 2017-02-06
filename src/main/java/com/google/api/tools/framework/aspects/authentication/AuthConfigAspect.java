@@ -120,10 +120,13 @@ public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, 
             requirement.getProviderId());
       } else {
         if (!requirement.getAudiences().isEmpty() && !authProvider.getAudiences().isEmpty()) {
-          error(
-              getLocationInConfig(requirement, AuthRequirement.AUDIENCES_FIELD_NUMBER),
-              "Setting 'audiences' field inside both 'requirement' and 'provider' is not allowed. "
-                  + "Please set the 'audiences' field only inside the 'provider'.");
+          if (!requirement.getAudiences().equalsIgnoreCase(authProvider.getAudiences())) {
+            error(
+                getLocationInConfig(requirement, AuthRequirement.AUDIENCES_FIELD_NUMBER),
+                "Setting 'audiences' field inside both 'requirement' and provider '%s' is not"
+                    + " allowed. Please set the 'audiences' field only inside the 'provider'.",
+                authProvider.getId());
+          }
         }
       }
     }
