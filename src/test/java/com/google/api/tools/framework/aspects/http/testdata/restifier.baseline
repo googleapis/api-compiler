@@ -3,6 +3,7 @@ GET ListFruits /trees/{tree_id}/fruits
 Rest Kind:   LIST
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: (null)
@@ -12,6 +13,7 @@ GET GetFruit /trees/{tree_id}/fruits/{fruit_id}
 Rest Kind:   GET
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: (null)
@@ -21,6 +23,7 @@ PUT UpdateFruit /trees/{tree_id}/fruits/{fruit_id}
 Rest Kind:   UPDATE
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: (null)
@@ -30,6 +33,7 @@ POST CreateFruit /trees/{tree_id}/fruits
 Rest Kind:   CREATE
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: (null)
@@ -39,6 +43,7 @@ POST InsertFruit /trees/{tree_id}/fruits
 Rest Kind:   CREATE
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: (null)
@@ -48,6 +53,7 @@ POST RipenFruit /trees/{tree_id}/fruits/{fruit_id}/ripen
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: ripen
@@ -57,6 +63,7 @@ POST RipenFruit /trees/{tree_id}/fruits/{fruit_id}:ripen
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: ripen
@@ -66,6 +73,7 @@ DELETE DeleteFruit /trees/{tree_id}/fruits/{fruit_id}
 Rest Kind:   DELETE
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: (null)
@@ -75,6 +83,7 @@ PATCH PatchFruit /trees/{tree_id}/fruits/{fruit_id}
 Rest Kind:   PATCH
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: (null)
@@ -84,6 +93,7 @@ PATCH PatchBranch /trees/{tree_id}/branch
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: patchBranch
@@ -93,6 +103,7 @@ GET GetFruitDiameter /{fruit_id}/diameter
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  (empty)
 Versioned collection:  (empty)
 Unversioned collection:  (empty)
 Custom Name: getDiameter
@@ -102,6 +113,7 @@ GET ListTrees /trees
 Rest Kind:   LIST
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: (null)
@@ -111,6 +123,7 @@ GET GetTree /trees/{tree_id}
 Rest Kind:   GET
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: (null)
@@ -120,6 +133,7 @@ PUT UpdateTree /trees/{tree_id}
 Rest Kind:   UPDATE
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: (null)
@@ -129,6 +143,7 @@ POST CreateTree /trees
 Rest Kind:   CREATE
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: (null)
@@ -138,6 +153,7 @@ POST InsertTree /trees
 Rest Kind:   CREATE
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: (null)
@@ -147,6 +163,7 @@ POST ShakeTree /trees/{tree_id}/shake
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: shake
@@ -156,6 +173,7 @@ POST ShakeTree /trees/{tree_id}:shake
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: shake
@@ -165,6 +183,7 @@ DELETE DeleteTree /trees/{tree_id}
 Rest Kind:   DELETE
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: (null)
@@ -174,6 +193,7 @@ PATCH PatchTree /trees/{tree_id}
 Rest Kind:   PATCH
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: (null)
@@ -183,6 +203,7 @@ GET GetOrchardLocation /orchard/location
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  orchard
 Versioned collection:  orchard
 Unversioned collection:  orchard
 Custom Name: getLocation
@@ -192,6 +213,7 @@ PUT UpdateOrchardLocation /orchard/location
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  orchard
 Versioned collection:  orchard
 Unversioned collection:  orchard
 Custom Name: updateLocation
@@ -201,6 +223,7 @@ GET GetOrchard /orchard
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  (empty)
 Versioned collection:  (empty)
 Unversioned collection:  (empty)
 Custom Name: getOrchard
@@ -210,6 +233,7 @@ PUT UpdateOrchard /orchard
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  (empty)
 Versioned collection:  (empty)
 Unversioned collection:  (empty)
 Custom Name: updateOrchard
@@ -219,6 +243,7 @@ GET FindTallestTree /orchard/tallestTree
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  orchard
 Versioned collection:  orchard
 Unversioned collection:  orchard
 Custom Name: tallestTree
@@ -228,6 +253,7 @@ GET FindTrees /findTrees
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  (empty)
 Versioned collection:  (empty)
 Unversioned collection:  (empty)
 Custom Name: findTrees
@@ -237,6 +263,7 @@ GET FindRipeFruit /trees/{tree_id}/findRipeFruit
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: findRipeFruit
@@ -246,6 +273,7 @@ GET FindRipeFruit /trees/{tree_id}:findRipeFruit
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  trees
 Versioned collection:  trees
 Unversioned collection:  trees
 Custom Name: findRipeFruit
@@ -255,6 +283,7 @@ GET FindWorm /trees/{tree_id}/fruits/{fruit_id}/findWorm
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  fruits
 Versioned collection:  trees.fruits
 Unversioned collection:  trees.fruits
 Custom Name: findWorm
@@ -264,6 +293,7 @@ PUT CreateBush /bushes/{bush_id}
 Rest Kind:   CREATE
 Version:  (empty)
 Version with default:  v1
+Simple collection:  bushes
 Versioned collection:  bushes
 Unversioned collection:  bushes
 Custom Name: (null)
@@ -273,6 +303,7 @@ DELETE DeleteJenkins /projects/{project}/jenkins
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  projects
 Versioned collection:  projects
 Unversioned collection:  projects
 Custom Name: deleteJenkins
@@ -282,6 +313,7 @@ GET GetFruit /v1:fruit
 Rest Kind:   CUSTOM
 Version:  v1
 Version with default:  v1
+Simple collection:  v1
 Versioned collection:  v1
 Unversioned collection:  (empty)
 Custom Name: getFruit
@@ -291,6 +323,7 @@ PUT UpdateFruit /v1:fruit
 Rest Kind:   CUSTOM
 Version:  v1
 Version with default:  v1
+Simple collection:  v1
 Versioned collection:  v1
 Unversioned collection:  (empty)
 Custom Name: updateFruit
@@ -300,6 +333,7 @@ DELETE DeleteFruit /v1:fruit
 Rest Kind:   CUSTOM
 Version:  v1
 Version with default:  v1
+Simple collection:  v1
 Versioned collection:  v1
 Unversioned collection:  (empty)
 Custom Name: deleteFruit
@@ -309,6 +343,7 @@ GET GetFruit (empty)
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  *error*
 Versioned collection:  *error*
 Unversioned collection:  *error*
 Custom Name: *error*
@@ -321,6 +356,7 @@ GET GetFruit /
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  (empty)
 Versioned collection:  (empty)
 Unversioned collection:  (empty)
 Custom Name: get
@@ -330,6 +366,7 @@ GET GetFruit /:fruit
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  *error*
 Versioned collection:  *error*
 Unversioned collection:  *error*
 Custom Name: *error*
@@ -343,6 +380,7 @@ GET MethodNotStartingWithGet /projects/{project}
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  projects
 Versioned collection:  projects
 Unversioned collection:  projects
 Custom Name: get
@@ -352,6 +390,7 @@ GET MethodNotStartingWithGet /projects/{project}
 Rest Kind:   CUSTOM
 Version:  (empty)
 Version with default:  v1
+Simple collection:  projects
 Versioned collection:  projects
 Unversioned collection:  projects
 Custom Name: methodNotStartingWithGet

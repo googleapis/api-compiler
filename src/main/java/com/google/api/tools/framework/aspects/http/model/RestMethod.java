@@ -195,7 +195,8 @@ public class RestMethod extends Element {
   public String getSimpleRestCollectionName() {
     String versionedRestCollectionName = getRestCollectionName();
     return Strings.isNullOrEmpty(versionedRestCollectionName)
-        ? "" : baseCollectionName.substring(versionedRestCollectionName.lastIndexOf('.') + 1);
+        ? ""
+        : versionedRestCollectionName.substring(versionedRestCollectionName.lastIndexOf('.') + 1);
   }
   /**
    * Returns the rest collection name without version prefix. Returns empty if there is no

@@ -167,6 +167,9 @@ public class RestAnalyzerTest extends BaselineTestCase {
     pw.printf("Version with default:  %s\n",
         restMethod.getVersionWithDefault().isEmpty()
         ? "(empty)" : restMethod.getVersionWithDefault());
+    pw.printf("Simple collection:  %s\n",
+        restMethod.getRestCollectionName().isEmpty()
+        ? "(empty)" : restMethod.getSimpleRestCollectionName());
     pw.printf("Versioned collection:  %s\n",
         restMethod.getRestCollectionName().isEmpty()
         ? "(empty)" : restMethod.getRestCollectionName());
