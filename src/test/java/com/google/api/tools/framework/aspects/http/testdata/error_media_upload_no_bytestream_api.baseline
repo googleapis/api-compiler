@@ -1,0 +1,12 @@
+documentation {
+}
+http {
+  rules {
+    selector: "protiary.test.TestService.Call1"
+    post: "/v1/test"
+    media_upload {
+      enabled: true
+    }
+  }
+}
+
