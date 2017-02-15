@@ -143,9 +143,9 @@ public class ApiVersionUtil {
     for (Interface iface : model.getSymbolTable().getInterfaces()) {
       for (Method method : iface.getReachableMethods()) {
         if (method.hasAttribute(HttpAttribute.KEY)) {
-          versions.add(
-              extractDefaultMajorVersionFromRestName(
-                  method.getAttribute(HttpAttribute.KEY).getRestMethod().getRestFullMethodName()));
+          for (HttpAttribute binding : method.getAttribute(HttpAttribute.KEY).getAllBindings()) {
+            versions.add(binding.getRestMethod().getVersionWithDefault());
+          }
         }
       }
     }
