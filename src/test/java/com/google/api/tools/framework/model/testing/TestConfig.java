@@ -37,7 +37,6 @@ import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.Message;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -80,6 +79,7 @@ public class TestConfig {
   private final Path descriptorFile;
   private final TestDataLocator testDataLocator;
   private final String tempDir;
+  private final List<String> enabledExperiments;
 
   /**
    * Creates a test api. The passed temp dir is managed by the caller; in a test, it is usally
@@ -87,9 +87,24 @@ public class TestConfig {
    * imports must be retrievable via the passed test data locator.
    */
   public TestConfig(TestDataLocator testDataLocator, String tempDir, List<String> protoFiles) {
+    this(testDataLocator, tempDir, protoFiles, ImmutableList.<String>of());
+  }
+
+  /**
+   * Creates a test api with a list of enabled experiments. The passed temp dir is managed by the
+   * caller; in a test, it is usally created by the TemporaryFolder rule of junit. The passed proto
+   * files as well as their imports must be retrievable via the passed test data locator.
+   */
+  public TestConfig(
+      TestDataLocator testDataLocator,
+      String tempDir,
+      List<String> protoFiles,
+      List<String> enabledExperiments) {
     this.testDataLocator = testDataLocator;
     this.protoFiles = ImmutableList.copyOf(protoFiles);
     this.tempDir = tempDir;
+    this.enabledExperiments = enabledExperiments;
+
     // Extract all needed proto files.
     Set<String> extracted = Sets.newHashSet();
     for (String source : protoFiles) {
@@ -211,8 +226,8 @@ public class TestConfig {
    */
   public Model createModel(List<String> configFileNames) {
     try {
-      Model model = Model.create(getDescriptor(), protoFiles, ImmutableList.<String>of(),
-          ExtensionPool.EMPTY);
+      Model model =
+          Model.create(getDescriptor(), protoFiles, enabledExperiments, ExtensionPool.EMPTY);
       model.setConfigSources(getApiYamlConfigSources(model.getDiagCollector(), configFileNames));
       return model;
     } catch (IOException e) {
