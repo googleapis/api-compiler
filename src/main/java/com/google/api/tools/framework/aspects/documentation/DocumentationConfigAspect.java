@@ -33,10 +33,8 @@ import com.google.api.tools.framework.model.SymbolTable;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-
 import java.util.List;
 import java.util.Set;
-
 import javax.annotation.Nullable;
 
 /**
@@ -49,7 +47,7 @@ public class DocumentationConfigAspect
     return new DocumentationConfigAspect(model);
   }
 
-  private static final List<Page> EMPTY_PAGES = ImmutableList.of();
+  private static final ImmutableList<Page> EMPTY_PAGES = ImmutableList.of();
 
   private final DocumentationProcessorSet processorSet;
 
