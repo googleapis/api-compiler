@@ -71,7 +71,7 @@ public class YamlReader {
   // Supported configuration types. (May consider to move this out here for more generic
   // use.)
   @VisibleForTesting
-  static final Map<String, Message> SUPPORTED_CONFIG_TYPES =
+  static final ImmutableMap<String, Message> SUPPORTED_CONFIG_TYPES =
       ImmutableMap.<String, Message>of(
       Service.getDescriptor().getFullName(), Service.getDefaultInstance());
 

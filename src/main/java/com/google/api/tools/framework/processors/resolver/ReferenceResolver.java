@@ -65,8 +65,9 @@ class ReferenceResolver extends Visitor {
     addExtraExtensionTypes();
   }
 
-  private static final Set<String> WHITELISTED_EXTENSION_TYPES = ImmutableSet.of(
- );
+  private static final ImmutableSet<String> WHITELISTED_EXTENSION_TYPES =
+      ImmutableSet.of(
+          );
 
   private static boolean isWhitelistedExtensionType(String type) {
     for (String whitelistedType : WHITELISTED_EXTENSION_TYPES) {
