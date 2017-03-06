@@ -13,7 +13,7 @@ WARNING: library_example_yaml.yaml: Operation 'post' in path '/v1/shelves/{shelv
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
-  name: "library_example_googleapis_com_v1"
+  name: "v1.library_example_googleapis_com"
   methods {
     name: "RestrictedGetShelf"
     request_type_url: "type.googleapis.com/namespace.types.RestrictedGetShelfRequest"
@@ -464,55 +464,55 @@ documentation {
 }
 http {
   rules {
-    selector: "library_example_googleapis_com_v1.RestrictedGetShelf"
+    selector: "v1.library_example_googleapis_com.RestrictedGetShelf"
     get: "/v1/restricted/shelves/{shelves_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ListShelves"
+    selector: "v1.library_example_googleapis_com.ListShelves"
     get: "/v1/shelves"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.CreateShelf"
+    selector: "v1.library_example_googleapis_com.CreateShelf"
     post: "/v1/shelves"
     body: "shelf"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.GetShelf"
+    selector: "v1.library_example_googleapis_com.GetShelf"
     get: "/v1/shelves/{shelves_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.DeleteShelf"
+    selector: "v1.library_example_googleapis_com.DeleteShelf"
     delete: "/v1/shelves/{shelves_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ListBooks"
+    selector: "v1.library_example_googleapis_com.ListBooks"
     get: "/v1/shelves/{shelves_id}/books"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.CreateBook"
+    selector: "v1.library_example_googleapis_com.CreateBook"
     post: "/v1/shelves/{shelves_id}/books"
     body: "book"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.GetBook"
+    selector: "v1.library_example_googleapis_com.GetBook"
     get: "/v1/shelves/{shelves_id}/books/{books_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.DeleteBook"
+    selector: "v1.library_example_googleapis_com.DeleteBook"
     delete: "/v1/shelves/{shelves_id}/books/{books_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.UpdateBook"
+    selector: "v1.library_example_googleapis_com.UpdateBook"
     put: "/v1/shelves/{shelves_id}/books/{books_id}"
     body: "book"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.MoveBook"
+    selector: "v1.library_example_googleapis_com.MoveBook"
     post: "/v1/shelves/{shelves_id}/books/{books_id}:move"
     body: "body"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.MergeShelves"
+    selector: "v1.library_example_googleapis_com.MergeShelves"
     post: "/v1/shelves/{shelves_id}:merge"
     body: "body"
   }
@@ -523,51 +523,51 @@ context {
 }
 usage {
   rules {
-    selector: "library_example_googleapis_com_v1.RestrictedGetShelf"
+    selector: "v1.library_example_googleapis_com.RestrictedGetShelf"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ListShelves"
+    selector: "v1.library_example_googleapis_com.ListShelves"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.CreateShelf"
+    selector: "v1.library_example_googleapis_com.CreateShelf"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.GetShelf"
+    selector: "v1.library_example_googleapis_com.GetShelf"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.DeleteShelf"
+    selector: "v1.library_example_googleapis_com.DeleteShelf"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ListBooks"
+    selector: "v1.library_example_googleapis_com.ListBooks"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.CreateBook"
+    selector: "v1.library_example_googleapis_com.CreateBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.GetBook"
+    selector: "v1.library_example_googleapis_com.GetBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.DeleteBook"
+    selector: "v1.library_example_googleapis_com.DeleteBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.UpdateBook"
+    selector: "v1.library_example_googleapis_com.UpdateBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.MoveBook"
+    selector: "v1.library_example_googleapis_com.MoveBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.MergeShelves"
+    selector: "v1.library_example_googleapis_com.MergeShelves"
     allow_unregistered_calls: true
   }
 }
@@ -575,7 +575,7 @@ endpoints {
   name: "library-example.googleapis.com"
   aliases: "library-example.clients6.google.com"
   aliases: "content-library-example.googleapis.com"
-  apis: "library_example_googleapis_com_v1"
+  apis: "v1.library_example_googleapis_com"
 }
 control {
   environment: "servicecontrol.googleapis.com"

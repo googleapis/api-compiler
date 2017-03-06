@@ -43,7 +43,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.commons.lang3.CharUtils;
 
 /**
  * Converts Multiple swagger files from in memory {@link FileWrapper}s to {@link OpenApiFile}
@@ -56,7 +55,6 @@ public class MultiOpenApiParser {
       ImmutableMap.of("yaml", Yaml.mapper(), "yml", Yaml.mapper(), "json", Json.mapper());
   private static final String SWAGGER_VERSION_PROPERTY = "swagger";
   private static final String CURRENT_SWAGGER_VERSION = "2.0";
-  private static final char API_NAME_FILLER_CHAR = '_';
 
   /** Build resources for a single Swagger file. */
   @AutoValue
@@ -76,7 +74,7 @@ public class MultiOpenApiParser {
         Service.Builder serviceBuilder, Swagger swagger, String filename, String typeNamespace) {
       String hostname = Strings.nullToEmpty(swagger.getHost());
       String version = Strings.nullToEmpty(swagger.getInfo().getVersion());
-      String apiName = generateApiName(hostname, version);
+      String apiName = ApiNameGenerator.generate(hostname, version);
       return new AutoValue_MultiOpenApiParser_OpenApiFile(
           serviceBuilder,
           swagger,
@@ -84,36 +82,6 @@ public class MultiOpenApiParser {
           apiName,
           OpenApiConversionResources.create(swagger, filename, apiName, typeNamespace));
     }
-  }
-
-  /**
-   * Generates API name in the form [hostname]_[version], with all non ASCII alphanumeric characters
-   * replaced with '_'. Adds '_' at start if hostname is empty or starts with non alpha character,
-   * since API names can only start with alpha or '_'
-   */
-  private static String generateApiName(String hostname, String version) {
-    StringBuilder apiName = new StringBuilder();
-    if (hostname.isEmpty() || !CharUtils.isAsciiAlpha(hostname.charAt(0))) {
-      apiName.append(API_NAME_FILLER_CHAR);
-    }
-    return apiName
-        .append(stringToAlphanumeric(hostname))
-        .append(API_NAME_FILLER_CHAR)
-        .append(stringToAlphanumeric(version))
-        .toString();
-  }
-
-  /** Replaces all non alphanumeric characters in input string with '_' */
-  private static String stringToAlphanumeric(String input) {
-    StringBuilder alphaNumeric = new StringBuilder();
-    for (char hostnameChar : input.toCharArray()) {
-      if (CharUtils.isAsciiAlphanumeric(hostnameChar)) {
-        alphaNumeric.append(hostnameChar);
-      } else {
-        alphaNumeric.append(API_NAME_FILLER_CHAR);
-      }
-    }
-    return alphaNumeric.toString();
   }
 
   public static List<OpenApiFile> convert(List<FileWrapper> openApiFiles, String typeNamespace)

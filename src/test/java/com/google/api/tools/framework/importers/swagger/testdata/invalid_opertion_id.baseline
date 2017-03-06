@@ -5,7 +5,7 @@ ERROR: invalid_opertion_id.json: operationId 'test.' has duplicate entry. Duplic
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
-  name: "library_example_googleapis_com_v1"
+  name: "v1.library_example_googleapis_com"
   methods {
     name: "Test"
     request_type_url: "type.googleapis.com/TestRequest"
@@ -45,7 +45,7 @@ documentation {
 }
 http {
   rules {
-    selector: "library_example_googleapis_com_v1.Test"
+    selector: "v1.library_example_googleapis_com.Test"
     get: "/v1/pets/{name}"
   }
 }
@@ -55,7 +55,7 @@ context {
 }
 usage {
   rules {
-    selector: "library_example_googleapis_com_v1.Test"
+    selector: "v1.library_example_googleapis_com.Test"
     allow_unregistered_calls: true
   }
 }
@@ -63,7 +63,7 @@ endpoints {
   name: "library-example.googleapis.com"
   aliases: "library-example.clients6.google.com"
   aliases: "content-library-example.googleapis.com"
-  apis: "library_example_googleapis_com_v1"
+  apis: "v1.library_example_googleapis_com"
 }
 control {
   environment: "servicecontrol.googleapis.com"

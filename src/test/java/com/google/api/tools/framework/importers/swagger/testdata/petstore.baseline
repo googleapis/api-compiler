@@ -5,7 +5,7 @@ WARNING: petstore.json: Operation 'delete' in path '/pets/{id}': Operation does 
 name: "petstore.swagger.io"
 title: "Swagger Petstore"
 apis {
-  name: "petstore_swagger_io_1_0_0"
+  name: "1.petstore_swagger_io"
   methods {
     name: "FindPets"
     request_type_url: "type.googleapis.com/namespace.types.FindPetsRequest"
@@ -96,20 +96,20 @@ documentation {
 }
 http {
   rules {
-    selector: "petstore_swagger_io_1_0_0.FindPets"
+    selector: "1.petstore_swagger_io.FindPets"
     get: "/v1/api/pets"
   }
   rules {
-    selector: "petstore_swagger_io_1_0_0.AddPet"
+    selector: "1.petstore_swagger_io.AddPet"
     post: "/v1/api/pets"
     body: "pet"
   }
   rules {
-    selector: "petstore_swagger_io_1_0_0.FindPetById"
+    selector: "1.petstore_swagger_io.FindPetById"
     get: "/v1/api/pets/{id}"
   }
   rules {
-    selector: "petstore_swagger_io_1_0_0.DeletePet"
+    selector: "1.petstore_swagger_io.DeletePet"
     delete: "/v1/api/pets/{id}"
   }
 }
@@ -119,25 +119,25 @@ context {
 }
 usage {
   rules {
-    selector: "petstore_swagger_io_1_0_0.FindPets"
+    selector: "1.petstore_swagger_io.FindPets"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "petstore_swagger_io_1_0_0.AddPet"
+    selector: "1.petstore_swagger_io.AddPet"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "petstore_swagger_io_1_0_0.FindPetById"
+    selector: "1.petstore_swagger_io.FindPetById"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "petstore_swagger_io_1_0_0.DeletePet"
+    selector: "1.petstore_swagger_io.DeletePet"
     allow_unregistered_calls: true
   }
 }
 endpoints {
   name: "petstore.swagger.io"
-  apis: "petstore_swagger_io_1_0_0"
+  apis: "1.petstore_swagger_io"
 }
 control {
   environment: "servicecontrol.googleapis.com"

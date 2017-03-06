@@ -4,7 +4,7 @@ WARNING: x_google_audiences.json: Operation 'post' in path '/v1/pets': Operation
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
-  name: "library_example_googleapis_com_v1"
+  name: "v1.library_example_googleapis_com"
   methods {
     name: "SimpleMethod"
     request_type_url: "type.googleapis.com/namespace.types.SimpleMethodRequest"
@@ -60,14 +60,14 @@ documentation {
 }
 http {
   rules {
-    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    selector: "v1.library_example_googleapis_com.SimpleMethod"
     post: "/v1/pets"
     body: "my_body_ref"
   }
 }
 authentication {
   rules {
-    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    selector: "v1.library_example_googleapis_com.SimpleMethod"
     requirements {
       provider_id: "test_auth"
       audiences: "www.test_auth.com, www.test2_auth.com"
@@ -84,7 +84,7 @@ context {
 }
 usage {
   rules {
-    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    selector: "v1.library_example_googleapis_com.SimpleMethod"
     allow_unregistered_calls: true
   }
 }
@@ -92,7 +92,7 @@ endpoints {
   name: "library-example.googleapis.com"
   aliases: "library-example.clients6.google.com"
   aliases: "content-library-example.googleapis.com"
-  apis: "library_example_googleapis_com_v1"
+  apis: "v1.library_example_googleapis_com"
 }
 control {
   environment: "servicecontrol.googleapis.com"

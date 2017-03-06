@@ -2,7 +2,7 @@ WARNING: operation_name_slash.json: Operation 'get' in path '/': Operation does 
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
-  name: "library_example_googleapis_com_v1"
+  name: "v1.library_example_googleapis_com"
   methods {
     name: "SimpleMethod"
     request_type_url: "type.googleapis.com/google.protobuf.Empty"
@@ -31,20 +31,20 @@ documentation {
 }
 http {
   rules {
-    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    selector: "v1.library_example_googleapis_com.SimpleMethod"
     get: "/"
   }
 }
 authentication {
   rules {
-    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    selector: "v1.library_example_googleapis_com.SimpleMethod"
   }
 }
 context {
 }
 usage {
   rules {
-    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    selector: "v1.library_example_googleapis_com.SimpleMethod"
     allow_unregistered_calls: true
   }
 }
@@ -52,7 +52,7 @@ endpoints {
   name: "library-example.googleapis.com"
   aliases: "library-example.clients6.google.com"
   aliases: "content-library-example.googleapis.com"
-  apis: "library_example_googleapis_com_v1"
+  apis: "v1.library_example_googleapis_com"
 }
 control {
   environment: "servicecontrol.googleapis.com"

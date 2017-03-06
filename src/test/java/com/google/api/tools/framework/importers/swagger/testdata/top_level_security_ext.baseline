@@ -8,7 +8,7 @@ WARNING: top_level_security_ext.json: Operation 'post' in path '/v1/pets': Opera
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
-  name: "library_example_googleapis_com_v1"
+  name: "v1.library_example_googleapis_com"
   methods {
     name: "SecurityExtOverrideWithEmpty"
     request_type_url: "type.googleapis.com/google.protobuf.Empty"
@@ -71,32 +71,32 @@ documentation {
 }
 http {
   rules {
-    selector: "library_example_googleapis_com_v1.SecurityExtOverrideWithEmpty"
+    selector: "v1.library_example_googleapis_com.SecurityExtOverrideWithEmpty"
     get: "/v1/pets"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SecurityExtInherit"
+    selector: "v1.library_example_googleapis_com.SecurityExtInherit"
     delete: "/v1/pets"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SecurityExtRedefine"
+    selector: "v1.library_example_googleapis_com.SecurityExtRedefine"
     post: "/v1/pets"
     body: "my_body_ref"
   }
 }
 authentication {
   rules {
-    selector: "library_example_googleapis_com_v1.SecurityExtOverrideWithEmpty"
+    selector: "v1.library_example_googleapis_com.SecurityExtOverrideWithEmpty"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SecurityExtInherit"
+    selector: "v1.library_example_googleapis_com.SecurityExtInherit"
     requirements {
       provider_id: "test_auth"
       audiences: "www.test_auth.com"
     }
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SecurityExtRedefine"
+    selector: "v1.library_example_googleapis_com.SecurityExtRedefine"
     requirements {
       provider_id: "test_auth3"
       audiences: "www.test_auth3.com,www.test_auth3_2.com"
@@ -124,15 +124,15 @@ context {
 }
 usage {
   rules {
-    selector: "library_example_googleapis_com_v1.SecurityExtOverrideWithEmpty"
+    selector: "v1.library_example_googleapis_com.SecurityExtOverrideWithEmpty"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SecurityExtInherit"
+    selector: "v1.library_example_googleapis_com.SecurityExtInherit"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SecurityExtRedefine"
+    selector: "v1.library_example_googleapis_com.SecurityExtRedefine"
     allow_unregistered_calls: true
   }
 }
@@ -140,7 +140,7 @@ endpoints {
   name: "library-example.googleapis.com"
   aliases: "library-example.clients6.google.com"
   aliases: "content-library-example.googleapis.com"
-  apis: "library_example_googleapis_com_v1"
+  apis: "v1.library_example_googleapis_com"
 }
 control {
   environment: "servicecontrol.googleapis.com"

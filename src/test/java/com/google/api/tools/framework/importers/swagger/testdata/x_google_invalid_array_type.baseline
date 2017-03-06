@@ -2,7 +2,7 @@ ERROR: x-google-invalid-array-type.json: x-google-endpoints: Extension x-google-
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {
-  name: "library_example_googleapis_com_v1"
+  name: "v1.library_example_googleapis_com"
   version: "v1"
   source_context {
     file_name: "x-google-invalid-array-type.json"
@@ -23,7 +23,7 @@ endpoints {
   name: "library-example.googleapis.com"
   aliases: "library-example.clients6.google.com"
   aliases: "content-library-example.googleapis.com"
-  apis: "library_example_googleapis_com_v1"
+  apis: "v1.library_example_googleapis_com"
 }
 control {
   environment: "servicecontrol.googleapis.com"

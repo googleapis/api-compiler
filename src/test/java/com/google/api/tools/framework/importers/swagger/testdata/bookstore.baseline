@@ -2,7 +2,7 @@ WARNING: bookstore.json: Operation 'get' in path '/shelves': Operation does not 
 name: "bookstore.appspot.com"
 title: "Bookstore"
 apis {
-  name: "bookstore_cloudendpointsapis_com_1_0_0"
+  name: "1.bookstore_cloudendpointsapis_com"
   methods {
     name: "ListShelves"
     request_type_url: "type.googleapis.com/google.protobuf.Empty"
@@ -231,46 +231,46 @@ documentation {
 }
 http {
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListShelves"
+    selector: "1.bookstore_cloudendpointsapis_com.ListShelves"
     get: "/shelves"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateShelf"
+    selector: "1.bookstore_cloudendpointsapis_com.CreateShelf"
     post: "/shelves"
     body: "shelf"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetShelf"
+    selector: "1.bookstore_cloudendpointsapis_com.GetShelf"
     get: "/shelves/{shelf}"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.DeleteShelf"
+    selector: "1.bookstore_cloudendpointsapis_com.DeleteShelf"
     delete: "/shelves/{shelf}"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListBooks"
+    selector: "1.bookstore_cloudendpointsapis_com.ListBooks"
     get: "/shelves/{shelf}/books"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateBook"
+    selector: "1.bookstore_cloudendpointsapis_com.CreateBook"
     post: "/shelves/{shelf}/books"
     body: "book"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetBook"
+    selector: "1.bookstore_cloudendpointsapis_com.GetBook"
     get: "/shelves/{shelf}/books/{book}"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.DeleteBook"
+    selector: "1.bookstore_cloudendpointsapis_com.DeleteBook"
     delete: "/shelves/{shelf}/books/{book}"
   }
 }
 authentication {
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListShelves"
+    selector: "1.bookstore_cloudendpointsapis_com.ListShelves"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateShelf"
+    selector: "1.bookstore_cloudendpointsapis_com.CreateShelf"
     requirements {
       provider_id: "google_id_token"
       audiences: "848149964201.apps.googleusercontent.com,841077041629.apps.googleusercontent.com"
@@ -284,7 +284,7 @@ authentication {
     }
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetShelf"
+    selector: "1.bookstore_cloudendpointsapis_com.GetShelf"
     requirements {
       provider_id: "google_id_token"
       audiences: "848149964201.apps.googleusercontent.com,841077041629.apps.googleusercontent.com"
@@ -317,34 +317,34 @@ context {
 }
 usage {
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListShelves"
+    selector: "1.bookstore_cloudendpointsapis_com.ListShelves"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateShelf"
+    selector: "1.bookstore_cloudendpointsapis_com.CreateShelf"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetShelf"
+    selector: "1.bookstore_cloudendpointsapis_com.GetShelf"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.DeleteShelf"
+    selector: "1.bookstore_cloudendpointsapis_com.DeleteShelf"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.ListBooks"
+    selector: "1.bookstore_cloudendpointsapis_com.ListBooks"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.CreateBook"
+    selector: "1.bookstore_cloudendpointsapis_com.CreateBook"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.GetBook"
+    selector: "1.bookstore_cloudendpointsapis_com.GetBook"
   }
   rules {
-    selector: "bookstore_cloudendpointsapis_com_1_0_0.DeleteBook"
+    selector: "1.bookstore_cloudendpointsapis_com.DeleteBook"
   }
 }
 endpoints {
   name: "bookstore.appspot.com"
-  apis: "bookstore_cloudendpointsapis_com_1_0_0"
+  apis: "1.bookstore_cloudendpointsapis_com"
 }
 control {
   environment: "servicecontrol.googleapis.com"

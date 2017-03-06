@@ -48,6 +48,8 @@ public class VersionConfigAspect extends ConfigAspectBase {
 
   public static final Key<String> KEY = Key.get(String.class, Names.named("version"));
 
+  public static final String NAME = "versioning";
+
   private final Set<ProtoElement> roots = Sets.newHashSet();
 
   public static VersionConfigAspect create(Model model) {
@@ -55,7 +57,7 @@ public class VersionConfigAspect extends ConfigAspectBase {
   }
 
   private VersionConfigAspect(Model model) {
-    super(model, "versioning");
+    super(model, NAME);
   }
 
   /**
@@ -112,26 +114,8 @@ public class VersionConfigAspect extends ConfigAspectBase {
     if (Strings.isNullOrEmpty(apiVersion)) {
       // If version is not provided by user, extract major version from package name.
       apiVersion = ApiVersionUtil.extractDefaultMajorVersionFromPackageName(packageName);
-    } else {
-      // Validate format of user-defined api version .
-      if (!ApiVersionUtil.isValidApiVersion(apiVersion)) {
-        error(getLocationInConfig(api, "version"),
-            "Invalid version '%s' defined in API '%s'.", apiVersion, api.getName());
-      }
-
-      // Validate that the version in the package name is consistent with what user provides.
-      String apiVersionFromPackageName =
-          ApiVersionUtil.extractDefaultMajorVersionFromPackageName(packageName);
-      // Workaround for OpenApi builds which do not use package names and set version
-      // explicitly.
-      if (!packageName.isEmpty()
-          && !apiVersionFromPackageName.equals(
-              ApiVersionUtil.extractMajorVersionFromSemanticVersion(apiVersion))) {
-        error(iface,
-            "User-defined api version '%s' is inconsistent with the one in package name '%s'.",
-            apiVersion, packageName);
-      }
     }
+    iface.setConfig(api.toBuilder().setVersion(apiVersion).build());
     iface.putAttribute(VersionAttribute.KEY, VersionAttribute.create(apiVersion));
   }
 

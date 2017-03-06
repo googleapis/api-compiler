@@ -187,24 +187,6 @@ public class MergerTest {
     Assert.assertEquals("v2", iface.getAttribute(VersionAttribute.KEY).majorVersion());
   }
 
-  @Test public void mergesWithInvalidVersion() throws Exception {
-    createApi("service.proto");
-    model.setConfigSources(testConfig.getApiYamlConfigSources(model.getDiagCollector(),
-        ImmutableList.of("service_with_invalid_version.yaml")));
-    StandardSetup.registerStandardConfigAspects(model);
-    model.establishStage(Merged.KEY);
-    assertError("Invalid version");
-  }
-
-  @Test public void mergesWithInconsistentVersion() throws Exception {
-    createApi("service.proto");
-    model.setConfigSources(testConfig.getApiYamlConfigSources(model.getDiagCollector(),
-        ImmutableList.of("service_with_inconsistent_version.yaml")));
-    StandardSetup.registerStandardConfigAspects(model);
-    model.establishStage(Merged.KEY);
-    assertError("is inconsistent with");
-  }
-
   @Test public void mergesWithBetaVersion() throws Exception {
     createApi("service_with_beta_version.proto");
     model.setConfigSources(testConfig.getApiYamlConfigSources(model.getDiagCollector(),
@@ -214,15 +196,6 @@ public class MergerTest {
 
     Interface iface = getInterface("protiary.test.v2beta1.Storage");
     Assert.assertEquals("v2beta1", iface.getAttribute(VersionAttribute.KEY).majorVersion());
-  }
-
-  @Test public void mergesWithInvalidBetaVersion() throws Exception {
-    createApi("service.proto");
-    model.setConfigSources(testConfig.getApiYamlConfigSources(model.getDiagCollector(),
-        ImmutableList.of("service_with_invalid_beta_version.yaml")));
-    StandardSetup.registerStandardConfigAspects(model);
-    model.establishStage(Merged.KEY);
-    assertError("Invalid version");
   }
 
   @Test public void httpGet() throws Exception {
