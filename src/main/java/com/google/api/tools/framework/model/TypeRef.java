@@ -19,16 +19,12 @@ package com.google.api.tools.framework.model;
 import com.google.api.tools.framework.model.stages.Requires;
 import com.google.api.tools.framework.model.stages.Resolved;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.protobuf.DescriptorProtos.FieldDescriptorProto.Type;
-
-import java.util.Map;
 import java.util.Objects;
-
 import javax.annotation.Nullable;
 
 /**
@@ -119,46 +115,45 @@ public class TypeRef {
     }
   }
 
-  private static final BiMap<String, Type> PRIMITIVE_TYPE_MAP = ImmutableBiMap
-      .<String, Type>builder()
-      .put("double", Type.TYPE_DOUBLE)
-      .put("float", Type.TYPE_FLOAT)
-      .put("int32", Type.TYPE_INT32)
-      .put("int64", Type.TYPE_INT64)
-      .put("uint32", Type.TYPE_UINT32)
-      .put("uint64", Type.TYPE_UINT64)
-      .put("sint32", Type.TYPE_SINT32)
-      .put("sint64", Type.TYPE_SINT64)
-      .put("fixed32", Type.TYPE_FIXED32)
-      .put("fixed64", Type.TYPE_FIXED64)
-      .put("sfixed32", Type.TYPE_SFIXED32)
-      .put("sfixed64", Type.TYPE_SFIXED64)
-      .put("bool", Type.TYPE_BOOL)
-      .put("string", Type.TYPE_STRING)
-      .put("bytes", Type.TYPE_BYTES)
-      .build();
+  private static final ImmutableBiMap<String, Type> PRIMITIVE_TYPE_MAP =
+      ImmutableBiMap.<String, Type>builder()
+          .put("double", Type.TYPE_DOUBLE)
+          .put("float", Type.TYPE_FLOAT)
+          .put("int32", Type.TYPE_INT32)
+          .put("int64", Type.TYPE_INT64)
+          .put("uint32", Type.TYPE_UINT32)
+          .put("uint64", Type.TYPE_UINT64)
+          .put("sint32", Type.TYPE_SINT32)
+          .put("sint64", Type.TYPE_SINT64)
+          .put("fixed32", Type.TYPE_FIXED32)
+          .put("fixed64", Type.TYPE_FIXED64)
+          .put("sfixed32", Type.TYPE_SFIXED32)
+          .put("sfixed64", Type.TYPE_SFIXED64)
+          .put("bool", Type.TYPE_BOOL)
+          .put("string", Type.TYPE_STRING)
+          .put("bytes", Type.TYPE_BYTES)
+          .build();
 
-  private static final Map<String, WellKnownType> WELL_KNOWN_TYPE_MAP = ImmutableMap
-      .<String, WellKnownType>builder()
-
-      .put("google.protobuf.DoubleValue", WellKnownType.DOUBLE)
-      .put("google.protobuf.FloatValue", WellKnownType.FLOAT)
-      .put("google.protobuf.Int64Value", WellKnownType.INT64)
-      .put("google.protobuf.UInt64Value", WellKnownType.UINT64)
-      .put("google.protobuf.Int32Value", WellKnownType.INT32)
-      .put("google.protobuf.UInt32Value", WellKnownType.UINT32)
-      .put("google.protobuf.BoolValue", WellKnownType.BOOL)
-      .put("google.protobuf.StringValue", WellKnownType.STRING)
-      .put("google.protobuf.BytesValue", WellKnownType.BYTES)
-      .put("google.protobuf.Timestamp", WellKnownType.TIMESTAMP)
-      .put("google.protobuf.Duration", WellKnownType.DURATION)
-      .put("google.protobuf.Struct", WellKnownType.STRUCT)
-      .put("google.protobuf.Value", WellKnownType.VALUE)
-      .put("google.protobuf.ListValue", WellKnownType.LIST_VALUE)
-      .put("google.protobuf.Any", WellKnownType.ANY)
-      .put("google.protobuf.Media", WellKnownType.MEDIA)
-      .put("google.protobuf.FieldMask", WellKnownType.FIELD_MASK)
-      .build();
+  private static final ImmutableMap<String, WellKnownType> WELL_KNOWN_TYPE_MAP =
+      ImmutableMap.<String, WellKnownType>builder()
+          .put("google.protobuf.DoubleValue", WellKnownType.DOUBLE)
+          .put("google.protobuf.FloatValue", WellKnownType.FLOAT)
+          .put("google.protobuf.Int64Value", WellKnownType.INT64)
+          .put("google.protobuf.UInt64Value", WellKnownType.UINT64)
+          .put("google.protobuf.Int32Value", WellKnownType.INT32)
+          .put("google.protobuf.UInt32Value", WellKnownType.UINT32)
+          .put("google.protobuf.BoolValue", WellKnownType.BOOL)
+          .put("google.protobuf.StringValue", WellKnownType.STRING)
+          .put("google.protobuf.BytesValue", WellKnownType.BYTES)
+          .put("google.protobuf.Timestamp", WellKnownType.TIMESTAMP)
+          .put("google.protobuf.Duration", WellKnownType.DURATION)
+          .put("google.protobuf.Struct", WellKnownType.STRUCT)
+          .put("google.protobuf.Value", WellKnownType.VALUE)
+          .put("google.protobuf.ListValue", WellKnownType.LIST_VALUE)
+          .put("google.protobuf.Any", WellKnownType.ANY)
+          .put("google.protobuf.Media", WellKnownType.MEDIA)
+          .put("google.protobuf.FieldMask", WellKnownType.FIELD_MASK)
+          .build();
 
   private static final Interner<TypeRef> interner = Interners.newWeakInterner();
 

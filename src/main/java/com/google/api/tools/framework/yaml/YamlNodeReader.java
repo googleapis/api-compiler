@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import java.util.Set;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -35,18 +34,19 @@ class YamlNodeReader {
 
   private static final String PATH_SEPARATOR = "/";
 
-  private static final Set<String> WRAPPER_TYPES = ImmutableSet.<String>builder()
-      .add("google.protobuf.DoubleValue")
-      .add("google.protobuf.FloatValue")
-      .add("google.protobuf.Int64Value")
-      .add("google.protobuf.Int32Value")
-      .add("google.protobuf.UInt64Value")
-      .add("google.protobuf.UInt32Value")
-      .add("google.protobuf.Int32Value")
-      .add("google.protobuf.BoolValue")
-      .add("google.protobuf.StringValue")
-      .add("google.protobuf.BytesValue")
-      .build();
+  private static final ImmutableSet<String> WRAPPER_TYPES =
+      ImmutableSet.<String>builder()
+          .add("google.protobuf.DoubleValue")
+          .add("google.protobuf.FloatValue")
+          .add("google.protobuf.Int64Value")
+          .add("google.protobuf.Int32Value")
+          .add("google.protobuf.UInt64Value")
+          .add("google.protobuf.UInt32Value")
+          .add("google.protobuf.Int32Value")
+          .add("google.protobuf.BoolValue")
+          .add("google.protobuf.StringValue")
+          .add("google.protobuf.BytesValue")
+          .build();
 
   private final ConfigSource.Builder builder;
   private final String pathToNode;
