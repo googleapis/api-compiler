@@ -58,7 +58,7 @@ public class Model extends Element implements ConfigLocationResolver {
   // Only put files that are ABSOLUTELY UNRELATED to the API Service but are
   // still included in the FileDescriptorSet by protoc. Each file should be
   // accompanied by a comment justifying the reason for exclusion.
-  private static final Set<String> BLACK_LISTED_FILES =
+  private static final ImmutableSet<String> BLACK_LISTED_FILES =
       ImmutableSet.<String>builder()
           // sawzall_message_set.proto is pulled twice in by protoc for some internal reason
           // and caused a duplicate symbol definition.

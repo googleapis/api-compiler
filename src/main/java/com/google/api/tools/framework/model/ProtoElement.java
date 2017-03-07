@@ -20,9 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Syntax;
-
 import java.util.Map;
-
 import javax.annotation.Nullable;
 
 /**
