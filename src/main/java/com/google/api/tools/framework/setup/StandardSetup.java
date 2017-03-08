@@ -37,9 +37,7 @@ import com.google.api.tools.framework.processors.merger.Merger;
 import com.google.api.tools.framework.processors.normalizer.Normalizer;
 import com.google.api.tools.framework.processors.resolver.Resolver;
 
-/**
- * A class providing registration of standard processors and config aspects.
- */
+/** A class providing registration of standard processors and config aspects. */
 public class StandardSetup {
   private StandardSetup() {}
 
