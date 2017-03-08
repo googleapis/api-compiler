@@ -76,7 +76,6 @@ public class StandardSetup {
     model.registerConfigAspect(SystemParameterConfigAspect.create(model));
 
     model.registerConfigAspect(UsageConfigAspect.create(model));
-
     model.registerConfigAspect(ControlConfigAspect.create(model));
 
     model.registerConfigAspect(AuthConfigAspect.create(model));
