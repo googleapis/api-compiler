@@ -23,12 +23,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
-
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.annotation.Nullable;
 
 /**
@@ -37,15 +35,15 @@ import javax.annotation.Nullable;
  */
 public class Context {
 
-  private static final Map<String, Object> BUILTIN =
+  private static final ImmutableMap<String, Object> BUILTIN =
       ImmutableMap.<String, Object>builder()
-        .put("BREAK", Doc.BREAK)
-        .put("SOFT_BREAK", Doc.SOFT_BREAK)
-        .put("EMPTY", Doc.EMPTY)
-        .put("TRUE", Values.TRUE)
-        .put("FALSE", Values.FALSE)
-        .put("COMMA_BREAK", Doc.text(",").add(Doc.BREAK))
-        .build();
+          .put("BREAK", Doc.BREAK)
+          .put("SOFT_BREAK", Doc.SOFT_BREAK)
+          .put("EMPTY", Doc.EMPTY)
+          .put("TRUE", Values.TRUE)
+          .put("FALSE", Values.FALSE)
+          .put("COMMA_BREAK", Doc.text(",").add(Doc.BREAK))
+          .build();
 
   private final Map<SnippetKey, Snippet> snippets;
   private final Multimap<String, Snippet> snippetsByName;
