@@ -51,9 +51,9 @@ public class ConfigRuleSet<RuleType extends Message> {
     return new ConfigRuleSet<RuleType>(ruleDescriptor, rules, model);
   }
 
-  public static final List<String> SYSTEM_PROTO_PREFIXES = ImmutableList.of(
-      "google.protobuf."
-  );
+  public static final ImmutableList<String> SYSTEM_PROTO_PREFIXES =
+      ImmutableList.of(
+          "google.protobuf.");
 
   private static final int SELECTOR_FIELD_NUM = 1;
   private static final String SELECTOR_FIELD_NAME = "selector";
