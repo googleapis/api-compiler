@@ -43,7 +43,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -208,7 +207,7 @@ public class ConfigGeneratorDriver extends ToolDriverBase {
     }
   }
 
-  private static final Set<String> EXTENDED_ELEMENTS =
+  private static final ImmutableSet<String> EXTENDED_ELEMENTS =
       ImmutableSet.of(
           "proto2.FileOptions",
           "proto2.ServiceOptions",
