@@ -191,11 +191,14 @@ public class Merger implements Processor {
     List<TypeRef> typeRefs = model.getSymbolTable().lookupMatchingTypes(typeName, kind);
 
     if (typeRefs == null || typeRefs.isEmpty()) {
-      model.getDiagCollector().addDiag(Diag.error(location,
-          "Cannot resolve additional %s type '%s' specified in the config. Make"
-          + " sure the name is right and its associated build target was included"
-          + " in your protobuf build rule.",
-          kind, typeName));
+      model
+          .getDiagCollector()
+          .addDiag(
+              Diag.error(
+                  location,
+                  "Cannot resolve additional %s type '%s' specified in the config.",
+                  kind,
+                  typeName));
     } else {
       for (TypeRef typeRef : typeRefs) {
         if (typeRef.isMessage()) {
