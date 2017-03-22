@@ -22,7 +22,7 @@ metrics:
 
 context:
   rules:
-  - selector: 'google.discovery.Discovery.*'
+  - selector: 'google.discovery.*'
     requested:
     - google.rpc.context.VisibilityContext
 

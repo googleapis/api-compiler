@@ -11,5 +11,5 @@ http:
 
 backend:
   rules:
-  - selector: google.discovery.Discovery.*
+  - selector: google.discovery.*
     address: "fake_discovery_backend"
