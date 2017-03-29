@@ -23,9 +23,7 @@ import com.google.common.base.Strings;
 import com.google.inject.Key;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Message;
-
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 /**
@@ -36,16 +34,15 @@ import javax.annotation.Nullable;
 public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeType>
     extends ConfigAspectBase {
 
-  /**
-   * Predicate determining whether a rule of the aspect is applicable to the element.
-   */
+  /** Predicate determining whether a rule of the aspect is applicable to the element. */
   protected abstract boolean isApplicable(ProtoElement element);
 
   /**
    * Attempts to synthesize the rule from the IDL, e.g. via an annotation. This is called if there
    * is no matching rule found for a given element. By default, returns null.
    */
-  @Nullable protected RuleType fromIdlLayer(ProtoElement element) {
+  @Nullable
+  protected RuleType fromIdlLayer(ProtoElement element) {
     return null;
   }
 
@@ -56,26 +53,33 @@ public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeT
   @Nullable
   protected abstract AttributeType evaluate(ProtoElement element, RuleType rule, boolean isFromIdl);
 
-  /**
-   * Clears the rule builder during normalization.
-   */
+  /** Clears the rule builder during normalization. */
   protected abstract void clearRuleBuilder(Service.Builder builder);
 
-  /**
-   * Adds a rule back to the rule builder, specialized for the given selector.
-   */
-  protected abstract void addToRuleBuilder(Service.Builder builder, String selector,
-      AttributeType attribute);
+  /** Adds a rule back to the rule builder, specialized for the given selector. */
+  protected abstract void addToRuleBuilder(
+      Service.Builder builder, String selector, AttributeType attribute);
 
   private final Key<AttributeType> key;
   private final ConfigRuleSet<RuleType> rules;
 
-  protected RuleBasedConfigAspect(Model model, Key<AttributeType> key, String aspectName,
-      Descriptor ruleDescriptor, List<RuleType> rules) {
+  protected RuleBasedConfigAspect(
+      Model model,
+      Key<AttributeType> key,
+      String aspectName,
+      Descriptor ruleDescriptor,
+      List<RuleType> rules) {
     super(model, aspectName);
     this.key = key;
-    this.rules = new ConfigRuleSet<>(ruleDescriptor, rules, model);
-    this.rules.reportBadSelectors(getModel().getDiagCollector(), getModel(), getAspectName());
+    this.rules =
+        new ConfigRuleSet<>(
+            ruleDescriptor,
+            rules,
+            model.getLocationResolver(),
+            model.getExperiments(),
+            model.getDiagCollector());
+    this.rules.reportBadSelectors(
+        getModel().getDiagCollector(), getModel().getLocationResolver(), getAspectName());
   }
 
   @Override
@@ -101,7 +105,8 @@ public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeT
   @Override
   public void endMerging() {
     // Report any unmatched rules.
-    rules.reportUnmatchedRules(getModel().getDiagCollector(), getModel(), getAspectName());
+    rules.reportUnmatchedRules(
+        getModel().getDiagCollector(), getModel().getLocationResolver(), getAspectName());
   }
 
   @Override

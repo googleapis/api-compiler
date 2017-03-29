@@ -39,9 +39,7 @@ import com.google.protobuf.Syntax;
 import com.google.protobuf.Type;
 import java.util.List;
 
-/**
- * Visits each element in the model and generates the normalized descriptor representation.
- */
+/** Visits each element in the model and generates the normalized descriptor representation. */
 class DescriptorNormalizer extends Visitor {
 
   /**
@@ -61,8 +59,8 @@ class DescriptorNormalizer extends Visitor {
   DescriptorNormalizer(Model model) {
     super(model.getScoper(), false);
     this.model = model;
-    this.includeDefaults = model.isExperimentEnabled(INCLUDE_DESCRIPTOR_DEFAULTS_EXPERIMENT);
-
+    this.includeDefaults =
+        model.getExperiments().isExperimentEnabled(INCLUDE_DESCRIPTOR_DEFAULTS_EXPERIMENT);
   }
 
   void run(Service.Builder builder) {
@@ -76,48 +74,51 @@ class DescriptorNormalizer extends Visitor {
     builder.addAllEnums(enums);
   }
 
-  @VisitsBefore void normalize(Interface iface) {
+  @VisitsBefore
+  void normalize(Interface iface) {
     Api.Builder coreApiBuilder = Api.newBuilder().setName(iface.getFullName());
     coreApiBuilder.setSourceContext(
-        SourceContext.newBuilder()
-            .setFileName(iface.getFile().getLocation().getDisplayString()));
+        SourceContext.newBuilder().setFileName(iface.getFile().getLocation().getDisplayString()));
     coreApiBuilder.setSyntax(iface.getSyntax());
 
     for (Method method : iface.getReachableMethods()) {
       com.google.protobuf.Method.Builder coreMethodBuilder =
-          com.google.protobuf.Method.newBuilder().setName(method.getSimpleName())
-          .setRequestTypeUrl(generateTypeUrl(method.getInputType()))
-          .setResponseTypeUrl(generateTypeUrl(method.getOutputType()));
+          com.google.protobuf.Method.newBuilder()
+              .setName(method.getSimpleName())
+              .setRequestTypeUrl(generateTypeUrl(method.getInputType()))
+              .setResponseTypeUrl(generateTypeUrl(method.getOutputType()));
 
       coreMethodBuilder.setRequestStreaming(method.getRequestStreaming());
       coreMethodBuilder.setResponseStreaming(method.getResponseStreaming());
-      coreMethodBuilder.addAllOptions(DescriptorNormalization.getMethodOptions(
-          method.getOptionFields(),
-          false,
-          includeDefaults));
+      coreMethodBuilder.addAllOptions(
+          DescriptorNormalization.getMethodOptions(
+              method.getOptionFields(),
+              false,
+              includeDefaults));
       coreApiBuilder.addMethods(coreMethodBuilder);
     }
 
-    coreApiBuilder.addAllOptions(DescriptorNormalization.getOptions(iface.getProto(),
-        includeDefaults));
+    coreApiBuilder.addAllOptions(
+        DescriptorNormalization.getOptions(iface.getProto(), includeDefaults));
     coreApiBuilder.setVersion(iface.getAttribute(VersionAttribute.KEY).majorVersion());
     apis.add(coreApiBuilder.build());
   }
 
-  @VisitsBefore void normalize(MessageType message) {
+  @VisitsBefore
+  void normalize(MessageType message) {
     Type.Builder coreTypeBuilder = Type.newBuilder().setName(message.getFullName());
-    coreTypeBuilder.setSourceContext(SourceContext.newBuilder()
-        .setFileName(message.getFile().getLocation().getDisplayString()));
+    coreTypeBuilder.setSourceContext(
+        SourceContext.newBuilder().setFileName(message.getFile().getLocation().getDisplayString()));
     coreTypeBuilder.setSyntax(message.getSyntax());
 
     for (Field field : message.getReachableFields()) {
       com.google.protobuf.Field.Builder coreFieldBuilder =
           com.google.protobuf.Field.newBuilder()
-          .setName(field.getSimpleName())
-          .setNumber(field.getNumber())
-          .setKind(toCoreFieldKind(field.getProto()))
-          .setCardinality(toCoreFieldCardinality(field.getProto()))
-          .setJsonName(field.getJsonName());
+              .setName(field.getSimpleName())
+              .setNumber(field.getNumber())
+              .setKind(toCoreFieldKind(field.getProto()))
+              .setCardinality(toCoreFieldCardinality(field.getProto()))
+              .setJsonName(field.getJsonName());
 
       if (field.getType().isEnum() || field.getType().isMessage()) {
         coreFieldBuilder.setTypeUrl(generateTypeUrl(field.getType()));
@@ -138,13 +139,13 @@ class DescriptorNormalizer extends Visitor {
       if (proto.hasDefaultValue()) {
         coreFieldBuilder.setDefaultValue(proto.getDefaultValue());
       }
-      coreFieldBuilder.addAllOptions(DescriptorNormalization.getOptions(field.getProto(),
-          includeDefaults));
+      coreFieldBuilder.addAllOptions(
+          DescriptorNormalization.getOptions(field.getProto(), includeDefaults));
       coreTypeBuilder.addFields(coreFieldBuilder.build());
     }
 
-    coreTypeBuilder.addAllOptions(DescriptorNormalization.getOptions(message.getProto(),
-        includeDefaults));
+    coreTypeBuilder.addAllOptions(
+        DescriptorNormalization.getOptions(message.getProto(), includeDefaults));
     coreTypeBuilder.addAllOneofs(DescriptorNormalization.getOneofs(message.getProto()));
     types.add(coreTypeBuilder.build());
   }
@@ -163,10 +164,12 @@ class DescriptorNormalizer extends Visitor {
     return false;
   }
 
-  @VisitsBefore void normalize(EnumType enumType) {
+  @VisitsBefore
+  void normalize(EnumType enumType) {
     Enum.Builder coreEnumBuilder = Enum.newBuilder().setName(enumType.getFullName());
-    coreEnumBuilder.setSourceContext(SourceContext.newBuilder()
-        .setFileName(enumType.getFile().getLocation().getDisplayString()));
+    coreEnumBuilder.setSourceContext(
+        SourceContext.newBuilder()
+            .setFileName(enumType.getFile().getLocation().getDisplayString()));
     coreEnumBuilder.setSyntax(enumType.getSyntax());
 
     for (EnumValue value : enumType.getReachableValues()) {
@@ -177,13 +180,13 @@ class DescriptorNormalizer extends Visitor {
       // fully qualified name in the request.
       coreEnumValueBuilder.setName(value.getSimpleName()).setNumber(value.getNumber());
 
-      coreEnumValueBuilder.addAllOptions(DescriptorNormalization.getOptions(value.getProto(),
-          includeDefaults));
+      coreEnumValueBuilder.addAllOptions(
+          DescriptorNormalization.getOptions(value.getProto(), includeDefaults));
       coreEnumBuilder.addEnumvalue(coreEnumValueBuilder.build());
     }
 
-    coreEnumBuilder.addAllOptions(DescriptorNormalization.getOptions(enumType.getProto(),
-        includeDefaults));
+    coreEnumBuilder.addAllOptions(
+        DescriptorNormalization.getOptions(enumType.getProto(), includeDefaults));
 
     enums.add(coreEnumBuilder.build());
   }

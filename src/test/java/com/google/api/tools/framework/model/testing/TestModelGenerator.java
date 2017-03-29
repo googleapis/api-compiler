@@ -15,10 +15,11 @@
  */
 package com.google.api.tools.framework.model.testing;
 
+import com.google.api.tools.framework.model.Experiments;
+import com.google.api.tools.framework.model.ExperimentsImpl;
 import com.google.api.tools.framework.model.Model;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.Lists;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -36,10 +37,11 @@ public class TestModelGenerator {
   }
 
   public ModelTestInfo buildModel(String... basenames) throws Exception {
-    return buildModel(Arrays.asList(basenames));
+    return buildModel(Arrays.asList(basenames), ExperimentsImpl.none());
   }
 
-  public ModelTestInfo buildModel(Iterable<String> basenames) throws Exception {
+  public ModelTestInfo buildModel(Iterable<String> basenames, Experiments experiments)
+      throws Exception {
     List<String> yamlFiles = getFilesWithSuffix(basenames, ".yaml");
     List<String> protoFiles = getFilesWithSuffix(basenames, ".proto");
     // Some tests might have proto files without .proto extensions. This
@@ -51,15 +53,14 @@ public class TestModelGenerator {
     if (protoFiles.isEmpty()) {
       throw new IllegalArgumentException("No proto files found");
     }
-    TestConfig testConfig = createTestConfig(tempDir.getRoot().getPath(), protoFiles);
+    TestConfig testConfig = createTestConfig(tempDir.getRoot().getPath(), protoFiles, experiments);
     return ModelTestInfo.create(testConfig.createModel(yamlFiles), testConfig);
   }
 
-  /**
-   * Creates the Model object based on the input proto files.
-   */
-  protected TestConfig createTestConfig(String tempDir, List<String> protoFiles) {
-    return new TestConfig(testDataLocator, tempDir, protoFiles);
+  /** Creates the Model object based on the input proto files. */
+  protected TestConfig createTestConfig(
+      String tempDir, List<String> protoFiles, Experiments experiments) {
+    return new TestConfig(testDataLocator, tempDir, protoFiles, experiments);
   }
 
   protected TestDataLocator getTestDataLocator() {

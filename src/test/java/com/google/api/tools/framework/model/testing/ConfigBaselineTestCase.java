@@ -18,6 +18,7 @@ package com.google.api.tools.framework.model.testing;
 
 import com.google.api.Service;
 import com.google.api.tools.framework.model.Diag;
+import com.google.api.tools.framework.model.ExperimentsImpl;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.testing.TestModelGenerator.ModelTestInfo;
 import com.google.api.tools.framework.setup.StandardSetup;
@@ -25,6 +26,7 @@ import com.google.api.tools.framework.snippet.Doc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 import java.io.File;
 import java.io.IOException;
@@ -93,9 +95,7 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
     return false;
   }
 
-  /**
-   * Add the given experiment on the model.
-   */
+  /** Add the given experiment on the model. */
   public void enableExperiment(String experiment) {
     experiments.add(experiment);
   }
@@ -105,9 +105,7 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
     return testConfig;
   }
 
-  /**
-   * Run a test, using defaults for proto compilation, etc.
-   */
+  /** Run a test, using defaults for proto compilation, etc. */
   protected void test(String... baseNames) throws Exception {
     test(new TestModelGenerator(getTestDataLocator(), tempDir), baseNames);
   }
@@ -117,22 +115,17 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
    * base name (i.e. baseName.proto or baseName.yaml), constructs model, and calls {@link #run()}.
    * Post that, prints diags and the result of the run to the baseline.
    */
-  protected void test(
-      TestModelGenerator testModelGenerator, String... baseNames) throws Exception {
+  protected void test(TestModelGenerator testModelGenerator, String... baseNames) throws Exception {
     test(testModelGenerator, Arrays.asList(baseNames));
   }
-  protected void test(
-      TestModelGenerator testModelGenerator, Iterable<String> baseNames) throws Exception {
+
+  protected void test(TestModelGenerator testModelGenerator, Iterable<String> baseNames)
+      throws Exception {
     String firstBaseName = baseNames.iterator().next();
-    ModelTestInfo modelTestInfo = testModelGenerator.buildModel(baseNames);
+    ModelTestInfo modelTestInfo =
+        testModelGenerator.buildModel(baseNames, new ExperimentsImpl(experiments));
     this.model = modelTestInfo.getModel();
     this.testConfig = modelTestInfo.getTestConfig();
-
-    // Enable the experiments on the model.
-    for (String experiment : experiments) {
-      model.enableExperiment(experiment);
-    }
-
     // Setup
     setupModel();
 

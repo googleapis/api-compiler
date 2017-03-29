@@ -86,7 +86,7 @@ public class Model extends Element implements ConfigLocationResolver {
   public static Model create(
       FileDescriptorSet proto,
       Iterable<String> sources,
-      Iterable<String> experiments,
+      Experiments experiments,
       ExtensionPool extensionPool) {
     return new Model(proto, sources, experiments, extensionPool, new BoundedDiagCollector());
   }
@@ -98,7 +98,7 @@ public class Model extends Element implements ConfigLocationResolver {
   public static Model create(
       FileDescriptorSet proto,
       Iterable<String> sources,
-      Iterable<String> experiments,
+      Experiments experiments,
       ExtensionPool extensionPool,
       DiagCollector diagCollector) {
     return new Model(proto, sources, experiments, extensionPool, diagCollector);
@@ -110,12 +110,14 @@ public class Model extends Element implements ConfigLocationResolver {
    * as for all dependencies.
    */
   public static Model create(FileDescriptorSet proto, Iterable<String> sources) {
-    return new Model(proto, sources, null, ExtensionPool.EMPTY, new BoundedDiagCollector());
+    return new Model(
+        proto, sources, ExperimentsImpl.none(), ExtensionPool.EMPTY, new BoundedDiagCollector());
   }
 
   /** Creates an model where all protos in the descriptor are considered to be sources. */
   public static Model create(FileDescriptorSet proto) {
-    return new Model(proto, null, null, ExtensionPool.EMPTY, new BoundedDiagCollector());
+    return new Model(
+        proto, null, ExperimentsImpl.none(), ExtensionPool.EMPTY, new BoundedDiagCollector());
   }
 
   /**
@@ -155,13 +157,13 @@ public class Model extends Element implements ConfigLocationResolver {
   }
 
   private ImmutableList<ProtoFile> files;
-  private ImmutableSet<String> experiments;
+  private final Experiments experiments;
   private final Map<Key<?>, Processor> processors = Maps.newLinkedHashMap();
   private final List<ConfigAspect> configAspects = Lists.newArrayList();
   private final DiagCollector diagCollector;
   private final DiagSuppressor diagSuppressor;
   private Set<String> visibilityLabels = Sets.newLinkedHashSet();
-  private Set<Set<String>> declaredVisibilityCombinations = Sets.newLinkedHashSet();;
+  private Set<Set<String>> declaredVisibilityCombinations = Sets.newLinkedHashSet();
   private Scoper scoper = Scoper.UNRESTRICTED;
   private final List<ProtoElement> roots = Lists.newArrayList();
 
@@ -171,7 +173,7 @@ public class Model extends Element implements ConfigLocationResolver {
   private Model(
       FileDescriptorSet proto,
       @Nullable Iterable<String> sources,
-      @Nullable Iterable<String> experiments,
+      Experiments experiments,
       ExtensionPool extensionPool,
       DiagCollector diagCollector) {
     Set<String> sourcesSet = sources == null ? null : Sets.newHashSet(sources);
@@ -205,8 +207,7 @@ public class Model extends Element implements ConfigLocationResolver {
       }
     }
     files = builder.build();
-    this.experiments =
-        experiments == null ? ImmutableSet.<String>of() : ImmutableSet.copyOf(experiments);
+    this.experiments = experiments;
     this.diagCollector = diagCollector;
     diagSuppressor = new DiagSuppressor(diagCollector);
   }
@@ -301,15 +302,12 @@ public class Model extends Element implements ConfigLocationResolver {
     return declaredVisibilityCombinations;
   }
 
-  /** Checks whether a given experiment is enabled. */
-  public boolean isExperimentEnabled(String experiment) {
-    return experiments.contains(experiment);
+  public Experiments getExperiments() {
+    return experiments;
   }
 
-  /** Enables the given experiment (for testing). */
-  @VisibleForTesting
-  public void enableExperiment(String experiment) {
-    this.experiments = FluentIterable.from(experiments).append(experiment).toSet();
+  public ConfigLocationResolver getLocationResolver() {
+    return this;
   }
 
   // API v1 version suffix.
@@ -403,7 +401,7 @@ public class Model extends Element implements ConfigLocationResolver {
       ConfigSource.Builder builder = mergedConfigs.get(descriptor);
       if (builder == null) {
         mergedConfigs.put(descriptor, config.toBuilder());
-      } else if (isExperimentEnabled(PROTO3_CONFIG_MERGING_EXPERIMENT)) {
+      } else if (experiments.isExperimentEnabled(PROTO3_CONFIG_MERGING_EXPERIMENT)) {
         builder.mergeFromWithProto3Semantics(config);
       } else {
         builder.mergeFrom(config);
@@ -544,8 +542,7 @@ public class Model extends Element implements ConfigLocationResolver {
    */
   @Override
   public Location getLocationInConfig(Message message, String fieldName) {
-    Location loc = getServiceConfigSource().getLocation(message, fieldName, null);
-    return loc != SimpleLocation.UNKNOWN ? loc : SimpleLocation.TOPLEVEL;
+    return getServiceConfigSource().getLocationInConfig(message, fieldName);
   }
 
   /**
@@ -556,8 +553,8 @@ public class Model extends Element implements ConfigLocationResolver {
   @Override
   public Location getLocationOfRepeatedFieldInConfig(
       Message message, String fieldName, Object elementKey) {
-    Location loc = getServiceConfigSource().getLocation(message, fieldName, elementKey);
-    return loc != SimpleLocation.UNKNOWN ? loc : SimpleLocation.TOPLEVEL;
+    return getServiceConfigSource()
+        .getLocationOfRepeatedFieldInConfig(message, fieldName, elementKey);
   }
 
   /** Adds diagnosis to the model if it is not suppressed. */

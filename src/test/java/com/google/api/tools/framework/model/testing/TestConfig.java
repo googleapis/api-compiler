@@ -23,6 +23,8 @@ import com.google.api.AuthProto;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.ConfigSource;
 import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.Experiments;
+import com.google.api.tools.framework.model.ExperimentsImpl;
 import com.google.api.tools.framework.model.ExtensionPool;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.yaml.YamlReader;
@@ -79,7 +81,7 @@ public class TestConfig {
   private final Path descriptorFile;
   private final TestDataLocator testDataLocator;
   private final String tempDir;
-  private final List<String> enabledExperiments;
+  private final Experiments enabledExperiments;
 
   /**
    * Creates a test api. The passed temp dir is managed by the caller; in a test, it is usally
@@ -87,7 +89,7 @@ public class TestConfig {
    * imports must be retrievable via the passed test data locator.
    */
   public TestConfig(TestDataLocator testDataLocator, String tempDir, List<String> protoFiles) {
-    this(testDataLocator, tempDir, protoFiles, ImmutableList.<String>of());
+    this(testDataLocator, tempDir, protoFiles, ExperimentsImpl.none());
   }
 
   /**
@@ -99,7 +101,7 @@ public class TestConfig {
       TestDataLocator testDataLocator,
       String tempDir,
       List<String> protoFiles,
-      List<String> enabledExperiments) {
+      Experiments enabledExperiments) {
     this.testDataLocator = testDataLocator;
     this.protoFiles = ImmutableList.copyOf(protoFiles);
     this.tempDir = tempDir;
