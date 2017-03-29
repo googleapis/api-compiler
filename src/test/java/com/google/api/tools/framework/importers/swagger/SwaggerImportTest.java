@@ -337,6 +337,11 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void x_google_endpoints_with_dns() throws Exception {
+    testWithDefaults("x-google-endpoints-with-dns");
+  }
+
+  @Test
   public void error_multiple_extension_for_same_property() throws Exception {
     testWithDefaults("error_multiple_extension_for_same_property");
   }
