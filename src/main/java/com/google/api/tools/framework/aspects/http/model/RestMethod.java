@@ -127,9 +127,9 @@ public class RestMethod extends Element {
   }
 
   /**
-   * Returns the full REST method name.
+   * Returns the full REST method name, including version and collection.
    */
-  public String getRestFullMethodName() {
+  public String getRestVersionedFullMethodName() {
     if (Strings.isNullOrEmpty(getRestCollectionName())) {
       // Top-level method without collection
       return getRestMethodName();
@@ -138,7 +138,7 @@ public class RestMethod extends Element {
   }
 
   /**
-   * Returns the full rest name without the version string.
+   * Returns the full rest name without the version string, including collection.
    */
   public String getRestFullMethodNameNoVersion() {
     if (Strings.isNullOrEmpty(baseCollectionName)) {
@@ -180,13 +180,7 @@ public class RestMethod extends Element {
    * Returns the versioned rest collection name.
    */
   public String getRestCollectionName() {
-    String sep;
-    if (Strings.isNullOrEmpty(version) || Strings.isNullOrEmpty(baseCollectionName)) {
-      sep = "";
-    } else {
-      sep = ".";
-    }
-    return Strings.isNullOrEmpty(version) ? baseCollectionName : version + sep + baseCollectionName;
+    return CollectionAttribute.versionedCollectionName(version, baseCollectionName);
   }
 
   /**
@@ -202,7 +196,7 @@ public class RestMethod extends Element {
    * Returns the rest collection name without version prefix. Returns empty if there is no
    * collection specified in the rest method.
    */
-  public String getRestCollectionNameNoVersion() {
+  public String getBaseRestCollectionName() {
     return baseCollectionName;
   }
 

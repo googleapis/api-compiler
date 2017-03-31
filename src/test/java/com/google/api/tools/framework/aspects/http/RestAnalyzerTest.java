@@ -180,16 +180,13 @@ public class RestAnalyzerTest extends BaselineTestCase {
     pw.printf(
         "Versioned collection:  %s\n",
         restMethod.getRestCollectionName().isEmpty()
-            ? "(empty)"
-            : restMethod.getRestCollectionName());
-    pw.printf(
-        "Unversioned collection:  %s\n",
-        restMethod.getRestCollectionNameNoVersion().isEmpty()
-            ? "(empty)"
-            : restMethod.getRestCollectionNameNoVersion());
-    pw.printf(
-        "Custom Name: %s\n",
-        restMethod.getRestKind() == RestKind.CUSTOM ? restMethod.getRestMethodName() : "(null)");
+        ? "(empty)" : restMethod.getRestCollectionName());
+     pw.printf("Base collection:  %s\n",
+        restMethod.getBaseRestCollectionName().isEmpty()
+        ? "(empty)" : restMethod.getBaseRestCollectionName());
+    pw.printf("Custom Name: %s\n",
+        restMethod.getRestKind() == RestKind.CUSTOM
+        ? restMethod.getRestMethodName() : "(null)");
 
     List<Diag> diags = model.getDiagCollector().getDiags();
     if (diags.size() > 0) {

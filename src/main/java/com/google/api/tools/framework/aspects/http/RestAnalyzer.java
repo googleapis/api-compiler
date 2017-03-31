@@ -125,7 +125,7 @@ public class RestAnalyzer {
     }
 
     // Add method to collection.
-    String baseCollectionName = restMethod.getRestCollectionNameNoVersion();
+    String baseCollectionName = restMethod.getBaseRestCollectionName();
     String version = restMethod.getVersion();
     String versionedCollectionName = version + "." + baseCollectionName;
     CollectionAttribute collection = collectionMap.get(versionedCollectionName);

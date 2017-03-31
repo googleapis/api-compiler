@@ -73,13 +73,19 @@ public class CollectionAttribute extends Element {
 
   @Override
   public String getSimpleName() {
-    String sep = Strings.isNullOrEmpty(version) || Strings.isNullOrEmpty(name) ? "" : ".";
-    return Strings.isNullOrEmpty(version) ? name : version + sep + name;
+    String fullName = getFullName();
+    return Strings.isNullOrEmpty(fullName) ? "" : fullName.substring(fullName.lastIndexOf('.') + 1);
   }
 
   @Override
   public String getFullName() {
-    return getSimpleName();
+    return versionedCollectionName(version, name);
+  }
+
+  public static String versionedCollectionName(String version, String baseCollectionName) {
+    String sep =
+        Strings.isNullOrEmpty(version) || Strings.isNullOrEmpty(baseCollectionName) ? "" : ".";
+    return version + sep + baseCollectionName;
   }
 
   /** Returns the methods associated with this collection. */
@@ -164,11 +170,8 @@ public class CollectionAttribute extends Element {
     return Strings.isNullOrEmpty(version) ? "v1" : version;
   }
 
-  /**
-   * Returns the full name with version prefix stripped if the full name has it. Returns empty if
-   * there is no collection specified in the url.
-   */
-  public String getFullNameNoVersion() {
+  /** Returns the base collection name, without version. */
+  public String getBaseName() {
     return name;
   }
 
