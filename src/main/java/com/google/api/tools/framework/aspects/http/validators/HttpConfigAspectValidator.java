@@ -165,10 +165,11 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
       if (!visited.add(type.getMessageType())) {
         error(
             method,
-            "cyclic message field '%s' referred to by message '%s' cannot be mapped "
+            "cyclic message field '%s' referred to by message '%s' in method '%s' cannot be mapped "
                 + "as an HTTP parameter.",
             field.getFullName(),
-            getInputMessageName(method));
+            getInputMessageName(method),
+            method);
         return;
       }
       if (type.isRepeated()) {

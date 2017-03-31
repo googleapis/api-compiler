@@ -80,7 +80,7 @@ public class SourceParser {
       + "\\s*"
       + "(?<instrcode>[\\w-]+)" // Instruction code
       + "\\s+"
-      + "(?<instrarg>[\\S\\s]+?)" // Instruction arg
+      + "(?<instrarg>[\\S\\s]*?)" // Instruction arg
       + "\\s*"
       + "(?<!\\\\)==\\)(?:\n|\\Z)?"); // End tag
 
