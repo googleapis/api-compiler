@@ -99,11 +99,25 @@ public class CollectionAttribute extends Element {
     }
     Collections.sort(
         result,
+        // Sort first on RPC method name, then on primary binding, then on REST name
         new Comparator<RestMethod>() {
-
           @Override
           public int compare(RestMethod o1, RestMethod o2) {
-            return o1.getFullName().compareTo(o2.getFullName());
+            int nameComparison = o1.getFullName().compareTo(o2.getFullName());
+            if (nameComparison != 0) {
+              return nameComparison;
+            }
+
+            boolean o1Primary = RestMethod.getPrimaryRestMethod(o1.getBaseMethod()).equals(o1);
+            boolean o2Primary = RestMethod.getPrimaryRestMethod(o2.getBaseMethod()).equals(o2);
+            if (o1Primary && !o2Primary) {
+              return -1;
+            } else if (o2Primary && !o1Primary) {
+              return 1;
+            } else {
+              return o1.getRestFullMethodNameNoVersion()
+                  .compareTo(o2.getRestFullMethodNameNoVersion());
+            }
           }
         });
     return result;
