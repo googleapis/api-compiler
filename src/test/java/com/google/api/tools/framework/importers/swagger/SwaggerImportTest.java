@@ -337,8 +337,23 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
-  public void x_google_endpoints_with_dns() throws Exception {
-    testWithDefaults("x-google-endpoints-with-dns");
+  public void x_google_endpoints_with_ip() throws Exception {
+    testWithDefaults("x-google-endpoints-with-ip");
+  }
+
+  @Test
+  public void x_google_endpoints_with_cname() throws Exception {
+    testWithDefaults("x-google-endpoints-with-cname");
+  }
+
+  @Test
+  public void x_google_endpoints_with_mismatched_name() throws Exception {
+    testWithDefaults("x-google-endpoints-with-mismatched-name");
+  }
+
+  @Test
+  public void x_google_endpoints_with_multiple_entries() throws Exception {
+    testWithDefaults("x-google-endpoints-with-multiple-entries");
   }
 
   @Test
@@ -349,11 +364,6 @@ public class SwaggerImportTest extends BaselineTestCase {
   @Test
   public void x_google_audiences() throws Exception {
     testWithDefaults("x_google_audiences");
-  }
-
-  @Test
-  public void x_google_invalid_array_type() throws Exception {
-    testWithDefaults("x-google-invalid-array-type");
   }
 
   @Test

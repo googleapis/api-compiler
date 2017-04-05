@@ -1,4 +1,4 @@
-ERROR: x-google-invalid-unknown-field.json: Swagger Spec: Extension x-google-endpoints value cannot be parsed successfully. Details: Cannot find field: invalid in message google.api.Endpoint
+ERROR: x-google-invalid-unknown-field.json: x-google-endpoints: Extension x-google-endpoints cannot be converted into proto type google.api.Endpoint. Details: Cannot find field: invalid in message google.api.Endpoint
 name: "library-example.googleapis.com"
 title: "Google Example Library API"
 apis {

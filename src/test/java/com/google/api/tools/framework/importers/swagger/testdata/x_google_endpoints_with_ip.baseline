@@ -4,7 +4,7 @@ apis {
   name: "v1.library_example_endpoints_test_project_cloud_goog"
   version: "v1"
   source_context {
-    file_name: "x-google-endpoints-with-dns.json"
+    file_name: "x-google-endpoints-with-ip.json"
   }
 }
 documentation {
@@ -22,15 +22,6 @@ endpoints {
   name: "library-example.endpoints.test-project.cloud.goog"
   apis: "v1.library_example_endpoints_test_project_cloud_goog"
   target: "5.5.5.5"
-}
-endpoints {
-  name: "library-example2.endpoints.test-project.cloud.goog"
-  apis: "v1.library_example_endpoints_test_project_cloud_goog"
-  target: "test.appspot.com"
-}
-endpoints {
-  name: "library-example3.endpoints.test-project.cloud.goog"
-  apis: "v1.library_example_endpoints_test_project_cloud_goog"
 }
 control {
   environment: "servicecontrol.googleapis.com"

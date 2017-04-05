@@ -109,9 +109,10 @@ public class VendorExtensionProtoConverter {
       diagCollector.addDiag(
           Diag.error(
               new SimpleLocation(extensionName),
-              "Extension %s cannot be converted into proto type %s.",
+              "Extension %s cannot be converted into proto type %s. Details: %s",
               extensionName,
-              prototype.getDescriptorForType().getFullName()));
+              prototype.getDescriptorForType().getFullName(),
+              ex.getMessage()));
       return null;
     }
   }

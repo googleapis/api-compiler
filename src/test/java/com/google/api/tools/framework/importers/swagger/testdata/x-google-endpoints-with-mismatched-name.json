@@ -8,15 +8,8 @@
     "host": "library-example.endpoints.test-project.cloud.goog",
     "x-google-endpoints": [
       {
-        "name": "library-example.endpoints.test-project.cloud.goog",
+        "name": "mismatched-name.endpoints.test-project.cloud.goog",
         "target": "5.5.5.5"
-      },
-      {
-        "name": "library-example2.endpoints.test-project.cloud.goog",
-        "target": "test.appspot.com"
-      },
-      {
-        "name": "library-example3.endpoints.test-project.cloud.goog"
       }
     ],
     "paths": {

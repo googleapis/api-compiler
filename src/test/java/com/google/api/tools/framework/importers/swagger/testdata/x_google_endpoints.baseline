@@ -25,12 +25,6 @@ endpoints {
   apis: "v1.library_example_googleapis_com"
   allow_cors: true
 }
-endpoints {
-  name: "library-example2.googleapis.com"
-  aliases: "library-example2.clients6.google.com"
-  aliases: "content-library-example2.googleapis.com"
-  apis: "v1.library_example_googleapis_com"
-}
 control {
   environment: "servicecontrol.googleapis.com"
 }
