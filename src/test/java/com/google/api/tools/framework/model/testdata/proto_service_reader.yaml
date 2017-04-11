@@ -1,0 +1,7 @@
+type: google.api.Service
+config_version: 3
+name: servicereadertest.example.googleapis.com
+title: A test service for ProtoServiceReader
+producer_project_id: foobar
+apis:
+- name: google.example.ProtoServiceReader

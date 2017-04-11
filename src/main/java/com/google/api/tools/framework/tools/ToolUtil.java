@@ -20,6 +20,7 @@ import com.google.api.tools.framework.model.ConfigSource;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagCollector;
 import com.google.api.tools.framework.model.Model;
+import com.google.api.tools.framework.model.ProtoServiceReader;
 import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.api.tools.framework.snippet.Doc;
 import com.google.api.tools.framework.snippet.Doc.AnsiColor;
@@ -29,6 +30,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import com.google.protobuf.TextFormat;
 import java.io.BufferedWriter;
@@ -212,15 +214,27 @@ public class ToolUtil {
     }
     return null;
   }
+
+  @Nullable
+  private static ConfigSource getConfigSourceFromFile(
+      DiagCollector diag, String filename, ByteString fileContents) {
+    if (filename.endsWith(".binarypb") || filename.endsWith(".binaryproto")) {
+      return ProtoServiceReader.readBinaryConfig(diag, filename, fileContents);
+    }
+    if (filename.endsWith(".textproto")) {
+      return ProtoServiceReader.readTextConfig(diag, filename, fileContents);
+    }
+    return YamlReader.readConfig(diag, filename, fileContents.toStringUtf8());
+  }
+
   /** Sets up the model configs, attaching to the model. */
   public static void setupModelConfigs(Model model, Set<FileWrapper> files) {
     DiagCollector diagCollector = model.getDiagCollector();
     ImmutableList.Builder<ConfigSource> builder = ImmutableList.builder();
 
     for (FileWrapper file : files) {
-      ConfigSource message =
-          YamlReader.readConfig(
-              model.getDiagCollector(), file.getFilename(), file.getFileContents().toStringUtf8());
+      ConfigSource message = getConfigSourceFromFile(
+          model.getDiagCollector(), file.getFilename(), file.getFileContents());
       if (message != null) {
         builder.add(message);
       }

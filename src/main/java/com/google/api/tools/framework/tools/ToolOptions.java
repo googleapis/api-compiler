@@ -203,14 +203,14 @@ public class ToolOptions {
       createOption(
           new TypeLiteral<List<String>>() {},
           "configs",
-          "The list of Yaml configuration files.",
+          "The list of service configuration files (Yaml, binaryproto or textproto).",
           ImmutableList.<String>of());
 
   public static final Option<List<FileWrapper>> CONFIG_FILE_CONTENTS =
       createOptionNoFlag(
           new TypeLiteral<List<FileWrapper>>() {},
           "config_file_contents",
-          "The list of Yaml configuration file names (absolute or relative) and their contents",
+          "The list of service configuration file names (absolute or relative) and their contents",
           ImmutableList.<FileWrapper>of());
 
   public static final Option<List<String>> PROTO_SOURCES =
