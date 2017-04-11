@@ -26,12 +26,14 @@ import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
 import com.google.api.tools.framework.model.SimpleLocation;
+import com.google.api.tools.framework.model.stages.Resolved;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.protobuf.Message;
+
 import java.util.List;
 import java.util.Set;
 
@@ -102,7 +104,15 @@ public abstract class ConfigAspectBase implements ConfigAspect {
    * be used for rules using the {@link #registerLintRule(LintRule)} mechanism.
    */
   public void registerLintRuleName(String... names) {
+    Preconditions.checkArgument(modelProcessingHasNotStarted(), "[Internal Error]Linters should be "
+        + "registered during aspect construction and not during processing of the model.");
     lintRuleNames.addAll(Lists.newArrayList(names));
+  }
+
+  private boolean modelProcessingHasNotStarted() {
+    // If resolved stage is established, it would mean the
+    // model processing has started.
+    return !this.model.hasAttribute(Resolved.KEY);
   }
 
   /**

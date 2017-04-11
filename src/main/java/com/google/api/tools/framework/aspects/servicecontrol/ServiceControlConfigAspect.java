@@ -33,6 +33,9 @@ public class ServiceControlConfigAspect extends ConfigAspectBase {
 
   private ServiceControlConfigAspect(Model model) {
     super(model, "servicecontrol");
+    for (String lintRuleName : ServiceControlConfigValidator.getLintRuleNames()) {
+      registerLintRuleName(lintRuleName);
+    }
   }
 
   /**

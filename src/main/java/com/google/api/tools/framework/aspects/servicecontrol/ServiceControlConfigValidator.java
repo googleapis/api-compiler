@@ -37,6 +37,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +58,10 @@ class ServiceControlConfigValidator {
 
   private static final String UNUSED_METRICS_RULE = "unused-metrics";
   private static final String UNUSED_LOGS_RULE = "unused-logs";
+
+  public static ImmutableList<String> getLintRuleNames() {
+    return ImmutableList.of(UNUSED_METRICS_RULE, UNUSED_LOGS_RULE);
+  }
 
   // The log name prefix for Cloud Audit Logs.
   private static final String CLOUD_AUDIT_LOG_PREFIX = "cloudaudit.googleapis.com";
@@ -86,8 +91,6 @@ class ServiceControlConfigValidator {
 
   private ServiceControlConfigValidator(ConfigAspectBase configAspect) {
     this.configAspect = configAspect;
-    configAspect.registerLintRuleName(UNUSED_METRICS_RULE);
-    configAspect.registerLintRuleName(UNUSED_LOGS_RULE);
   }
 
   /**
