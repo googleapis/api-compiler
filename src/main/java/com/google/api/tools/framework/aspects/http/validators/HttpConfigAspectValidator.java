@@ -31,6 +31,7 @@ import com.google.api.tools.framework.model.TypeRef;
 import com.google.api.tools.framework.model.TypeRef.WellKnownType;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import java.util.Set;
@@ -42,6 +43,12 @@ import java.util.Set;
  *     <p>TODO(user): Split this validation into more logical components.
  */
 public class HttpConfigAspectValidator extends ConfigValidator<Method> {
+
+  private static final ImmutableSet<String> ALLOWED_MAP_FIELDS_IN_QUERY_PARAM =
+      ImmutableSet.of(
+          // This map field is specially handled by the framework and will not be visible to users;
+          // it is not expected to be mapped to a query parameter.
+          "google.rpc.context.HttpHeaderContext.headers");
 
   public HttpConfigAspectValidator(DiagCollector diagCollector, DiagSuppressor diagSuppressor) {
     super(diagCollector, diagSuppressor, HttpConfigAspect.NAME, Method.class);
@@ -150,6 +157,10 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
     TypeRef type = field.getType();
     WellKnownType wkt = type.getWellKnownType();
     if (type.isMap()) {
+      if (ALLOWED_MAP_FIELDS_IN_QUERY_PARAM.contains(field.getFullName())) {
+        return;
+      }
+
       error(
           method,
           "map field '%s' referred to by message '%s' cannot be mapped as an HTTP parameter.",
