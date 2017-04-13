@@ -19,7 +19,10 @@ package com.google.api.tools.framework.aspects.documentation.source;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.google.api.tools.framework.model.SimpleDiagCollector;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
+import com.google.api.tools.framework.model.SimpleLocation;
+import com.google.api.tools.framework.model.testing.TestDiagReporter;
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.junit.Test;
@@ -34,7 +37,7 @@ import org.junit.runners.JUnit4;
 public class SourceParserTest {
 
   private SourceParser parser;
-  private final SimpleDiagCollector diag = new SimpleDiagCollector();
+  private final DiagReporter diag = TestDiagReporter.createForTest();
 
   @Test
   public void parse_html_pre() {
@@ -42,7 +45,7 @@ public class SourceParserTest {
                   + "  <pre> 1 2  3\n"
                   + " 4  5 6\n"
                   + "</pre>\nNOTCODE";
-    parser = new SourceParser(source, null, diag, "");
+    parser = new SourceParser(source, ResolvedLocation.create(SimpleLocation.UNKNOWN), diag, "");
     SourceRoot root = parser.parse();
     List<ContentElement> tlcontents = Lists.newArrayList();
     for (ContentElement elt : root.getTopLevelContents()) {
@@ -71,7 +74,7 @@ public class SourceParserTest {
                   + "  <pre> 1 2  3\n"
                   + " 4  5 6\n"
                   + "</pre>\n\nNOTCODE";
-    parser = new SourceParser(source, null, diag, "");
+    parser = new SourceParser(source, ResolvedLocation.create(SimpleLocation.UNKNOWN), diag, "");
     SourceRoot root = parser.parse();
     List<ContentElement> tlcontents = Lists.newArrayList();
     for (ContentElement elt : root.getTopLevelContents()) {
@@ -114,7 +117,7 @@ public class SourceParserTest {
                   + "    } ]"
                   + "  }"
                   + "}</code></pre>";
-    parser = new SourceParser(source, null, diag, "");
+    parser = new SourceParser(source, ResolvedLocation.create(SimpleLocation.UNKNOWN), diag, "");
     parser.parse();
   }
 
@@ -124,7 +127,7 @@ public class SourceParserTest {
                   + "c \\(== don't do anything \\==) d\n"
                   + "e \\(== f (== command arg ==) \\==) g\n"
                   + "h (== do_something_else arg1 \\==) \\(== \\==) arg5 ==) i";
-    parser = new SourceParser(source, null, diag, "");
+    parser = new SourceParser(source, ResolvedLocation.create(SimpleLocation.UNKNOWN), diag, "");
     SourceRoot root = parser.parse();
     List<ContentElement> tlcontents = Lists.newArrayList();
     for (ContentElement elt : root.getTopLevelContents()) {
@@ -165,7 +168,7 @@ public class SourceParserTest {
   public void instruction_scoping() {
     String source = "a (== do_something arg ==) ==) b\n"
         + "c (== do_something (== (== arg ==) d";
-    parser = new SourceParser(source, null, diag, "");
+    parser = new SourceParser(source, ResolvedLocation.create(SimpleLocation.UNKNOWN), diag, "");
     SourceRoot root = parser.parse();
     List<ContentElement> tlcontents = Lists.newArrayList();
     for (ContentElement elt : root.getTopLevelContents()) {

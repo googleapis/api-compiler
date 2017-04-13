@@ -24,9 +24,10 @@ import com.google.api.tools.framework.aspects.documentation.source.SourceParser;
 import com.google.api.tools.framework.aspects.documentation.source.SourceRoot;
 import com.google.api.tools.framework.aspects.documentation.source.SourceVisitor;
 import com.google.api.tools.framework.aspects.documentation.source.Text;
-import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.Element;
-import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.api.tools.framework.util.VisitsAfter;
 import com.google.api.tools.framework.util.VisitsBefore;
@@ -35,7 +36,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Set;
@@ -48,12 +48,12 @@ class SourceNormalizer implements DocumentationProcessor {
 
   private static final Joiner ARROW_JOINER = Joiner.on(" -> ");
 
-  private final DiagCollector diagCollector;
+  private final DiagReporter diagResolver;
   private final String docPath;
 
-  public SourceNormalizer(DiagCollector diagCollector, String docPath) {
-    Preconditions.checkNotNull(diagCollector, "diagCollector should not be null.");
-    this.diagCollector = diagCollector;
+  public SourceNormalizer(DiagReporter diagReporter, String docPath) {
+    Preconditions.checkNotNull(diagReporter, "diagCollector should not be null.");
+    this.diagResolver = diagReporter;
     this.docPath = docPath;
   }
 
@@ -61,6 +61,7 @@ class SourceNormalizer implements DocumentationProcessor {
    * Normalizes documentation source by substituting file inclusion instructions with external
    * content. The heading levels of external content will be adjusted based on parent's heading
    * level so that they will be nested headings of parent. For example:
+   *
    * <pre>
    *   docset1.md file:
    *   # Docset 1
@@ -77,7 +78,7 @@ class SourceNormalizer implements DocumentationProcessor {
    * @return normalized source, or source if errors detected
    */
   @Override
-  public String process(String source, Location sourceLocation, Element element) {
+  public String process(String source, LocationContext sourceLocation, Element element) {
     if (Strings.isNullOrEmpty(source)) {
       return source;
     }
@@ -86,58 +87,48 @@ class SourceNormalizer implements DocumentationProcessor {
     return result;
   }
 
-  /**
-   * Helper class to do actual normalization.
-   */
+  /** Helper class to do actual normalization. */
   private class Normalizer extends SourceVisitor {
 
-    /**
-     * Tracks the file inclusion chain to detect cyclic inclusion.
-     */
+    /** Tracks the file inclusion chain to detect cyclic inclusion. */
     private final Set<String> fileInclusionPath = Sets.newLinkedHashSet();
 
-    /**
-     * Stack of base section levels used for adjusting section levels for included content.
-     */
+    /** Stack of base section levels used for adjusting section levels for included content. */
     private final Deque<Integer> baseSectionLevels = new LinkedList<>(ImmutableList.of(0));
 
     private final StringBuilder builder = new StringBuilder();
-    private Location location = SimpleLocation.UNKNOWN;
+    private LocationContext location = ResolvedLocation.create(SimpleLocation.UNKNOWN);
     private Element element;
 
-    private String normalize(String source, Location location, Element element) {
+    private String normalize(String source, LocationContext location, Element element) {
       Preconditions.checkNotNull(source, "source should not be null.");
       Preconditions.checkNotNull(location, "location should not be null.");
       this.element = element;
-      int errorCount = diagCollector.getErrorCount();
-      SourceParser parser = new SourceParser(source, location, diagCollector, docPath);
+      int errorCount = diagResolver.getDiagCollector().getErrorCount();
+      SourceParser parser = new SourceParser(source, location, diagResolver, docPath);
       SourceRoot root = parser.parse();
-      Location savedLocation = this.location;
+      LocationContext savedLocation = this.location;
       this.location = location;
       visit(root);
       this.location = savedLocation;
-      return diagCollector.getErrorCount() > errorCount ? source : builder.toString();
+      return diagResolver.getDiagCollector().getErrorCount() > errorCount
+          ? source
+          : builder.toString();
     }
 
-    /**
-     * Visits {@link Text} element to append its content directly to the normalized result.
-     */
+    /** Visits {@link Text} element to append its content directly to the normalized result. */
     @VisitsBefore
     void normalize(Text text) {
       builder.append(text.getContent());
     }
 
-    /**
-     * Visits {@link CodeBlock} element to append its content directly to the normalized result.
-     */
+    /** Visits {@link CodeBlock} element to append its content directly to the normalized result. */
     @VisitsBefore
     void normalize(CodeBlock codeBlock) {
       builder.append(codeBlock.getContent());
     }
 
-    /**
-     * Visits {@link Instruction} element, evaluating it and appending content (usually empty).
-     */
+    /** Visits {@link Instruction} element, evaluating it and appending content (usually empty). */
     @VisitsBefore
     void normalize(Instruction instruction) {
       instruction.evalute(element);
@@ -145,8 +136,8 @@ class SourceNormalizer implements DocumentationProcessor {
     }
 
     /**
-     * Visits {@link FileInclusion} element to recursively resolve the file reference and append
-     * the external content to the normalized result.
+     * Visits {@link FileInclusion} element to recursively resolve the file reference and append the
+     * external content to the normalized result.
      */
     @VisitsBefore
     boolean normalize(FileInclusion inclusion) {
@@ -155,7 +146,11 @@ class SourceNormalizer implements DocumentationProcessor {
       // Stop visiting if cyclic file inclusion is detected.
       if (fileInclusionPath.contains(filePath)) {
         String path = ARROW_JOINER.join(fileInclusionPath);
-        inclusion.error("Cyclic file inclusion detected for '%s' via %s", filePath, path);
+        diagResolver.reportError(
+            ResolvedLocation.create(SimpleLocation.TOPLEVEL),
+            "Cyclic file inclusion detected for '%s' via %s",
+            filePath,
+            path);
         return false;
       }
       String content = inclusion.getContent();
@@ -166,14 +161,13 @@ class SourceNormalizer implements DocumentationProcessor {
       // Save state before normalizing included content.
       fileInclusionPath.add(filePath);
       baseSectionLevels.addLast(baseSectionLevels.peekLast() + inclusion.getSectionLevel());
-      normalize(content, new SimpleLocation(inclusion.getFileName()), element);
+      normalize(
+          content, ResolvedLocation.create(new SimpleLocation(inclusion.getFileName())), element);
       builder.append('\n');
       return true;
     }
 
-    /**
-     * Cleans up state after visiting the {@link FileInclusion} elements.
-     */
+    /** Cleans up state after visiting the {@link FileInclusion} elements. */
     @VisitsAfter
     void afterNormalize(FileInclusion inclusion) {
       fileInclusionPath.remove(inclusion.getRelativeFilePath());
@@ -181,14 +175,14 @@ class SourceNormalizer implements DocumentationProcessor {
     }
 
     /**
-     * Visits the {@link SectionHeader} element to adjust the heading level according to the
-     * current base heading level.
+     * Visits the {@link SectionHeader} element to adjust the heading level according to the current
+     * base heading level.
      */
     @VisitsBefore
     void normalize(SectionHeader header) {
       int sectionLevel = baseSectionLevels.peekLast() + header.getLevel();
-      builder.append(String.format(
-          "%s %s\n\n", Strings.repeat("#", sectionLevel), header.getText()));
+      builder.append(
+          String.format("%s %s\n\n", Strings.repeat("#", sectionLevel), header.getText()));
     }
   }
 }

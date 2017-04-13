@@ -39,8 +39,8 @@ public class ServiceNormalizer {
       Service service, DiagCollector diagCollector, List<FileWrapper> additionalConfigs) {
     Model model = createModel(service, additionalConfigs);
     model.establishStage(Normalized.KEY);
-    if (model.getDiagCollector().hasErrors()) {
-      for (Diag diag : model.getDiagCollector().getDiags()) {
+    if (model.getDiagReporter().getDiagCollector().hasErrors()) {
+      for (Diag diag : model.getDiagReporter().getDiagCollector().getDiags()) {
         diagCollector.addDiag(diag);
       }
       return null;
@@ -58,7 +58,7 @@ public class ServiceNormalizer {
       for (FileWrapper additionalConfig : additionalConfigs) {
         allConfigs.add(
             YamlReader.readConfig(
-                model.getDiagCollector(),
+                model.getDiagReporter().getDiagCollector(),
                 additionalConfig.getFilename(),
                 additionalConfig.getFileContents().toStringUtf8()));
       }

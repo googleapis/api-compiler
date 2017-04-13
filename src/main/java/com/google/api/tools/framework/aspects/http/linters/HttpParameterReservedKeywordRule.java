@@ -48,8 +48,10 @@ public class HttpParameterReservedKeywordRule extends LintRule<Method> {
         if (!visitedFieldNames.contains(restParameterName)) {
           visitedFieldNames.add(restParameterName);
           if (SystemParameter.isSystemParameter(restParameterName)) {
-            warning(method, "Field name '%s' is a reserved keyword, please use a different name. "
-                + "The reserved keywords are %s.",
+            warning(
+                method.getLocation(),
+                "Field name '%s' is a reserved keyword, please use a different name. "
+                    + "The reserved keywords are %s.",
                 restParameterName,
                 Joiner.on(", ").join(SystemParameter.allSystemParameters()).toLowerCase());
           }

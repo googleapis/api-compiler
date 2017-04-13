@@ -27,7 +27,6 @@ import com.google.protobuf.DescriptorProtos.FileDescriptorProto;
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Syntax;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -192,7 +191,7 @@ public class ProtoFile extends ProtoContainerElement {
     }
 
     Location location =
-        SimpleLocation.convertFrom(getSourceCodeLocation(element.getPath()), element);
+        ProtoLocation.convertFrom(getSourceCodeLocation(element.getPath()), element);
     protoToLocation.put(element, location);
     return location;
   }

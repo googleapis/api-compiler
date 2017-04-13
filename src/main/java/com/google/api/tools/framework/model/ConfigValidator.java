@@ -16,6 +16,7 @@
 
 package com.google.api.tools.framework.model;
 
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
 import com.google.common.base.Preconditions;
 
 /**
@@ -35,29 +36,23 @@ import com.google.common.base.Preconditions;
  */
 public abstract class ConfigValidator<E extends Element> {
 
+  public static final String DIAG_PREFIX = "%s: ";
   private final Class<E> elemClass;
-  private final DiagCollector diagCollector;
+  private final DiagReporter diagReporter;
   private final String validatorName;
-  private final DiagSuppressor diagSuppressor;
 
   /**
    * Constructs a new validator that is tied to a particular Element class.
    *
-   * @param diagCollector Diagnostic collector into which the new warnings/errors will be added.
-   * @param diagSuppressor Manages the set of rules for suppressing warnings messages.
+   * @param diagResolver Diagnostic resolver into which the new warnings/errors will be added.
    * @param validatorName The name to be used when printing the error message as a prefix to the
    *     generated error text.
    * @param elemClass Element class or its sub classes for which this validator needs to be invoked.
    */
-  protected ConfigValidator(
-      DiagCollector diagCollector,
-      DiagSuppressor diagSuppressor,
-      String validatorName,
-      Class<E> elemClass) {
-    this.elemClass = Preconditions.checkNotNull(elemClass);
-    this.diagCollector = Preconditions.checkNotNull(diagCollector);
-    this.validatorName = Preconditions.checkNotNull(validatorName);
-    this.diagSuppressor = Preconditions.checkNotNull(diagSuppressor);
+  protected ConfigValidator(DiagReporter diagResolver, String validatorName, Class<E> elemClass) {
+    this.elemClass = Preconditions.checkNotNull(elemClass, "elemClass");
+    this.diagReporter = Preconditions.checkNotNull(diagResolver, "diagResolver");
+    this.validatorName = Preconditions.checkNotNull(validatorName, "validatorName");
   }
 
   /** Runs the validator. */
@@ -69,13 +64,15 @@ public abstract class ConfigValidator<E extends Element> {
   }
 
   /** Helper to report an error. */
-  public void error(Object elementOrLocation, String message, Object... params) {
-    SimpleDiagCollector.error(diagCollector, elementOrLocation, validatorName, message, params);
+  public void error(LocationContext locationContext, String message, Object... params) {
+    String prefix = String.format(DIAG_PREFIX, validatorName);
+    diagReporter.reportError(locationContext, prefix + message, params);
   }
 
   /** Helper to report a warning. */
-  public void warning(Object elementOrLocation, String message, Object... params) {
-    SimpleDiagCollector.warning(
-        diagCollector, diagSuppressor, elementOrLocation, validatorName, message, params);
+  public void warning(LocationContext locationContext, String message, Object... params) {
+    String prefix = String.format(DIAG_PREFIX, validatorName);
+    diagReporter.reportWarning(locationContext, prefix + message, params);
   }
+  
 }

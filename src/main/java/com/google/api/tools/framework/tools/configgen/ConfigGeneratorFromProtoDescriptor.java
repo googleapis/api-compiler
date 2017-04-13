@@ -60,7 +60,7 @@ public class ConfigGeneratorFromProtoDescriptor extends ToolDriverBase implement
 
     // Suppress all lint warnings if the flag is true.
     if (options.get(SUPPRESS_WARNINGS)) {
-      model.suppressAllWarnings();
+      model.getDiagReporter().getDiagSuppressor().suppressAllWarningsUnder(model);
     }
 
     // Generate the normalized config.

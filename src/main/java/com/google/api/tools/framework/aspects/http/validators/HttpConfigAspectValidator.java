@@ -21,8 +21,8 @@ import com.google.api.tools.framework.aspects.http.HttpConfigAspect;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute;
 import com.google.api.tools.framework.aspects.http.model.MethodKind;
 import com.google.api.tools.framework.model.ConfigValidator;
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.DiagSuppressor;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.Field;
 import com.google.api.tools.framework.model.FieldSelector;
 import com.google.api.tools.framework.model.MessageType;
@@ -50,8 +50,8 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
           // it is not expected to be mapped to a query parameter.
           "google.rpc.context.HttpHeaderContext.headers");
 
-  public HttpConfigAspectValidator(DiagCollector diagCollector, DiagSuppressor diagSuppressor) {
-    super(diagCollector, diagSuppressor, HttpConfigAspect.NAME, Method.class);
+  public HttpConfigAspectValidator(DiagReporter diagReporter) {
+    super(diagReporter, HttpConfigAspect.NAME, Method.class);
   }
 
   @Override
@@ -98,7 +98,7 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
       WellKnownType wkt = TypeRef.of(method.getOutputMessage()).getWellKnownType();
       if (!wkt.allowedAsHttpRequestResponse()) {
         error(
-            method,
+            ResolvedLocation.create(method.getLocation()),
             "type '%s' is not allowed as a response because it does not render as "
                 + "a JSON object.",
             method.getOutputMessage().getFullName());
@@ -113,7 +113,7 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
       for (FieldSelector otherSelector : binding.getPathSelectors()) {
         if (selector != otherSelector && selector.isPrefixOf(otherSelector)) {
           error(
-              method,
+              ResolvedLocation.create(method.getLocation()),
               "path contains overlapping field paths '%s' and '%s'.",
               selector,
               otherSelector);
@@ -126,7 +126,10 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
 
     if (binding.getBody() != null && !binding.bodyCapturesUnboundFields()) {
       if (!FieldSelector.hasSinglePathElement(binding.getBody())) {
-        error(method, "body field path '%s' should not reference sub messages.", binding.getBody());
+        error(
+            ResolvedLocation.create(method.getLocation()),
+            "body field path '%s' should not reference sub messages.",
+            binding.getBody());
       } else {
         // There should be just one body as body is not unbounded.
         if (binding.getBodySelectors() != null && binding.getBodySelectors().size() == 1) {
@@ -136,7 +139,10 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
             if (!bodyField.getType().isMessage()
                 || bodyField.getType().isRepeated()
                 || !wkt.allowedAsHttpRequestResponse()) {
-              error(method, "body field path '%s' must be a non-repeated message.", bodyField);
+              error(
+                  ResolvedLocation.create(method.getLocation()),
+                  "body field path '%s' must be a non-repeated message.",
+                  bodyField);
             }
           }
         }
@@ -162,7 +168,7 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
       }
 
       error(
-          method,
+          ResolvedLocation.create(method.getLocation()),
           "map field '%s' referred to by message '%s' cannot be mapped as an HTTP parameter.",
           field.getFullName(),
           getInputMessageName(method));
@@ -175,7 +181,7 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
       }
       if (!visited.add(type.getMessageType())) {
         error(
-            method,
+            ResolvedLocation.create(method.getLocation()),
             "cyclic message field '%s' referred to by message '%s' in method '%s' cannot be mapped "
                 + "as an HTTP parameter.",
             field.getFullName(),
@@ -185,7 +191,7 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
       }
       if (type.isRepeated()) {
         error(
-            method,
+            ResolvedLocation.create(method.getLocation()),
             "repeated message field '%s' referred to by message '%s' cannot be mapped "
                 + "as an HTTP parameter.",
             field.getFullName(),
@@ -210,19 +216,19 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
     WellKnownType wkt = type.getWellKnownType();
     if (type.isMap()) {
       error(
-          method,
+          ResolvedLocation.create(method.getLocation()),
           "map field not allowed: reached via '%s' on message '%s'.",
           selector.toString(),
           getInputMessageName(method));
     } else if (type.isRepeated()) {
       error(
-          method,
+          ResolvedLocation.create(method.getLocation()),
           "repeated field not allowed: reached via '%s' on message '%s'.",
           selector,
           getInputMessageName(method));
     } else if (type.isMessage() && !wkt.allowedAsPathParameter()) {
       error(
-          method,
+          ResolvedLocation.create(method.getLocation()),
           "message field not allowed: reached via '%s' on message '%s'.",
           selector,
           getInputMessageName(method));
@@ -232,10 +238,14 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
   private void validateAdditionalBindingConstraints(Method method, HttpRule rule) {
     // Additional bindings must not specify more bindings or a selector.
     if (rule.getAdditionalBindingsCount() > 0) {
-      error(method, "rules in additional_bindings must not specify additional_bindings");
+      error(
+          ResolvedLocation.create(method.getLocation()),
+          "rules in additional_bindings must not specify additional_bindings");
     }
     if (!rule.getSelector().isEmpty()) {
-      error(method, "rules in additional_bindings must not specify a selector");
+      error(
+          ResolvedLocation.create(method.getLocation()),
+          "rules in additional_bindings must not specify a selector");
     }
   }
 

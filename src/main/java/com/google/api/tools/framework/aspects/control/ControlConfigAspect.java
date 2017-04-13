@@ -18,17 +18,17 @@ package com.google.api.tools.framework.aspects.control;
 
 import com.google.api.Service;
 import com.google.api.tools.framework.aspects.ConfigAspectBase;
+import com.google.api.tools.framework.aspects.LintRule;
 import com.google.api.tools.framework.aspects.control.model.ControlConfigUtil;
 import com.google.api.tools.framework.model.ConfigAspect;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.Model;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.List;
 
-/**
- * Configuration aspect for Control plane.
- */
+/** Configuration aspect for Control plane. */
 public class ControlConfigAspect extends ConfigAspectBase {
 
   private static final String NO_CONTROL_ENV = "presence";
@@ -51,9 +51,7 @@ public class ControlConfigAspect extends ConfigAspectBase {
     registerLintRuleName(NO_CONTROL_ENV);
   }
 
-  /**
-   * Returns an empty list since this aspect does not depend on any other aspects.
-   */
+  /** Returns an empty list since this aspect does not depend on any other aspects. */
   @Override
   public List<Class<? extends ConfigAspect>> mergeDependencies() {
     return ImmutableList.of();
@@ -63,13 +61,18 @@ public class ControlConfigAspect extends ConfigAspectBase {
   public void startMerging() {
     if (!Strings.isNullOrEmpty(environment)) {
       if (!SUPPORTED_ENVS.contains(environment)) {
-        error(getModel(), "Control environment '%s' is not one of the supported environments: %s",
-            environment, SUPPORTED_ENVS);
+        error(
+            getModel().getLocation(),
+            "Control environment '%s' is not one of the supported environments: %s",
+            environment,
+            SUPPORTED_ENVS);
       }
     } else {
-      lintWarning(NO_CONTROL_ENV, getModel(),
-          "Service %s does not have control environment configured.",
-          getModel().getServiceConfig().getName());
+      String message =
+          LintRule.formatLintWarning(
+              "Service %s does not have control environment configured.",
+              NO_CONTROL_ENV, NAME, getModel().getServiceConfig().getName());
+      getDiagReporter().reportWarning(ResolvedLocation.create(getModel().getLocation()), message);
     }
   }
 

@@ -16,8 +16,10 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
+import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.common.base.Splitter;
 import com.google.common.io.Files;
 import java.io.File;
@@ -25,9 +27,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.Nullable;
 
-/**
- * Represents Docgen file inclusion instruction.
- */
+/** Represents Docgen file inclusion instruction. */
 public class FileInclusion extends ContentElement {
   private static final String SUPPORTED_FILE_EXTENSION = "md";
 
@@ -35,20 +35,33 @@ public class FileInclusion extends ContentElement {
   private final String resolvedFilePath;
   private final int sectionLevel;
   private final String content;
+  private final DiagReporter diagReporter;
 
-  public FileInclusion(String docPath, String relativeFilePath, int sectionLevel, int startIndex,
-      int endIndex, DiagCollector diagCollector, Location sourceLocation) {
-    super(startIndex, endIndex, diagCollector, sourceLocation);
+  public FileInclusion(
+      String docPath,
+      String relativeFilePath,
+      int sectionLevel,
+      int startIndex,
+      int endIndex,
+      DiagReporter diagReporter,
+      LocationContext sourceLocation) {
+    super(startIndex, endIndex);
     this.relativeFilePath = relativeFilePath;
     this.sectionLevel = sectionLevel;
+    this.diagReporter = diagReporter;
     if (!Files.getFileExtension(relativeFilePath).equals(SUPPORTED_FILE_EXTENSION)) {
-      error("Not supported file extension: '%s'.", relativeFilePath);
+      diagReporter.reportError(
+          sourceLocation, "Not supported file extension: '%s'.", relativeFilePath);
       this.resolvedFilePath = null;
       this.content = null;
     } else {
       this.resolvedFilePath = resolveFilePath(docPath, relativeFilePath);
       if (resolvedFilePath == null) {
-        error("File not found, relative path '%s', inside root '%s'.", relativeFilePath, docPath);
+        diagReporter.reportError(
+            sourceLocation,
+            "File not found, relative path '%s', inside root '%s'.",
+            relativeFilePath,
+            docPath);
         this.content = null;
       } else {
         this.content = readFileContent();
@@ -56,35 +69,27 @@ public class FileInclusion extends ContentElement {
     }
   }
 
-  /**
-   * Returns the included file path relative to the root of data files.
-   */
+  /** Returns the included file path relative to the root of data files. */
   public String getRelativeFilePath() {
     return relativeFilePath;
   }
 
-  /**
-   * Returns the included file name.
-   */
+  /** Returns the included file name. */
   public String getFileName() {
     int index = relativeFilePath.lastIndexOf("/");
-    return index < 0 ? relativeFilePath
+    return index < 0
+        ? relativeFilePath
         : relativeFilePath.substring(index + 1, relativeFilePath.length());
   }
 
-  /**
-   * Returns the content of included file if file path is valid.
-   * Otherwise, returns null.
-   */
+  /** Returns the content of included file if file path is valid. Otherwise, returns null. */
   @Override
   @Nullable
   public String getContent() {
     return content;
   }
 
-  /**
-   * Returns the section level the file should be included.
-   */
+  /** Returns the section level the file should be included. */
   public int getSectionLevel() {
     return sectionLevel;
   }
@@ -93,7 +98,10 @@ public class FileInclusion extends ContentElement {
     try {
       return Files.asCharSource(new File(resolvedFilePath), StandardCharsets.UTF_8).read();
     } catch (IOException e) {
-      error("Failed to read file: '%s'.", resolvedFilePath);
+      diagReporter.reportError(
+          ResolvedLocation.create(SimpleLocation.TOPLEVEL),
+          "Failed to read file: '%s'.",
+          resolvedFilePath);
       return null;
     }
   }

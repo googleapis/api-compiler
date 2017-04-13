@@ -18,9 +18,7 @@ package com.google.api.tools.framework.model.testing;
 
 import com.google.api.tools.framework.model.Diag;
 
-/**
- * Utility class to handle {@link Diag} printing for baseline testing.
- */
+/** Utility class to handle {@link Diag} printing for baseline testing. */
 public class DiagUtils {
 
   // Gets the string representation of diag.

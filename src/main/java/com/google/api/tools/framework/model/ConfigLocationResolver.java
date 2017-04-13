@@ -18,9 +18,7 @@ package com.google.api.tools.framework.model;
 
 import com.google.protobuf.Message;
 
-/**
- * An interface representing an object which collects diagnostics.
- */
+/** An interface representing an object which resolves Message location in config. */
 public interface ConfigLocationResolver {
 
   /**

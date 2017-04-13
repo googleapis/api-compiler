@@ -19,6 +19,7 @@ package com.google.api.tools.framework.aspects.naming.linters;
 import com.google.api.Service;
 import com.google.api.tools.framework.aspects.ConfigAspectBase;
 import com.google.api.tools.framework.aspects.LintRule;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
 import com.google.api.tools.framework.model.Model;
 import com.google.common.base.Strings;
 import com.google.common.net.InternetDomainName;
@@ -42,7 +43,7 @@ public class ServiceNameRule extends LintRule<Model> {
             // do not want to permit as DNS names). Therefore explicitly checking for underscores.
             || INVALID_CHARACTER_PATTERN.matcher(serviceName).find())) {
       warning(
-          getLocationInConfig(model.getServiceConfig(), Service.NAME_FIELD_NUMBER),
+          MessageLocationContext.create(model.getServiceConfig(), Service.NAME_FIELD_NUMBER),
           "Invalid DNS name '%s'.",
           serviceName);
     }

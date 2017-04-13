@@ -16,17 +16,13 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
-
 /**
  * Represents the content in a document that could be at either file level or section level.
  */
 public abstract class ContentElement extends SourceElement {
 
-  public ContentElement(int startIndex, int endIndex, DiagCollector diagCollector,
-      Location sourceLocation) {
-    super(startIndex, endIndex, diagCollector, sourceLocation);
+  public ContentElement(int startIndex, int endIndex) {
+    super(startIndex, endIndex);
   }
 
   /**

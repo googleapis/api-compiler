@@ -49,6 +49,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /** Tests for {@link RestAnalyzer}. */
+
 @RunWith(JUnit4.class)
 
 public class RestAnalyzerTest extends BaselineTestCase {
@@ -139,7 +140,7 @@ public class RestAnalyzerTest extends BaselineTestCase {
 
     RestMethod restMethod;
     ImmutableList<PathSegment> path = parse(model, template);
-    if (!model.getDiagCollector().getDiags().isEmpty()) {
+    if (!model.getDiagReporter().getDiagCollector().getDiags().isEmpty()) {
       restMethod = RestMethod.create(method, RestKind.CUSTOM, "*error*", "*error*");
     } else {
       HttpAttribute httpConfig =
@@ -188,7 +189,7 @@ public class RestAnalyzerTest extends BaselineTestCase {
         restMethod.getRestKind() == RestKind.CUSTOM
         ? restMethod.getRestMethodName() : "(null)");
 
-    List<Diag> diags = model.getDiagCollector().getDiags();
+    List<Diag> diags = model.getDiagReporter().getDiagCollector().getDiags();
     if (diags.size() > 0) {
       pw.println("Diagnostics:");
       for (Diag d : diags) {
@@ -201,7 +202,10 @@ public class RestAnalyzerTest extends BaselineTestCase {
   private ImmutableList<PathSegment> parse(Model model, String path) {
     ImmutableList<PathSegment> segments =
         new HttpTemplateParser(
-                model.getDiagCollector(), SimpleLocation.TOPLEVEL, path, configVersion)
+                model.getDiagReporter().getDiagCollector(),
+                SimpleLocation.TOPLEVEL,
+                path,
+                configVersion)
             .parse();
     return segments;
   }

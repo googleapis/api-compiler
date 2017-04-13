@@ -18,6 +18,7 @@ package com.google.api.tools.framework.aspects.versioning.linters;
 
 import com.google.api.tools.framework.aspects.ConfigAspectBase;
 import com.google.api.tools.framework.aspects.LintRule;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
 import com.google.api.tools.framework.model.Model;
 
 /** Checks if config_version value is not less than Model.CURRENT_CONFIG_DEFAULT_VERSION. */
@@ -30,11 +31,13 @@ public class ConfigVersionRule extends LintRule<Model> {
   @Override public void run(Model model) {
     if (model.getServiceConfig().hasConfigVersion()
         && model.getConfigVersion() != Model.getDefaultConfigVersion()) {
-      warning(getLocationInConfig(model.getServiceConfig().getConfigVersion(), "value"),
-          "Specified config_version value '%d' is not equal to "
-          + "the current default value '%d'. Consider changing this value "
-          + "to the default config version.",
-          model.getConfigVersion(), Model.getDefaultConfigVersion());
+      warning(
+          MessageLocationContext.create(model.getServiceConfig().getConfigVersion(), "value"),
+          "Specified config_version value '%s' is not equal to "
+              + "the current default value '%s'. Consider changing this value "
+              + "to the default config version.",
+          model.getConfigVersion(),
+          Model.getDefaultConfigVersion());
     }
   }
 }

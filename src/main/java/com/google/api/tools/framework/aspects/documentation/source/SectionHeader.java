@@ -16,9 +16,6 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
-
 /**
  * Represent the header of a section.
  */
@@ -27,9 +24,8 @@ public class SectionHeader extends SourceElement {
   private final int level;
   private final String text;
 
-  public SectionHeader(int level, String text, int startIndex, int endIndex,
-      DiagCollector diagCollector, Location sourceLocation) {
-    super(startIndex, endIndex, diagCollector, sourceLocation);
+  public SectionHeader(int level, String text, int startIndex, int endIndex) {
+    super(startIndex, endIndex);
     this.level = level;
     this.text = text;
   }

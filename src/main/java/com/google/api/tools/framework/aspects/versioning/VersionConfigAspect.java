@@ -25,8 +25,9 @@ import com.google.api.tools.framework.aspects.versioning.model.ApiVersionUtil;
 import com.google.api.tools.framework.aspects.versioning.model.RestVersionsAttribute;
 import com.google.api.tools.framework.aspects.versioning.model.VersionAttribute;
 import com.google.api.tools.framework.model.ConfigAspect;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
 import com.google.api.tools.framework.model.Interface;
-import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Method;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
@@ -82,8 +83,8 @@ public class VersionConfigAspect extends ConfigAspectBase {
     }
 
     // Detect config version location.
-    Location configVersionLocation = getLocationInConfig(
-        getModel().getServiceConfig().getConfigVersion(), "value");
+    LocationContext configVersionLocation =
+        MessageLocationContext.create(getModel().getServiceConfig().getConfigVersion(), "value");
 
     if (getModel().getConfigVersion() > Model.getDevConfigVersion()) {
       error(

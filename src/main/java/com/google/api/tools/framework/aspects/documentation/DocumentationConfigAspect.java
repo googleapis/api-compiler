@@ -27,6 +27,8 @@ import com.google.api.tools.framework.aspects.documentation.model.DocumentationP
 import com.google.api.tools.framework.aspects.documentation.model.ElementDocumentationAttribute;
 import com.google.api.tools.framework.aspects.documentation.model.PageAttribute;
 import com.google.api.tools.framework.model.ConfigAspect;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
 import com.google.api.tools.framework.model.SymbolTable;
@@ -37,9 +39,7 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 
-/**
- * Configuration aspect for documentation.
- */
+/** Configuration aspect for documentation. */
 public class DocumentationConfigAspect
     extends RuleBasedConfigAspect<DocumentationRule, ElementDocumentationAttribute> {
 
@@ -52,15 +52,16 @@ public class DocumentationConfigAspect
   private final DocumentationProcessorSet processorSet;
 
   private DocumentationConfigAspect(Model model) {
-    super(model, ElementDocumentationAttribute.KEY, "documentation",
-          DocumentationRule.getDescriptor(),
-          model.getServiceConfig().getDocumentation().getRulesList());
+    super(
+        model,
+        ElementDocumentationAttribute.KEY,
+        "documentation",
+        DocumentationRule.getDescriptor(),
+        model.getServiceConfig().getDocumentation().getRulesList());
     processorSet = DocumentationProcessorSet.standardSetup(model);
   }
 
-  /**
-   * Returns an empty list since this aspect does not depend on any other aspects.
-   */
+  /** Returns an empty list since this aspect does not depend on any other aspects. */
   @Override
   public List<Class<? extends ConfigAspect>> mergeDependencies() {
     return ImmutableList.of();
@@ -75,11 +76,14 @@ public class DocumentationConfigAspect
   public void startMerging() {
     super.startMerging();
     Documentation doc = getModel().getServiceConfig().getDocumentation();
-    getModel().putAttribute(DocumentationPagesAttribute.KEY,
-        DocumentationPagesAttribute.create(processDocumentPages(doc)));
+    getModel()
+        .putAttribute(
+            DocumentationPagesAttribute.KEY,
+            DocumentationPagesAttribute.create(processDocumentPages(doc)));
   }
 
-  @Override @Nullable
+  @Override
+  @Nullable
   protected DocumentationRule fromIdlLayer(ProtoElement element) {
     // For the case there is no documentation rule, synthesize one from the comment
     // in the proto.
@@ -96,14 +100,15 @@ public class DocumentationConfigAspect
   }
 
   @Override
-  protected ElementDocumentationAttribute evaluate(ProtoElement element, DocumentationRule rule,
-      boolean isFromIdl) {
+  protected ElementDocumentationAttribute evaluate(
+      ProtoElement element, DocumentationRule rule, boolean isFromIdl) {
 
     // Process documentation by chained processors, such as CommentFilter and SourceNormalizer.
     // This line must be first, so the element attributes being tested below will be present on the
     // element, if needed.
-    String description = processorSet.process(rule.getDescription(), element.getLocation(),
-        element);
+    String description =
+        processorSet.process(
+            rule.getDescription(), ResolvedLocation.create(element.getLocation()), element);
 
     // Processing may have attached page attribute to element. Propagate to file of element if the
     // file does not yet have one, so the first occurrence of a (== page ==) instruction
@@ -115,17 +120,19 @@ public class DocumentationConfigAspect
 
     // If the element has a deprecation description attached, make sure it gets sucked into the
     // rule for that element if we don't already have a deprecation description.
-    String deprecationDesc = processorSet.process(
-        rule.getDeprecationDescription(),
-        element.getLocation(),
-        element);
+    String deprecationDesc =
+        processorSet.process(
+            rule.getDeprecationDescription(),
+            ResolvedLocation.create(element.getLocation()),
+            element);
 
     if (Strings.isNullOrEmpty(deprecationDesc)
         && element.hasAttribute(DeprecationDescriptionAttribute.KEY)) {
-      deprecationDesc = processorSet.process(
-          element.getAttribute(DeprecationDescriptionAttribute.KEY).deprecationDescription(),
-          element.getLocation(),
-          element);
+      deprecationDesc =
+          processorSet.process(
+              element.getAttribute(DeprecationDescriptionAttribute.KEY).deprecationDescription(),
+              ResolvedLocation.create(element.getLocation()),
+              element);
     }
 
     return ElementDocumentationAttribute.create(description, deprecationDesc);
@@ -148,8 +155,8 @@ public class DocumentationConfigAspect
     if (getModel().hasAttribute(DocumentationPagesAttribute.KEY)) {
       Documentation.Builder docBuilder = builder.getDocumentationBuilder();
       docBuilder.clearPages();
-      docBuilder.addAllPages(getModel().getAttribute(DocumentationPagesAttribute.KEY)
-          .toplevelPages());
+      docBuilder.addAllPages(
+          getModel().getAttribute(DocumentationPagesAttribute.KEY).toplevelPages());
     }
   }
 
@@ -159,12 +166,11 @@ public class DocumentationConfigAspect
   }
 
   @Override
-  protected void addToRuleBuilder(Builder builder, String selector,
-      ElementDocumentationAttribute attr) {
+  protected void addToRuleBuilder(
+      Builder builder, String selector, ElementDocumentationAttribute attr) {
     final DocumentationRule.Builder ruleBuilder = DocumentationRule.newBuilder();
 
-    ruleBuilder.setSelector(selector)
-        .setDescription(attr.documentation());
+    ruleBuilder.setSelector(selector).setDescription(attr.documentation());
 
     if (!Strings.isNullOrEmpty(attr.deprecationDescription())) {
       ruleBuilder.setDeprecationDescription(attr.deprecationDescription());
@@ -178,7 +184,7 @@ public class DocumentationConfigAspect
     List<Page> toBeProcessedPages = null;
     ImmutableList.Builder<Page> processedPages = ImmutableList.builder();
     toBeProcessedPages = doc.getPagesList();
-    ensureUniquePageName(""/* Parent page name*/, toBeProcessedPages);
+    ensureUniquePageName("" /* Parent page name*/, toBeProcessedPages);
     for (Page page : toBeProcessedPages) {
       processedPages.add(processPage("", page));
     }
@@ -186,14 +192,19 @@ public class DocumentationConfigAspect
   }
 
   private Page processPage(String parentPageFullName, Page page) {
-    String currentPageFullName = parentPageFullName.isEmpty()
-        ? page.getName() : String.format("%s.%s", parentPageFullName, page.getName());
+    String currentPageFullName =
+        parentPageFullName.isEmpty()
+            ? page.getName()
+            : String.format("%s.%s", parentPageFullName, page.getName());
     ensureUniquePageName(currentPageFullName, page.getSubpagesList());
 
     Page.Builder normalizedPage = page.toBuilder().clearSubpages();
     normalizedPage.setContent(
         processorSet
-            .process(page.getContent(), getLocationInConfig(page, "content"), getModel())
+            .process(
+                page.getContent(),
+                MessageLocationContext.create(page, Page.CONTENT_FIELD_NUMBER),
+                getModel())
             .trim());
 
     for (Page subpage : page.getSubpagesList()) {
@@ -203,8 +214,8 @@ public class DocumentationConfigAspect
   }
 
   /**
-   * Ensure the sub page full names are unique regard of other page names and proto element
-   * full name so that we will not have naming clash for references of the pages.
+   * Ensure the sub page full names are unique regard of other page names and proto element full
+   * name so that we will not have naming clash for references of the pages.
    */
   private void ensureUniquePageName(String parentPageName, List<Page> pages) {
     String parentPageNameInError = parentPageName.isEmpty() ? "Top Level" : parentPageName;
@@ -212,14 +223,23 @@ public class DocumentationConfigAspect
     Set<String> names = Sets.newHashSet();
     for (Page page : pages) {
       if (Strings.isNullOrEmpty(page.getName())) {
-        error(getModel(), "Found empty subpage name of '%s' page.", parentPageNameInError);
+        error(
+            getModel().getLocation(),
+            "Found empty subpage name of '%s' page.",
+            parentPageNameInError);
       } else if (names.contains(page.getName())) {
-        error(getModel(), "Found duplicate subpage name '%s' of '%s' page.",
-            page.getName(), parentPageNameInError);
-      } else if (symbolTable.resolve(
-          String.format("%s.%s", parentPageName, page.getName())) != null) {
-        error(getModel(), "Found conflict subpage name '%s' of '%s' page with ProtoElement.",
-            page.getName(), parentPageNameInError);
+        error(
+            getModel().getLocation(),
+            "Found duplicate subpage name '%s' of '%s' page.",
+            page.getName(),
+            parentPageNameInError);
+      } else if (symbolTable.resolve(String.format("%s.%s", parentPageName, page.getName()))
+          != null) {
+        error(
+            getModel().getLocation(),
+            "Found conflict subpage name '%s' of '%s' page with ProtoElement.",
+            page.getName(),
+            parentPageNameInError);
       } else {
         names.add(page.getName());
       }

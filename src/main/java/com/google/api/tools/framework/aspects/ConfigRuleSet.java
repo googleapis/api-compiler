@@ -17,8 +17,8 @@
 package com.google.api.tools.framework.aspects;
 
 import com.google.api.tools.framework.model.ConfigLocationResolver;
-import com.google.api.tools.framework.model.Diag;
-import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
 import com.google.api.tools.framework.model.Experiments;
 import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.ProtoElement;
@@ -47,11 +47,11 @@ public class ConfigRuleSet<RuleType extends Message> {
   public static <RuleType extends Message> ConfigRuleSet<RuleType> of(
       Descriptor ruleDescriptor,
       List<RuleType> rules,
-      ConfigLocationResolver locationResolver,
       Experiments experiments,
-      DiagCollector diagCollector) {
-    return new ConfigRuleSet<RuleType>(
-        ruleDescriptor, rules, locationResolver, experiments, diagCollector);
+      ConfigLocationResolver configLocationResolver,
+      DiagReporter diagReporter) {
+    return new ConfigRuleSet<>(
+        ruleDescriptor, rules, experiments, configLocationResolver, diagReporter);
   }
 
   public static final ImmutableList<String> SYSTEM_PROTO_PREFIXES =
@@ -71,9 +71,9 @@ public class ConfigRuleSet<RuleType extends Message> {
   private final List<RuleWrapper<RuleType>> rules;
   private final FieldDescriptor selectorFieldDesc;
   private final Map<ProtoElement, RuleType> ruleMap = Maps.newHashMap();
-  private final ConfigLocationResolver locationResolver;
+  private final DiagReporter diagReporter;
+  private final ConfigLocationResolver configLocationResolver;
   private final Experiments experiments;
-  private final DiagCollector diagCollector;
 
   /** Mapping from rule to unmatched selectors. */
   private final Map<RuleWrapper<RuleType>, Set<String>> unmatchedRules = Maps.newLinkedHashMap();
@@ -81,17 +81,16 @@ public class ConfigRuleSet<RuleType extends Message> {
   public ConfigRuleSet(
       Descriptor ruleDescriptor,
       List<RuleType> rules,
-      ConfigLocationResolver locationResolver,
       Experiments experiments,
-      DiagCollector diagCollector) {
+      ConfigLocationResolver configLocationResolver,
+      DiagReporter diagReporter) {
     Preconditions.checkNotNull(ruleDescriptor, "ruleDescriptor");
-    Preconditions.checkNotNull(locationResolver, "locationResolver");
-    Preconditions.checkNotNull(experiments, "experiments");
-    Preconditions.checkNotNull(diagCollector, "diagCollector");
+    this.experiments = Preconditions.checkNotNull(experiments, "experiments");
+    this.diagReporter = Preconditions.checkNotNull(diagReporter, "diagReporter");
+    this.configLocationResolver =
+        Preconditions.checkNotNull(configLocationResolver, "configLocationResolver");
     this.selectorFieldDesc = ruleDescriptor.findFieldByNumber(SELECTOR_FIELD_NUM);
-    this.locationResolver = locationResolver;
-    this.experiments = experiments;
-    this.diagCollector = diagCollector;
+
     // Sanity check for selector field.
     Preconditions.checkArgument(
         selectorFieldDesc != null
@@ -122,40 +121,27 @@ public class ConfigRuleSet<RuleType extends Message> {
   }
 
   /** Validate selector syntax and report errors. */
-  public void reportBadSelectors(
-      DiagCollector collector, ConfigLocationResolver configLocationResolver, String category) {
-    reportBadSelectors(collector, configLocationResolver, category, "");
+  public void reportBadSelectors(String category) {
+    reportBadSelectors(category, "");
   }
 
   /** Validate selector syntax and report errors (with given error message prefix). */
-  public void reportBadSelectors(
-      DiagCollector collector,
-      ConfigLocationResolver configLocationResolver,
-      String category,
-      String messagePrefix) {
+  public void reportBadSelectors(String category, String messagePrefix) {
     for (RuleWrapper<RuleType> ruleWrapper : rules) {
       for (String selector : ruleWrapper.selectors) {
         if (!SELECTOR_PATTERN.matcher(selector).matches()) {
-          collector.addDiag(
-              getBadSelectorErrorDiag(
-                  configLocationResolver.getLocationInConfig(ruleWrapper.rule, SELECTOR_FIELD_NAME),
-                  category,
-                  messagePrefix,
-                  selector));
+          String message =
+              messagePrefix
+                  + "%s rule has bad syntax in selector '%s'. See "
+                  + "documentation for information on selector syntax.";
+          diagReporter.reportError(
+              MessageLocationContext.create(ruleWrapper.rule, SELECTOR_FIELD_NAME),
+              message,
+              category,
+              selector);
         }
       }
     }
-  }
-
-  private Diag getBadSelectorErrorDiag(
-      Location location, String category, String messagePrefix, String selector) {
-    return Diag.error(
-        location,
-        messagePrefix
-            + "%s rule has bad syntax in selector '%s'. See "
-            + "documentation for information on selector syntax.",
-        category,
-        selector);
   }
 
   /**
@@ -201,22 +187,19 @@ public class ConfigRuleSet<RuleType extends Message> {
   }
 
   /** Reports any unmatched rules. */
-  public void reportUnmatchedRules(
-      DiagCollector collector, ConfigLocationResolver configLocationResolver, String category) {
+  public void reportUnmatchedRules(String category) {
     for (Map.Entry<RuleWrapper<RuleType>, Set<String>> unmatched : unmatchedRules.entrySet()) {
       Set<String> selectors = unmatched.getValue();
       selectors.remove("*");
       // For rules which are not general default, report a warning.
       if (!selectors.isEmpty()) {
         String unmatchedSelectors = SELECTOR_JOINER.join(unmatched.getValue());
-        collector.addDiag(
-            Diag.warning(
-                configLocationResolver.getLocationInConfig(
-                    unmatched.getKey().rule, SELECTOR_FIELD_NAME),
-                "%s rule has selector(s) '%s' that do not match and are not "
-                    + "shadowed by other rules.",
-                category,
-                unmatchedSelectors));
+        diagReporter.reportWarning(
+            MessageLocationContext.create(unmatched.getKey().rule, SELECTOR_FIELD_NAME),
+            "%s rule has selector(s) '%s' that do not match and are not "
+                + "shadowed by other rules.",
+            category,
+            unmatchedSelectors);
       }
     }
   }
@@ -295,25 +278,24 @@ public class ConfigRuleSet<RuleType extends Message> {
     /** Remove selectors if they are subsumed by any selectors of given rule list. */
     private void minimizeSelectors(List<RuleWrapper<WrappedRuleType>> rules, int startIndex) {
       Location toBeMatchedRuleLocation =
-          locationResolver.getLocationInConfig(rule, SELECTOR_FIELD_NAME);
+          configLocationResolver.getLocationInConfig(rule, SELECTOR_FIELD_NAME);
       for (Iterator<String> iter = selectors.iterator(); iter.hasNext(); ) {
         String selector = iter.next();
         for (int i = startIndex; i < rules.size(); i++) {
           RuleWrapper<WrappedRuleType> ruleWrapper = rules.get(i);
           if (isSubsumed(selector, ruleWrapper.selectors)) {
             Location matchingRuleLocation =
-                locationResolver.getLocationInConfig(ruleWrapper.rule, SELECTOR_FIELD_NAME);
+                configLocationResolver.getLocationInConfig(ruleWrapper.rule, SELECTOR_FIELD_NAME);
             if (!maintainSelectorMinimizationBugExperimentEnabled()
                 && isSameYamlFile(matchingRuleLocation, toBeMatchedRuleLocation)) {
-              diagCollector.addDiag(
-                  Diag.error(
-                      matchingRuleLocation,
-                      "Selector '%s' at location %s subsumes selector '%s' at location %s. "
-                          + "Subsuming selectors in the same file is not supported.",
-                      ruleWrapper.getUnflattenedSelector(),
-                      matchingRuleLocation.getDisplayString(),
-                      selector,
-                      toBeMatchedRuleLocation.getDisplayString()));
+              diagReporter.reportError(
+                  MessageLocationContext.create(ruleWrapper.rule, SELECTOR_FIELD_NAME),
+                  "Selector '%s' at location %s subsumes selector '%s' at location %s. "
+                      + "Subsuming selectors in the same file is not supported.",
+                  ruleWrapper.getUnflattenedSelector(),
+                  matchingRuleLocation.getDisplayString(),
+                  selector,
+                  toBeMatchedRuleLocation.getDisplayString());
             }
             iter.remove();
             break;

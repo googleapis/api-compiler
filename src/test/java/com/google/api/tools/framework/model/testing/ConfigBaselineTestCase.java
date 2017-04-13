@@ -131,7 +131,10 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
 
     if (suppressionDirectives != null) {
       for (String suppressionDirective : suppressionDirectives) {
-        model.addSupressionDirective(model, suppressionDirective);
+        model
+            .getDiagReporter()
+            .getDiagSuppressor()
+            .addSuppressionDirective(model, suppressionDirective, model.getConfigAspects());
       }
     }
 
@@ -140,12 +143,12 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
 
     // Output diag into baseline file.
     if (!suppressDiagnosis()) {
-      for (Diag diag : model.getDiagCollector().getDiags()) {
+      for (Diag diag : model.getDiagReporter().getDiagCollector().getDiags()) {
         printDiag(diag);
       }
     }
 
-    if (!model.getDiagCollector().hasErrors() && result != null) {
+    if (!model.getDiagReporter().getDiagCollector().hasErrors() && result != null) {
       // Output the result depending on its type.
       if (result instanceof Map) {
         @SuppressWarnings("unchecked")
@@ -187,6 +190,18 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
       location = location.replace(toReplace, "");
     }
     return location;
+  }
+
+  /**
+   * Set a filter for warnings based on regular expression for aspect name. Only warnings containing
+   * the aspect name pattern are produced.
+   */
+  public void setWarningFilter(@Nullable String aspectNamePattern) {
+    // Add as a pattern to the model.
+    model
+        .getDiagReporter()
+        .getDiagSuppressor()
+        .addPattern(model, String.format("^(?!.*(%s)).*", aspectNamePattern));
   }
 
   /** Fetches content from various values for a content source (File, Doc, etc.) */

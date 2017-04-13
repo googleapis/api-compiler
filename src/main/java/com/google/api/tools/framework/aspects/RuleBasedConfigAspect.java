@@ -75,11 +75,10 @@ public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeT
         new ConfigRuleSet<>(
             ruleDescriptor,
             rules,
-            model.getLocationResolver(),
             model.getExperiments(),
-            model.getDiagCollector());
-    this.rules.reportBadSelectors(
-        getModel().getDiagCollector(), getModel().getLocationResolver(), getAspectName());
+            model.getLocationResolver(),
+            model.getDiagReporter());
+    this.rules.reportBadSelectors(getAspectName());
   }
 
   @Override
@@ -105,8 +104,7 @@ public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeT
   @Override
   public void endMerging() {
     // Report any unmatched rules.
-    rules.reportUnmatchedRules(
-        getModel().getDiagCollector(), getModel().getLocationResolver(), getAspectName());
+    rules.reportUnmatchedRules(getAspectName());
   }
 
   @Override

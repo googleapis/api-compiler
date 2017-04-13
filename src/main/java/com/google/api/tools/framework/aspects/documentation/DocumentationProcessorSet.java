@@ -16,13 +16,12 @@
 
 package com.google.api.tools.framework.aspects.documentation;
 
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
 import com.google.api.tools.framework.model.Element;
-import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Model;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -38,10 +37,11 @@ public class DocumentationProcessorSet {
    * Returns {@link DocumentationProcessorSet} with standard processors registered.
    */
   public static DocumentationProcessorSet standardSetup(Model model) {
-    return new DocumentationProcessorSet(Lists.newArrayList(
-        new CommentReferenceResolver(model),
-        new SourceNormalizer(model.getDiagCollector(), model.getDataPath()),
-        new CommentChecker(model.getDiagCollector())));
+    return new DocumentationProcessorSet(
+        Lists.newArrayList(
+            new CommentReferenceResolver(model),
+            new SourceNormalizer(model.getDiagReporter(), model.getDataPath()),
+            new CommentChecker(model.getDiagReporter())));
   }
 
   public DocumentationProcessorSet(Collection<DocumentationProcessor> processors) {
@@ -53,7 +53,7 @@ public class DocumentationProcessorSet {
    * Processes given documentation source by the registered processor chain. Returns processed
    * documentation string.
    */
-  public String process(String source, Location location, Element element) {
+  public String process(String source, LocationContext location, Element element) {
     if (Strings.isNullOrEmpty(source)) {
       return source;
     }

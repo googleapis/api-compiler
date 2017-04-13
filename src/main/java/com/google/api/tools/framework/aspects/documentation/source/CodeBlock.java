@@ -16,9 +16,6 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
-
 /**
  * Represents code block content.
  */
@@ -26,9 +23,8 @@ public class CodeBlock extends ContentElement {
 
   private final String source;
 
-  public CodeBlock(String source, int startIndex, int endIndex, DiagCollector diagCollector,
-      Location sourceLocation) {
-    super(startIndex, endIndex, diagCollector, sourceLocation);
+  public CodeBlock(String source, int startIndex, int endIndex) {
+    super(startIndex, endIndex);
     this.source = source;
   }
 

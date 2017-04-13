@@ -30,8 +30,9 @@ import com.google.api.tools.framework.aspects.mixin.model.MixinAttribute;
 import com.google.api.tools.framework.aspects.versioning.VersionConfigAspect;
 import com.google.api.tools.framework.aspects.versioning.model.VersionAttribute;
 import com.google.api.tools.framework.model.ConfigAspect;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
 import com.google.api.tools.framework.model.Interface;
-import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Method;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
@@ -39,17 +40,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Api;
 import com.google.protobuf.Mixin;
-
 import java.util.List;
 
-/**
- * Configuration aspect for mixins.
- */
+/** Configuration aspect for mixins. */
 public class MixinConfigAspect extends ConfigAspectBase {
 
-  /**
-   * Creates mixin config aspect.
-   */
+  /** Creates mixin config aspect. */
   public static ConfigAspectBase create(Model model) {
     return new MixinConfigAspect(model);
   }
@@ -59,8 +55,8 @@ public class MixinConfigAspect extends ConfigAspectBase {
   }
 
   /**
-   * Returns dependencies. The attributes belonging to those aspects are used by this
-   * aspect during merging phase.
+   * Returns dependencies. The attributes belonging to those aspects are used by this aspect during
+   * merging phase.
    */
   @Override
   public List<Class<? extends ConfigAspect>> mergeDependencies() {
@@ -71,19 +67,22 @@ public class MixinConfigAspect extends ConfigAspectBase {
   }
 
   /**
-   * Analyze any mixins and attach attributes related to interfaces and methods which are
-   * used by the main merging phase.
+   * Analyze any mixins and attach attributes related to interfaces and methods which are used by
+   * the main merging phase.
    */
-  @Override public void startMerging() {
+  @Override
+  public void startMerging() {
     for (Api api : getModel().getServiceConfig().getApisList()) {
       // Resolve the including interface.
       Interface including =
-          resolveInterface(api.getName(), getLocationInConfig(api, "name"));
+          resolveInterface(
+              api.getName(), MessageLocationContext.create(api, Api.NAME_FIELD_NUMBER));
 
       // Process each mixin declaration.
       for (Mixin mixin : api.getMixinsList()) {
         Interface included =
-            resolveInterface(mixin.getName(), getLocationInConfig(mixin, "name"));
+            resolveInterface(
+                mixin.getName(), MessageLocationContext.create(mixin, Mixin.NAME_FIELD_NUMBER));
         if (including == null || included == null) {
           // Errors have been reported.
           continue;
@@ -105,21 +104,27 @@ public class MixinConfigAspect extends ConfigAspectBase {
     // Check conditions implied by mixin configuration.
     Method redeclared = including.lookupMethod(method.getSimpleName());
     if (redeclared == null) {
-      error(including,
+      error(
+          including.getLocation(),
           "The API '%s' does not redeclare method '%s' as required by the mixin configuration.",
-          including.getFullName(), method);
+          including.getFullName(),
+          method);
       return;
     }
     if (!method.getInputType().equals(redeclared.getInputType())) {
-      error(redeclared,
+      error(
+          redeclared.getLocation(),
           "The method '%s' must have request type '%s' as required by the mixin configuration.",
-          redeclared, method.getInputMessage());
+          redeclared,
+          method.getInputMessage());
       return;
     }
     if (!method.getOutputType().equals(redeclared.getOutputType())) {
-      error(redeclared,
+      error(
+          redeclared.getLocation(),
           "The method '%s' must have response type '%s' as required by the mixin configuration.",
-          redeclared, method.getOutputType());
+          redeclared,
+          method.getOutputType());
       return;
     }
 
@@ -134,8 +139,10 @@ public class MixinConfigAspect extends ConfigAspectBase {
     }
 
     // Use the first implemented method to derive properties.
-    ImplementsAttribute attrib = elem.hasAttribute(ImplementsAttribute.KEY)
-        ? elem.getAttribute(ImplementsAttribute.KEY).get(0) : null;
+    ImplementsAttribute attrib =
+        elem.hasAttribute(ImplementsAttribute.KEY)
+            ? elem.getAttribute(ImplementsAttribute.KEY).get(0)
+            : null;
     if (attrib == null) {
       return;
     }
@@ -188,12 +195,12 @@ public class MixinConfigAspect extends ConfigAspectBase {
       // Set the derived attribute and version.
       if (!whitespace().matchesAllOf(Strings.nullToEmpty(effectiveRoot))) {
         redeclared.putAttribute(HttpAttribute.KEY, sourceAttrib.reroot(effectiveRoot));
-        redeclared.putAttribute(VersionAttribute.KEY,  VersionAttribute.create(effectiveVersion));
+        redeclared.putAttribute(VersionAttribute.KEY, VersionAttribute.create(effectiveVersion));
       }
     }
   }
 
-  private Interface resolveInterface(String name, Location location) {
+  private Interface resolveInterface(String name, LocationContext location) {
     Interface iface = getModel().getSymbolTable().resolveInterface("", name);
     if (iface == null) {
       error(location, "The API '%s' cannot be resolved.", name);

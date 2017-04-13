@@ -16,18 +16,14 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
-
 /**
  * Represents text content.
  */
 public class Text extends ContentElement {
   private final String text;
 
-  public Text(String text, int startIndex, int endIndex, DiagCollector diagCollector,
-      Location sourceLocation) {
-    super(startIndex, endIndex, diagCollector, sourceLocation);
+  public Text(String text, int startIndex, int endIndex) {
+    super(startIndex, endIndex);
     this.text = text;
   }
 

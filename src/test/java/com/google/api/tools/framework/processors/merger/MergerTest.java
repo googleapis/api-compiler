@@ -145,8 +145,9 @@ public class MergerTest {
 
   @Test public void mergesWithYamlConfig() throws Exception {
     createApi("service.proto", "included_type.proto");
-    model.setConfigSources(testConfig.getApiYamlConfigSources(model.getDiagCollector(),
-        ImmutableList.of("service.yaml")));
+    model.setConfigSources(
+        testConfig.getApiYamlConfigSources(
+            model.getDiagReporter().getDiagCollector(), ImmutableList.of("service.yaml")));
     StandardSetup.registerStandardConfigAspects(model);
     model.establishStage(Merged.KEY);
     checkNoErrors();
@@ -169,7 +170,8 @@ public class MergerTest {
   @Test public void mergesWithTypeMismatch() throws Exception {
     createApi("service_type_mismatch.proto");
     model.setConfigSources(
-        testConfig.getApiYamlConfigSources(model.getDiagCollector(),
+        testConfig.getApiYamlConfigSources(
+            model.getDiagReporter().getDiagCollector(),
             ImmutableList.of("service_type_mismatch.yaml")));
     model.establishStage(Merged.KEY);
     assertError("protiary.test.ExtraEnum");
@@ -178,8 +180,10 @@ public class MergerTest {
 
   @Test public void mergesWithApiVersion() throws Exception {
     createApi("service_with_version.proto");
-    model.setConfigSources(testConfig.getApiYamlConfigSources(model.getDiagCollector(),
-        ImmutableList.of("service_with_version.yaml")));
+    model.setConfigSources(
+        testConfig.getApiYamlConfigSources(
+            model.getDiagReporter().getDiagCollector(),
+            ImmutableList.of("service_with_version.yaml")));
     StandardSetup.registerStandardConfigAspects(model);
     model.establishStage(Merged.KEY);
 
@@ -189,8 +193,10 @@ public class MergerTest {
 
   @Test public void mergesWithBetaVersion() throws Exception {
     createApi("service_with_beta_version.proto");
-    model.setConfigSources(testConfig.getApiYamlConfigSources(model.getDiagCollector(),
-        ImmutableList.of("service_with_beta_version.yaml")));
+    model.setConfigSources(
+        testConfig.getApiYamlConfigSources(
+            model.getDiagReporter().getDiagCollector(),
+            ImmutableList.of("service_with_beta_version.yaml")));
     StandardSetup.registerStandardConfigAspects(model);
     model.establishStage(Merged.KEY);
 
@@ -272,8 +278,9 @@ public class MergerTest {
 
   @Test public void storageHttpConfig() throws Exception {
     createApi("service.proto", "included_type.proto");
-    model.setConfigSources(testConfig.getApiYamlConfigSources(model.getDiagCollector(),
-        ImmutableList.of("service.yaml")));
+    model.setConfigSources(
+        testConfig.getApiYamlConfigSources(
+            model.getDiagReporter().getDiagCollector(), ImmutableList.of("service.yaml")));
     StandardSetup.registerStandardConfigAspects(model);
     model.establishStage(Merged.KEY);
     checkNoErrors();
@@ -290,25 +297,29 @@ public class MergerTest {
   }
 
   private void assertError(final String phrase) {
-    Assert.assertTrue(model.getDiagCollector().hasErrors());
-    Assert.assertTrue(Iterators.any(model.getDiagCollector().getDiags().iterator(),
-      new Predicate<Diag>() {
-        @Override
-        public boolean apply(Diag diag) {
-          return diag.getKind() == Kind.ERROR && diag.toString().contains(phrase);
-        }
-    }));
+    Assert.assertTrue(model.getDiagReporter().getDiagCollector().hasErrors());
+    Assert.assertTrue(
+        Iterators.any(
+            model.getDiagReporter().getDiagCollector().getDiags().iterator(),
+            new Predicate<Diag>() {
+              @Override
+              public boolean apply(Diag diag) {
+                return diag.getKind() == Kind.ERROR && diag.toString().contains(phrase);
+              }
+            }));
   }
 
   private void assertWarning(final String phrase) {
-    Assert.assertTrue(model.getDiagCollector().getDiags().size() > 0);
-    Assert.assertTrue(Iterators.any(model.getDiagCollector().getDiags().iterator(),
-      new Predicate<Diag>() {
-        @Override
-        public boolean apply(Diag diag) {
-          return diag.getKind() != Kind.ERROR && diag.toString().contains(phrase);
-        }
-    }));
+    Assert.assertTrue(model.getDiagReporter().getDiagCollector().getDiags().size() > 0);
+    Assert.assertTrue(
+        Iterators.any(
+            model.getDiagReporter().getDiagCollector().getDiags().iterator(),
+            new Predicate<Diag>() {
+              @Override
+              public boolean apply(Diag diag) {
+                return diag.getKind() != Kind.ERROR && diag.toString().contains(phrase);
+              }
+            }));
   }
 
   private void assertMethodConfig(String interfaceName, String methodName,
@@ -363,8 +374,9 @@ public class MergerTest {
   }
 
   private void checkNoErrors() {
-    if (model.getDiagCollector().hasErrors()) {
-      Assert.fail("Errors: " + Joiner.on("\n").join(model.getDiagCollector().getDiags()));
+    if (model.getDiagReporter().getDiagCollector().hasErrors()) {
+      Assert.fail(
+          "Errors: " + Joiner.on("\n").join(model.getDiagReporter().getDiagCollector().getDiags()));
     }
     StageValidator.assertStages(ImmutableList.<Key<?>>of(Resolved.KEY, Merged.KEY), model);
   }

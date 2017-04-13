@@ -282,13 +282,13 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
       result = FieldSelector.resolve(method.getInputType().getMessageType(), fieldPath);
       if (result == null) {
         error(
-            method,
+            method.getLocation(),
             "undefined field '%s' on message '%s'.",
             fieldPath,
             getInputMessageName(method));
       }
     } catch (RuntimeException exception) {
-      error(method, "%s", exception.getMessage());
+      error(method.getLocation(), "%s", exception.getMessage());
     }
     return result;
   }

@@ -21,19 +21,19 @@ import com.google.api.Service.Builder;
 import com.google.api.tools.framework.model.ConfigAspect;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.Element;
 import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
-import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.api.tools.framework.model.stages.Resolved;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.google.protobuf.Message;
-
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +50,9 @@ import java.util.Set;
  */
 public abstract class ConfigAspectBase implements ConfigAspect {
 
+  /** A prefix to be used in diag messages for general errors and warnings. */
+  public static final String ASPECT_DIAG_PREFIX = "%s: ";
+
   // The model this aspect is attached to.
   private final Model model;
 
@@ -58,7 +61,7 @@ public abstract class ConfigAspectBase implements ConfigAspect {
 
   // The validation rules registered for this aspect.
   private final Multimap<Class<? extends Element>, LintRule<? extends Element>> lintRules =
-    LinkedHashMultimap.create();
+      LinkedHashMultimap.create();
 
   // The set of lint rule names used by this aspect.
   private final Set<String> lintRuleNames = Sets.newLinkedHashSet();
@@ -71,11 +74,13 @@ public abstract class ConfigAspectBase implements ConfigAspect {
     this.aspectName = Preconditions.checkNotNull(aspectName);
   }
 
-  /**
-   * Returns the model to which the aspect is linked.
-   */
+  /** Returns the model to which the aspect is linked. */
   public Model getModel() {
     return model;
+  }
+
+  public DiagReporter getDiagReporter() {
+    return model.getDiagReporter();
   }
 
   @Override
@@ -99,9 +104,9 @@ public abstract class ConfigAspectBase implements ConfigAspect {
   }
 
   /**
-   * Registers name of a lint rule. Should be used for all rule names used in
-   * {@link #lintWarning(String, Object, String, Object...)} to enable suppression. Does not need to
-   * be used for rules using the {@link #registerLintRule(LintRule)} mechanism.
+   * Registers name of a lint rule. Should be used for all rule names used in Lint rules that do not
+   * extend {@link LintRule} to enable suppression. Does not need to be used for rules using the
+   * {@link #registerLintRule(LintRule)} mechanism.
    */
   public void registerLintRuleName(String... names) {
     Preconditions.checkArgument(modelProcessingHasNotStarted(), "[Internal Error]Linters should be "
@@ -121,21 +126,15 @@ public abstract class ConfigAspectBase implements ConfigAspect {
   @Override
   public void startMerging() {}
 
-  /**
-   * Default implementation for merging an element; does nothing.
-   */
+  /** Default implementation for merging an element; does nothing. */
   @Override
   public void merge(ProtoElement elem) {}
 
-  /**
-   * Default implementation ending merging; does nothing.
-   */
+  /** Default implementation ending merging; does nothing. */
   @Override
   public void endMerging() {}
 
-  /**
-   * Default implementation of start linting; does nothing.
-   */
+  /** Default implementation of start linting; does nothing. */
   @Override
   public void startLinting() {}
 
@@ -161,9 +160,7 @@ public abstract class ConfigAspectBase implements ConfigAspect {
     runRules(model);
   }
 
-  /**
-   * Runs all rules for the given element.
-   */
+  /** Runs all rules for the given element. */
   @SuppressWarnings("unchecked")
   private void runRules(Element elem) {
     Class<?> type = elem.getClass();
@@ -177,27 +174,21 @@ public abstract class ConfigAspectBase implements ConfigAspect {
     }
   }
 
-  /**
-   * Default implementation of starting normalization; does nothing.
-   */
+  /** Default implementation of starting normalization; does nothing. */
   @Override
   public void startNormalization(Service.Builder builder) {}
 
-  /**
-   * Default implementation to normalize an element; does nothing.
-   */
+  /** Default implementation to normalize an element; does nothing. */
   @Override
-  public void normalize(ProtoElement element, Builder builder) { }
+  public void normalize(ProtoElement element, Builder builder) {}
 
-  /**
-   * Default implementation of ending normalization; does nothing.
-   */
+  /** Default implementation of ending normalization; does nothing. */
   @Override
   public void endNormalization(Service.Builder builder) {}
 
   /**
-   * Default implementation of aspect documentation title. Returns null, indicating
-   * the aspect is not documented.
+   * Default implementation of aspect documentation title. Returns null, indicating the aspect is
+   * not documented.
    */
   @Override
   public String getDocumentationTitle(ProtoElement element) {
@@ -205,85 +196,43 @@ public abstract class ConfigAspectBase implements ConfigAspect {
   }
 
   /**
-   * Default implementation of aspect documentation. Returns null, indicating
-   * the aspect is not documented.
+   * Default implementation of aspect documentation. Returns null, indicating the aspect is not
+   * documented.
    */
   @Override
   public String getDocumentation(ProtoElement element) {
     return null;
   }
 
-  /**
-   * Helper for subclasses to report an error.
-   */
-  public void error(Object elementOrLocation, String message, Object... params) {
-    model.getDiagCollector().addDiag(Diag.error(getLocation(elementOrLocation),
-        Model.diagPrefix(aspectName) + message, params));
+  /** Helper for subclasses to report an error. */
+  public void error(Location location, String message, Object... params) {
+    error(ResolvedLocation.create(location), message, params);
+  }
+
+  public void error(LocationContext locationContext, String message, Object... params) {
+    String prefix = String.format(ASPECT_DIAG_PREFIX, aspectName);
+    getDiagReporter().reportError(locationContext, prefix + message, params);
+  }
+
+  /** Helper for subclasses to report a warning. */
+  public void warning(Location location, String message, Object... params) {
+    warning(ResolvedLocation.create(location), message, params);
+  }
+
+  public void warning(LocationContext locationContext, String message, Object... params) {
+    String prefix = String.format(ASPECT_DIAG_PREFIX, aspectName);
+    getDiagReporter().reportWarning(locationContext, prefix + message, params);
   }
 
   /**
-   * Helper for subclasses to report a warning.
-   */
-  public void warning(Object elementOrLocation, String message, Object... params) {
-    model.addDiagIfNotSuppressed(elementOrLocation, Diag.warning(getLocation(elementOrLocation),
-        Model.diagPrefix(aspectName) + message, params));
-  }
-
-  /**
-   * Helper for subclasses to report a linter warning. Each such warning must have a name so the
-   * user can suppress it. The name is relative to the aspect name.
-   *
-   * <p>This method should usually not be directly called. Instead, use the {@link LintRule}
-   * mechanism.
-   */
-  public void lintWarning(String ruleName, Object elementOrLocation,
-      String message, Object... params) {
-    model.addDiagIfNotSuppressed(elementOrLocation, Diag.warning(getLocation(elementOrLocation),
-        Model.diagPrefixForLint(aspectName, ruleName) + message, params));
-  }
-
-  private Location getLocation(Object elementOrLocation) {
-    if (elementOrLocation instanceof Location) {
-      return (Location) elementOrLocation;
-    }
-    if (elementOrLocation instanceof Element) {
-      return ((Element) elementOrLocation).getLocation();
-    }
-    return SimpleLocation.TOPLEVEL;
-  }
-
-  /**
-   * Returns the service config file location of the given named field in the (sub)message.
-   */
-  public Location getLocationInConfig(Message message, String fieldName) {
-    return model.getLocationInConfig(message, fieldName);
-  }
-
-  /** Returns the service config file location of the given field number in the (sub)message. */
-  public Location getLocationInConfig(Message message, int fieldNumber) {
-    return model.getLocationInConfig(
-        message, message.getDescriptorForType().findFieldByNumber(fieldNumber).getName());
-  }
-
-  /**
-   * Returns the service config file location of the given named field in the (sub)message. The key
-   * identifies the key of the map. For repeated fields, the element key is a
-   * zero-based index.
-   * Returns {@link SimpleLocation#TOPLEVEL} if the location is not known.
-   */
-  public Location getLocationOfRepeatedFieldInConfig(
-      Message message, String fieldName, Object elementKey) {
-    return model.getLocationOfRepeatedFieldInConfig(message, fieldName, elementKey);
-  }
-
-  /**
-   * Return a view of this aspect as a diag collector. This allows for abstracting
-   * the aspect to make code better testable.
+   * Return a view of this aspect as a diag collector. This allows for abstracting the aspect to
+   * make code better testable.
    */
   public DiagCollector asDiagCollector() {
     return new DiagCollector() {
 
-      @Override public void addDiag(Diag diag) {
+      @Override
+      public void addDiag(Diag diag) {
         switch (diag.getKind()) {
           case ERROR:
             error(diag.getLocation(), diag.getMessage());
@@ -294,8 +243,9 @@ public abstract class ConfigAspectBase implements ConfigAspect {
         }
       }
 
-      @Override public int getErrorCount() {
-        return model.getDiagCollector().getErrorCount();
+      @Override
+      public int getErrorCount() {
+        return model.getDiagReporter().getDiagCollector().getErrorCount();
       }
 
       @Override
@@ -305,7 +255,7 @@ public abstract class ConfigAspectBase implements ConfigAspect {
 
       @Override
       public List<Diag> getDiags() {
-        return model.getDiagCollector().getDiags();
+        return model.getDiagReporter().getDiagCollector().getDiags();
       }
     };
   }

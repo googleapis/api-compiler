@@ -17,31 +17,36 @@
 package com.google.api.tools.framework.aspects.documentation;
 
 import com.google.api.tools.framework.aspects.documentation.model.DocumentationUtil;
-import com.google.api.tools.framework.model.Location;
-import com.google.api.tools.framework.model.SimpleDiagCollector;
+import com.google.api.tools.framework.model.Diag;
+import com.google.api.tools.framework.model.Diag.Kind;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.SimpleLocation;
+import com.google.api.tools.framework.model.testing.TestDiagReporter;
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.truth.Truth;
+import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/**
- * Tests for {@link DocumentationUtil#filter}.
- */
+/** Tests for {@link DocumentationUtil#filter}. */
 @RunWith(JUnit4.class)
 public class CommentFilterTest {
   private static final Joiner NEWLINE_JOINER = Joiner.on('\n');
   // Set element to null as the CommentFilter does not use it.
-  private final SimpleDiagCollector diagCollector = new SimpleDiagCollector();
+  private final DiagReporter diagReporter = TestDiagReporter.createForTest();
   private final Set<String> visibilityLabels = Sets.newHashSet("TRUSTED_TESTER");
-  private final Location location = SimpleLocation.TOPLEVEL;
+  private final LocationContext location = ResolvedLocation.create(SimpleLocation.TOPLEVEL);
 
-  private String filter(String comment, Location location) {
-    return DocumentationUtil.filter(diagCollector, visibilityLabels, location, comment);
+  private String filter(String comment, LocationContext location) {
+    return DocumentationUtil.filter(diagReporter, visibilityLabels, location, comment);
   }
 
   @Test
@@ -128,22 +133,25 @@ public class CommentFilterTest {
   @Test
   public void testFilter_missingStartTag() {
     filter("Missing \n start tag --)", location);
-    expectError("ERROR: toplevel (at document line 2): Unexpected end tag '--)' with missing "
-        + "begin tag.");
+    expectError(
+        "ERROR: toplevel: (at document line 2) Unexpected end tag '--)' with missing "
+            + "begin tag.");
   }
 
   @Test
   public void testFilter_missingEndTag() {
     filter("Missing end tag (--", location);
-    expectError("ERROR: toplevel (at document line 1): Did not find associated end tag for the "
-        + "begin tag '(--'");
+    expectError(
+        "ERROR: toplevel: (at document line 1) Did not find associated end tag for the "
+            + "begin tag '(--'");
   }
 
   @Test
   public void testFilter_escapedMissingEndTag() {
     filter("\\(-- error --)", location);
-    expectError("ERROR: toplevel (at document line 1): Unexpected end tag '--)' with missing "
-        + "begin tag.");
+    expectError(
+        "ERROR: toplevel: (at document line 1) Unexpected end tag '--)' with missing "
+            + "begin tag.");
   }
 
   /**
@@ -151,24 +159,33 @@ public class CommentFilterTest {
    * during the filtering.
    */
   private void assertResult(String expected, String result) {
-    if (diagCollector.getErrorCount() > 0) {
+    if (diagReporter.getDiagCollector().getErrorCount() > 0) {
       Truth.assertWithMessage("Errors detected while filtering comment")
-          .fail(NEWLINE_JOINER.join(diagCollector.getErrors()));
+          .fail(NEWLINE_JOINER.join(diagReporter.getDiagCollector().getDiags()));
     } else {
       Truth.assertThat(result).isEqualTo(expected);
     }
   }
 
   private void expectError(String message) {
-    if (diagCollector.getErrorCount() == 0) {
+    if (diagReporter.getDiagCollector().getErrorCount() == 0) {
       Truth.assertWithMessage("No error found.").fail("Expected error message %s", message);
-    } else if (diagCollector.getErrorCount() > 1) {
-      Truth.assert_().fail("Found more than one error: \n%s",
-          NEWLINE_JOINER.join(diagCollector.getErrors()));
+    } else if (diagReporter.getDiagCollector().getErrorCount() > 1) {
+      Truth.assert_().fail("Found more than one error: \n%s", NEWLINE_JOINER.join(getErrors()));
     } else {
-      Truth.assertThat(Iterables.getOnlyElement(diagCollector.getErrors()).toString())
-          .isEqualTo(message);
+      Truth.assertThat(Iterables.getOnlyElement(getErrors()).toString()).isEqualTo(message);
     }
   }
 
+  private List<Diag> getErrors() {
+    return FluentIterable.from(diagReporter.getDiagCollector().getDiags())
+        .filter(
+            new Predicate<Diag>() {
+              @Override
+              public boolean apply(Diag diag) {
+                return Kind.ERROR.equals(diag.getKind());
+              }
+            })
+        .toList();
+  }
 }

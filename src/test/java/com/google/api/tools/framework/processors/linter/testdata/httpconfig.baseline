@@ -1,1 +1,0 @@
-WARNING: httpconfig.yaml:10: auth rule has selector(s) 'protiary.test.Storage.GetUndefined' that do not match and are not shadowed by other rules.

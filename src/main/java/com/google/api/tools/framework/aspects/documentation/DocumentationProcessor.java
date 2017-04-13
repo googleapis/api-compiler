@@ -16,8 +16,8 @@
 
 package com.google.api.tools.framework.aspects.documentation;
 
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
 import com.google.api.tools.framework.model.Element;
-import com.google.api.tools.framework.model.Location;
 
 /**
  * Interface defines processor that processes documentation source.
@@ -32,5 +32,5 @@ interface DocumentationProcessor {
    * @param sourceLocation the location of the documentation source.
    * @param element the element for which the documentation source is being processed
    */
-  String process(String source, Location sourceLocation, Element element);
+  String process(String source, LocationContext sourceLocation, Element element);
 }

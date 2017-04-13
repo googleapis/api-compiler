@@ -44,7 +44,7 @@ public class Linter implements Processor {
 
   @Override
   public boolean run(final Model model) {
-    int oldErrorCount = model.getDiagCollector().getErrorCount();
+    int oldErrorCount = model.getDiagReporter().getDiagCollector().getErrorCount();
 
     for (ConfigAspect aspect : model.getConfigAspects()) {
       aspect.startLinting();
@@ -61,7 +61,7 @@ public class Linter implements Processor {
       aspect.endLinting();
     }
 
-    if (oldErrorCount == model.getDiagCollector().getErrorCount()) {
+    if (oldErrorCount == model.getDiagReporter().getDiagCollector().getErrorCount()) {
       // No new errors produced -- success.
       model.putAttribute(Linted.KEY, new Linted());
       return true;

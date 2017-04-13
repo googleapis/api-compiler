@@ -17,42 +17,38 @@
 package com.google.api.tools.framework.aspects.documentation;
 
 import com.google.api.tools.framework.model.Diag;
+import com.google.api.tools.framework.model.Diag.Kind;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.ProtoElement;
-import com.google.api.tools.framework.model.SimpleDiagCollector;
 import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.api.tools.framework.model.testing.BaselineTestCase;
 import com.google.api.tools.framework.model.testing.DiagUtils;
 import com.google.api.tools.framework.model.testing.TestDataLocator;
+import com.google.api.tools.framework.model.testing.TestDiagReporter;
 import com.google.common.base.Joiner;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/**
- * Baseline tests for {@link SourceNormalizer}
- */
+/** Baseline tests for {@link SourceNormalizer} */
 @RunWith(JUnit4.class)
 
 public class SourceNormalizerTest extends BaselineTestCase {
   private static final String TESTDATA_PATH =
       SourceNormalizerTest.class.getPackage().getName().replace(".", File.separator)
-      + File.separator + "testdata";
+          + File.separator
+          + "testdata";
 
   private static final Joiner NEWLINE_JOINER = Joiner.on('\n');
   // Set element to null as the SourcecNormalizer does not use it.
   private static final ProtoElement element = null;
   private SourceNormalizer normalizer;
-  private SimpleDiagCollector diagCollector;
+  private DiagReporter diagReporter = TestDiagReporter.createForTest();
   private TestDataLocator testDataLocator = TestDataLocator.create(getClass());
-
-  @Before
-  public void setup() {
-    diagCollector = new SimpleDiagCollector();
-  }
 
   @Test
   public void documentation_normalize() throws IOException {
@@ -61,27 +57,29 @@ public class SourceNormalizerTest extends BaselineTestCase {
 
     tempFileFullPath = testDataLocator.getTestDataAsFile(relativeFilePath);
     String includeFile = tempFileFullPath.getFileName().toString();
-    String source = createFromLines(
-        "Top level line.",
-        "# Header1 #",
-        "Header1 content line1.",
-        "Header1 content line2.",
-        "",
-        "## Header2.",
-        "Header2 content line1.",
-        "(== include " + includeFile + "==)");
+    String source =
+        createFromLines(
+            "Top level line.",
+            "# Header1 #",
+            "Header1 content line1.",
+            "Header1 content line2.",
+            "",
+            "## Header2.",
+            "Header2 content line1.",
+            "(== include " + includeFile + "==)");
     runTest(source, tempFileFullPath.getParent().toString());
   }
 
   @Test
   public void documentation_normalize_setextHeader() {
-    String source = createFromLines(
-        "SETEXT-Style Header1",
-        "========",
-        "Header1 content line1.",
-        "SETEXT-Style Header2",
-        "--------",
-        "Header2 content line1.");
+    String source =
+        createFromLines(
+            "SETEXT-Style Header1",
+            "========",
+            "Header1 content line1.",
+            "SETEXT-Style Header2",
+            "--------",
+            "Header2 content line1.");
     runTest(source, "");
   }
 
@@ -89,13 +87,14 @@ public class SourceNormalizerTest extends BaselineTestCase {
   public void documentation_normalize_invalidInclusion() {
     String invalidFilePath = TESTDATA_PATH + "/dummy.md";
     String invalidExtension = TESTDATA_PATH + "/invalid.dummy";
-    String source = createFromLines(
-        "Top level line.",
-        "# Header1 #",
-        "(== include " + invalidExtension + "==)",
-        "## Header2.",
-        "Header2 content line1.",
-        "(== include " + invalidFilePath + "==)");
+    String source =
+        createFromLines(
+            "Top level line.",
+            "# Header1 #",
+            "(== include " + invalidExtension + "==)",
+            "## Header2.",
+            "Header2 content line1.",
+            "(== include " + invalidFilePath + "==)");
     runTest(source, "");
   }
 
@@ -103,14 +102,16 @@ public class SourceNormalizerTest extends BaselineTestCase {
     return NEWLINE_JOINER.join(lines);
   }
 
-  /**
-   * Runs the test for normalizing given source and compare the result with baseline result.
-   */
+  /** Runs the test for normalizing given source and compare the result with baseline result. */
   private void runTest(String source, String docPath) {
-    normalizer = new SourceNormalizer(diagCollector, docPath);
-    testOutput().println(normalizer.process(source, SimpleLocation.TOPLEVEL, element));
-    for (Diag diag : diagCollector.getErrors()) {
-      testOutput().println(DiagUtils.getDiagToPrint(diag, true));
+    normalizer = new SourceNormalizer(diagReporter, docPath);
+    testOutput()
+        .println(
+            normalizer.process(source, ResolvedLocation.create(SimpleLocation.TOPLEVEL), element));
+    for (Diag diag : diagReporter.getDiagCollector().getDiags()) {
+      if (diag.getKind() == Kind.ERROR) {
+        testOutput().println(DiagUtils.getDiagToPrint(diag, true));
+      }
     }
   }
 }

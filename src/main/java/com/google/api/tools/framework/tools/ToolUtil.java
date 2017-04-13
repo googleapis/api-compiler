@@ -229,12 +229,12 @@ public class ToolUtil {
 
   /** Sets up the model configs, attaching to the model. */
   public static void setupModelConfigs(Model model, Set<FileWrapper> files) {
-    DiagCollector diagCollector = model.getDiagCollector();
+    DiagCollector diagCollector = model.getDiagReporter().getDiagCollector();
     ImmutableList.Builder<ConfigSource> builder = ImmutableList.builder();
 
     for (FileWrapper file : files) {
-      ConfigSource message = getConfigSourceFromFile(
-          model.getDiagCollector(), file.getFilename(), file.getFileContents());
+      ConfigSource message =
+          getConfigSourceFromFile(diagCollector, file.getFilename(), file.getFileContents());
       if (message != null) {
         builder.add(message);
       }

@@ -18,12 +18,12 @@ package com.google.api.tools.framework.aspects.documentation.model;
 
 import com.google.api.Page;
 import com.google.api.tools.framework.aspects.http.model.RestMethod;
-import com.google.api.tools.framework.model.Diag;
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
-import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.api.tools.framework.model.SymbolTable;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
@@ -36,9 +36,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringEscapeUtils;
 
-/**
- * Static utilities for dealing with documentation.
- */
+/** Static utilities for dealing with documentation. */
 public class DocumentationUtil {
 
   private DocumentationUtil() {}
@@ -49,18 +47,14 @@ public class DocumentationUtil {
    */
   private static final Pattern WORD = Pattern.compile("(?<!\\.)\\b\\w+\\b");
 
-  /**
-   * Get the documentation pages from given model.
-   */
+  /** Get the documentation pages from given model. */
   public static List<Page> getToplevelPages(Model model) {
     return model.hasAttribute(DocumentationPagesAttribute.KEY)
         ? model.getAttribute(DocumentationPagesAttribute.KEY).toplevelPages()
         : ImmutableList.<Page>of();
   }
 
-  /**
-   * Get the documentation pages scoped to the visibility as currently set in the model.
-   */
+  /** Get the documentation pages scoped to the visibility as currently set in the model. */
   public static List<Page> getScopedToplevelPages(Model model) {
     ImmutableList.Builder<Page> scopedPages = ImmutableList.builder();
     for (Page page : getToplevelPages(model)) {
@@ -72,8 +66,11 @@ public class DocumentationUtil {
   private static Page doPageScoping(Model model, Page page) {
     Page.Builder scopedPage = page.toBuilder().clearSubpages();
     scopedPage.setContent(
-        new CommentFilter(model.getDiagCollector(), model.getLocationInConfig(page, "content"),
-            model.getVisibilityLabels()).process(page.getContent()));
+        new CommentFilter(
+                model.getDiagReporter(),
+                MessageLocationContext.create(page, Page.CONTENT_FIELD_NUMBER),
+                model.getVisibilityLabels())
+            .process(page.getContent()));
     for (Page subpage : page.getSubpagesList()) {
       scopedPage.addSubpages(doPageScoping(model, subpage));
     }
@@ -81,8 +78,8 @@ public class DocumentationUtil {
   }
 
   /**
-   * Given an ProtoElement, returns its associated deprecation description.  Returns the empty
-   * string if not available.
+   * Given an ProtoElement, returns its associated deprecation description. Returns the empty string
+   * if not available.
    */
   public static String getDeprecationDescription(ProtoElement element) {
     return element.hasAttribute(ElementDocumentationAttribute.KEY)
@@ -91,34 +88,32 @@ public class DocumentationUtil {
   }
 
   /**
-   * Given an ProtoElement, returns its associated description.
-   * Returns the empty string if no description is available.
+   * Given an ProtoElement, returns its associated description. Returns the empty string if no
+   * description is available.
    */
   public static String getDescription(ProtoElement element) {
     return getDescription(element, "");
   }
 
-  /**
-   * Get the description of the element scoped to the visibility as currently set in the model.
-   */
+  /** Get the description of the element scoped to the visibility as currently set in the model. */
   public static String getScopedDescription(ProtoElement element) {
     return getScopedDescription(element, false);
   }
 
   public static String getScopedDescription(ProtoElement element, boolean reportWarning) {
     Model model = element.getModel();
-    Location location = element.getLocation();
+    LocationContext location = ResolvedLocation.create(element.getLocation());
     String internalCommentFilteredString =
-        new CommentFilter(model.getDiagCollector(), location, model.getVisibilityLabels())
+        new CommentFilter(model.getDiagReporter(), location, model.getVisibilityLabels())
             .process(getDescription(element));
 
     return sanitizeTodos(
-        model.getDiagCollector(), location, internalCommentFilteredString, reportWarning);
+        model.getDiagReporter(), location, internalCommentFilteredString, reportWarning);
   }
 
   /**
-   * Given a proto element, returns its associated description. Returns {@code defaultText}
-   * if no description is available.
+   * Given a proto element, returns its associated description. Returns {@code defaultText} if no
+   * description is available.
    */
   public static String getDescription(ProtoElement element, String defaultText) {
     return element.hasAttribute(ElementDocumentationAttribute.KEY)
@@ -129,8 +124,8 @@ public class DocumentationUtil {
   /**
    * Given a string, searches for unqualified references to message fields and to method names and
    * converts them from RPC-style to REST-style. Field names are converted from lower_underscore to
-   * lowerCamel. Method names are converted from VerbCollection-style to collection.verb style.
-   * No work is done for qualified references; in such a case, an explicit markdown link with the
+   * lowerCamel. Method names are converted from VerbCollection-style to collection.verb style. No
+   * work is done for qualified references; in such a case, an explicit markdown link with the
    * proper display text should be used in the proto comment (e.g.,
    * [foo_bar][Path.To.Message.foo_bar], which will be converted to
    * [fooBar][Path.To.Message.foo_bar] by rpcToRest).
@@ -144,15 +139,15 @@ public class DocumentationUtil {
       if (symbolTable.containsFieldName(m.group(0))) {
         m.appendReplacement(sb, CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, m.group(0)));
 
-      // Convert method names
+        // Convert method names
       } else if (symbolTable.lookupMethodSimpleName(m.group(0)) != null) {
         RestMethod restMethod =
             RestMethod.getPrimaryRestMethod(symbolTable.lookupMethodSimpleName(m.group(0)).get(0));
         if (restMethod == null) {
           m.appendReplacement(sb, m.group(0));
         } else {
-          m.appendReplacement(sb, restMethod.getSimpleRestCollectionName() + "."
-              + restMethod.getRestMethodName());
+          m.appendReplacement(
+              sb, restMethod.getSimpleRestCollectionName() + "." + restMethod.getRestMethodName());
         }
 
       } else {
@@ -164,23 +159,22 @@ public class DocumentationUtil {
   }
 
   /**
-   * Given a model, returns its associated documentation root url based on documentation and
-   * legacy configuration. Returns empty string if not available.
+   * Given a model, returns its associated documentation root url based on documentation and legacy
+   * configuration. Returns empty string if not available.
    */
   public static String getDocumentationRootUrl(Model model) {
     if (model.getServiceConfig() == null) {
       return "";
     }
-    if (model.getServiceConfig().hasDocumentation() && !Strings.isNullOrEmpty(
-        model.getServiceConfig().getDocumentation().getDocumentationRootUrl())) {
+    if (model.getServiceConfig().hasDocumentation()
+        && !Strings.isNullOrEmpty(
+            model.getServiceConfig().getDocumentation().getDocumentationRootUrl())) {
       return model.getServiceConfig().getDocumentation().getDocumentationRootUrl();
     }
     return "";
   }
 
-  /**
-   * Given a documentation string, escape it such that it can be represented as a JSON string.
-   */
+  /** Given a documentation string, escape it such that it can be represented as a JSON string. */
   public static String asJsonString(String text) {
     if (text == null) {
       return "";
@@ -188,15 +182,13 @@ public class DocumentationUtil {
     return StringEscapeUtils.ESCAPE_JSON.translate(text);
   }
 
-  /**
-   * Given a documentation string, replace the cross reference links with reference text.
-   */
+  /** Given a documentation string, replace the cross reference links with reference text. */
   public static String removeCrossReference(String text) {
     if (Strings.isNullOrEmpty(text)) {
       return "";
     }
-    Pattern pattern = Pattern.compile("\\[(?<name>[^\\]]+?)\\]( |\\n)*"
-        + "\\[(?<link>[^\\]]*?)\\]");
+    Pattern pattern =
+        Pattern.compile("\\[(?<name>[^\\]]+?)\\]( |\\n)*" + "\\[(?<link>[^\\]]*?)\\]");
     Matcher matcher = pattern.matcher(text);
     StringBuffer result = new StringBuffer();
     while (matcher.find()) {
@@ -209,27 +201,27 @@ public class DocumentationUtil {
   }
 
   /**
-   * Performs comment filtering. Parse the text to remove non visible comments enclosed by
-   * "(-- --)" tags. It works as follows:
+   * Performs comment filtering. Parse the text to remove non visible comments enclosed by "(-- --)"
+   * tags. It works as follows:
+   *
    * <ul>
-   * <li>All leading and trailing white spaces surrounding tags will be replaced with one space.
-   * For example:
-   * <pre>
+   *   <li>All leading and trailing white spaces surrounding tags will be replaced with one space.
+   *       For example:
+   *       <pre>
    *   "Foo (-- internal --) foo"
    *   will be returned as
    *   "Foo foo"
    * </pre>
-   * Except, if internal comment is at the beginning of the line, no space will be
-   * inserted. For example:
-   * <pre>
+   *       Except, if internal comment is at the beginning of the line, no space will be inserted.
+   *       For example:
+   *       <pre>
    *   "(-- internal --) foo"
    *   will be returned as
    *   "foo"
    * </pre>
-   *
-   * <li>Lines with only internal comments (all text enclosed by tags) will be removed.
-   * For example:
-   * <pre>
+   *   <li>Lines with only internal comments (all text enclosed by tags) will be removed. For
+   *       example:
+   *       <pre>
    *   "Foo (-- internal --)
    *   (-- internal --) (-- internal2 --)
    *   Foo"
@@ -237,18 +229,20 @@ public class DocumentationUtil {
    *   "Foo
    *   Foo"
    * </pre>
-   *
-   * <li> If visibility label "(--LABEL: ... --) is specified, the comments will be kept if the
-   * label is found in the provided visibility labels. If no label was specified, the comments will
-   * be filtered.
-   * <li> Nested tags are valid, but should appear in pair.
-   * <li> It only reports the first encountered error if multiple ones exist.
-   * <li> Tags may be escaped with a backslash, for example, "\(-- ... \--)".
+   *   <li>If visibility label "(--LABEL: ... --) is specified, the comments will be kept if the
+   *       label is found in the provided visibility labels. If no label was specified, the comments
+   *       will be filtered.
+   *   <li>Nested tags are valid, but should appear in pair.
+   *   <li>It only reports the first encountered error if multiple ones exist.
+   *   <li>Tags may be escaped with a backslash, for example, "\(-- ... \--)".
    * </ul>
    */
-  public static String filter(DiagCollector collector, @Nullable Set<String> visibilityLabels,
-      Location location, @Nullable String source) {
-    return new CommentFilter(collector, location, visibilityLabels).process(source);
+  public static String filter(
+      DiagReporter diagReporter,
+      @Nullable Set<String> visibilityLabels,
+      LocationContext location,
+      @Nullable String source) {
+    return new CommentFilter(diagReporter, location, visibilityLabels).process(source);
   }
 
   /**
@@ -259,8 +253,8 @@ public class DocumentationUtil {
    * generated documentation.
    */
   private static String sanitizeTodos(
-      DiagCollector diagCollector,
-      Location location,
+      DiagReporter diagReporter,
+      LocationContext location,
       @Nullable String source,
       boolean reportWarning) {
     if (Strings.isNullOrEmpty(source)) {
@@ -270,14 +264,13 @@ public class DocumentationUtil {
     String[] sourceSplitByTodo = Pattern.compile("\\bTODO(\\(.*?\\))?:").split(source);
 
     if (sourceSplitByTodo.length > 1 && reportWarning) {
-      diagCollector.addDiag(
-          Diag.warning(
-              location,
-              "A TODO comment was found. All comments from this TODO to the end of the comment "
-                  + "block will be removed from the generated documentation. This TODO Comment "
-                  + "should be wrapped in internal comment tags, \"(--\" and \"--)\", to prevent "
-                  + "non-internal documentation after the TODO from being removed from the "
-                  + "generated documentation."));
+      diagReporter.reportWarning(
+          location,
+          "A TODO comment was found. All comments from this TODO to the end of the comment "
+              + "block will be removed from the generated documentation. This TODO Comment "
+              + "should be wrapped in internal comment tags, \"(--\" and \"--)\", to prevent "
+              + "non-internal documentation after the TODO from being removed from the "
+              + "generated documentation.");
     }
 
     String result = sourceSplitByTodo[0];
@@ -285,24 +278,20 @@ public class DocumentationUtil {
     return result.endsWith("\n") ? result.substring(0, result.length() - 1) : result;
   }
 
-  /**
-   * Helper class to filter comments.
-   */
+  /** Helper class to filter comments. */
   private static class CommentFilter {
 
     private static final String NEW_LINE = "\n";
 
-    private final DiagCollector diagCollector;
+    private final DiagReporter diagReporter;
     @Nullable private final Set<String> labels;
-    private final Location location;
+    private final LocationContext location;
 
-    /**
-     * Creates an instance of {@link CommentFilter}
-     */
-    private CommentFilter(DiagCollector diagCollector, Location location,
-        @Nullable Set<String> labels) {
-      this.diagCollector = Preconditions.checkNotNull(diagCollector,
-          "diagCollector should not be null.");
+    /** Creates an instance of {@link CommentFilter} */
+    private CommentFilter(
+        DiagReporter diagReporter, LocationContext location, @Nullable Set<String> labels) {
+      this.diagReporter =
+          Preconditions.checkNotNull(diagReporter, "diagReporter should not be null.");
       this.labels = labels;
       this.location = Preconditions.checkNotNull(location, "location should not be null.");
     }
@@ -326,8 +315,8 @@ public class DocumentationUtil {
             appendText(tokenizer, builder);
             break;
           default:
-            collectError(location, token.lineNum,
-                "Unexpected end tag '--)' with missing begin tag.");
+            collectError(
+                location, token.lineNum, "Unexpected end tag '--)' with missing begin tag.");
             return source;
         }
       }
@@ -348,11 +337,12 @@ public class DocumentationUtil {
      * @param location the location of the comment source
      * @return true if no error found. Otherwise returns false
      */
-    private boolean handleInternalComment(CommentTokenizer tokenizer, StringBuilder builder,
-        Location location) {
+    private boolean handleInternalComment(
+        CommentTokenizer tokenizer, StringBuilder builder, LocationContext location) {
       Token beginTag = tokenizer.pollNext();
-      boolean shouldFilter = Strings.isNullOrEmpty(beginTag.label)
-          || labels != null && !labels.contains(beginTag.label);
+      boolean shouldFilter =
+          Strings.isNullOrEmpty(beginTag.label)
+              || labels != null && !labels.contains(beginTag.label);
       while (tokenizer.hasNext()) {
         switch (tokenizer.peekNext().kind) {
           case BEGIN_INTERNAL_COMMENT:
@@ -379,20 +369,19 @@ public class DocumentationUtil {
         }
       }
 
-      collectError(location, beginTag.lineNum,
-          "Did not find associated end tag for the begin tag '(--'");
+      collectError(
+          location, beginTag.lineNum, "Did not find associated end tag for the begin tag '(--'");
       return false;
     }
 
-    /**
-     * Consumes consecutive text tokens and append them to builder.
-     */
+    /** Consumes consecutive text tokens and append them to builder. */
     private void appendText(CommentTokenizer tokenizer, StringBuilder builder) {
       while (tokenizer.hasNext() && tokenizer.peekNext().kind == TokenKind.TEXT) {
         String text = tokenizer.pollNext().text;
         // Append a whitespace, if the position the text to be appended is not the
         // beginning of the line and text to be appended is not newline.
-        if (builder.length() > 0 && builder.charAt(builder.length() - 1) != '\n'
+        if (builder.length() > 0
+            && builder.charAt(builder.length() - 1) != '\n'
             && !text.equals(NEW_LINE)) {
           builder.append(' ');
         }
@@ -400,9 +389,7 @@ public class DocumentationUtil {
       }
     }
 
-    /**
-     * Consumes consecutive text tokens.
-     */
+    /** Consumes consecutive text tokens. */
     private void skipText(CommentTokenizer tokenizer) {
       while (tokenizer.hasNext() && tokenizer.peekNext().kind == TokenKind.TEXT) {
         tokenizer.pollNext();
@@ -416,23 +403,19 @@ public class DocumentationUtil {
      * @param lineNum the line number where the error is detected
      * @param message the message describes the error
      */
-    private void collectError(Location location, int lineNum, String message) {
-      diagCollector.addDiag(Diag.error(new SimpleLocation(
-          String.format("%s (at document line %d)", location.getDisplayString(), lineNum)),
-          message));
+    private void collectError(LocationContext location, int lineNum, String message) {
+      diagReporter.reportError(location, "(at document line %d) " + message, lineNum);
     }
 
-    /**
-     * Tokenizes given comment source by internal comment tags "(--LABEL" and "--)".
-     */
+    /** Tokenizes given comment source by internal comment tags "(--LABEL" and "--)". */
     private static class CommentTokenizer {
       private static final Pattern ACL_LABEL = Pattern.compile("[A-Z_]+:");
-      private static final Pattern BEGIN_TAG = Pattern.compile(String.format(
-          " *(?<!\\\\)\\(--(?<ACL>%s)? *", ACL_LABEL));
+      private static final Pattern BEGIN_TAG =
+          Pattern.compile(String.format(" *(?<!\\\\)\\(--(?<ACL>%s)? *", ACL_LABEL));
       private static final Pattern END_TAG = Pattern.compile(" *(?<!\\\\)--\\) *\\n?");
 
-      private static final Pattern TOKEN = Pattern.compile(String.format(
-          "(?<BeginTag>%s)|(?<EndTag>%s)|(\n)", BEGIN_TAG, END_TAG));
+      private static final Pattern TOKEN =
+          Pattern.compile(String.format("(?<BeginTag>%s)|(?<EndTag>%s)|(\n)", BEGIN_TAG, END_TAG));
 
       private static final String BEGIN_TAG_GROUP = "BeginTag";
       private static final String ACL_LABEL_GROUP = "ACL";
@@ -442,49 +425,37 @@ public class DocumentationUtil {
       private final String source;
       private Token currentToken;
 
-      /**
-       * The line number of the current token inside the source.
-       */
+      /** The line number of the current token inside the source. */
       private int lineNum = 1;
 
-      /**
-       * The index of source string.
-       */
+      /** The index of source string. */
       private int index = 0;
 
-      /**
-       * Creates an instance of {@link CommentTokenizer} for given comment source.
-       */
+      /** Creates an instance of {@link CommentTokenizer} for given comment source. */
       private CommentTokenizer(String source) {
         this.source = Preconditions.checkNotNull(source, "source should not be null.");
         this.matcher = TOKEN.matcher(source);
         pollNext();
       }
 
-      /**
-       * Returns next token without consuming it.
-       */
+      /** Returns next token without consuming it. */
       private Token peekNext() {
         return currentToken;
       }
 
-      /**
-       * Determines if it has more tokens.
-       */
+      /** Determines if it has more tokens. */
       private boolean hasNext() {
         return currentToken != null;
       }
 
-      /**
-       * Returns next token. The matcher will move forward.
-       */
+      /** Returns next token. The matcher will move forward. */
       private Token pollNext() {
         Token result = currentToken;
         if (matcher.find()) {
           if (index < matcher.start()) {
             // There is text between current position and next matching.
-            currentToken = new Token(TokenKind.TEXT, source.substring(index, matcher.start()),
-                lineNum);
+            currentToken =
+                new Token(TokenKind.TEXT, source.substring(index, matcher.start()), lineNum);
             index = matcher.start();
             matcher.region(index, matcher.regionEnd());
           } else {
@@ -507,8 +478,12 @@ public class DocumentationUtil {
       private Token createTokenFromMatcher() {
         Token result;
         if (matcher.group(BEGIN_TAG_GROUP) != null) {
-          result = new Token(TokenKind.BEGIN_INTERNAL_COMMENT, matcher.group(BEGIN_TAG_GROUP),
-              matcher.group(ACL_LABEL_GROUP), lineNum);
+          result =
+              new Token(
+                  TokenKind.BEGIN_INTERNAL_COMMENT,
+                  matcher.group(BEGIN_TAG_GROUP),
+                  matcher.group(ACL_LABEL_GROUP),
+                  lineNum);
         } else if (matcher.group(END_TAG_GROUP) != null) {
           String endTag = matcher.group(END_TAG_GROUP);
           if (endTag.endsWith(NEW_LINE)) {
@@ -524,17 +499,13 @@ public class DocumentationUtil {
       }
     }
 
-    /**
-     * Represents matched token.
-     */
+    /** Represents matched token. */
     private static class Token {
       private final TokenKind kind;
       private final String text;
       private final int lineNum;
 
-      /**
-       * ACL label name. Could be set for BEGIN_INTERNAL_COMMENT token.
-       */
+      /** ACL label name. Could be set for BEGIN_INTERNAL_COMMENT token. */
       @Nullable private final String label;
 
       private Token(TokenKind kind, String text, int lineNum) {
@@ -549,9 +520,7 @@ public class DocumentationUtil {
       }
     }
 
-    /**
-     * Represent token kind.
-     */
+    /** Represent token kind. */
     private static enum TokenKind {
       BEGIN_INTERNAL_COMMENT,
       END_INTERNAL_COMMENT,

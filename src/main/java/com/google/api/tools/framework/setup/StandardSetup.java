@@ -86,8 +86,7 @@ public class StandardSetup {
   }
 
   private static void registerValidators(Model model) {
-    model.registerValidator(
-        new HttpConfigAspectValidator(model.getDiagCollector(), model.getDiagSuppressor()));
+    model.registerValidator(new HttpConfigAspectValidator(model.getDiagReporter()));
 
   }
 
