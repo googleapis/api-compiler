@@ -44,11 +44,11 @@ import java.util.Set;
  */
 public class HttpConfigAspectValidator extends ConfigValidator<Method> {
 
-  private static final ImmutableSet<String> ALLOWED_MAP_FIELDS_IN_QUERY_PARAM =
+  private static final ImmutableSet<String> ALLOWED_REPEATED_FIELDS_IN_QUERY_PARAM =
       ImmutableSet.of(
-          // This map field is specially handled by the framework and will not be visible to users;
-          // it is not expected to be mapped to a query parameter.
-          "google.rpc.context.HttpHeaderContext.headers");
+          // This map field is specially handled by the framework; it is not expected to be mapped
+          // to a query parameter.
+          "google.api.HttpBody.extensions");
 
   public HttpConfigAspectValidator(DiagReporter diagReporter) {
     super(diagReporter, HttpConfigAspect.NAME, Method.class);
@@ -163,10 +163,6 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
     TypeRef type = field.getType();
     WellKnownType wkt = type.getWellKnownType();
     if (type.isMap()) {
-      if (ALLOWED_MAP_FIELDS_IN_QUERY_PARAM.contains(field.getFullName())) {
-        return;
-      }
-
       error(
           ResolvedLocation.create(method.getLocation()),
           "map field '%s' referred to by message '%s' cannot be mapped as an HTTP parameter.",
@@ -190,6 +186,10 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
         return;
       }
       if (type.isRepeated()) {
+        if (ALLOWED_REPEATED_FIELDS_IN_QUERY_PARAM.contains(field.getFullName())) {
+          return;
+        }
+
         error(
             ResolvedLocation.create(method.getLocation()),
             "repeated message field '%s' referred to by message '%s' cannot be mapped "
