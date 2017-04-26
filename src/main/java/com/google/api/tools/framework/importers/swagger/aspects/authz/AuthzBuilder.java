@@ -29,7 +29,7 @@ import io.swagger.models.Swagger;
  * Class to parse "x-google-experimental-authorization" field and build
  * service.experimental.authorization.
  */
-public final class AuthzBuilder implements AspectBuilder{
+public final class AuthzBuilder implements AspectBuilder {
   private final DiagCollector diagCollector;
 
   public AuthzBuilder(DiagCollector diagCollector) {
@@ -44,11 +44,11 @@ public final class AuthzBuilder implements AspectBuilder{
     if (extensionConverter.hasExtension(ExtensionNames.AUTHORIZATION_EXTENSION_NAME)) {
       Experimental.Builder eBuilder = serviceBuilder.getExperimentalBuilder();
 
-      AuthorizationConfig config = extensionConverter.convertExtensionToProto(
-          AuthorizationConfig.getDefaultInstance(), ExtensionNames.AUTHORIZATION_EXTENSION_NAME);
-      if (config != null) {
-        serviceBuilder.setExperimental(eBuilder.setAuthorization(config));
-      }
+      AuthorizationConfig config =
+          extensionConverter.convertExtensionToProto(
+              AuthorizationConfig.getDefaultInstance(),
+              ExtensionNames.AUTHORIZATION_EXTENSION_NAME);
+      serviceBuilder.setExperimental(eBuilder.setAuthorization(config));
     }
   }
 }

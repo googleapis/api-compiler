@@ -74,10 +74,13 @@ public class OpenApiToService {
         .setTopLevelFields(openApis.get(0).serviceBuilder(), openApis, serviceName);
     buildService(openApis);
     aggregateAllDiagnostics(openApis);
-   List<Service.Builder> serviceBuilders = Lists.newArrayList();
+    if (diagCollector.hasErrors()) {
+      return null;
+    }
+    List<Service.Builder> serviceBuilders = Lists.newArrayList();
     for (OpenApiFile openApiFile : openApis) {
       serviceBuilders.add(openApiFile.serviceBuilder());
-   }
+    }
     return ServiceNormalizer.normalizeService(
         new ServiceMerger().merge(serviceBuilders), diagCollector, additionalConfigs);
   }

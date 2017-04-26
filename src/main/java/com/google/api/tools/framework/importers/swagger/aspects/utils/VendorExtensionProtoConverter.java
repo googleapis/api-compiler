@@ -57,8 +57,9 @@ public class VendorExtensionProtoConverter {
    * issues in proto.
    */
   @Nullable
-  public <T extends Message> T convertExtensionToProto(T prototype, String extensionName) {
-    return convertJsonToProto(prototype, extensions.get(extensionName).toString(), extensionName);
+  public <T extends Message> T convertExtensionToProto(T defaultValue, String extensionName) {
+    return convertJsonToProto(
+        defaultValue, extensions.get(extensionName).toString(), extensionName);
   }
 
   /**
@@ -67,12 +68,13 @@ public class VendorExtensionProtoConverter {
    * due to type issues in proto. Will fail if the provided extension is not a JsonArray. Returns
    * empty List on failure.
    */
-  public <T extends Message> List<T> convertExtensionToProtos(T prototype, String extensionName) {
+  public <T extends Message> List<T> convertExtensionToProtos(
+      T defaultValue, String extensionName) {
     JsonNode jsonNode = readExtensionAsJsonArray(extensionName);
     if (jsonNode == null) {
       return Lists.newArrayList();
     }
-    return convertJsonArrayToProto(prototype, jsonNode, extensionName);
+    return convertJsonArrayToProto(defaultValue, jsonNode, extensionName);
   }
 
   private <T extends Message> List<T> convertJsonArrayToProto(
@@ -82,7 +84,7 @@ public class VendorExtensionProtoConverter {
       try {
         String nodeJson = new ObjectMapper().writeValueAsString(messageNode);
         T message = convertJsonToProto(prototype, nodeJson, extensionName);
-        if (message != null) {
+        if (!message.equals(prototype)) {
           messages.add(message);
         }
       } catch (IOException ex) {
@@ -113,7 +115,7 @@ public class VendorExtensionProtoConverter {
               extensionName,
               prototype.getDescriptorForType().getFullName(),
               ex.getMessage()));
-      return null;
+      return prototype;
     }
   }
 

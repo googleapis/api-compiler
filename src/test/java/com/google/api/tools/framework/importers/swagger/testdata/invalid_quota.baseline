@@ -1,0 +1,3 @@
+ERROR: invalid_quota.yaml: x-google-quota-definitions: Extension x-google-quota-definitions cannot be converted into proto type google.api.Quota. Details: Cannot find field: limit in message google.api.Quota
+WARNING: invalid_quota.yaml: Operation 'post' in path '/v1/shelves': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+Service config creation failed
