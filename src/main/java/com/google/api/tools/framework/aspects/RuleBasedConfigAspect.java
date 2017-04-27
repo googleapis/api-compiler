@@ -34,6 +34,8 @@ import javax.annotation.Nullable;
 public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeType>
     extends ConfigAspectBase {
 
+  private final boolean alwaysEvaluate;
+
   /** Predicate determining whether a rule of the aspect is applicable to the element. */
   protected abstract boolean isApplicable(ProtoElement element);
 
@@ -49,9 +51,13 @@ public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeT
   /**
    * Evaluates the rule w.r.t. the given element and returns the attribute which should be attached
    * to the element. May add errors on the element's model, and may return null if evaluation fails.
+   *
+   * The 'rule' can be null if alwaysEvaluate() returns true and there is no rule defined for
+   * the 'element'.
    */
   @Nullable
-  protected abstract AttributeType evaluate(ProtoElement element, RuleType rule, boolean isFromIdl);
+  protected abstract AttributeType evaluate(
+      ProtoElement element, @Nullable RuleType rule, boolean isFromIdl);
 
   /** Clears the rule builder during normalization. */
   protected abstract void clearRuleBuilder(Service.Builder builder);
@@ -69,7 +75,18 @@ public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeT
       String aspectName,
       Descriptor ruleDescriptor,
       List<RuleType> rules) {
+    this(model, key, aspectName, ruleDescriptor, rules, false);
+  }
+
+  protected RuleBasedConfigAspect(
+      Model model,
+      Key<AttributeType> key,
+      String aspectName,
+      Descriptor ruleDescriptor,
+      List<RuleType> rules,
+      boolean alwaysEvaluate) {
     super(model, aspectName);
+    this.alwaysEvaluate = alwaysEvaluate;
     this.key = key;
     this.rules =
         new ConfigRuleSet<>(
@@ -93,7 +110,7 @@ public abstract class RuleBasedConfigAspect<RuleType extends Message, AttributeT
       rule = fromIdlLayer(element);
       isFromIdl = true;
     }
-    if (rule != null) {
+    if (alwaysEvaluate || rule != null) {
       AttributeType attribute = evaluate(element, rule, isFromIdl);
       if (attribute != null) {
         element.putAttribute(key, attribute);
