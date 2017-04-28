@@ -143,9 +143,10 @@ public class RestAnalyzerTest extends BaselineTestCase {
     if (!model.getDiagReporter().getDiagCollector().getDiags().isEmpty()) {
       restMethod = RestMethod.create(method, RestKind.CUSTOM, "*error*", "*error*");
     } else {
+      HttpRule httpRule = HttpRule.getDefaultInstance();
       HttpAttribute httpConfig =
           new HttpAttribute(
-              HttpRule.getDefaultInstance(),
+              httpRule,
               httpKind,
               MessageType.create(file, Empty.getDescriptor().toProto(), "", ExtensionPool.EMPTY),
               path,

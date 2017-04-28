@@ -34,9 +34,13 @@ import com.google.api.tools.framework.model.TypeRef;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -50,7 +54,14 @@ import java.util.TreeMap;
  */
 public class RestAnalyzer {
 
+  /**
+   * If experiment is set, the RestAnalyzer will shorten collection names using a heuristic.
+   */
+  private static final String SHORTEN_COLLECTION_NAMES =
+      "shorten-collection-names";
+
   private final HttpConfigAspect aspect;
+  private final Map<String, CollectionAttribute> intermediateCollectionMap = new TreeMap<>();
   private final Map<String, CollectionAttribute> collectionMap = new TreeMap<>();
 
   /**
@@ -85,6 +96,19 @@ public class RestAnalyzer {
       }
     }
 
+    if (aspect.getModel().getExperiments().isExperimentEnabled(SHORTEN_COLLECTION_NAMES)) {
+      assignShortNames(intermediateCollectionMap.values());
+    }
+    for (CollectionAttribute collection : intermediateCollectionMap.values()) {
+      // note: nested loop needed to reach duplicate REST methods
+      for (String restMethodName : collection.getRestMethodNames()) {
+        for (RestMethod restMethod : collection.getRestMethodWithDuplicates(restMethodName)) {
+          addMethodToCollection(
+              collectionMap, restMethod, restMethod.getBaseRestCollectionName());
+        }
+      }
+    }
+
     ImmutableList.Builder<CollectionAttribute> result = ImmutableList.builder();
     for (CollectionAttribute collection : collectionMap.values()) {
       TypeRef type = definedResources.get(collection.getFullName());
@@ -96,7 +120,8 @@ public class RestAnalyzer {
       collection.setResourceType(type);
       result.add(collection);
     }
-    return result.build();
+    List<CollectionAttribute> collections = result.build();
+    return collections;
   }
 
   /**
@@ -105,7 +130,7 @@ public class RestAnalyzer {
   RestMethod analyzeMethod(Method method, HttpAttribute httpConfig) {
     // First check whether this is a special method.
     RestMethod restMethod = createSpecialMethod(method, httpConfig);
-
+    String configuredCollectionName = "";
     if (restMethod == null) {
       // Search for the first matching method pattern.
       MethodMatcher matcher = null;
@@ -117,15 +142,28 @@ public class RestAnalyzer {
         matcher = null;
       }
       if (matcher != null) {
-        restMethod = matcher.createRestMethod();
+        restMethod = matcher.createRestMethod(configuredCollectionName);
       } else {
         restMethod = createCustomMethod(method, httpConfig, "");
         restMethod.setHasValidRestPattern(false);
       }
     }
 
-    // Add method to collection.
-    String baseCollectionName = restMethod.getBaseRestCollectionName();
+    // Add method to collections and name-to-collection maps.
+    // If name is manually configured from the HttpRule, use the final collection map so
+    // that the configured name will not be shortened if the shorten-collection-names experiment is
+    // enabled. Otherwise, use an intermediate map, which is potentially subject to name shortening.
+    if (Strings.isNullOrEmpty(configuredCollectionName)) {
+      addMethodToCollection(
+          intermediateCollectionMap, restMethod, restMethod.getBaseRestCollectionName());
+    } else {
+      addMethodToCollection(collectionMap, restMethod, configuredCollectionName);
+    }
+    return restMethod;
+  }
+
+  private void addMethodToCollection(Map<String, CollectionAttribute> collectionMap,
+      RestMethod restMethod, String baseCollectionName) {
     String version = restMethod.getVersion();
     String versionedCollectionName = version + "." + baseCollectionName;
     CollectionAttribute collection = collectionMap.get(versionedCollectionName);
@@ -134,7 +172,6 @@ public class RestAnalyzer {
       collectionMap.put(versionedCollectionName, collection);
     }
     collection.addMethod(restMethod);
-    return restMethod;
   }
 
   // Determines whether to create a special rest method. Returns null if no special rest method.
@@ -220,5 +257,71 @@ public class RestAnalyzer {
     }
 
     return CollectionName.create(baseName, version);
+  }
+
+  /**
+   * Assigns this RestGroup's short names to its collections and Rest methods.
+   */
+  private static void assignShortNames(Collection<CollectionAttribute> collections) {
+    ImmutableMap<CollectionAttribute, String> collectionshortNames =
+        generateShortNames(collections);
+    for (Map.Entry<CollectionAttribute, String> collectionshortName
+        : collectionshortNames.entrySet()) {
+      String name = collectionshortName.getValue();
+      CollectionAttribute collection = collectionshortName.getKey();
+      collection.setName(name);
+      for (RestMethod method : collection.getMethods()) {
+        method.setBaseCollectionName(name);
+      }
+    }
+  }
+
+  private static ImmutableMap<CollectionAttribute, String> generateShortNames(
+      Collection<CollectionAttribute> collections) {
+    BiMap<String, CollectionAttribute> intermediateMap = HashBiMap.create();
+    for (CollectionAttribute collection : collections) {
+      String baseName = collection.getBaseName();
+      String shortName = baseName.substring(baseName.lastIndexOf(".") + 1);
+      insertOrDisambiguate(intermediateMap, shortName, collection);
+    }
+    return ImmutableMap.copyOf(intermediateMap.inverse());
+  }
+
+  /**
+   * Attempts to insert key-value pair into map; disambiguate if the key is already present.
+   */
+  private static void insertOrDisambiguate(Map<String, CollectionAttribute> map, String key,
+      CollectionAttribute value) {
+    CollectionAttribute oldValue = map.remove(key);
+    if (oldValue == null) {
+      map.put(key, value);
+      return;
+    }
+    insertOrDisambiguate(map, disambiguate(key, value), value);
+    insertOrDisambiguate(map, disambiguate(key, oldValue), oldValue);
+  }
+
+  /*
+   * Appends an additional token onto the name of the collection. If no more tokens are available,
+   * returns the name unchanged.
+   */
+  private static String disambiguate(String name, CollectionAttribute collection) {
+    String[] tokens = collection.getBaseName().split("\\.");
+    int level = tokens.length - 2;
+    String candidate = tokens[tokens.length - 1];
+    for (; level >= 0; level--) {
+      if (candidate.equals(name)) {
+        break;
+      }
+      candidate = appendCamelCase(candidate, tokens[level]);
+    }
+    return level >= 0 ? appendCamelCase(candidate, tokens[level]) : candidate;
+  }
+
+  private static String appendCamelCase(String s, String toAppend) {
+    if (Strings.isNullOrEmpty(s)) {
+      return toAppend;
+    }
+    return toAppend + s.substring(0, 1).toUpperCase() + s.substring(1);
   }
 }

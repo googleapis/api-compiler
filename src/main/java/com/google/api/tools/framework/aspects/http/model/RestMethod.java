@@ -127,6 +127,12 @@ public class RestMethod extends Element {
   }
 
   /**
+   * Mutates the baseCollectionName.
+   */
+  public void setBaseCollectionName(String baseCollectionName) {
+    this.baseCollectionName = baseCollectionName;
+  }
+  /**
    * Returns the full REST method name, including version and collection.
    */
   public String getRestVersionedFullMethodName() {

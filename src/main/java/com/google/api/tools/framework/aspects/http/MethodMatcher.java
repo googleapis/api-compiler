@@ -18,12 +18,14 @@ package com.google.api.tools.framework.aspects.http;
 
 import com.google.api.tools.framework.aspects.http.RestPatterns.MethodPattern;
 import com.google.api.tools.framework.aspects.http.RestPatterns.SegmentPattern;
+import com.google.api.tools.framework.aspects.http.model.CollectionName;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.LiteralSegment;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.PathSegment;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.WildcardSegment;
 import com.google.api.tools.framework.aspects.http.model.RestMethod;
 import com.google.api.tools.framework.model.Method;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -80,16 +82,22 @@ public class MethodMatcher {
     }
   }
 
-  // Creates a RestMethod from this matcher.
-  RestMethod createRestMethod() {
+  // Creates a RestMethod from this matcher. Autoderives a collection name if it is not specified.
+  RestMethod createRestMethod(String collectionNameOverride) {
     if (pattern.lastSegmentPattern() == SegmentPattern.CUSTOM_VERB
         || pattern.lastSegmentPattern() == SegmentPattern.CUSTOM_VERB_WITH_COLON) {
       return RestAnalyzer.createCustomMethod(method, httpConfig, pattern.customPrefix());
     }
+
+    CollectionName collectionName =
+        RestAnalyzer.buildCollectionName(httpConfig.getFlatPath(), method.getModel());
+    if (!Strings.isNullOrEmpty(collectionNameOverride)) {
+      collectionName = CollectionName.create(collectionNameOverride, collectionName.version());
+    }
     return RestMethod.create(
         method,
         pattern.restKind(),
-        RestAnalyzer.buildCollectionName(httpConfig.getFlatPath(), method.getModel()),
+        collectionName,
         null);
   }
 

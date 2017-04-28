@@ -49,7 +49,7 @@ public class CollectionAttribute extends Element {
       Key.get(new TypeLiteral<List<CollectionAttribute>>() {});
 
   private final Model model;
-  private final String name;
+  private String name;
   private final String version;
   private final ListMultimap<String, RestMethod> methods = ArrayListMultimap.create();
   private TypeRef resourceType;
@@ -187,6 +187,13 @@ public class CollectionAttribute extends Element {
   /** Returns the base collection name, without version. */
   public String getBaseName() {
     return name;
+  }
+
+  /**
+   * Mutates the collection name.
+   */
+  public void setName(String name) {
+    this.name = name;
   }
 
   /**
