@@ -297,6 +297,11 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void invalid_extension_json_array() throws Exception {
+    testWithDefaults("invalid_extension_json_array");
+  }
+
+  @Test
   public void invalid_google_allow_extension_value() throws Exception {
     testWithDefaults("invalid_google_allow_extension_value");
   }

@@ -89,12 +89,13 @@ public class VendorExtensionProtoConverter {
         }
       } catch (IOException ex) {
         // Should not be possible to throw in newer versions of ObjectMapper.
-        Diag.error(
-            new SimpleLocation(extensionName),
-            String.format(
-                "The extension %s does not match the schema. It should be a %s. Please refer "
-                    + "to documentation of the extension.",
-                extensionName, prototype.getDescriptorForType().getName()));
+        diagCollector.addDiag(
+            Diag.error(
+                new SimpleLocation(extensionName),
+                String.format(
+                    "The extension %s does not match the schema. It should be a %s. Please refer "
+                        + "to documentation of the extension.",
+                    extensionName, prototype.getDescriptorForType().getName())));
       }
     }
     return messages;
@@ -130,12 +131,13 @@ public class VendorExtensionProtoConverter {
     } catch (IOException ex) {
       //error handling below
     }
-    Diag.error(
-        new SimpleLocation(extensionName),
-        String.format(
-            "The extension %s does not match the schema. It should be a json array. Please refer "
-                + "to documentation of the extension.",
-            extensionName));
+    diagCollector.addDiag(
+        Diag.error(
+            new SimpleLocation(extensionName),
+            String.format(
+                "The extension %s does not match the schema. It should be a json array. "
+                    + "Please refer to documentation of the extension.",
+                extensionName)));
     return null;
   }
 }
