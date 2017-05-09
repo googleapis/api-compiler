@@ -17,7 +17,6 @@
 package com.google.api.tools.framework.tools;
 
 import com.google.api.AnnotationsProto;
-import com.google.api.AuthProto;
 
 import com.google.protobuf.ExtensionRegistry;
 
@@ -32,7 +31,6 @@ public class ToolProtoUtil {
   public static ExtensionRegistry getStandardPlatformExtensions() {
     ExtensionRegistry registry = ExtensionRegistry.newInstance();
     AnnotationsProto.registerAllExtensions(registry);
-    AuthProto.registerAllExtensions(registry);
 
     return registry;
   }

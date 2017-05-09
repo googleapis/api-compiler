@@ -19,7 +19,6 @@ package com.google.api.tools.framework.model.testing;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.api.AnnotationsProto;
-import com.google.api.AuthProto;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.ConfigSource;
 import com.google.api.tools.framework.model.DiagCollector;
@@ -67,14 +66,14 @@ public class TestConfig {
     }
   }
 
-  private static final Pattern PROTO_IMPORT_PATTERN = Pattern.compile("\\s*import\\s*\"(.*)\"");
+  private static final Pattern PROTO_IMPORT_PATTERN =
+      Pattern.compile("\\s*import\\s*(?:public)?\\s*\"(.*)\"");
 
   private static final ExtensionRegistry EXTENSIONS;
 
   static {
     EXTENSIONS = ExtensionRegistry.newInstance();
     AnnotationsProto.registerAllExtensions(EXTENSIONS);
-    AuthProto.registerAllExtensions(EXTENSIONS);
   }
 
   private final List<String> protoFiles;
