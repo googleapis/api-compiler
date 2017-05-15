@@ -242,6 +242,11 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void distributed_swagger_missing_file() throws Exception {
+    testWithDefaults("distributed_swagger_missing_file");
+  }
+
+  @Test
   public void invalid_swagger() throws Exception {
     testWithDefaults("invalid_swagger");
   }

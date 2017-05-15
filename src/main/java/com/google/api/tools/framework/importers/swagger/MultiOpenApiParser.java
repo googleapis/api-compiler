@@ -102,13 +102,28 @@ public class MultiOpenApiParser {
   private static OpenApiFile buildOpenApiFile(
       Service.Builder serviceToBuild, String userDefinedFilename, File file, String typeNamespace)
       throws OpenApiConversionException {
-    Swagger swagger = new SwaggerParser().read(file.getAbsolutePath());
-    if (swagger == null) {
+    Swagger swagger = tryGetOpenApi(file, userDefinedFilename);
+    return OpenApiFile.create(serviceToBuild, swagger, userDefinedFilename, typeNamespace);
+  }
+
+  private static Swagger tryGetOpenApi(File file, String userDefinedFilename)
+      throws OpenApiConversionException {
+    try {
+      Swagger swagger = new SwaggerParser().read(file.getAbsolutePath());
+      if (swagger == null) {
+        throw new OpenApiConversionException(
+            String.format(
+                "OpenAPI spec in file {%s} is ill formed and cannot be parsed",
+                userDefinedFilename));
+      } else {
+        return swagger;
+      }
+    } catch (RuntimeException ex) {
       throw new OpenApiConversionException(
           String.format(
-              "OpenAPI spec in file {%s} is ill formed and cannot be parsed", userDefinedFilename));
+              "OpenAPI spec in file {%s} is ill formed and cannot be parsed: %s",
+              userDefinedFilename, ex.getMessage()));
     }
-    return OpenApiFile.create(serviceToBuild, swagger, userDefinedFilename, typeNamespace);
   }
 
   /**
