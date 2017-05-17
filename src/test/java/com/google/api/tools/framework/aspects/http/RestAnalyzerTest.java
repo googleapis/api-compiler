@@ -141,7 +141,7 @@ public class RestAnalyzerTest extends BaselineTestCase {
     RestMethod restMethod;
     ImmutableList<PathSegment> path = parse(model, template);
     if (!model.getDiagReporter().getDiagCollector().getDiags().isEmpty()) {
-      restMethod = RestMethod.create(method, RestKind.CUSTOM, "*error*", "*error*");
+      restMethod = RestMethod.create(method, RestKind.CUSTOM, "*error*", "*error*", null);
     } else {
       HttpRule httpRule = HttpRule.getDefaultInstance();
       HttpAttribute httpConfig =

@@ -94,11 +94,15 @@ public class MethodMatcher {
     if (!Strings.isNullOrEmpty(collectionNameOverride)) {
       collectionName = CollectionName.create(collectionNameOverride, collectionName.version());
     }
+
+    String restMethodName = "";
+
     return RestMethod.create(
         method,
         pattern.restKind(),
         collectionName,
-        null);
+        null,
+        restMethodName);
   }
 
   public boolean matches() {

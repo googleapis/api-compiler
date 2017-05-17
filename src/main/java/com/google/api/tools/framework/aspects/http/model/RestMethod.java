@@ -30,21 +30,30 @@ import javax.annotation.Nullable;
  */
 public class RestMethod extends Element {
 
-  /**
-   * Create a new REST method.
-   */
-  public static RestMethod create(Method method, RestKind kind, String collectionName,
-      String customMethodName) {
-    return new RestMethod(method, kind, collectionName, "", customMethodName);
+  /** Create a new REST method. */
+  public static RestMethod create(
+      Method method,
+      RestKind kind,
+      String collectionName,
+      String customMethodName,
+      String methodNameOverride) {
+    return new RestMethod(method, kind, collectionName, "", customMethodName, methodNameOverride);
   }
 
-  /**
-   * Create a new REST method.
-   */
-  public static RestMethod create(Method method, RestKind kind, CollectionName collectionName,
-      String customMethodName) {
-    return new RestMethod(method, kind, collectionName.baseName(), collectionName.version(),
-        customMethodName);
+  /** Create a new REST method. */
+  public static RestMethod create(
+      Method method,
+      RestKind kind,
+      CollectionName collectionName,
+      String customMethodName,
+      String methodNameOverride) {
+    return new RestMethod(
+        method,
+        kind,
+        collectionName.baseName(),
+        collectionName.version(),
+        customMethodName,
+        methodNameOverride);
   }
 
   /**
@@ -69,15 +78,24 @@ public class RestMethod extends Element {
 
   private final Method method;
 
-  private RestMethod(Method method, RestKind kind, String baseCollectionName, String version,
-      String customMethodName) {
+  private RestMethod(
+      Method method,
+      RestKind kind,
+      String baseCollectionName,
+      String version,
+      String customMethodName,
+      String methodNameOverride) {
     this.method = method;
     this.restKind = kind;
     this.baseCollectionName = baseCollectionName;
     this.version = version;
     this.restCustomMethodName = customMethodName;
-    this.restMethodName =
-        restKind == RestKind.CUSTOM ? restCustomMethodName : restKind.getMethodName();
+    if (!Strings.isNullOrEmpty(methodNameOverride)) {
+      this.restMethodName = methodNameOverride;
+    } else {
+      this.restMethodName =
+          restKind == RestKind.CUSTOM ? restCustomMethodName : restKind.getMethodName();
+    }
   }
 
   @Override

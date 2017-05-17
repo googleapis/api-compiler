@@ -176,9 +176,10 @@ public class RestAnalyzer {
 
   // Determines whether to create a special rest method. Returns null if no special rest method.
   private RestMethod createSpecialMethod(Method method, HttpAttribute httpConfig) {
+    String restMethodName = "";
     if (httpConfig.getMethodKind() == MethodKind.NONE) {
       // Not an HTTP method. Create a dummy rest method.
-      return RestMethod.create(method, RestKind.CUSTOM, "", method.getFullName());
+      return RestMethod.create(method, RestKind.CUSTOM, "", method.getFullName(), restMethodName);
     }
     return null;
   }
@@ -214,8 +215,14 @@ public class RestAnalyzer {
     // Ensure effective start is lower case.
     customName = ensureLowerCase(customName);
 
+    String restMethodName = "";
+
     return RestMethod.create(
-        method, RestKind.CUSTOM, buildCollectionName(path, method.getModel()), customName);
+        method,
+        RestKind.CUSTOM,
+        buildCollectionName(path, method.getModel()),
+        customName,
+        restMethodName);
   }
 
   private static String ensureUpperCase(String name) {
