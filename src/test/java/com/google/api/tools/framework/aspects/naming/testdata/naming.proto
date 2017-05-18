@@ -25,18 +25,6 @@ service NamingService {
 
   // Other names
   rpc OtherNames(Names) returns (Empty);
-
-  // Check common abbreviations
-  // Config
-  rpc RpcConfiguration(Empty) returns (Empty);
-  // Spec
-  rpc RpcSpecification(Empty) returns (Empty);
-  // ID
-  rpc RpcIdentifier(Empty) returns (Empty);
-  // Stats
-  rpc RpcStatistics(Empty) returns (Empty);
-  // Other abbreviations
-  rpc OtherAbbreviations(Abbreviations) returns (Empty);
 }
 
 message Names {
@@ -70,20 +58,6 @@ message Names {
   snake_case_enum_name snake_case_enum = 7;
   CAPS_SNAKE_CASE_ENUM_NAME caps_snake_case_enum = 8;
   EnumValues enum_values = 9;
-}
-
-message Abbreviations {
-  // Common names should be abbreviated in message names
-  message MessageConfiguration {}
-  message MessageSpecification {}
-  message MessageIdentifier {}
-  message MessageStatistics {}
-
-  // Common names should be abbreviated in field names
-  MessageConfiguration field_configuration = 1;
-  MessageSpecification field_specification = 2;
-  MessageIdentifier field_identifier = 3;
-  MessageStatistics field_statistics = 4;
 }
 
 // For use throughout

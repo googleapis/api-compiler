@@ -1,0 +1,9 @@
+type: google.api.Service
+config_version: 3
+name: abbreviations.googleapis.com
+apis:
+- name: protiary.test.OtherAbbreviations
+- name: protiary.test.ServiceConfiguration
+- name: protiary.test.ServiceIdentifier
+- name: protiary.test.ServiceSpecification
+- name: protiary.test.ServiceStatistics

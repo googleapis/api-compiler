@@ -27,9 +27,9 @@ public class DnsNameUtil {
   // The non-prod expected DNS name pattern has changed from
   // {apiname}-{env}.sandbox.* to {env}-{apiname}.sandbox.*
   private static final Pattern SERVICE_NAME_PATTERN =
-      Pattern.compile("^(staging-|test-)?(?<corp>.+)(\\.corp|-corp)(\\.sandbox)?\\.[^.]+\\.[^.]+$"
-          + "|^(staging-|test-)(?<sandboxed>.+)\\.sandbox\\.[^.]+\\.[^.]+$"
-          + "|^(?<legacySandboxed>.+)(-staging\\.sandbox|-test\\.sandbox)\\.[^.]+\\.[^.]+$"
+      Pattern.compile("^(staging-|test-|local-)?(?<corp>.+)(\\.corp|-corp)(\\.sandbox)?\\.[^.]+\\.[^.]+$"
+          + "|^(staging-|test-|local-)(?<sandboxed>.+)\\.sandbox\\.[^.]+\\.[^.]+$"
+          + "|^(?<legacySandboxed>.+)(-staging\\.sandbox|-test\\.sandbox|-local\\.sandbox)\\.[^.]+\\.[^.]+$"
           + "|^(?<regular>.+)\\.[^.]+\\.[^.]+$");
 
   public static boolean matchServiceNamePattern(String serviceName) {

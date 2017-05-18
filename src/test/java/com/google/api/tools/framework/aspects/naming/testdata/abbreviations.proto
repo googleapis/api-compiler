@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package protiary.test;
+
+// Services abbreviated
+service ServiceConfiguration {}
+service ServiceIdentifier {}
+service ServiceSpecification {}
+service ServiceStatistics {}
+service ServiceStatisticsConfiguration {}
+
+// Abbreviations of other types (RPCs, fields, etc)
+service OtherAbbreviations {
+  // Configuration -> Config
+  rpc RpcConfiguration(Empty) returns (Empty);
+  // Identifier -> Id
+  rpc RpcIdentifier(Empty) returns (Empty);
+  // Specification -> Spec
+  rpc RpcSpecification(Empty) returns (Empty);
+  // Statistics -> Stats
+  rpc RpcStatistics(Empty) returns (Empty);
+  // Multiple abbreviations together
+  rpc RpcSpecificationIdentifier(Empty) returns (Empty);
+  // Other abbreviations
+  rpc RpcOtherAbbreviations(Abbreviations) returns (Empty);
+}
+
+message Abbreviations {
+  // Common names should be abbreviated in message names
+  message MessageConfiguration {}
+  message MessageIdentifier {}
+  message MessageSpecification {}
+  message MessageStatistics {}
+  message MessageIdentifierConfiguration {}
+
+  // Common names should be abbreviated in field names
+  MessageConfiguration field_configuration = 1;
+  MessageIdentifier field_identifier = 2;
+  MessageSpecification field_specification = 3;
+  MessageStatistics field_statistics = 4;
+  MessageIdentifierConfiguration field_configuration_identifier = 5;
+}
+
+// For use throughout.
+message Empty {}
+
+// Unreachable messages shouldn't produce warnings.
+message UnreachableConfiguration {
+  int32 configuration_statistics = 1;
+}

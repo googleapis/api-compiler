@@ -40,6 +40,14 @@ public class NamingConfigAspectTest extends ConfigAspectBaselineTestCase {
     test("naming");
   }
 
+  @Test public void abbreviations() throws Exception {
+    /**
+     * This test verifies that common abbreviations are used (e.g., Configuration -> Config).
+     */
+    showDiagLocation = true;
+    test("abbreviations");
+  }
+
   @Test public void invalid_filename() throws Exception {
     /**
      * This test verifies that protos and yaml files are named in snake_case.
