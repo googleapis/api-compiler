@@ -1,4 +1,3 @@
 WARNING: naming.yaml:3: (lint) naming-service-dns-name: Invalid DNS name 'blob.google_apis.googleapis.com'.
 documentation {
 }
-
