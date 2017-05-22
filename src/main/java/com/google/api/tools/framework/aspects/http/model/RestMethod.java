@@ -246,4 +246,29 @@ public class RestMethod extends Element {
   public boolean hasValidRestPattern() {
     return hasValidRestPattern;
   }
+
+  /**
+   * Type of streaming method.
+   */
+  public enum StreamingType {
+    NONE,
+    CLIENT_SIDE,
+    SERVER_SIDE,
+    BIDIRECTONAL
+  }
+
+  /**
+   * Return the streaming type of the method.
+   */
+  public StreamingType getStreamingType() {
+    if (method.getResponseStreaming()) {
+      if (method.getRequestStreaming()) {
+        return StreamingType.BIDIRECTONAL;
+      }
+      return StreamingType.SERVER_SIDE;
+    } else if (method.getRequestStreaming()) {
+      return StreamingType.CLIENT_SIDE;
+    }
+    return StreamingType.NONE;
+  }
 }
