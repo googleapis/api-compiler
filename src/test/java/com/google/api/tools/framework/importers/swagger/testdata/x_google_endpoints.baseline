@@ -1,7 +1,7 @@
-name: "library-example.googleapis.com"
+name: "library-example.cloud.goog"
 title: "Google Example Library API"
 apis {
-  name: "v1.library_example_googleapis_com"
+  name: "v1.library_example_cloud_goog"
   version: "v1"
   source_context {
     file_name: "x-google-endpoints.json"
@@ -19,10 +19,8 @@ context {
 usage {
 }
 endpoints {
-  name: "library-example.googleapis.com"
-  aliases: "library-example.clients6.google.com"
-  aliases: "content-library-example.googleapis.com"
-  apis: "v1.library_example_googleapis_com"
+  name: "library-example.cloud.goog"
+  apis: "v1.library_example_cloud_goog"
   allow_cors: true
 }
 control {

@@ -5,10 +5,10 @@ WARNING: top_level_security_ext.json: x-jwks_uri: Extension name x-jwks_uri has 
 WARNING: top_level_security_ext.json: Operation 'get' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 WARNING: top_level_security_ext.json: Operation 'delete' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 WARNING: top_level_security_ext.json: Operation 'post' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
-name: "library-example.googleapis.com"
+name: "library-example.cloud.goog"
 title: "Google Example Library API"
 apis {
-  name: "v1.library_example_googleapis_com"
+  name: "v1.library_example_cloud_goog"
   methods {
     name: "SecurityExtOverrideWithEmpty"
     request_type_url: "type.googleapis.com/google.protobuf.Empty"
@@ -71,32 +71,32 @@ documentation {
 }
 http {
   rules {
-    selector: "v1.library_example_googleapis_com.SecurityExtOverrideWithEmpty"
+    selector: "v1.library_example_cloud_goog.SecurityExtOverrideWithEmpty"
     get: "/v1/pets"
   }
   rules {
-    selector: "v1.library_example_googleapis_com.SecurityExtInherit"
+    selector: "v1.library_example_cloud_goog.SecurityExtInherit"
     delete: "/v1/pets"
   }
   rules {
-    selector: "v1.library_example_googleapis_com.SecurityExtRedefine"
+    selector: "v1.library_example_cloud_goog.SecurityExtRedefine"
     post: "/v1/pets"
     body: "my_body_ref"
   }
 }
 authentication {
   rules {
-    selector: "v1.library_example_googleapis_com.SecurityExtOverrideWithEmpty"
+    selector: "v1.library_example_cloud_goog.SecurityExtOverrideWithEmpty"
   }
   rules {
-    selector: "v1.library_example_googleapis_com.SecurityExtInherit"
+    selector: "v1.library_example_cloud_goog.SecurityExtInherit"
     requirements {
       provider_id: "test_auth"
       audiences: "www.test_auth.com"
     }
   }
   rules {
-    selector: "v1.library_example_googleapis_com.SecurityExtRedefine"
+    selector: "v1.library_example_cloud_goog.SecurityExtRedefine"
     requirements {
       provider_id: "test_auth3"
       audiences: "www.test_auth3.com,www.test_auth3_2.com"
@@ -124,23 +124,21 @@ context {
 }
 usage {
   rules {
-    selector: "v1.library_example_googleapis_com.SecurityExtOverrideWithEmpty"
+    selector: "v1.library_example_cloud_goog.SecurityExtOverrideWithEmpty"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "v1.library_example_googleapis_com.SecurityExtInherit"
+    selector: "v1.library_example_cloud_goog.SecurityExtInherit"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "v1.library_example_googleapis_com.SecurityExtRedefine"
+    selector: "v1.library_example_cloud_goog.SecurityExtRedefine"
     allow_unregistered_calls: true
   }
 }
 endpoints {
-  name: "library-example.googleapis.com"
-  aliases: "library-example.clients6.google.com"
-  aliases: "content-library-example.googleapis.com"
-  apis: "v1.library_example_googleapis_com"
+  name: "library-example.cloud.goog"
+  apis: "v1.library_example_cloud_goog"
 }
 control {
   environment: "servicecontrol.googleapis.com"

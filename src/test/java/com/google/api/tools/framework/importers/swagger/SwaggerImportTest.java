@@ -387,11 +387,6 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
-  public void library_example_yaml() throws Exception {
-    testWithDefaults("library_example_yaml");
-  }
-
-  @Test
   public void petstore_expanded() throws Exception {
     testWithDefaults("petstore_expanded");
   }
@@ -419,6 +414,20 @@ public class SwaggerImportTest extends BaselineTestCase {
         EMPTY_VISIBILITY_LABELS,
         ImmutableList.of("invalid_extension"),
         NO_ADDITIONAL_CONFIGS);
+  }
+
+  @Test
+  public void compiler_warning() throws Exception {
+    test(
+        "",
+        "",
+        EMPTY_VISIBILITY_LABELS,
+        ImmutableList.of("compiler_warning"),
+        ImmutableList.of(
+            FileWrapper.create(
+                "compiler_warning.yaml",
+                testDataLocator.readTestData(
+                    getFileResourceUrl("compiler_warning.yaml")))));
   }
 
   @Test

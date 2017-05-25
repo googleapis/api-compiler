@@ -1,20 +1,21 @@
-WARNING: reference_model.json: Operation 'post' in path '/v1/pets/{name}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: compiler_warning.json: Operation 'post' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+WARNING: compiler_warning.yaml:2: (lint) versioning-config: Specified config_version value '2' is not equal to the current default value '3'. Consider changing this value to the default config version.
 name: "library-example.cloud.goog"
 title: "Google Example Library API"
 apis {
   name: "v1.library_example_cloud_goog"
   methods {
     name: "SimpleMethod"
-    request_type_url: "type.googleapis.com/namespace.types.SimpleMethodRequest"
-    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+    request_type_url: "type.googleapis.com/SimpleMethodRequest"
+    response_type_url: "type.googleapis.com/SimpleDef"
   }
   version: "v1"
   source_context {
-    file_name: "reference_model.json"
+    file_name: "compiler_warning.json"
   }
 }
 types {
-  name: "namespace.types.SimpleDef"
+  name: "SimpleDef"
   fields {
     kind: TYPE_STRING
     cardinality: CARDINALITY_OPTIONAL
@@ -23,20 +24,18 @@ types {
     json_name: "name"
   }
   source_context {
-    file_name: "namespace.types"
   }
 }
 types {
-  name: "namespace.types.SimpleMethodRequest"
+  name: "SimpleMethodRequest"
   fields {
     kind: TYPE_STRING
     cardinality: CARDINALITY_OPTIONAL
     number: 1
-    name: "name"
-    json_name: "name"
+    name: "my_string"
+    json_name: "myString"
   }
   source_context {
-    file_name: "namespace.types"
   }
 }
 documentation {
@@ -45,7 +44,7 @@ documentation {
 http {
   rules {
     selector: "v1.library_example_cloud_goog.SimpleMethod"
-    post: "/v1/pets/{name}"
+    post: "/v1/pets"
   }
 }
 authentication {

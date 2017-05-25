@@ -5,10 +5,10 @@
       "description": "A simple Google Example Library API.",
       "version": "v1"
     },
-    "host": "library-example.googleapis.com",
+    "host": "library-example.cloud.goog",
     "x-google-endpoints": [
       {
-        "name": "library-example.googleapis.com",
+        "name": "library-example.cloud.goog",
         "allowCors": "true"
       }
     ],

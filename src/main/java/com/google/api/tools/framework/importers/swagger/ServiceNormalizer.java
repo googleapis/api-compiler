@@ -39,10 +39,10 @@ public class ServiceNormalizer {
       Service service, DiagCollector diagCollector, List<FileWrapper> additionalConfigs) {
     Model model = createModel(service, additionalConfigs);
     model.establishStage(Normalized.KEY);
+    for (Diag diag : model.getDiagReporter().getDiagCollector().getDiags()) {
+      diagCollector.addDiag(diag);
+    }
     if (model.getDiagReporter().getDiagCollector().hasErrors()) {
-      for (Diag diag : model.getDiagReporter().getDiagCollector().getDiags()) {
-        diagCollector.addDiag(diag);
-      }
       return null;
     }
     return model.getNormalizedConfig();
