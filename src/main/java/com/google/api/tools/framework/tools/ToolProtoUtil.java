@@ -17,7 +17,6 @@
 package com.google.api.tools.framework.tools;
 
 import com.google.api.AnnotationsProto;
-
 import com.google.protobuf.ExtensionRegistry;
 
 /**

@@ -74,6 +74,7 @@ public class TestConfig {
   static {
     EXTENSIONS = ExtensionRegistry.newInstance();
     AnnotationsProto.registerAllExtensions(EXTENSIONS);
+
   }
 
   private final List<String> protoFiles;
