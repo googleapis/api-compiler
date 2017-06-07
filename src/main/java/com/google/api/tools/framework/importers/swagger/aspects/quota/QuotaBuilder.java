@@ -15,17 +15,25 @@
  */
 package com.google.api.tools.framework.importers.swagger.aspects.quota;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.MetricDescriptor;
+import com.google.api.Quota;
 import com.google.api.Service;
 import com.google.api.tools.framework.importers.swagger.aspects.AspectBuilder;
+import com.google.api.tools.framework.importers.swagger.aspects.utils.ExtensionNames;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.VendorExtensionProtoConverter;
+import com.google.api.tools.framework.importers.swagger.extensions.ServiceManagementExtension;
+import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.SimpleLocation;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 import io.swagger.models.Swagger;
+import java.io.IOException;
+import java.util.List;
 
-/** Builder for the {@link Quota} section of service config, from OpenAPI. */
+/** Builder for Quota and Quota related Metric Descriptors of service config, from OpenAPI. */
 public class QuotaBuilder implements AspectBuilder {
-
-  private static final String METRIC_DEFINITIONS_SWAGGER_EXTENSION = "x-google-metric-definitions";
 
   private final DiagCollector diagCollector;
 
@@ -37,15 +45,44 @@ public class QuotaBuilder implements AspectBuilder {
   public void addFromSwagger(Service.Builder serviceBuilder, Swagger swagger) {
     VendorExtensionProtoConverter extensionConverter =
         new VendorExtensionProtoConverter(swagger.getVendorExtensions(), diagCollector);
-    addMetricDefinitions(serviceBuilder, extensionConverter);
-  }
-
-  private static void addMetricDefinitions(
-      Service.Builder serviceBuilder, VendorExtensionProtoConverter extensionConverter) {
-    if (extensionConverter.hasExtension(METRIC_DEFINITIONS_SWAGGER_EXTENSION)) {
-      serviceBuilder.addAllMetrics(
-          extensionConverter.convertExtensionToProtos(
-              MetricDescriptor.getDefaultInstance(), METRIC_DEFINITIONS_SWAGGER_EXTENSION));
+    if (extensionConverter.hasExtension(ExtensionNames.MANAGEMENT_SWAGGER_EXTENSION)) {
+      ServiceManagementExtension serviceManagementExtension = readExtension(swagger);
+      serviceBuilder.addAllMetrics(parseMetrics(serviceManagementExtension, extensionConverter));
     }
   }
+
+  //TODO(user): Refactor this out when we add more fields under 'x-google-management'
+  private ServiceManagementExtension readExtension(Swagger swagger) {
+    return new Gson()
+        .fromJson(
+            swagger
+                .getVendorExtensions()
+                .get(ExtensionNames.MANAGEMENT_SWAGGER_EXTENSION)
+                .toString(),
+            ServiceManagementExtension.class);
+  }
+
+  private List<MetricDescriptor> parseMetrics(
+      ServiceManagementExtension extension, VendorExtensionProtoConverter extensionConverter) {
+    if (extension.getMetrics() == null) {
+      return ImmutableList.of();
+    }
+    try {
+      String extensionJson = new ObjectMapper().writer().writeValueAsString(extension.getMetrics());
+      return extensionConverter.convertJsonArrayToProto(
+          MetricDescriptor.getDefaultInstance(),
+          new ObjectMapper().readTree(extensionJson),
+          "metrics");
+    } catch (IOException ex) {
+      diagCollector.addDiag(
+          Diag.error(
+              new SimpleLocation("metrics"),
+              "Extension %s cannot be converted into proto type %s. Details: %s",
+              "quota",
+              MetricDescriptor.getDescriptor().getFullName(),
+              ex.getMessage()));
+      return ImmutableList.of();
+    }
+  }
+
 }

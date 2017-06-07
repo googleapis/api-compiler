@@ -9,13 +9,14 @@ schemes:
   - https
 basePath: /
 x-google-allow: configured
-x-google-metric-definitions:
-  - name: bookstore/write_requests
-    valueType: INT64 # default
-    metricKind: GAUGE # default
-  - name: bookstore/read_requests
-    valueType: INT64 # default
-    metricKind: GAUGE # default
+x-google-management:
+  metrics:
+    - name: bookstore/write_requests
+      valueType: INT64 # default
+      metricKind: GAUGE # default
+    - name: bookstore/read_requests
+      valueType: INT64 # default
+      metricKind: GAUGE # default
 paths:
   /v1/shelves:
     post:

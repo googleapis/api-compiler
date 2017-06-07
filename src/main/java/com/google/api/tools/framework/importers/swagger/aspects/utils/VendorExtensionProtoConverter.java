@@ -77,7 +77,7 @@ public class VendorExtensionProtoConverter {
     return convertJsonArrayToProto(defaultValue, jsonNode, extensionName);
   }
 
-  private <T extends Message> List<T> convertJsonArrayToProto(
+  public <T extends Message> List<T> convertJsonArrayToProto(
       T prototype, JsonNode array, String extensionName) {
     List<T> messages = Lists.newArrayList();
     for (JsonNode messageNode : array) {
@@ -103,7 +103,7 @@ public class VendorExtensionProtoConverter {
 
   // Suppress because Proto has terrible type awareness with builders.
   @SuppressWarnings("unchecked")
-  private <T extends Message> T convertJsonToProto(T prototype, String json, String extensionName) {
+  public <T extends Message> T convertJsonToProto(T prototype, String json, String extensionName) {
     try {
       Builder builder = prototype.newBuilderForType();
       JsonFormat.parser().merge(json, builder);
@@ -120,7 +120,7 @@ public class VendorExtensionProtoConverter {
     }
   }
 
-  private JsonNode readExtensionAsJsonArray(String extensionName) {
+  public JsonNode readExtensionAsJsonArray(String extensionName) {
     try {
       String extensionJson =
           new ObjectMapper().writer().writeValueAsString(extensions.get(extensionName));

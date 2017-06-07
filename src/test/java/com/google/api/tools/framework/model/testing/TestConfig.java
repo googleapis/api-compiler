@@ -18,7 +18,7 @@ package com.google.api.tools.framework.model.testing;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.api.AnnotationsProto;
+import com.google.api.HttpProto;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.ConfigSource;
 import com.google.api.tools.framework.model.DiagCollector;
@@ -73,7 +73,7 @@ public class TestConfig {
 
   static {
     EXTENSIONS = ExtensionRegistry.newInstance();
-    AnnotationsProto.registerAllExtensions(EXTENSIONS);
+    HttpProto.registerAllExtensions(EXTENSIONS);
 
   }
 

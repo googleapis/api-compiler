@@ -16,7 +16,7 @@
 
 package com.google.api.tools.framework.aspects.http;
 
-import com.google.api.AnnotationsProto;
+import com.google.api.HttpProto;
 import com.google.api.HttpRule;
 import com.google.api.Service.Builder;
 import com.google.api.tools.framework.aspects.RuleBasedConfigAspect;
@@ -92,7 +92,7 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
   @Override
   protected HttpRule fromIdlLayer(ProtoElement element) {
     Method method = (Method) element;
-    HttpRule rule = method.getDescriptor().getMethodAnnotation(AnnotationsProto.http);
+    HttpRule rule = method.getDescriptor().getMethodAnnotation(HttpProto.http);
     if (rule != null && !rule.equals(HttpRule.getDefaultInstance())) {
       return rule;
     }

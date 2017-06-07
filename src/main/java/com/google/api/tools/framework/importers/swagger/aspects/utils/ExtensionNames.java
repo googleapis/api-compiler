@@ -38,6 +38,9 @@ public final class ExtensionNames {
   public static final String OAUTH_ISSUER_SWAGGER_EXTENSION = addGooglePrefix("issuer");
   public static final String AUDIENCES_SWAGGER_EXTENSION = addGooglePrefix("audiences");
 
+  // api management
+  public static final String MANAGEMENT_SWAGGER_EXTENSION = addGooglePrefix("management");
+
   // allow unregistered calls
   public static final String X_GOOGLE_ALLOW = addGooglePrefix("allow");
 
