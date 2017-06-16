@@ -44,12 +44,17 @@ public class TestModelGenerator {
       throws Exception {
     List<String> yamlFiles = getFilesWithSuffix(basenames, ".yaml");
     List<String> protoFiles = getFilesWithSuffix(basenames, ".proto");
-    // Some tests might have proto files without .proto extensions. This
-    // is to bypass certain presubmit check. Therefore, for such cases protoFiles
-    // is defaulted to all files without any extensions.
+
+    // Standardize on *.proto_nolint for the names of testdata/... files that are proto sources
+    // that we don't want to be subject to presubmit linter checks.
+    protoFiles.addAll(getFilesWithSuffix(basenames, ".proto_nolint"));
+
+    // If we haven't found any protoFiles yet, check to see if any of the names in 'basenames'
+    // exist, as is, without any added suffix.
     if (protoFiles.isEmpty()) {
       protoFiles = getFilesWithSuffix(basenames, "");
     }
+
     if (protoFiles.isEmpty()) {
       throw new IllegalArgumentException("No proto files found");
     }

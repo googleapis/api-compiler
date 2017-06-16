@@ -1,0 +1,41 @@
+// Globally suppress documentation presence (and others) warnings in this file
+// (== suppress_warning documentation-presence ==)
+// (== suppress_warning naming-* ==)
+// (== suppress_warning http-* ==)
+syntax = "proto3";
+
+option java_package = "com.google.api.server.tools.protiary";
+
+import "google/api/annotations.proto";
+
+message Message {
+  string field = 1;
+}
+
+service Service {
+  // (-- Rpc uses a wrong rpc name but the warning is suppressed. --)
+  rpc Rpc(Message) returns (Message) {
+    option (google.api.http).get = "/v1/nonconforming";
+  }
+
+  // (-- Another way to suppress the warning. --)
+  rpc Rpc1(Message) returns (Message) {
+    option (google.api.http).get = "/v1/nonconforming1";
+  }
+
+  rpc Rpc2(Message) returns (Message) {
+    option (google.api.http).get = "/v1/nonconforming1";
+  }
+
+  rpc Rpc3(Message) returns (Message) {
+    option (google.api.http).get = "/v2/nonconforming1";
+  }
+
+  rpc Rpc4(Message) returns (Message) {
+    option (google.api.http).get = "/v2/nonconforming2";
+  }
+
+  rpc Rpc5(Message) returns (Message) {
+    option (google.api.http).get = "/v1/nonconforming2";
+  }
+}

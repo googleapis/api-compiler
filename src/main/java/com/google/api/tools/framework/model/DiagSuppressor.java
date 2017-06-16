@@ -29,8 +29,9 @@ public class DiagSuppressor {
 
   // Regexp to match a suppression directive argument.
   // TODO(user): Should this pattern be more restrictive?
+  private static final String VALID_RULE_REGEX = "[-_a-z0-9]+";
   private static final Pattern SUPPRESSION_DIRECTIVE_PATTERN =
-      Pattern.compile("\\s*(?<aspect>[^-]+)-(?<rule>.*)");
+      Pattern.compile(String.format("\\s*(?<aspect>[^-]+)-(?<rule>\\*|%s)", VALID_RULE_REGEX));
 
   // A map of per-element regexp patterns which characterize suppressed warnings.
   private final Map<Element, String> suppressions = Maps.newHashMap();
@@ -182,6 +183,7 @@ public class DiagSuppressor {
   private static String suppressionPattern(String aspectName, String ruleName) {
     return String.format(
         "\\(lint\\)\\s*%s-%s:.*",
-        Pattern.quote(aspectName), "*".equals(ruleName) ? "\\w+" : Pattern.quote(ruleName));
+        Pattern.quote(aspectName),
+        "*".equals(ruleName) ? VALID_RULE_REGEX : Pattern.quote(ruleName));
   }
 }

@@ -40,13 +40,22 @@ public class ProtoLocation implements Location {
     return new ProtoLocation(location, element);
   }
 
-  private final DescriptorProtos.SourceCodeInfo.Location location;
+  private final String displayString;
   private final ProtoElement element;
 
   public ProtoLocation(
       DescriptorProtos.SourceCodeInfo.Location location, final ProtoElement element) {
-    this.location = location;
+    this.displayString = String.format(
+        "%s:%d:%d",
+        element.getFile().getLocation().getDisplayString(),
+        location.getSpan(0) + 1,
+        location.getSpan(1) + 1);
     this.element = element;
+  }
+
+  public ProtoLocation(ProtoFile fileElement) {
+    this.displayString = fileElement.getSimpleName();
+    this.element = fileElement;
   }
 
   public ProtoElement getElement() {
@@ -55,15 +64,16 @@ public class ProtoLocation implements Location {
 
   @Override
   public String getDisplayString() {
-    return String.format(
-        "%s:%d:%d",
-        element.getFile().getLocation().getDisplayString(),
-        location.getSpan(0) + 1,
-        location.getSpan(1) + 1);
+    return displayString;
   }
 
   @Override
   public String getContainerName() {
     return element.getFile().getLocation().getDisplayString();
+  }
+
+  @Override
+  public String toString() {
+    return String.format("(%s)%s", element, displayString);
   }
 }

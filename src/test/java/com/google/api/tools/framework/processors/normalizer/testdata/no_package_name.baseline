@@ -9,7 +9,7 @@ apis {
   }
   version: "v1"
   source_context {
-    file_name: "no_package_name"
+    file_name: "no_package_name.proto_nolint"
   }
 }
 types {
@@ -22,7 +22,7 @@ types {
     json_name: "bucketId"
   }
   source_context {
-    file_name: "no_package_name"
+    file_name: "no_package_name.proto_nolint"
   }
 }
 documentation {
@@ -64,3 +64,4 @@ system_parameters {
 }
 experimental {
 }
+
