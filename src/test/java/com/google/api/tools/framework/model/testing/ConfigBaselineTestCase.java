@@ -24,6 +24,7 @@ import com.google.api.tools.framework.model.testing.TestModelGenerator.ModelTest
 import com.google.api.tools.framework.setup.StandardSetup;
 import com.google.api.tools.framework.snippet.Doc;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.protobuf.Message;
@@ -59,6 +60,12 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
    * files.
    */
   protected boolean showDiagLocation = true;
+
+  /**
+   * Map of regex Pattern to the replacement strings to be used for sanitizing/stabilizing diag
+   * message strings.
+   */
+  protected Map<String, String> diagPatternReplacements = ImmutableMap.of();
 
   /** List of suppression directives that should be added to the model. */
   protected List<String> suppressionDirectives = Lists.newArrayList("versioning-config");
@@ -168,16 +175,30 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
    *
    */
   protected void printDiag(final Diag diag) {
-    String message = DiagUtils.getDiagMessage(diag);
+    // There are some diag messages that include strings that change over time (e.g. list of valid
+    // region names), so try to filter messages to make the baseline output a bit more stable.
+    Diag diagToPrint = diag;
+    if (!diagPatternReplacements.isEmpty()) {
+      String message = diagToPrint.getMessage();
+      for (Map.Entry<String, String> entry : diagPatternReplacements.entrySet()) {
+        message = message.replaceAll(entry.getKey(), entry.getValue());
+      }
+      if (!message.equals(diagToPrint.getMessage())) {
+        diagToPrint = Diag.create(diag.getLocation(), "%s", diag.getKind(), message);
+      }
+    }
+    String message = DiagUtils.getDiagMessage(diagToPrint);
     if (showDiagLocation) {
       testOutput()
           .printf(
               String.format(
                       "%s: %s: %s",
-                      diag.getKind().toString(), getLocationWithoutFullPath(diag), message)
+                      diagToPrint.getKind().toString(),
+                      getLocationWithoutFullPath(diagToPrint),
+                      message)
                   + "%n");
     } else {
-      testOutput().printf("%s: %s%n", diag.getKind(), message);
+      testOutput().printf("%s: %s%n", diagToPrint.getKind(), message);
     }
   }
 
