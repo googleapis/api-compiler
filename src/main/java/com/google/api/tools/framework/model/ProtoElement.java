@@ -23,38 +23,30 @@ import com.google.protobuf.Syntax;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-/**
- * Base class of model elements which stem from protocol buffers.
- */
+/** Base class of model elements which stem from protocol buffers. */
 public abstract class ProtoElement extends Element {
 
   private final ProtoElement parent;
   private final String name;
   private final String path;
 
-  /**
-   * Creates the element, given its parent and (simple) name.
-   */
-  protected ProtoElement(
-      @Nullable ProtoElement parent, String name, String path) {
+  /** Creates the element, given its parent and (simple) name. */
+  protected ProtoElement(@Nullable ProtoElement parent, String name, String path) {
     this.parent = parent;
     this.name = Preconditions.checkNotNull(name);
     this.path = path;
   }
 
-  //-------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   // Syntax
 
-  /**
-   * Returns the parent, or null if this a root (a proto file).
-   */
-  @Nullable public ProtoElement getParent() {
+  /** Returns the parent, or null if this a root (a proto file). */
+  @Nullable
+  public ProtoElement getParent() {
     return parent;
   }
 
-  /**
-   * Returns the model.
-   */
+  /** Returns the model. */
   @Override
   public Model getModel() {
     // Don't need to care about root case as that overrides.
@@ -71,8 +63,8 @@ public abstract class ProtoElement extends Element {
   }
 
   /**
-   * Returns the full name of this element, including package and outer messages
-   * for nested elements. For a file, this will return the package name of the file.
+   * Returns the full name of this element, including package and outer messages for nested
+   * elements. For a file, this will return the package name of the file.
    */
   @Override
   public String getFullName() {
@@ -83,37 +75,27 @@ public abstract class ProtoElement extends Element {
     return parent.getFullName() + "." + getSimpleName();
   }
 
-  /**
-   * Returns the proto file in which this element lives.
-   */
+  /** Returns the proto file in which this element lives. */
   public ProtoFile getFile() {
     // Don't need to care about root case as that overrides.
     return parent.getFile();
   }
 
-  /**
-   * Return this element's options from the proto.
-   */
+  /** Return this element's options from the proto. */
   public abstract Map<FieldDescriptor, Object> getOptionFields();
 
-  /**
-   * Deliver the location of this protocol element.
-   */
+  /** Deliver the location of this protocol element. */
   @Override
   public Location getLocation() {
     return getFile().getLocation(this);
   }
 
-  /**
-   * Returns the location path of this element in the proto file.
-   */
+  /** Returns the location path of this element in the proto file. */
   String getPath() {
     return path;
   }
 
-  /**
-   * Helper function to build location path.
-   */
+  /** Helper function to build location path. */
   static String buildPath(String parentPath, int fieldNumber, int fieldIndex) {
     if (Strings.isNullOrEmpty(parentPath)) {
       return String.format("%d.%d", fieldNumber, fieldIndex);
@@ -122,30 +104,23 @@ public abstract class ProtoElement extends Element {
     }
   }
 
-  //-------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   // Attributes belonging to merged stage
 
-  /**
-   * Gets the syntax in which the element was defined.
-   */
+  /** Gets the syntax in which the element was defined. */
   public Syntax getSyntax() {
     return parent.getSyntax();
   }
 
-  /**
-   * Return true if the element is reachable with the current scoper.
-   */
+  /** Return true if the element is reachable with the current scoper. */
   public boolean isReachable() {
     return getModel().getScoper().isReachable(this);
   }
 
-  /**
-   * Returns true if this object represents something that is configured as deprecated.
-   */
+  /** Returns true if this object represents something that is configured as deprecated. */
   public boolean isDeprecated() {
     // Assume that element is not deprecated - subclasses will override this method if they can be
     // marked as deprecated.
     return false;
   }
-
 }
