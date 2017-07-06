@@ -84,13 +84,13 @@ public class Merger implements Processor {
     Service config = model.getServiceConfig();
     for (Api api : model.getServiceConfig().getApisList()) {
       Interface iface = model.getSymbolTable().lookupInterface(api.getName());
-      Location location = model.getLocationInConfig(api, "name");
       if (iface != null) {
         // Add interface to the roots.
         model.addRoot(iface);
         // Attach api proto to interface.
         iface.setConfig(api);
       } else {
+        Location location = model.getLocationInConfig(api, "name");
         model
             .getDiagReporter()
             .report(Diag.error(location, "Cannot resolve api '%s'.", api.getName()));
