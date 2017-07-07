@@ -174,12 +174,13 @@ public class TypeRef {
 
   private static final ImmutableMap<String, GoogleCommonType> GOOGLE_COMMON_TYPE_MAP =
       ImmutableMap.<String, GoogleCommonType>builder()
-          .put("google.type.Color", GoogleCommonType.COLOR)
           .put("google.type.Date", GoogleCommonType.DATE)
+          .put("google.type.TimeOfDay", GoogleCommonType.TIME_OF_DAY)
+          .put("google.type.Color", GoogleCommonType.COLOR)
           .put("google.type.Expr", GoogleCommonType.EXPR)
           .put("google.type.LatLng", GoogleCommonType.LAT_LNG)
           .put("google.type.Money", GoogleCommonType.MONEY)
-          .put("google.type.TimeOfDay", GoogleCommonType.TIME_OF_DAY)
+          .put("google.type.PostalAddress", GoogleCommonType.POSTAL_ADDRESS)
           .build();
 
   private static final Interner<TypeRef> interner = Interners.newWeakInterner();
