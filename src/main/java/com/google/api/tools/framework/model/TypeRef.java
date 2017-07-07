@@ -115,6 +115,23 @@ public class TypeRef {
     }
   }
 
+  /** Represents an enumeration of Google common types defined under google/type/... */
+  public enum GoogleCommonType {
+    // Marker for indicating no common type.
+    NONE,
+
+    // Time
+    DATE,
+    TIME_OF_DAY,
+
+    // Other
+    COLOR,
+    EXPR,
+    LAT_LNG,
+    MONEY,
+    POSTAL_ADDRESS
+  }
+
   private static final ImmutableBiMap<String, Type> PRIMITIVE_TYPE_MAP =
       ImmutableBiMap.<String, Type>builder()
           .put("double", Type.TYPE_DOUBLE)
@@ -153,6 +170,16 @@ public class TypeRef {
           .put("google.protobuf.Any", WellKnownType.ANY)
           .put("google.protobuf.Media", WellKnownType.MEDIA)
           .put("google.protobuf.FieldMask", WellKnownType.FIELD_MASK)
+          .build();
+
+  private static final ImmutableMap<String, GoogleCommonType> GOOGLE_COMMON_TYPE_MAP =
+      ImmutableMap.<String, GoogleCommonType>builder()
+          .put("google.type.Color", GoogleCommonType.COLOR)
+          .put("google.type.Date", GoogleCommonType.DATE)
+          .put("google.type.Expr", GoogleCommonType.EXPR)
+          .put("google.type.LatLng", GoogleCommonType.LAT_LNG)
+          .put("google.type.Money", GoogleCommonType.MONEY)
+          .put("google.type.TimeOfDay", GoogleCommonType.TIME_OF_DAY)
           .build();
 
   private static final Interner<TypeRef> interner = Interners.newWeakInterner();
@@ -259,9 +286,16 @@ public class TypeRef {
     return wkt == null ? WellKnownType.NONE : wkt;
   }
 
-  /**
-   * Makes the given type to have cardinality optional.
-   */
+  /** Returns the Google common type kind, or NONE if its not one. */
+  public GoogleCommonType getGoogleCommonType() {
+    if (!isMessage()) {
+      return GoogleCommonType.NONE;
+    }
+    GoogleCommonType type = GOOGLE_COMMON_TYPE_MAP.get(messageType.getFullName());
+    return type == null ? GoogleCommonType.NONE : type;
+  }
+
+  /** Makes the given type to have cardinality optional. */
   public TypeRef makeOptional() {
     return interner.intern(new TypeRef(kind, Cardinality.OPTIONAL, messageType, enumType));
   }
