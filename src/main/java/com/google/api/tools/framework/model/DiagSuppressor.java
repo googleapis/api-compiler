@@ -19,6 +19,8 @@ package com.google.api.tools.framework.model;
 import com.google.api.tools.framework.model.Diag.Kind;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,14 +74,13 @@ public class DiagSuppressor {
     // Get aspect and rule name and search for matching aspect and rule.
     String aspectName = matcher.group("aspect");
     String ruleName = matcher.group("rule");
-    ConfigAspect matching = null;
+    List<ConfigAspect> aspectsWithName = new ArrayList<>();
     for (ConfigAspect aspect : configAspects) {
       if (aspect.getAspectName().equals(aspectName)) {
-        matching = aspect;
-        break;
+        aspectsWithName.add(aspect);
       }
     }
-    if (matching == null) {
+    if (aspectsWithName.isEmpty()) {
       diagCollector.addDiag(
           Diag.error(
               elem.getLocation(),
@@ -88,7 +89,7 @@ public class DiagSuppressor {
               directive));
       return;
     }
-    if (!"*".equals(ruleName) && !matching.getLintRuleNames().contains(ruleName)) {
+    if (!"*".equals(ruleName) && !hasMatchingLinterRule(ruleName, aspectsWithName)) {
       diagCollector.addDiag(
           Diag.warning(
               elem.getLocation(),
@@ -102,6 +103,16 @@ public class DiagSuppressor {
     // Add the suppression pattern.
     addPattern(elem, suppressionPattern(aspectName, ruleName));
   }
+
+  private boolean hasMatchingLinterRule(String ruleName, List<ConfigAspect> aspects) {
+    for (ConfigAspect aspect : aspects) {
+      if (aspect.getLintRuleNames().contains(ruleName)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // Adds a pattern for given element.
   public void addPattern(Element elem, String pattern) {
     String elemPattern = suppressions.get(elem);

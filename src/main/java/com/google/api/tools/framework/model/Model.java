@@ -312,12 +312,6 @@ public class Model extends Element implements ConfigLocationResolver {
     return declaredVisibilityCombinations;
   }
 
-  public Set<Set<String>> clearDeclaredVisibilityCombinations() {
-    this.declaredVisibilityCombinations = Sets.newLinkedHashSet();
-    this.declaredVisibilityCombinations.add(Sets.<String>newLinkedHashSet());
-    return this.declaredVisibilityCombinations;
-  }
-
   /** add to Set of a collection of declared visibility combinations. */
   public Set<Set<String>> addDeclaredVisibilityCombinations(
       Set<Set<String>> declaredVisibilityCombinations) {
