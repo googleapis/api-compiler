@@ -117,14 +117,17 @@ authentication {
     id: "test_auth"
     issuer: "1234567-compute@developer.gserviceaccount.com"
     jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+    authorization_url: "http://petstore.swagger.wordnik.com/api/oauth/dialog"
   }
   providers {
     id: "test_auth2"
     issuer: "1234567-compute@developer.gserviceaccount2.com"
+    authorization_url: "http://petstore.swagger.wordnik.com/api/oauth/dialog"
   }
   providers {
     id: "test_auth3"
     jwks_uri: "https://www.googleapis.com/oauth2/v1/certs3"
+    authorization_url: "http://petstore.swagger.wordnik.com/api/oauth/dialog"
   }
 }
 context {

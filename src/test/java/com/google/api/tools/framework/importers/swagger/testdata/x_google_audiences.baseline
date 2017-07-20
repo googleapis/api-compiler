@@ -78,6 +78,7 @@ authentication {
     issuer: "1234567-compute@developer.gserviceaccount.com"
     jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
     audiences: "www.test_auth.com, www.test2_auth.com"
+    authorization_url: "http://petstore.swagger.wordnik.com/api/oauth/dialog"
   }
 }
 context {

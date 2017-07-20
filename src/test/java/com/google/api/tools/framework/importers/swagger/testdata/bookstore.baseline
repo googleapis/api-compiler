@@ -301,6 +301,7 @@ authentication {
     id: "auth0_jwk"
     issuer: "https://esp-jwk.auth0.com/"
     jwks_uri: "https://esp-jwk.auth0.com/.well-known/jwks.json"
+    authorization_url: "https://esp-jwk.auth0.com/authorize"
   }
   providers {
     id: "google_id_token"

@@ -41,6 +41,7 @@ import io.swagger.models.SecurityRequirement;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.In;
+import io.swagger.models.auth.OAuth2Definition;
 import io.swagger.models.auth.SecuritySchemeDefinition;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -91,7 +92,9 @@ public final class AuthBuilder implements AspectBuilder {
     if (securitySchema == null) {
       return;
     }
+
     if (securitySchema.getType().equalsIgnoreCase("oauth2")) {
+      OAuth2Definition oauthSchema = (OAuth2Definition) securitySchema;
       AuthProvider.Builder authProviderBuilder = AuthProvider.newBuilder();
       authProviderBuilder.setId(securitySchemaName);
       String oauthIssuerSwaggerExtensionUsed =
@@ -112,7 +115,9 @@ public final class AuthBuilder implements AspectBuilder {
           authProviderBuilder.setIssuer(oauthIssuerSwaggerExtensionObject);
         }
       }
-
+      if (oauthSchema.getAuthorizationUrl() != null) {
+        authProviderBuilder.setAuthorizationUrl(oauthSchema.getAuthorizationUrl());
+      }
       String jwksSwaggerExtensionUsed =
           VendorExtensionUtils.usedExtension(
               diagCollector,
@@ -311,4 +316,3 @@ public final class AuthBuilder implements AspectBuilder {
     }
   }
 }
-
