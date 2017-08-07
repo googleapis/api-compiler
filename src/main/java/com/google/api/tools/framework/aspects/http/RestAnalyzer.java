@@ -219,7 +219,8 @@ public class RestAnalyzer {
 
     CollectionName collectionName = RestAnalyzer.buildCollectionName(path, method.getModel());
 
-    return RestMethod.create(method, RestKind.CUSTOM, collectionName, customName, restMethodName);
+    return RestMethod.create(
+        method, RestKind.CUSTOM, collectionName, customName, restMethodName);
   }
 
   private static String ensureUpperCase(String name) {

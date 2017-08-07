@@ -37,7 +37,8 @@ public class RestMethod extends Element {
       String collectionName,
       String customMethodName,
       String methodNameOverride) {
-    return new RestMethod(method, kind, collectionName, "", customMethodName, methodNameOverride);
+    return new RestMethod(
+        method, kind, collectionName, "", customMethodName, methodNameOverride);
   }
 
   /** Create a new REST method. */
@@ -271,4 +272,5 @@ public class RestMethod extends Element {
     }
     return StreamingType.NONE;
   }
+
 }
