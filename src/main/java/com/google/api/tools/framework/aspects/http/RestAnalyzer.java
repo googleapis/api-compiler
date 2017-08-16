@@ -41,6 +41,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -268,28 +269,42 @@ public class RestAnalyzer {
    * Assigns this RestGroup's short names to its collections and Rest methods.
    */
   private static void assignShortNames(Collection<CollectionAttribute> collections) {
-    ImmutableMap<CollectionAttribute, String> collectionshortNames =
+    ImmutableMap<String, Map<CollectionAttribute, String>> collectionShortNamesByVersion =
         generateShortNames(collections);
-    for (Map.Entry<CollectionAttribute, String> collectionshortName
-        : collectionshortNames.entrySet()) {
-      String name = collectionshortName.getValue();
-      CollectionAttribute collection = collectionshortName.getKey();
-      collection.setName(name);
-      for (RestMethod method : collection.getMethods()) {
-        method.setBaseCollectionName(name);
+    for (String version : collectionShortNamesByVersion.keySet()) {
+      for (Map.Entry<CollectionAttribute, String> collectionshortName
+          : collectionShortNamesByVersion.get(version).entrySet()) {
+        String name = collectionshortName.getValue();
+        CollectionAttribute collection = collectionshortName.getKey();
+        collection.setName(name);
+        for (RestMethod method : collection.getMethods()) {
+          method.setBaseCollectionName(name);
+        }
       }
     }
   }
 
-  private static ImmutableMap<CollectionAttribute, String> generateShortNames(
+  private static ImmutableMap<String, Map<CollectionAttribute, String>> generateShortNames(
       Collection<CollectionAttribute> collections) {
-    BiMap<String, CollectionAttribute> intermediateMap = HashBiMap.create();
+    // Map[version -> Map[name -> collection]] because collection name must be unique within a
+    // given version, but likely is not unique across versions.
+    Map<String, BiMap<String, CollectionAttribute>> versionMap = new HashMap<>();
     for (CollectionAttribute collection : collections) {
+      String version = collection.getVersionWithDefault();
+      if (!versionMap.containsKey(version)) {
+        versionMap.put(version, HashBiMap.<String, CollectionAttribute>create());
+      }
       String baseName = collection.getBaseName();
       String shortName = baseName.substring(baseName.lastIndexOf(".") + 1);
-      insertOrDisambiguate(intermediateMap, shortName, collection);
+      insertOrDisambiguate(versionMap.get(version), shortName, collection);
     }
-    return ImmutableMap.copyOf(intermediateMap.inverse());
+
+    ImmutableMap.Builder<String, Map<CollectionAttribute, String>> shortNames =
+        new ImmutableMap.Builder<>();
+    for (Map.Entry<String, BiMap<String, CollectionAttribute>> entry : versionMap.entrySet()) {
+      shortNames.put(entry.getKey(), entry.getValue().inverse());
+    }
+    return shortNames.build();
   }
 
   /**
