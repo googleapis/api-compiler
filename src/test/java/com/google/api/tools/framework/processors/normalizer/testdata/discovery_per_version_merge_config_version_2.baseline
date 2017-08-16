@@ -81,6 +81,8 @@ http {
     post: "/v4/reverseecho"
   }
 }
+quota {
+}
 authentication {
 }
 context {
@@ -100,3 +102,4 @@ system_parameters {
 }
 experimental {
 }
+

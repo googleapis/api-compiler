@@ -10,6 +10,19 @@ schemes:
 basePath: /
 x-google-allow: configured
 x-google-management:
+  quota:
+    # invalid -> should be 'limits'
+    limit:
+      - name: bookstore-read-requests
+        values:
+          STANDARD: 1000 # user provided in Swagger as "default_limit"
+        unit: "1/{project}/{region}"
+        metric: bookstore/read_requests
+      - name: bookstore-write-requests
+        values:
+          STANDARD: 100 # user provided in Swagger as "default_limit"
+        unit: "1/min/{project}/{resource}"
+        metric: bookstore/write_requests
   metrics:
     - name: bookstore/write_requests
       valueType: INT64 # default

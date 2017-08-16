@@ -23,6 +23,7 @@ import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthBuilder
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthRuleGenerator;
 import com.google.api.tools.framework.importers.swagger.aspects.authz.AuthzBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.endpoint.EndpointBuilder;
+import com.google.api.tools.framework.importers.swagger.aspects.quota.MetricRuleGenerator;
 import com.google.api.tools.framework.importers.swagger.aspects.quota.QuotaBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.type.TypeBuilder;
 import com.google.auto.value.AutoValue;
@@ -48,6 +49,8 @@ public abstract class OpenApiConversionResources {
         new HttpRuleGenerator(methodNamespace, swagger.getBasePath(), diagCollector);
     AuthRuleGenerator authRuleGenerator = new AuthRuleGenerator(methodNamespace, diagCollector);
     AuthBuilder authBuilder = new AuthBuilder(methodNamespace, diagCollector, authRuleGenerator);
+    MetricRuleGenerator metricRuleGenerator =
+        new MetricRuleGenerator(methodNamespace, diagCollector);
     QuotaBuilder quotaBuilder = new QuotaBuilder(diagCollector);
     EndpointBuilder endpointBuilder = new EndpointBuilder(diagCollector);
     AuthzBuilder authzBuilder = new AuthzBuilder(diagCollector);
@@ -59,6 +62,7 @@ public abstract class OpenApiConversionResources {
             methodNamespace,
             httpRuleGenerator,
             authRuleGenerator,
+            metricRuleGenerator,
             authBuilder);
     List<AspectBuilder> aspectBuilders =
         Lists.newArrayList(typeBuilder, authBuilder, endpointBuilder, quotaBuilder, authzBuilder);

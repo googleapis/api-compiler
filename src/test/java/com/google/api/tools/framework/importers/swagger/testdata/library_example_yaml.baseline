@@ -517,6 +517,110 @@ http {
     body: "body"
   }
 }
+quota {
+  limits {
+    name: "bookstore-read-requests"
+    metric: "bookstore/read_requests"
+    unit: "1/min/{project}"
+    values {
+      key: "STANDARD"
+      value: 1000
+    }
+  }
+  limits {
+    name: "bookstore-write-requests"
+    metric: "bookstore/write_requests"
+    unit: "1/min/{project}"
+    values {
+      key: "STANDARD"
+      value: 100
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.RestrictedGetShelf"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.ListShelves"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.CreateShelf"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.GetShelf"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.DeleteShelf"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.ListBooks"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.CreateBook"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.GetBook"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.DeleteBook"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.UpdateBook"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.MoveBook"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 2
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.MergeShelves"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 2
+    }
+  }
+}
 authentication {
 }
 context {

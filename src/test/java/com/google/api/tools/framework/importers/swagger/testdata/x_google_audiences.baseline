@@ -65,6 +65,8 @@ http {
     body: "my_body_ref"
   }
 }
+quota {
+}
 authentication {
   rules {
     selector: "v1.library_example_cloud_goog.SimpleMethod"

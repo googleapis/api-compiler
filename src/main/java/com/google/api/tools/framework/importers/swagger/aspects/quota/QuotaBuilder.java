@@ -15,6 +15,7 @@
  */
 package com.google.api.tools.framework.importers.swagger.aspects.quota;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.MetricDescriptor;
 import com.google.api.Quota;
@@ -47,6 +48,10 @@ public class QuotaBuilder implements AspectBuilder {
         new VendorExtensionProtoConverter(swagger.getVendorExtensions(), diagCollector);
     if (extensionConverter.hasExtension(ExtensionNames.MANAGEMENT_SWAGGER_EXTENSION)) {
       ServiceManagementExtension serviceManagementExtension = readExtension(swagger);
+      Quota quota = parseQuota(serviceManagementExtension, extensionConverter);
+      if (!quota.equals(Quota.getDefaultInstance())) {
+        serviceBuilder.setQuota(quota);
+      }
       serviceBuilder.addAllMetrics(parseMetrics(serviceManagementExtension, extensionConverter));
     }
   }
@@ -85,4 +90,24 @@ public class QuotaBuilder implements AspectBuilder {
     }
   }
 
+  private Quota parseQuota(
+      ServiceManagementExtension extension, VendorExtensionProtoConverter extensionConverter) {
+    if (extension.getQuota() == null) {
+      return Quota.getDefaultInstance();
+    }
+    try {
+      String extensionJson = new ObjectMapper().writer().writeValueAsString(extension.getQuota());
+      return extensionConverter.convertJsonToProto(
+          Quota.getDefaultInstance(), extensionJson, "quota");
+    } catch (JsonProcessingException ex) {
+      diagCollector.addDiag(
+          Diag.error(
+              new SimpleLocation("quota"),
+              "Extension %s cannot be converted into proto type %s. Details: %s",
+              "quota",
+              Quota.getDescriptor().getFullName(),
+              ex.getMessage()));
+      return Quota.getDefaultInstance();
+    }
+  }
 }

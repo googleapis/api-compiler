@@ -84,6 +84,8 @@ http {
     body: "body"
   }
 }
+quota {
+}
 authentication {
 }
 context {

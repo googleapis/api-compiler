@@ -27,4 +27,6 @@ documentation {
 }
 http {
 }
+quota {
+}
 

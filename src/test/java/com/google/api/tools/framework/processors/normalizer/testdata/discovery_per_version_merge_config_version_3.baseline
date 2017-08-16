@@ -81,6 +81,8 @@ http {
     post: "/v4/reverseecho"
   }
 }
+quota {
+}
 authentication {
 }
 context {

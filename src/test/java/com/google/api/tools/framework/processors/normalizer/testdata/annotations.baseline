@@ -93,6 +93,8 @@ http {
     get: "/buckets/{bucket_id}"
   }
 }
+quota {
+}
 authentication {
 }
 context {
@@ -112,3 +114,4 @@ system_parameters {
 }
 experimental {
 }
+

@@ -17,10 +17,12 @@
 package com.google.api.tools.framework.importers.swagger.aspects;
 
 import com.google.api.AuthenticationRule;
+import com.google.api.MetricRule;
 import com.google.api.Service;
 import com.google.api.tools.framework.importers.swagger.OpenApiLocations;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthRuleGenerator;
+import com.google.api.tools.framework.importers.swagger.aspects.quota.MetricRuleGenerator;
 import com.google.api.tools.framework.importers.swagger.aspects.type.TypeBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.type.TypeInfo;
 import com.google.api.tools.framework.importers.swagger.aspects.type.WellKnownTypeUtils.WellKnownType;
@@ -72,6 +74,7 @@ public class ProtoApiFromOpenApi {
   private final HttpRuleGenerator httpRuleGenerator;
   private final AuthRuleGenerator authRuleGenerator;
   private final AuthBuilder authBuilder;
+  private final MetricRuleGenerator metricRuleGenerator;
 
   public ProtoApiFromOpenApi(
       DiagCollector diagCollector,
@@ -80,6 +83,7 @@ public class ProtoApiFromOpenApi {
       String apiName,
       HttpRuleGenerator httpRuleGenerator,
       AuthRuleGenerator authRuleGenerator,
+      MetricRuleGenerator metricRuleGenerator,
       AuthBuilder authBuilder) {
     this.typeBuilder = typeBuilder;
     this.diagCollector = diagCollector;
@@ -88,6 +92,7 @@ public class ProtoApiFromOpenApi {
     this.httpRuleGenerator = httpRuleGenerator;
     this.authRuleGenerator = authRuleGenerator;
     this.authBuilder = authBuilder;
+    this.metricRuleGenerator = metricRuleGenerator;
   }
 
   public void addFromSwagger(Service.Builder serviceBuilder, Swagger swagger) {
@@ -208,6 +213,10 @@ public class ProtoApiFromOpenApi {
           authRuleGenerator.createAuthRule(operation, operationType, urlPath);
       if (authRule != null) {
         serviceBuilder.getAuthenticationBuilder().addRules(authRule);
+      }
+      MetricRule metricRule = metricRuleGenerator.createMetricRule(operation);
+      if (metricRule != null) {
+        serviceBuilder.getQuotaBuilder().addMetricRules(metricRule);
       }
       serviceBuilder
           .getUsageBuilder()

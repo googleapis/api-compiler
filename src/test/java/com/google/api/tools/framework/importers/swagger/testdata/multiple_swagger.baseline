@@ -157,6 +157,8 @@ http {
     delete: "/v2/api/pets/{id}"
   }
 }
+quota {
+}
 authentication {
 }
 context {

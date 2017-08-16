@@ -48,6 +48,8 @@ http {
     post: "/v1/pets"
   }
 }
+quota {
+}
 authentication {
 }
 context {

@@ -54,6 +54,8 @@ http {
     get: "/v1beta1/foo"
   }
 }
+quota {
+}
 authentication {
 }
 context {

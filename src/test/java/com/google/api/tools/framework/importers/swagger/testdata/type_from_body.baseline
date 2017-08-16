@@ -63,6 +63,8 @@ http {
     body: "my_body_ref"
   }
 }
+quota {
+}
 authentication {
 }
 context {

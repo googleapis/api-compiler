@@ -785,6 +785,8 @@ http {
     body: "*"
   }
 }
+quota {
+}
 authentication {
   rules {
     selector: "google.example.library.v1.LibraryService.CreateShelf"

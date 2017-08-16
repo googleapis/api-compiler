@@ -234,6 +234,8 @@ http {
     }
   }
 }
+quota {
+}
 authentication {
 }
 context {
@@ -260,3 +262,4 @@ system_parameters {
 }
 experimental {
 }
+

@@ -45,6 +45,8 @@ documentation {
 }
 http {
 }
+quota {
+}
 authentication {
 }
 context {

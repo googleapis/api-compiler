@@ -133,6 +133,8 @@ http {
     delete: "/v1/api/pets/{id}"
   }
 }
+quota {
+}
 authentication {
 }
 context {

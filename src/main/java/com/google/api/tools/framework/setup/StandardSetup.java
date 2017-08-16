@@ -27,6 +27,11 @@ import com.google.api.tools.framework.aspects.http.validators.HttpConfigAspectVa
 import com.google.api.tools.framework.aspects.naming.NamingConfigAspect;
 import com.google.api.tools.framework.aspects.naming.linters.ServiceNameRule;
 import com.google.api.tools.framework.aspects.servicecontrol.ServiceControlConfigAspect;
+import com.google.api.tools.framework.aspects.superquota.SuperQuotaConfigAspect;
+import com.google.api.tools.framework.aspects.superquota.validators.QuotaLimitNameValidator;
+import com.google.api.tools.framework.aspects.superquota.validators.QuotaLimitValuesValidator;
+import com.google.api.tools.framework.aspects.superquota.validators.QuotaMetricsExistValidator;
+import com.google.api.tools.framework.aspects.superquota.validators.QuotaUnitValidator;
 import com.google.api.tools.framework.aspects.systemparameter.SystemParameterConfigAspect;
 import com.google.api.tools.framework.aspects.usage.UsageConfigAspect;
 import com.google.api.tools.framework.aspects.versioning.VersionConfigAspect;
@@ -80,6 +85,7 @@ public class StandardSetup {
 
     model.registerConfigAspect(AuthConfigAspect.create(model));
     model.registerConfigAspect(ServiceControlConfigAspect.create(model));
+    model.registerConfigAspect(SuperQuotaConfigAspect.create(model));
 
     registerValidators(model);
 
@@ -87,6 +93,11 @@ public class StandardSetup {
 
   private static void registerValidators(Model model) {
     model.registerValidator(new HttpConfigAspectValidator(model.getDiagReporter()));
+
+      model.registerValidator(new QuotaUnitValidator(model.getDiagReporter()));
+      model.registerValidator(new QuotaLimitValuesValidator(model.getDiagReporter()));
+    model.registerValidator(new QuotaLimitNameValidator(model.getDiagReporter()));
+    model.registerValidator(new QuotaMetricsExistValidator(model.getDiagReporter()));
 
   }
 

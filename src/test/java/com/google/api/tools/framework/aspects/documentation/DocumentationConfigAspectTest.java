@@ -18,6 +18,7 @@ package com.google.api.tools.framework.aspects.documentation;
 
 import com.google.api.tools.framework.aspects.ConfigAspectBaselineTestCase;
 import com.google.api.tools.framework.aspects.http.HttpConfigAspect;
+import com.google.api.tools.framework.aspects.superquota.SuperQuotaConfigAspect;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -32,6 +33,7 @@ public class DocumentationConfigAspectTest extends ConfigAspectBaselineTestCase 
   public DocumentationConfigAspectTest() {
     super(DocumentationConfigAspect.class);
     addBaselineAspect(HttpConfigAspect.class);
+    addBaselineAspect(SuperQuotaConfigAspect.class);
   }
 
   @Test public void docpresence() throws Exception {

@@ -98,6 +98,8 @@ http {
     put: "/**"
   }
 }
+quota {
+}
 authentication {
   rules {
     selector: "v1.library_example_cloud_goog.SimpleMethod"

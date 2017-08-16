@@ -265,6 +265,8 @@ http {
     delete: "/shelves/{shelf}/books/{book}"
   }
 }
+quota {
+}
 authentication {
   rules {
     selector: "1.bookstore_cloudendpointsapis_com.ListShelves"

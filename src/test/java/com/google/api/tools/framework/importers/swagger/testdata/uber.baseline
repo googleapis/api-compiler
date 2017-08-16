@@ -170,6 +170,8 @@ http {
     get: "/v1/products"
   }
 }
+quota {
+}
 authentication {
 }
 context {

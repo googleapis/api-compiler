@@ -292,6 +292,33 @@ http {
     }
   }
 }
+quota {
+  limits {
+    name: "ReadsPerMinutePerProject"
+    metric: "test.googleapis.com/read_requests"
+    unit: "1/min/{project}"
+    values {
+      key: "STANDARD"
+      value: 200
+    }
+  }
+  limits {
+    name: "ReadsPerDayPerProject"
+    metric: "test.googleapis.com/read_requests"
+    unit: "1/d/{project}"
+    values {
+      key: "STANDARD"
+      value: 10000
+    }
+  }
+  metric_rules {
+    selector: "proto.test.v1.TestService.Call"
+    metric_costs {
+      key: "test.googleapis.com/read_requests"
+      value: 1
+    }
+  }
+}
 authentication {
 }
 context {
@@ -333,3 +360,4 @@ system_parameters {
 }
 experimental {
 }
+

@@ -61,4 +61,6 @@ http {
     get: "/v1/nonconforming2"
   }
 }
+quota {
+}
 

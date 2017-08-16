@@ -97,6 +97,8 @@ http {
     put: "/v1/pets"
   }
 }
+quota {
+}
 authentication {
   rules {
     selector: "v1.library_example_cloud_goog.RemoveSecurityByXSecurity"
