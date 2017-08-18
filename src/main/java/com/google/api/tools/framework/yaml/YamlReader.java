@@ -98,7 +98,10 @@ public class YamlReader {
       helper.error(SimpleLocation.UNKNOWN, "Parsing error: %s", e.getMessage());
       return null;
     }
-
+    if (tree == null) {
+      helper.error(SimpleLocation.UNKNOWN, "Parsing error or Empty YAML document");
+      return null;
+    }
     // Identify the configuration type.
     if (!(tree instanceof MappingNode)) {
       helper.error(tree, "Expected a map as a root object.");
