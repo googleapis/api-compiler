@@ -17,6 +17,7 @@
 package com.google.api.tools.framework.importers.swagger.aspects;
 
 import com.google.api.AuthenticationRule;
+import com.google.api.MetricDescriptor;
 import com.google.api.MetricRule;
 import com.google.api.Service;
 import com.google.api.tools.framework.importers.swagger.OpenApiLocations;
@@ -34,6 +35,7 @@ import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagCollector;
 import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.SimpleLocation;
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
@@ -57,8 +59,10 @@ import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.RefParameter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 /** Class to create {@link Api} from OpenAPI operations. */
@@ -216,11 +220,30 @@ public class ProtoApiFromOpenApi {
       }
       MetricRule metricRule = metricRuleGenerator.createMetricRule(operation);
       if (metricRule != null) {
+        checkMatchingMetrics(serviceBuilder, metricRule);
         serviceBuilder.getQuotaBuilder().addMetricRules(metricRule);
       }
       serviceBuilder
           .getUsageBuilder()
           .addRules(authBuilder.createUsageRule(operation, operationType, urlPath));
+    }
+  }
+
+  private void checkMatchingMetrics(Service.Builder serviceBuilder, MetricRule metricRule) {
+    Set<String> definedMetrics = new HashSet<>();
+    for (MetricDescriptor definedMetric : serviceBuilder.getMetricsList()) {
+      definedMetrics.add(definedMetric.getName());
+    }
+    Set<String> missingMetrics =
+        Sets.difference(metricRule.getMetricCosts().keySet(), definedMetrics);
+
+    if (!missingMetrics.isEmpty()) {
+      diagCollector.addDiag(
+          Diag.error(
+              new SimpleLocation(MetricRuleGenerator.QUOTA_SWAGGER_EXTENSION),
+              "Quota Extension for method '%s' references undefined metric(s) '%s'",
+              metricRule.getSelector(),
+              Joiner.on(',').join(missingMetrics)));
     }
   }
 

@@ -1,0 +1,41 @@
+swagger: '2.0'
+info:
+  title: Google Example Library API
+  description: A simple Google Example Library API.
+  version: v1
+host: library-example.cloud.goog
+schemes:
+  - http
+  - https
+basePath: /
+x-google-allow: configured
+paths:
+  /v1/shelves:
+    post:
+      operationId: CreateShelf
+      description: 'Creates a shelf, and returns the new Shelf.'
+      parameters:
+        - name: shelf
+          description: The shelf to create.
+          in: body
+          schema:
+            $ref: '#/definitions/Shelf'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Shelf'
+      x-google-quota:
+        metricCosts:
+          non_existent_metric: 1
+definitions:
+  Shelf:
+    description: A Shelf contains a collection of books with a theme.
+    type: object
+    properties:
+      name:
+        description: |-
+          The resource name of the shelf.
+          Shelf names have the form `shelves/{shelf_id}`.
+          The name is ignored when creating a shelf.
+        type: string

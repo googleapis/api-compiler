@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 /** Generator for {@link MetricRule}s for single API methods. */
 public class MetricRuleGenerator {
 
-  private static final String QUOTA_SWAGGER_EXTENSION = "x-google-quota";
+  public static final String QUOTA_SWAGGER_EXTENSION = "x-google-quota";
 
   private final String namespacePrefix;
   private final DiagCollector diagCollector;
