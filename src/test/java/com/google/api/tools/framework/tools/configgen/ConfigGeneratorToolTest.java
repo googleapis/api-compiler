@@ -51,7 +51,6 @@ import org.junit.runners.JUnit4;
 
 public class ConfigGeneratorToolTest extends BaselineTestCase {
   private static final class ConfigGeneratorDriverForTest extends ConfigGeneratorDriver {
-
     protected ConfigGeneratorDriverForTest(ToolOptions options) {
       super(options);
     }
