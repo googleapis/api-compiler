@@ -19,18 +19,21 @@ package com.google.api.tools.framework.aspects.http;
 import com.google.api.tools.framework.aspects.documentation.model.ResourceAttribute;
 import com.google.api.tools.framework.aspects.http.RestPatterns.MethodPattern;
 import com.google.api.tools.framework.aspects.http.model.CollectionAttribute;
+import com.google.api.tools.framework.aspects.http.model.CollectionName;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.LiteralSegment;
 import com.google.api.tools.framework.aspects.http.model.HttpAttribute.PathSegment;
 import com.google.api.tools.framework.aspects.http.model.MethodKind;
 import com.google.api.tools.framework.aspects.http.model.RestKind;
 import com.google.api.tools.framework.aspects.http.model.RestMethod;
+import com.google.api.tools.framework.aspects.versioning.model.ApiVersionUtil;
 import com.google.api.tools.framework.model.MessageType;
 import com.google.api.tools.framework.model.Method;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.TypeRef;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -122,11 +125,13 @@ public class RestAnalyzer {
     }
 
     // Add method to collection.
-    String collectionName = restMethod.getRestCollectionName();
-    CollectionAttribute collection = collectionMap.get(collectionName);
+    String baseCollectionName = restMethod.getRestCollectionNameNoVersion();
+    String version = restMethod.getVersion();
+    String versionedCollectionName = version + "." + baseCollectionName;
+    CollectionAttribute collection = collectionMap.get(versionedCollectionName);
     if (collection == null) {
-      collection = new CollectionAttribute(aspect.getModel(), collectionName);
-      collectionMap.put(collectionName, collection);
+      collection = new CollectionAttribute(aspect.getModel(), baseCollectionName, version);
+      collectionMap.put(versionedCollectionName, collection);
     }
     collection.addMethod(restMethod);
     return restMethod;
@@ -191,8 +196,10 @@ public class RestAnalyzer {
   }
 
   // Builds the collection name from a path.
-  static String buildCollectionName(Iterable<PathSegment> segments, Model model) {
-    return Joiner.on('.').skipNulls().join(FluentIterable.from(segments).transform(
+  static CollectionName buildCollectionName(Iterable<PathSegment> segments, Model model) {
+    String version = null;
+
+    String baseName = Joiner.on('.').skipNulls().join(FluentIterable.from(segments).transform(
         new Function<PathSegment, String>() {
           @Override
           public String apply(PathSegment segm) {
@@ -206,6 +213,12 @@ public class RestAnalyzer {
             return literal.getLiteral();
           }
         }));
-  }
 
+    if (Strings.isNullOrEmpty(version)) {
+      version = ApiVersionUtil.extractMajorVersionFromRestName(baseName);
+      baseName = ApiVersionUtil.stripVersionFromRestName(baseName);
+    }
+
+    return CollectionName.create(baseName, version);
+  }
 }

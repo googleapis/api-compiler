@@ -66,13 +66,22 @@ public class ApiVersionUtil {
    * or "foo.bar". For the later case, "v1" will be returned.
    */
   public static String extractDefaultMajorVersionFromRestName(String restName) {
+    String version = extractMajorVersionFromRestName(restName);
+    return Strings.isNullOrEmpty(version) ? "v1" : version;
+  }
+
+  /**
+   * Extract major version from REST element name. Rest element name has the form of "v1.foo.bar"
+   * or "foo.bar". For the later case, the empty string will be returned.
+   */
+  public static String extractMajorVersionFromRestName(String restName) {
     Preconditions.checkNotNull(restName);
     String [] segs = restName.split("\\.");
     if (segs.length == 0) {
-      return "v1";
+      return "";
     }
     Matcher matcher = MAJOR_VERSION_REGEX_PATTERN.matcher(segs[0]);
-    return matcher.find() ? matcher.group(1) : "v1";
+    return matcher.find() ? matcher.group(1) : "";
   }
 
   /**

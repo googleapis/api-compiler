@@ -1,6 +1,9 @@
 GET GetSummaryResponse /customer:getSummary
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  customer
+Version:  (empty)
+Version with default:  v1
+Versioned collection:  customer
+Unversioned collection:  customer
 Custom Name: getSummary
 

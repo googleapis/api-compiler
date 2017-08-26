@@ -16,12 +16,12 @@
 
 package com.google.api.tools.framework.aspects.http.model;
 
-import com.google.api.tools.framework.aspects.versioning.model.ApiVersionUtil;
 import com.google.api.tools.framework.model.Element;
 import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.TypeRef;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -50,13 +50,15 @@ public class CollectionAttribute extends Element {
 
   private final Model model;
   private final String name;
+  private final String version;
   private final ListMultimap<String, RestMethod> methods = ArrayListMultimap.create();
   private TypeRef resourceType;
   private CollectionAttribute parent;
 
-  public CollectionAttribute(Model model, String name) {
+  public CollectionAttribute(Model model, String name, String version) {
     this.model = model;
     this.name = name;
+    this.version = version;
   }
 
   @Override
@@ -71,7 +73,8 @@ public class CollectionAttribute extends Element {
 
   @Override
   public String getSimpleName() {
-    return name;
+    String sep = Strings.isNullOrEmpty(version) || Strings.isNullOrEmpty(name) ? "" : ".";
+    return Strings.isNullOrEmpty(version) ? name : version + sep + name;
   }
 
   @Override
@@ -158,7 +161,7 @@ public class CollectionAttribute extends Element {
    * default "v1" will be returned.
    */
   public String getVersionWithDefault() {
-    return ApiVersionUtil.extractDefaultMajorVersionFromRestName(getFullName());
+    return Strings.isNullOrEmpty(version) ? "v1" : version;
   }
 
   /**
@@ -166,7 +169,7 @@ public class CollectionAttribute extends Element {
    * there is no collection specified in the url.
    */
   public String getFullNameNoVersion() {
-    return ApiVersionUtil.stripVersionFromRestName(getFullName());
+    return name;
   }
 
   /**
