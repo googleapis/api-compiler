@@ -1,0 +1,59 @@
+swagger: '2.0'
+info:
+  title: Google Example Library API
+  description: A simple Google Example Library API.
+  version: v1
+host: library-example.cloud.goog
+schemes:
+  - http
+  - https
+basePath: /
+x-google-allow: configured
+x-google-management:
+  quota:
+    # invalid -> should be 'limits'
+    limit:
+      - name: bookstore-read-requests
+        values:
+          STANDARD: 1000 # user provided in Swagger as "default_limit"
+        unit: "1/{project}/{region}"
+        metric: bookstore/read_requests
+      - name: bookstore-write-requests
+        values:
+          STANDARD: 100 # user provided in Swagger as "default_limit"
+        unit: "1/min/{project}/{resource}"
+        metric: bookstore/write_requests
+  metrics:
+    - name: bookstore/write_requests
+      valueType: INT64 # default
+      metricKind: GAUGE # default
+    - name: bookstore/read_requests
+      valueType: INT64 # default
+      metricKind: GAUGE # default
+paths:
+  /v1/shelves:
+    post:
+      operationId: CreateShelf
+      description: 'Creates a shelf, and returns the new Shelf.'
+      parameters:
+        - name: shelf
+          description: The shelf to create.
+          in: body
+          schema:
+            $ref: '#/definitions/Shelf'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Shelf'
+definitions:
+  Shelf:
+    description: A Shelf contains a collection of books with a theme.
+    type: object
+    properties:
+      name:
+        description: |-
+          The resource name of the shelf.
+          Shelf names have the form `shelves/{shelf_id}`.
+          The name is ignored when creating a shelf.
+        type: string

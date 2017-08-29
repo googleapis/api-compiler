@@ -4,50 +4,66 @@ package protiary.test;
 
 option java_package = "com.google.api.server.tools.protiary";
 
-message BucketName {}
+// Check service names
+service camelCaseServiceName {}
+service CapsCamelCaseServiceName {}
+service snake_case_service_name {}
+service CAPS_SNAKE_CASE_SERVICE_NAME {}
 
-// An object (with non-confirming field name)
-message ObjectName {
-  string objectId = 2;
+// Check other names
+service NamingService {
+  // Check RPC names
+
+  // camelCase
+  rpc camelCaseRpcName(Empty) returns (Empty);
+  // CapsCamelCase
+  rpc CapsCamelCaseRpcName(Empty) returns (Empty);
+  // snake_case
+  rpc snake_case_invalid_rpc_name(Empty) returns (Empty);
+  // CAPS_SNAKE_CASE
+  rpc CAPS_SNAKE_CASE_RPC_NAME(Empty) returns (Empty);
+
+  // Other names
+  rpc OtherNames(Names) returns (Empty);
 }
 
-// A bucket (with non-conforming message name).
-message bucket {
-  string DEPRECATED_string_filter = 1;
+message Names {
+  // Messages names should be CapsCamelCase.
+  message camelCaseMessageName {}
+  message CapsCamelCaseCaseMessageName {}
+  message snake_case_message_name {}
+  message CAPS_SNAKE_CASE_MESSAGE_NAME {}
+
+  // EnumNames should be CapsCamelCase, values CAPS_SNAKE_CASE
+  enum camelCaseEnumName { DEFAULT_CAMEL = 0; }
+  enum CapsCamelCaseCaseEnumName { DEFAULT_CAPS_CAMEL = 0; }
+  enum snake_case_enum_name { DEFAULT_SNAKE = 0; }
+  enum CAPS_SNAKE_CASE_ENUM_NAME { DEFAULT_CAPS_SNAKE = 0; }
+  enum EnumValues {
+    camelCaseEnumValue = 0;
+    CapsCamelCaseEnumValue = 1;
+    snake_case_enum_value = 2;
+    CAPS_SNAKE_CASE_ENUM_VALUE = 3;
+  }
+
+  // Fields should be snake_case_name
+  camelCaseMessageName camelCaseFieldName = 1;
+  CapsCamelCaseCaseMessageName CapsCamelCaseFieldName = 2;
+  snake_case_message_name snake_case_field_name = 3;
+  CAPS_SNAKE_CASE_MESSAGE_NAME CAPS_SNAKE_CASE_FIELD_NAME = 4;
+
+  // Fields (to expose the enums)
+  camelCaseEnumName camel_case_enum = 5;
+  CapsCamelCaseCaseEnumName caps_camel_case_enum = 6;
+  snake_case_enum_name snake_case_enum = 7;
+  CAPS_SNAKE_CASE_ENUM_NAME caps_snake_case_enum = 8;
+  EnumValues enum_values = 9;
 }
 
-message Object {
-  Kind kind = 1;
-}
+// For use throughout
+message Empty {};
 
-// A bucket (with non-conforming message name).
-message BucketSpecification {
-  string field_specification = 1;
-}
-
-enum Kind {
-  this = 0; // non-conforming enum value
-  THAT = 1;
-}
-
-// Unreachable type, should not produce warning.
+// Unreachable entities do not produce warnings.
 enum Unreachable {
-  SOME = 0;
-  other = 1;
-}
-
-// Api Storage does some things.
-service Storage {
-
-  // Some method
-  rpc GetBucket(BucketName) returns (bucket);
-
-  // Another method
-  rpc get_object(ObjectName) returns (Object);
-}
-
-// test
-service StorageIdentifier {
-  // test
-  rpc GetBucketConfigurationIdentifier(BucketName) returns (BucketSpecification);
+  invalid_enum_unreachable = 0;
 }

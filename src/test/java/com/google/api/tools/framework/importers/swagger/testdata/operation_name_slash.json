@@ -1,0 +1,40 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.cloud.goog",
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "simpleMethod",
+                "parameters": [
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "schema": {
+                                "$ref": "#/definitions/SimpleDef"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "SimpleDef": {
+            "properties": {
+                "myStringA": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

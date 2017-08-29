@@ -22,8 +22,10 @@ message Bucket {
 }
 
 service Storage {
+  option deprecated = true;
   rpc GetBucket(BucketName) returns (Bucket) {
     option (google.api.http).get = "/buckets/{bucket_id}";
+    option deprecated = true;
   }
 }
 

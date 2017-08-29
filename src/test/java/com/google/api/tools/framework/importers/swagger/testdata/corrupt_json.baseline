@@ -6,7 +6,7 @@ Unable to parse the content. Illegal unquoted character ((CTRL-CHAR, code 10)): 
     "description": "A simple Google Example Library API.",
     "version": "v1"
   },
-  "host": "library-example.googleapis.com",
+  "host": "library-example.cloud.goog",
   "schemes": ["http", "https"],
   "basePath": "/",
   "paths": {

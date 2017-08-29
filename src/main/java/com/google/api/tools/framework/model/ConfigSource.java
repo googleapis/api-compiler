@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * merging of configurations preserving above information, and allowing to override default values
  * (which standard proto3 merging semantics does not support).
  */
-public class ConfigSource {
+public class ConfigSource implements ConfigLocationResolver {
 
   // Contains the config message.
   private final Message configMessage;
@@ -62,6 +62,28 @@ public class ConfigSource {
   /** Returns the config message. */
   public Message getConfig() {
     return configMessage;
+  }
+  
+  /**
+   * Returns the service config file location of the given named field in the (sub)message. Returns
+   * {@link SimpleLocation#TOPLEVEL} if the location is not known.
+   */
+  @Override
+  public Location getLocationInConfig(Message message, String fieldName) {
+    Location loc = getLocation(message, fieldName, null);
+    return loc != SimpleLocation.UNKNOWN ? loc : SimpleLocation.TOPLEVEL;
+  }
+
+  /**
+   * Returns the service config file location of the given named field in the (sub)message. The key
+   * identifies the key of the map. For repeated fields, the element key is a zero-based index.
+   * Returns {@link SimpleLocation#TOPLEVEL} if the location is not known.
+   */
+  @Override
+  public Location getLocationOfRepeatedFieldInConfig(
+      Message message, String fieldName, Object elementKey) {
+    Location loc = getLocation(message, fieldName, elementKey);
+    return loc != SimpleLocation.UNKNOWN ? loc : SimpleLocation.TOPLEVEL;
   }
 
   /**

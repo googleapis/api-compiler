@@ -91,12 +91,6 @@ metrics:
     - key: /credential_id
     - key: /quota_group_name
 
-- name: serviceruntime.googleapis.com/api/consumer/quota_billable_count
-  metric_kind: DELTA
-  value_type: INT64
-  labels:
-    - key: /quota_group_name
-
 - name: serviceruntime.googleapis.com/api/consumer/request_overhead_latencies
   metric_kind: DELTA
   value_type: DISTRIBUTION

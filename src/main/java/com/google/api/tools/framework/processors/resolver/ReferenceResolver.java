@@ -65,8 +65,9 @@ class ReferenceResolver extends Visitor {
     addExtraExtensionTypes();
   }
 
-  private static final Set<String> WHITELISTED_EXTENSION_TYPES = ImmutableSet.of(
- );
+  private static final ImmutableSet<String> WHITELISTED_EXTENSION_TYPES =
+      ImmutableSet.of(
+          );
 
   private static boolean isWhitelistedExtensionType(String type) {
     for (String whitelistedType : WHITELISTED_EXTENSION_TYPES) {
@@ -128,9 +129,14 @@ class ReferenceResolver extends Visitor {
     // Check for resolution of oneof.
     if (field.getProto().hasOneofIndex() && field.getOneof() == null) {
       // Indicates the oneof index could not be resolved.
-      model.getDiagCollector().addDiag(Diag.error(field.getLocation(),
-          "Unresolved oneof reference (indicates internal inconsistency of input; oneof index: %s)",
-          field.getProto().getOneofIndex()));
+      model
+          .getDiagReporter()
+          .report(
+              Diag.error(
+                  field.getLocation(),
+                  "Unresolved oneof reference (indicates internal inconsistency of input; oneof "
+                      + "index: %s)",
+                  field.getProto().getOneofIndex()));
     }
 
     findOptionTypes(field.getOptionFields());
@@ -187,7 +193,7 @@ class ReferenceResolver extends Visitor {
         type = TypeRef.of(kind);
     }
     if (type == null) {
-      model.getDiagCollector().addDiag(Diag.error(location, "Unresolved type '%s'", name));
+      model.getDiagReporter().report(Diag.error(location, "Unresolved type '%s'", name));
     }
     return type;
   }

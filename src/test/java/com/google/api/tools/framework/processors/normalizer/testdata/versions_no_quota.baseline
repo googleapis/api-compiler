@@ -292,6 +292,10 @@ http {
     }
   }
 }
+quota {
+}
+authentication {
+}
 context {
   rules {
     selector: "google.discovery.Discovery.GetDiscovery"
@@ -301,6 +305,8 @@ context {
     selector: "google.discovery.Discovery.GetDiscoveryRest"
     requested: "google.rpc.context.VisibilityContext"
   }
+}
+usage {
 }
 endpoints {
   name: "test.googleapis.com"
@@ -320,3 +326,8 @@ metrics {
   metric_kind: DELTA
   value_type: INT64
 }
+system_parameters {
+}
+experimental {
+}
+

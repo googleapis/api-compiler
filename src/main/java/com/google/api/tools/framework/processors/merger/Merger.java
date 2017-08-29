@@ -50,17 +50,16 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * A processor which establishes the {@link Merged} stage, in which service config
- * and IDL are combined and validated.
+ * A processor which establishes the {@link Merged} stage, in which service config and IDL are
+ * combined and validated.
  *
- * <p>The merger also derives interpreted values from the configuration, for example, the
- * {@link com.google.api.tools.framework.aspects.http.HttpConfigAspect},
- * and reports consistency errors encountered during interpretation.
+ * <p>The merger also derives interpreted values from the configuration, for example, the {@link
+ * com.google.api.tools.framework.aspects.http.HttpConfigAspect}, and reports consistency errors
+ * encountered during interpretation.
  */
 public class Merger implements Processor {
 
-  private static final Pattern SELECTOR_PATTERN =
-      Pattern.compile("^(\\w+(\\.\\w+)*(\\.\\*)?)$");
+  private static final Pattern SELECTOR_PATTERN = Pattern.compile("^(\\w+(\\.\\w+)*(\\.\\*)?)$");
 
   @Override
   public ImmutableList<Key<?>> requires() {
@@ -74,7 +73,7 @@ public class Merger implements Processor {
 
   @Override
   public boolean run(Model model) {
-    int oldErrorCount = model.getDiagCollector().getErrorCount();
+    int oldErrorCount = model.getDiagReporter().getDiagCollector().getErrorCount();
 
     if (model.getServiceConfig() == null) {
       // No service config defined; create a dummy one.
@@ -85,15 +84,16 @@ public class Merger implements Processor {
     Service config = model.getServiceConfig();
     for (Api api : model.getServiceConfig().getApisList()) {
       Interface iface = model.getSymbolTable().lookupInterface(api.getName());
-      Location location = model.getLocationInConfig(api, "name");
       if (iface != null) {
         // Add interface to the roots.
         model.addRoot(iface);
         // Attach api proto to interface.
         iface.setConfig(api);
       } else {
-        model.getDiagCollector().addDiag(Diag.error(location,
-            "Cannot resolve api '%s'.", api.getName()));
+        Location location = model.getLocationInConfig(api, "name");
+        model
+            .getDiagReporter()
+            .report(Diag.error(location, "Cannot resolve api '%s'.", api.getName()));
       }
     }
 
@@ -133,7 +133,7 @@ public class Merger implements Processor {
     // model to those elements reachable via the roots.
     model.setScoper(ScoperImpl.create(model.getRoots()));
 
-    if (oldErrorCount == model.getDiagCollector().getErrorCount()) {
+    if (oldErrorCount == model.getDiagReporter().getDiagCollector().getErrorCount()) {
       // No new errors produced -- success.
       model.putAttribute(Merged.KEY, new Merged());
       return true;
@@ -174,28 +174,34 @@ public class Merger implements Processor {
   /**
    * Resolve the additional type specified besides those that can be reached transitively from
    * service definition. It resolves the typeName into a {@link TypeRef} object. If typeName ends
-   * with wildcard ".*", all the {@link TypeRef}s that is under typeName pattern
-   * path are added to the root.
+   * with wildcard ".*", all the {@link TypeRef}s that is under typeName pattern path are added to
+   * the root.
    */
   private void addAdditionalType(
       Model model, Location location, final String typeName, final Type kind) {
     if (!SELECTOR_PATTERN.matcher(typeName).matches()) {
-      model.getDiagCollector().addDiag(Diag.error(
-          location,
-          "Type selector '%s' specified in the config has bad syntax. "
-          + "Valid format is \"<segment>('.' <segment>)*('.' '*')?\"",
-          typeName));
+      model
+          .getDiagReporter()
+          .report(
+              Diag.error(
+                  location,
+                  "Type selector '%s' specified in the config has bad syntax. "
+                      + "Valid format is \"<segment>('.' <segment>)*('.' '*')?\"",
+                  typeName));
       return;
     }
 
     List<TypeRef> typeRefs = model.getSymbolTable().lookupMatchingTypes(typeName, kind);
 
     if (typeRefs == null || typeRefs.isEmpty()) {
-      model.getDiagCollector().addDiag(Diag.error(location,
-          "Cannot resolve additional %s type '%s' specified in the config. Make"
-          + " sure the name is right and its associated build target was included"
-          + " in your protobuf build rule.",
-          kind, typeName));
+      model
+          .getDiagReporter()
+          .report(
+              Diag.error(
+                  location,
+                  "Cannot resolve additional %s type '%s' specified in the config.",
+                  kind,
+                  typeName));
     } else {
       for (TypeRef typeRef : typeRefs) {
         if (typeRef.isMessage()) {
@@ -215,7 +221,8 @@ public class Merger implements Processor {
       this.orderedAspects = orderedAspects;
     }
 
-    @VisitsBefore void merge(ProtoElement element) {
+    @VisitsBefore
+    void merge(ProtoElement element) {
       for (ConfigAspect aspect : orderedAspects) {
         aspect.merge(element);
       }
@@ -223,23 +230,25 @@ public class Merger implements Processor {
   }
 
   /**
-   * Returns the given config aspects as list of group of aspects in merge dependency order.
-   * This performs a 'longest path layering' algorithm by placing aspects at different levels
-   * (layers). First place all sink nodes at level-1 and then each node n is placed at level
-   * level-p+1, where p is the longest path from n to sink. Aspects in each level are independent of
-   * each other and can only depend on aspects in lower levels.
-   * Detailed algorithm : 13.3.2 Layer Assignment Algorithms :
-   * https://cs.brown.edu/~rt/gdhandbook/chapters/hierarchical.pdf
+   * Returns the given config aspects as list of group of aspects in merge dependency order. This
+   * performs a 'longest path layering' algorithm by placing aspects at different levels (layers).
+   * First place all sink nodes at level-1 and then each node n is placed at level level-p+1, where
+   * p is the longest path from n to sink. Aspects in each level are independent of each other and
+   * can only depend on aspects in lower levels. Detailed algorithm : 13.3.2 Layer Assignment
+   * Algorithms : https://cs.brown.edu/~rt/gdhandbook/chapters/hierarchical.pdf
    */
   private static List<Set<ConfigAspect>> sortForMerge(Iterable<ConfigAspect> aspects) {
     Map<Class<? extends ConfigAspect>, ConfigAspect> aspectsByType =
-        HashBiMap.create(Maps.toMap(
-                             aspects, new Function<ConfigAspect, Class<? extends ConfigAspect>>() {
-                               @Override
-                               public Class<? extends ConfigAspect> apply(ConfigAspect aspect) {
-                                 return aspect.getClass();
-                               }
-                             })).inverse();
+        HashBiMap.create(
+                Maps.toMap(
+                    aspects,
+                    new Function<ConfigAspect, Class<? extends ConfigAspect>>() {
+                      @Override
+                      public Class<? extends ConfigAspect> apply(ConfigAspect aspect) {
+                        return aspect.getClass();
+                      }
+                    }))
+            .inverse();
     List<Class<? extends ConfigAspect>> visiting = Lists.newArrayList();
     Map<ConfigAspect, Integer> aspectsToLevel = Maps.newLinkedHashMap();
     for (ConfigAspect aspect : aspects) {
@@ -263,16 +272,19 @@ public class Merger implements Processor {
   /**
    * Does a DFS traversal and computes the maximum height (level) of each node from the sink node.
    */
-  private static int assignLevelToAspect(ConfigAspect aspect,
+  private static int assignLevelToAspect(
+      ConfigAspect aspect,
       Map<Class<? extends ConfigAspect>, ConfigAspect> aspectsByType,
-      List<Class<? extends ConfigAspect>> visiting, Map<ConfigAspect, Integer> aspectToLevel) {
+      List<Class<? extends ConfigAspect>> visiting,
+      Map<ConfigAspect, Integer> aspectToLevel) {
     Class<? extends ConfigAspect> aspectType = aspect.getClass();
     if (aspectToLevel.containsKey(aspect)) {
       return aspectToLevel.get(aspect);
     }
     if (visiting.contains(aspectType)) {
       throw new IllegalStateException(
-          String.format("Cyclic dependency between config aspect attributes. Cycle is: %s <- %s",
+          String.format(
+              "Cyclic dependency between config aspect attributes. Cycle is: %s <- %s",
               aspectType, Joiner.on(" <- ").join(visiting)));
     }
     visiting.add(aspectType);
@@ -284,7 +296,8 @@ public class Merger implements Processor {
         childMaxHeight = childHeight > childMaxHeight ? childHeight : childMaxHeight;
       } else {
         throw new IllegalStateException(
-            String.format("config aspect %s depends on an unregistered aspect %s.",
+            String.format(
+                "config aspect %s depends on an unregistered aspect %s.",
                 aspectType.getSimpleName(), dep.getSimpleName()));
       }
     }

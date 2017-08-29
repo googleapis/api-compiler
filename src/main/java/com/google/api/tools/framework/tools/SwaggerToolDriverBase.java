@@ -17,8 +17,8 @@
 package com.google.api.tools.framework.tools;
 
 import com.google.api.Service;
-import com.google.api.tools.framework.importers.swagger.SwaggerConversionException;
-import com.google.api.tools.framework.importers.swagger.SwaggerToService;
+import com.google.api.tools.framework.importers.swagger.OpenApiConversionException;
+import com.google.api.tools.framework.importers.swagger.OpenApiToService;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.Diag.Kind;
 import com.google.api.tools.framework.model.Model;
@@ -52,7 +52,7 @@ public abstract class SwaggerToolDriverBase extends GenericToolDriverBase {
       ToolOptions.createOption(
           String.class,
           "type_namespace",
-          "(For Swagger Input Only) A namespace to use in generated "
+          "(For OpenAPI Input Only) A namespace to use in generated "
               + "service config for all types. If provided, all type names will be prefixed by this"
               + " value and a dot ('.') separator.",
           "");
@@ -61,7 +61,7 @@ public abstract class SwaggerToolDriverBase extends GenericToolDriverBase {
       ToolOptions.createOption(
           String.class,
           "method_namespace",
-          "(For Swagger Input Only) A namespace to use in generated service config "
+          "(For OpenAPI Input Only) A namespace to use in generated service config "
               + "for all methods. If provided, all method names will be prefixed by this value "
               + "and a dot ('.') separator.",
           "");
@@ -70,7 +70,7 @@ public abstract class SwaggerToolDriverBase extends GenericToolDriverBase {
       ToolOptions.createOption(
           String.class,
           "service_name",
-          "(For Swagger Input Only) Service name to be used in the converted service " + "config.",
+          "(For OpenAPI Input Only) Service name to be used in the converted service " + "config.",
           "");
 
   public static final Option<String> OPEN_API =
@@ -81,7 +81,7 @@ public abstract class SwaggerToolDriverBase extends GenericToolDriverBase {
           "");
 
   private Service serviceConfig = null;
-  private SwaggerToService tool;
+  private OpenApiToService tool;
 
   protected Model model;
 
@@ -132,15 +132,15 @@ public abstract class SwaggerToolDriverBase extends GenericToolDriverBase {
 
     try {
       tool =
-          new SwaggerToService(
+          new OpenApiToService(
               fileContentMap.build(),
               options.get(SERVICE_NAME),
               options.get(TYPE_NAMESPACE),
               additionalConfigsMap.build());
 
       serviceConfig = tool.createServiceConfig();
-    } catch (SwaggerConversionException e) {
-      System.out.printf("\nSwagger Spec conversion failed:\n  %s\n", e.getMessage());
+    } catch (OpenApiConversionException ex) {
+      System.out.printf("\nOpenApi conversion failed:\n  %s\n", ex.getMessage());
       return null;
     }
 
@@ -176,11 +176,11 @@ public abstract class SwaggerToolDriverBase extends GenericToolDriverBase {
 
     if (!errors.isEmpty()) {
       System.out.printf(
-          "\nSwagger/service config conversion encountered ERRORS:\n  %s\n", errors);
+          "\nOpenAPI/service config conversion encountered ERRORS:\n  %s\n", errors);
     }
     if (!warnings.isEmpty()) {
       System.out.printf(
-          "\nSwagger/service config conversion encountered warnings:\n  %s\n", warnings);
+          "\nOpenAPI/service config conversion encountered warnings:\n  %s\n", warnings);
     }
   }
 }

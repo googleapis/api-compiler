@@ -48,9 +48,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/**
- * Tests for {@link RestAnalyzer}.
- */
+/** Tests for {@link RestAnalyzer}. */
+
 @RunWith(JUnit4.class)
 
 public class RestAnalyzerTest extends BaselineTestCase {
@@ -122,6 +121,7 @@ public class RestAnalyzerTest extends BaselineTestCase {
 
   private void restify(MethodKind httpKind, String simpleName, String template) {
     Model model = Model.create(FileDescriptorSet.getDefaultInstance());
+
     model.setServiceConfig(
         ConfigSource.newBuilder(Service.getDefaultInstance())
             .setValue(
@@ -131,22 +131,29 @@ public class RestAnalyzerTest extends BaselineTestCase {
                 new SimpleLocation("from test"))
             .build());
     HttpConfigAspect aspect = HttpConfigAspect.create(model);
-    ProtoFile file = ProtoFile.create(model, FileDescriptorProto.getDefaultInstance(), true,
-        ExtensionPool.EMPTY);
+    ProtoFile file =
+        ProtoFile.create(
+            model, FileDescriptorProto.getDefaultInstance(), true, ExtensionPool.EMPTY);
     Interface iface = Interface.create(file, ServiceDescriptorProto.getDefaultInstance(), "");
-    Method method = Method.create(iface,
-        MethodDescriptorProto.newBuilder().setName(simpleName).build(), "");
+    Method method =
+        Method.create(iface, MethodDescriptorProto.newBuilder().setName(simpleName).build(), "");
 
     RestMethod restMethod;
     ImmutableList<PathSegment> path = parse(model, template);
-    if (!model.getDiagCollector().getDiags().isEmpty()) {
-      restMethod = RestMethod.create(method, RestKind.CUSTOM, "*error*", "*error*");
+    if (!model.getDiagReporter().getDiagCollector().getDiags().isEmpty()) {
+      restMethod = RestMethod.create(method, RestKind.CUSTOM, "*error*", "*error*", null);
     } else {
-      HttpAttribute httpConfig = new HttpAttribute(HttpRule.getDefaultInstance(),
-          httpKind,
-          MessageType.create(file, Empty.getDescriptor().toProto(), "", ExtensionPool.EMPTY),
-          path, "", false,
-          ImmutableList.<HttpAttribute>of(), false);
+      HttpRule httpRule = HttpRule.getDefaultInstance();
+      HttpAttribute httpConfig =
+          new HttpAttribute(
+              httpRule,
+              httpKind,
+              MessageType.create(file, Empty.getDescriptor().toProto(), "", ExtensionPool.EMPTY),
+              path,
+              "",
+              false,
+              ImmutableList.<HttpAttribute>of(),
+              false);
       RestAnalyzer analyzer = new RestAnalyzer(aspect);
       restMethod = analyzer.analyzeMethod(method, httpConfig);
     }
@@ -160,14 +167,30 @@ public class RestAnalyzerTest extends BaselineTestCase {
     pw.println();
     pw.println(Strings.repeat("=", 70));
     pw.printf("Rest Kind:   %s\n", restMethod.getRestKind());
-    pw.printf("Collection:  %s\n",
+    pw.printf(
+        "Version:  %s\n", restMethod.getVersion().isEmpty() ? "(empty)" : restMethod.getVersion());
+    pw.printf(
+        "Version with default:  %s\n",
+        restMethod.getVersionWithDefault().isEmpty()
+            ? "(empty)"
+            : restMethod.getVersionWithDefault());
+    pw.printf(
+        "Simple collection:  %s\n",
+        restMethod.getRestCollectionName().isEmpty()
+            ? "(empty)"
+            : restMethod.getSimpleRestCollectionName());
+    pw.printf(
+        "Versioned collection:  %s\n",
         restMethod.getRestCollectionName().isEmpty()
         ? "(empty)" : restMethod.getRestCollectionName());
+     pw.printf("Base collection:  %s\n",
+        restMethod.getBaseRestCollectionName().isEmpty()
+        ? "(empty)" : restMethod.getBaseRestCollectionName());
     pw.printf("Custom Name: %s\n",
         restMethod.getRestKind() == RestKind.CUSTOM
         ? restMethod.getRestMethodName() : "(null)");
 
-    List<Diag> diags = model.getDiagCollector().getDiags();
+    List<Diag> diags = model.getDiagReporter().getDiagCollector().getDiags();
     if (diags.size() > 0) {
       pw.println("Diagnostics:");
       for (Diag d : diags) {
@@ -179,8 +202,12 @@ public class RestAnalyzerTest extends BaselineTestCase {
 
   private ImmutableList<PathSegment> parse(Model model, String path) {
     ImmutableList<PathSegment> segments =
-        new HttpTemplateParser(model.getDiagCollector(), SimpleLocation.TOPLEVEL, path,
-            configVersion).parse();
+        new HttpTemplateParser(
+                model.getDiagReporter().getDiagCollector(),
+                SimpleLocation.TOPLEVEL,
+                path,
+                configVersion)
+            .parse();
     return segments;
   }
 }

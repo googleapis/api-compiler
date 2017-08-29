@@ -157,12 +157,12 @@ logging:
 monitoring:
   producer_destinations:
   - monitored_resource: "type" # Destination must refer to the monitored resource defined in the monitored resources section.
-  # Logging destination must have at least one log name.
+  # Monitoring destination must have at least one metric name.
 
   - monitored_resource: "type1"
     metrics:
     - metric1
-    - metric2 # Log name must defined in the logs section.
+    - metric2 # Metric name must defined in the logs section.
     - metric2____
     - metric3 # List must not be longer than the predefined limit.
     - metric3 # Same metric used more than once.

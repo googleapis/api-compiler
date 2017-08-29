@@ -20,8 +20,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,10 +77,10 @@ public abstract class TestDataLocator {
   }
 
   /**
-   * Injects virtual test data based on a list of files found at the given root. The simple
-   * name of a file is used in the virtual test data mapping.
+   * Injects virtual test data based on a list of files found at the given root. The simple name of
+   * a file is used in the virtual test data mapping.
    */
-  public void injectVirtualTestData(Path sourceDir, Iterable<Path> dataFiles) {
+  public void injectVirtualTestData(Path sourceDir, Collection<Path> dataFiles) {
     for (Path file : dataFiles) {
       try {
         injectVirtualTestData(file.getFileName().toString(),
@@ -95,8 +96,10 @@ public abstract class TestDataLocator {
    * name of a file is used in the virtual test data mapping.
    */
   public void injectVirtualTestData(Path sourceDir, String... dataFiles) {
-    injectVirtualTestData(sourceDir,
-        FluentIterable.from(ImmutableList.copyOf(dataFiles)).transform(
+    injectVirtualTestData(
+        sourceDir,
+        Lists.transform(
+            ImmutableList.copyOf(dataFiles),
             new Function<String, Path>() {
               @Override
               public Path apply(String input) {

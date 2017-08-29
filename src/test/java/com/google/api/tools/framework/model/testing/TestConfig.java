@@ -19,10 +19,11 @@ package com.google.api.tools.framework.model.testing;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.api.AnnotationsProto;
-import com.google.api.AuthProto;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.ConfigSource;
 import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.Experiments;
+import com.google.api.tools.framework.model.ExperimentsImpl;
 import com.google.api.tools.framework.model.ExtensionPool;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.yaml.YamlReader;
@@ -37,7 +38,6 @@ import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.Message;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -52,8 +52,8 @@ import java.util.regex.Pattern;
 /**
  * A class to represent a test api configuration.
  *
- * <p>Compiles proto sources found via a {@link TestDataLocator} and converts yaml service
- * config files. Allows to create a {@link Model} from them.
+ * <p>Compiles proto sources found via a {@link TestDataLocator} and converts yaml service config
+ * files. Allows to create a {@link Model} from them.
  */
 public class TestConfig {
 
@@ -67,29 +67,46 @@ public class TestConfig {
   }
 
   private static final Pattern PROTO_IMPORT_PATTERN =
-      Pattern.compile("\\s*import\\s*\"(.*)\"");
+      Pattern.compile("\\s*import\\s*(?:public)?\\s*\"(.*)\"");
 
   private static final ExtensionRegistry EXTENSIONS;
+
   static {
     EXTENSIONS = ExtensionRegistry.newInstance();
     AnnotationsProto.registerAllExtensions(EXTENSIONS);
-    AuthProto.registerAllExtensions(EXTENSIONS);
+
   }
 
   private final List<String> protoFiles;
   private final Path descriptorFile;
   private final TestDataLocator testDataLocator;
   private final String tempDir;
+  private final Experiments enabledExperiments;
 
   /**
    * Creates a test api. The passed temp dir is managed by the caller; in a test, it is usally
-   * created by the TemporaryFolder rule of junit. The passed proto files as well as their
-   * imports must be retrievable via the passed test data locator.
+   * created by the TemporaryFolder rule of junit. The passed proto files as well as their imports
+   * must be retrievable via the passed test data locator.
    */
   public TestConfig(TestDataLocator testDataLocator, String tempDir, List<String> protoFiles) {
+    this(testDataLocator, tempDir, protoFiles, ExperimentsImpl.none());
+  }
+
+  /**
+   * Creates a test api with a list of enabled experiments. The passed temp dir is managed by the
+   * caller; in a test, it is usally created by the TemporaryFolder rule of junit. The passed proto
+   * files as well as their imports must be retrievable via the passed test data locator.
+   */
+  public TestConfig(
+      TestDataLocator testDataLocator,
+      String tempDir,
+      List<String> protoFiles,
+      Experiments enabledExperiments) {
     this.testDataLocator = testDataLocator;
     this.protoFiles = ImmutableList.copyOf(protoFiles);
     this.tempDir = tempDir;
+    this.enabledExperiments = enabledExperiments;
+
     // Extract all needed proto files.
     Set<String> extracted = Sets.newHashSet();
     for (String source : protoFiles) {
@@ -100,23 +117,19 @@ public class TestConfig {
     compileProtos(tempDir, protoFiles, descriptorFile.toString());
   }
 
-  /**
-   * Returns the test data locator associated with this test config.
-   */
+  /** Returns the test data locator associated with this test config. */
   public TestDataLocator getTestDataLocator() {
     return testDataLocator;
   }
 
-  /**
-   * Returns the temp directory into which this test config fetches test data.
-   */
+  /** Returns the temp directory into which this test config fetches test data. */
   public String getTempDir() {
     return tempDir;
   }
 
   /**
-   * Reads test data associated with this test api. Uses the {@link TestDataLocator}
-   * provided at creation time.
+   * Reads test data associated with this test api. Uses the {@link TestDataLocator} provided at
+   * creation time.
    */
   public String readTestData(String name) {
     URL url = testDataLocator.findTestData(name);
@@ -137,39 +150,31 @@ public class TestConfig {
       Files.createDirectories(targetPath.getParent());
       Files.write(targetPath, content.getBytes(StandardCharsets.UTF_8));
     } catch (IOException e) {
-      throw new IllegalArgumentException(String.format("Cannot copy '%s': %s",
-          targetPath, e.getMessage()));
+      throw new IllegalArgumentException(
+          String.format("Cannot copy '%s': %s", targetPath, e.getMessage()));
     }
     return content;
   }
 
-  /**
-   * Copies test data and returns the path pointing to it.
-   */
+  /** Copies test data and returns the path pointing to it. */
   public Path copyTestDataAndGetPath(String name) {
     copyTestData(name);
     return Paths.get(tempDir, name);
   }
 
-  /**
-   * Gets the descriptor file generated from the proto sources.
-   */
+  /** Gets the descriptor file generated from the proto sources. */
   public Path getDescriptorFile() {
     return descriptorFile;
   }
 
-  /**
-   * Returns the file descriptor set generated from the sources of this api.
-   */
+  /** Returns the file descriptor set generated from the sources of this api. */
   public FileDescriptorSet getDescriptor() throws IOException {
     return FileDescriptorSet.parseFrom(Files.newInputStream(descriptorFile), EXTENSIONS);
   }
 
-  /**
-   * Parses the config files, in Yaml format.
-   */
-  public ImmutableList<ConfigSource> getApiYamlConfigSources(DiagCollector diag,
-      List<String> configFileNames) {
+  /** Parses the config files, in Yaml format. */
+  public ImmutableList<ConfigSource> getApiYamlConfigSources(
+      DiagCollector diag, List<String> configFileNames) {
     ImmutableList.Builder<ConfigSource> builder = ImmutableList.builder();
 
     for (String fileName : configFileNames) {
@@ -181,24 +186,21 @@ public class TestConfig {
     return builder.build();
   }
 
-  /**
-   * Parses the config files, in Yaml format.
-   */
+  /** Parses the config files, in Yaml format. */
   @Deprecated
-  public ImmutableList<Message> getApiYamlConfig(DiagCollector diag,
-      List<String> configFileNames) {
+  public ImmutableList<Message> getApiYamlConfig(DiagCollector diag, List<String> configFileNames) {
     return FluentIterable.from(getApiYamlConfigSources(diag, configFileNames))
-        .transform(new Function<ConfigSource, Message>() {
-          @Override
-          public Message apply(ConfigSource input) {
-            return input.getConfig();
-          }
-        }).toList();
+        .transform(
+            new Function<ConfigSource, Message>() {
+              @Override
+              public Message apply(ConfigSource input) {
+                return input.getConfig();
+              }
+            })
+        .toList();
   }
 
-  /**
-   * Parses the config file, in proto text format, and returns it.
-   */
+  /** Parses the config file, in proto text format, and returns it. */
   public Service getApiProtoConfig(String configFileName) throws ParseException {
     String content = readTestData(configFileName);
     Service.Builder builder = Service.newBuilder();
@@ -206,14 +208,13 @@ public class TestConfig {
     return builder.build();
   }
 
-  /**
-   * Creates a model, based on the provided config files.
-   */
+  /** Creates a model, based on the provided config files. */
   public Model createModel(List<String> configFileNames) {
     try {
-      Model model = Model.create(getDescriptor(), protoFiles, ImmutableList.<String>of(),
-          ExtensionPool.EMPTY);
-      model.setConfigSources(getApiYamlConfigSources(model.getDiagCollector(), configFileNames));
+      Model model =
+          Model.create(getDescriptor(), protoFiles, enabledExperiments, ExtensionPool.EMPTY);
+      model.setConfigSources(
+          getApiYamlConfigSources(model.getDiagReporter().getDiagCollector(), configFileNames));
       return model;
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -221,8 +222,8 @@ public class TestConfig {
   }
 
   /**
-   * Collect all needed proto files as resources from the classpath and store them in the
-   * temporary directory, so protoc can find them.
+   * Collect all needed proto files as resources from the classpath and store them in the temporary
+   * directory, so protoc can find them.
    */
   private void extractProtoSources(Set<String> extracted, String protoFile) {
     if (!extracted.add(protoFile)) {
@@ -235,9 +236,7 @@ public class TestConfig {
     }
   }
 
-  /**
-   * Calls the protocol compiler to compile the given sources into a descriptor.
-   */
+  /** Calls the protocol compiler to compile the given sources into a descriptor. */
   protected void compileProtos(String tempDir, List<String> sourceFiles, String outputFile) {
     List<String> commandLine = Lists.newArrayList();
     commandLine.add(PROTOCOL_COMPILER);
@@ -257,7 +256,8 @@ public class TestConfig {
       Process process = processBuilder.start();
       if (process.waitFor() != 0) {
         throw new IllegalArgumentException(
-            String.format("proto compilation failed: %s:\n%s",
+            String.format(
+                "proto compilation failed: %s:\n%s",
                 Joiner.on(" ").join(commandLine), new String(Files.readAllBytes(output), UTF_8)));
       }
     } catch (Exception e) {

@@ -71,7 +71,7 @@ public class YamlReader {
   // Supported configuration types. (May consider to move this out here for more generic
   // use.)
   @VisibleForTesting
-  static final Map<String, Message> SUPPORTED_CONFIG_TYPES =
+  static final ImmutableMap<String, Message> SUPPORTED_CONFIG_TYPES =
       ImmutableMap.<String, Message>of(
       Service.getDescriptor().getFullName(), Service.getDefaultInstance());
 
@@ -98,7 +98,10 @@ public class YamlReader {
       helper.error(SimpleLocation.UNKNOWN, "Parsing error: %s", e.getMessage());
       return null;
     }
-
+    if (tree == null) {
+      helper.error(SimpleLocation.UNKNOWN, "Parsing error or Empty YAML document");
+      return null;
+    }
     // Identify the configuration type.
     if (!(tree instanceof MappingNode)) {
       helper.error(tree, "Expected a map as a root object.");

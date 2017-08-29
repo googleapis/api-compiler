@@ -25,20 +25,17 @@ import com.google.api.tools.framework.model.DiagCollector;
 import com.google.api.tools.framework.model.Location;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * HTTP path template parser.
- */
+/** HTTP path template parser. */
 public class HttpTemplateParser {
 
   private static final Pattern LITERAL_PATTERN = Pattern.compile("[^/*}{=]+");
   private static final Pattern TOKEN_PATTERN =
       Pattern.compile(String.format("%s|[/*}{=]", LITERAL_PATTERN));
   private static final Pattern CUSTOM_VERB_PATTERN =
-      Pattern.compile(String.format("(?<!/):(%s)$", LITERAL_PATTERN));
+      Pattern.compile(String.format("(?<!/)/?:(%s)$", LITERAL_PATTERN));
   private static final Pattern CUSTOM_VERB_PATTERN_ILLEGAL =
       Pattern.compile(String.format("/:(%s)$", LITERAL_PATTERN));
 
@@ -54,11 +51,10 @@ public class HttpTemplateParser {
   private int configVersion;
 
   /**
-   * Constructs a template parser. Errors are reported to the diag collector at the given
-   * location.
+   * Constructs a template parser. Errors are reported to the diag collector at the given location.
    */
-  public HttpTemplateParser(DiagCollector diagCollector, Location location, String template,
-      int configVersion) {
+  public HttpTemplateParser(
+      DiagCollector diagCollector, Location location, String template, int configVersion) {
     this.diagCollector = diagCollector;
     this.location = location;
     this.template = template;
@@ -74,10 +70,15 @@ public class HttpTemplateParser {
     this.current = tokens.find() ? tokens.group().trim() : null;
   }
 
-  /**
-   * Runs the parser.
-   */
+  /** Runs the parser. */
   public ImmutableList<PathSegment> parse() {
+    if ("/".equals(template)) {
+      /*
+       * Other toolchain methods assume that we have at least one segment. For the path "/", we
+       * have one segment that is effectively empty, "".
+       */
+      return ImmutableList.<PathSegment>of(new LiteralSegment(""));
+    }
     ImmutableList<PathSegment> path = parse(true, false);
     if (!pathStartedWithSlash) {
       addError("effective path must start with leading '/'.");
@@ -86,12 +87,11 @@ public class HttpTemplateParser {
       addError("unrecognized input at '%s'.", current);
     }
     if (configVersion > 0 && CUSTOM_VERB_PATTERN_ILLEGAL.matcher(template).find()) {
-      addError("invalid token '/:' before the custom verb.");
+      addWarning("Token '/:' before a custom verb is not currently supported.");
     }
     if (hadErrors) {
       return null;
-    }
-    if (customVerb != null) {
+    } else if (customVerb != null) {
       return FluentIterable.from(path).append(new LiteralSegment(customVerb, true)).toList();
     }
     return path;
@@ -132,10 +132,10 @@ public class HttpTemplateParser {
       // No longer processing the first segment.
       firstSegment = false;
 
-      if (!lookingAt("/")) {
-        break;
-      } else {
+      if (lookingAt("/")) {
         getCurrentAndShift();
+      } else {
+        break;
       }
     }
     return segments.build();
@@ -172,16 +172,22 @@ public class HttpTemplateParser {
 
   private void expectAndShift(String token) {
     if (!lookingAt(token)) {
-      addError("expected '%s', looking at %s.", token,
-          current == null ? "end of input" : "'" + current + "'");
+      addError(
+          "expected '%s', looking at %s.",
+          token, current == null ? "end of input" : "'" + current + "'");
     } else {
       getCurrentAndShift();
     }
   }
 
+  private void addWarning(String message, Object... params) {
+    diagCollector.addDiag(
+        Diag.warning(location, "In path template '" + template + "': " + message, params));
+  }
+  
   private void addError(String message, Object... params) {
-    diagCollector.addDiag(Diag.error(location, "In path template '" + template + "': " + message,
-        params));
+    diagCollector.addDiag(
+        Diag.error(location, "In path template '" + template + "': " + message, params));
     hadErrors = true;
   }
 }

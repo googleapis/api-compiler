@@ -1,0 +1,14 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.cloud.goog",
+    "x-google-experimental-authorization": {
+      "provider": "firebaserules.googleapis.com"
+    },
+    "paths": {
+    }
+}

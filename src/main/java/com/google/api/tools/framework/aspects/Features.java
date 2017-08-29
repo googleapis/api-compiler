@@ -16,12 +16,10 @@
 
 package com.google.api.tools.framework.aspects;
 
-import com.google.api.tools.framework.model.Diag;
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +30,7 @@ import java.util.TreeSet;
  * particular service config element.
  */
 public class Features {
+  private static final String FEATURE_DISABLE_CHARACTER_PREFIX = "~";
   private final Map<String, Feature> featuresByName;
 
   public Features(Feature... features) {
@@ -42,23 +41,30 @@ public class Features {
     featuresByName = featuresByNameBuilder.build();
   }
 
+  public static String getFeatureNameStringToDisable(String featureName) {
+    return FEATURE_DISABLE_CHARACTER_PREFIX + featureName;
+  }
+
   /**
    * Evaluates a collection of feature strings provided by the service owner, taking into account
    * the feature definitions and the current config version, and returns the canonicalized set of
-   * enabled features.  Any issues are reported to the given DiagCollector.
+   * enabled features. Any issues are reported to the given DiagCollector.
    *
    * @param input a collection of strings that are either feature names (indicating that the named
-   *   feature should be enabled), or a '~' followed by a feature name (indicating that the named
-   *   feature should be disabled).
+   *     feature should be enabled), or a '~' followed by a feature name (indicating that the named
+   *     feature should be disabled).
    */
   public Set<String> evaluate(
-      Collection<String> input, int configVersion, DiagCollector diags, Location location) {
+      Collection<String> input,
+      int configVersion,
+      DiagReporter diagReporter,
+      LocationContext location) {
     Set<String> enabled = new TreeSet<>();
 
     // Accumulate features that are enabled by default.
     for (Feature feature : featuresByName.values()) {
       if (feature.isDefaultIn(configVersion)) {
-        feature.accumulate(enabled, false /* remove */, configVersion, diags, location);
+        feature.accumulate(enabled, false /* remove */, configVersion, diagReporter, location);
       }
     }
 
@@ -68,14 +74,14 @@ public class Features {
       String featureName = remove ? featureString.substring(1) : featureString;
       Feature feature = featuresByName.get(featureName);
       if (feature == null) {
-        diags.addDiag(Diag.error(
+        diagReporter.reportError(
             location,
             "No such feature %s supported for this element. "
-            + "Supported features for this config version are: [%s].",
+                + "Supported features for this config version are: [%s].",
             featureName,
-            Joiner.on(", ").join(getSupportedFeatureNames(configVersion))));
+            Joiner.on(", ").join(getSupportedFeatureNames(configVersion)));
       } else {
-        feature.accumulate(enabled, remove, configVersion, diags, location);
+        feature.accumulate(enabled, remove, configVersion, diagReporter, location);
       }
     }
     return enabled;

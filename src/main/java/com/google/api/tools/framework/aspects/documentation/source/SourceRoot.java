@@ -16,10 +16,7 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
 import com.google.common.collect.Lists;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -37,9 +34,8 @@ public class SourceRoot extends SourceElement {
   private final List<ContentElement> topLevelContents = Lists.newArrayList();
   private final List<SourceSection> sections = Lists.newArrayList();
 
-  public SourceRoot(int startIndex, int endIndex, DiagCollector diagCollector,
-      Location sourceLocation) {
-    super(startIndex, endIndex, diagCollector, sourceLocation);
+  public SourceRoot(int startIndex, int endIndex) {
+    super(startIndex, endIndex);
   }
 
   /**

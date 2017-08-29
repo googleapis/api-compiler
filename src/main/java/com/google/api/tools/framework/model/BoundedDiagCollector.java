@@ -39,7 +39,7 @@ public class BoundedDiagCollector implements DiagCollector {
 
   public static final Integer DEFAULT_MAX_ERRORS = 500;
   public static final Integer DEFAULT_MAX_WARNINGS = 5000;
-  private static final Map<Kind, Integer> DEFAULT_CAPACITY =
+  private static final ImmutableMap<Kind, Integer> DEFAULT_CAPACITY =
       ImmutableMap.<Kind, Integer>builder()
           .put(Kind.ERROR, DEFAULT_MAX_ERRORS)
           .put(Kind.WARNING, DEFAULT_MAX_WARNINGS)

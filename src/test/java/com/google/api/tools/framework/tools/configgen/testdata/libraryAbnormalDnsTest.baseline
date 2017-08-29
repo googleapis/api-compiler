@@ -2,11 +2,27 @@ WARNING: toplevel: (lint) control-presence: Service foobar.googleprod.com does n
 ============== file: normalized config without derived data ==============
 name: "foobar.googleprod.com"
 title: "Google Foobar"
+documentation {
+}
+http {
+}
+quota {
+}
+authentication {
+}
+context {
+}
+usage {
+}
 endpoints {
   name: "foobar.googleprod.com"
 }
 config_version {
   value: 3
+}
+system_parameters {
+}
+experimental {
 }
 
 ============== Successfully regenerated service config ==============

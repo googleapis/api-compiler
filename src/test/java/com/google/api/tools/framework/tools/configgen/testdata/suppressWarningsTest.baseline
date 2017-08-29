@@ -54,6 +54,14 @@ http {
     get: "/v1beta1/foo"
   }
 }
+quota {
+}
+authentication {
+}
+context {
+}
+usage {
+}
 endpoints {
   name: "test.googleapis.com"
   aliases: "test.clients6.google.com"
@@ -62,6 +70,10 @@ endpoints {
 }
 config_version {
   value: 3
+}
+system_parameters {
+}
+experimental {
 }
 
 ============== Successfully regenerated service config ==============

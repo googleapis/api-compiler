@@ -7,11 +7,25 @@ apis {
     request_type_url: "type.googleapis.com/protiary.test.BucketName"
     response_type_url: "type.googleapis.com/protiary.test.Bucket"
     options {
+      name: "google.protobuf.MethodOptions.deprecated"
+      value {
+        type_url: "type.googleapis.com/google.protobuf.BoolValue"
+        value: "\b\001"
+      }
+    }
+    options {
       name: "google.api.http"
       value {
         type_url: "type.googleapis.com/google.api.HttpRule"
         value: "\022\024/buckets/{bucket_id}"
       }
+    }
+  }
+  options {
+    name: "google.protobuf.ServiceOptions.deprecated"
+    value {
+      type_url: "type.googleapis.com/google.protobuf.BoolValue"
+      value: "\b\001"
     }
   }
   version: "v1"
@@ -71,11 +85,21 @@ enums {
     file_name: "annotations.proto"
   }
 }
+documentation {
+}
 http {
   rules {
     selector: "protiary.test.Storage.GetBucket"
     get: "/buckets/{bucket_id}"
   }
+}
+quota {
+}
+authentication {
+}
+context {
+}
+usage {
 }
 endpoints {
   name: "blob.googleapis.com"
@@ -86,3 +110,8 @@ endpoints {
 config_version {
   value: 1
 }
+system_parameters {
+}
+experimental {
+}
+

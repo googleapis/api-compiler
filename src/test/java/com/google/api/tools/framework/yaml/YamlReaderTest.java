@@ -63,6 +63,10 @@ public class YamlReaderTest extends BaselineTestCase {
     testFromInputFile("failsForDuplicateCollections.yaml");
   }
 
+  @Test public void emptyConfig() {
+    String content = "";
+    testFromInputString("empty", content);
+  }
   @Test public void missingTypeConfig() {
     // Test for missing the root config for "type".
     String content = createContent(

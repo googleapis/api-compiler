@@ -20,6 +20,7 @@ import com.google.api.tools.framework.model.Model;
 import com.google.inject.Key;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * An attribute attached by this aspect to the {@link Model} representing the set of all rest
@@ -32,7 +33,8 @@ public class RestVersionsAttribute {
   private final Set<String> versions;
 
   public RestVersionsAttribute(Set<String> versions) {
-    this.versions = versions;
+    // Use TreeSet so that the versions are sorted in natural ordering.
+    this.versions = new TreeSet<>(versions);
   }
 
   public Set<String> getVersions() {

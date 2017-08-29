@@ -4,10 +4,10 @@ WARNING: auth_default.json: x-issuer: Extension name x-issuer has been deprecate
 WARNING: auth_default.json: x-jwks_uri: Extension name x-jwks_uri has been deprecated, please rename it to x-google-jwks_uri.
 WARNING: auth_default.json: Operation 'delete' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 WARNING: auth_default.json: Operation 'put' in path '/v1/pets': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
-name: "library-example.googleapis.com"
+name: "library-example.cloud.goog"
 title: "Google Example Library API"
 apis {
-  name: "library_example_googleapis_com_v1"
+  name: "v1.library_example_cloud_goog"
   methods {
     name: "ApiKeyReqOverride"
     request_type_url: "type.googleapis.com/google.protobuf.Empty"
@@ -78,29 +78,31 @@ documentation {
 }
 http {
   rules {
-    selector: "library_example_googleapis_com_v1.ApiKeyReqOverride"
+    selector: "v1.library_example_cloud_goog.ApiKeyReqOverride"
     get: "/v1/pets"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ApiKeyNotReqInherit"
+    selector: "v1.library_example_cloud_goog.ApiKeyNotReqInherit"
     delete: "/v1/pets"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
     post: "/v1/pets"
     body: "my_body_ref"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SecuritySectionEmpty"
+    selector: "v1.library_example_cloud_goog.SecuritySectionEmpty"
     put: "/v1/pets"
   }
 }
+quota {
+}
 authentication {
   rules {
-    selector: "library_example_googleapis_com_v1.ApiKeyReqOverride"
+    selector: "v1.library_example_cloud_goog.ApiKeyReqOverride"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
     requirements {
       provider_id: "test_auth3"
       audiences: "www.test_auth3.com,www.test_auth3_2.com"
@@ -111,45 +113,52 @@ authentication {
     }
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SecuritySectionEmpty"
+    selector: "v1.library_example_cloud_goog.SecuritySectionEmpty"
   }
   providers {
     id: "test_auth"
     issuer: "1234567-compute@developer.gserviceaccount.com"
     jwks_uri: "https://www.googleapis.com/oauth2/v1/certs"
+    authorization_url: "http://petstore.swagger.wordnik.com/api/oauth/dialog"
   }
   providers {
     id: "test_auth2"
     issuer: "1234567-compute@developer.gserviceaccount2.com"
+    authorization_url: "http://petstore.swagger.wordnik.com/api/oauth/dialog"
   }
   providers {
     id: "test_auth3"
     jwks_uri: "https://www.googleapis.com/oauth2/v1/certs3"
+    authorization_url: "http://petstore.swagger.wordnik.com/api/oauth/dialog"
   }
+}
+context {
 }
 usage {
   rules {
-    selector: "library_example_googleapis_com_v1.ApiKeyReqOverride"
+    selector: "v1.library_example_cloud_goog.ApiKeyReqOverride"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ApiKeyNotReqInherit"
+    selector: "v1.library_example_cloud_goog.ApiKeyNotReqInherit"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SimpleMethod"
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.SecuritySectionEmpty"
+    selector: "v1.library_example_cloud_goog.SecuritySectionEmpty"
     allow_unregistered_calls: true
   }
 }
 endpoints {
-  name: "library-example.googleapis.com"
-  aliases: "library-example.clients6.google.com"
-  aliases: "content-library-example.googleapis.com"
-  apis: "library_example_googleapis_com_v1"
+  name: "library-example.cloud.goog"
+  apis: "v1.library_example_cloud_goog"
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
+}
+experimental {
 }
 

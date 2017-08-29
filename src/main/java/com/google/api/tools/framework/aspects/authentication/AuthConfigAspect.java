@@ -24,6 +24,7 @@ import com.google.api.Service;
 import com.google.api.tools.framework.aspects.RuleBasedConfigAspect;
 import com.google.api.tools.framework.aspects.authentication.model.AuthAttribute;
 import com.google.api.tools.framework.model.ConfigAspect;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
 import com.google.api.tools.framework.model.Method;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
@@ -115,15 +116,18 @@ public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, 
       AuthProvider authProvider = getAuthProvider(requirement.getProviderId());
       if (authProvider == null) {
         error(
-            getLocationInConfig(requirement, AuthRequirement.PROVIDER_ID_FIELD_NUMBER),
+            MessageLocationContext.create(requirement, AuthRequirement.PROVIDER_ID_FIELD_NUMBER),
             "Cannot find auth provider with id '%s'",
             requirement.getProviderId());
       } else {
         if (!requirement.getAudiences().isEmpty() && !authProvider.getAudiences().isEmpty()) {
-          error(
-              getLocationInConfig(requirement, AuthRequirement.AUDIENCES_FIELD_NUMBER),
-              "Setting 'audiences' field inside both 'requirement' and 'provider' is not allowed. "
-                  + "Please set the 'audiences' field only inside the 'provider'.");
+          if (!requirement.getAudiences().equalsIgnoreCase(authProvider.getAudiences())) {
+            error(
+                MessageLocationContext.create(requirement, AuthRequirement.AUDIENCES_FIELD_NUMBER),
+                "Setting 'audiences' field inside both 'requirement' and provider '%s' is not"
+                    + " allowed. Please set the 'audiences' field only inside the 'provider'.",
+                authProvider.getId());
+          }
         }
       }
     }

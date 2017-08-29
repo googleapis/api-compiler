@@ -1029,6 +1029,8 @@ http {
     get: "/$discovery/{format}/rest"
   }
 }
+quota {
+}
 authentication {
   rules {
     selector: "google.example.library.v1.LibraryService.CreateShelf"
@@ -1114,20 +1116,6 @@ authentication {
     }
     allow_without_credential: true
   }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscovery"
-    oauth {
-      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
-    }
-    allow_without_credential: true
-  }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscoveryRest"
-    oauth {
-      canonical_scopes: "https://www.googleapis.com/auth/xapi.zoo"
-    }
-    allow_without_credential: true
-  }
 }
 context {
   rules {
@@ -1190,16 +1178,8 @@ context {
     requested: "google.rpc.context.VisibilityContext"
     requested: "google.rpc.context.ProjectContext"
   }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscovery"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscoveryRest"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
+}
+usage {
 }
 endpoints {
   name: "library-example.googleapis.com"
@@ -1207,6 +1187,12 @@ endpoints {
   aliases: "content-library-example.googleapis.com"
   apis: "google.example.library.v1.LibraryService"
   apis: "google.discovery.Discovery"
+}
+config_version {
+}
+system_parameters {
+}
+experimental {
 }
 
 ============== Successfully regenerated service config ==============

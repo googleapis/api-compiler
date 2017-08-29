@@ -22,6 +22,8 @@ import com.google.api.tools.framework.aspects.ConfigAspectBase;
 import com.google.api.tools.framework.aspects.Features;
 import com.google.api.tools.framework.aspects.endpoint.model.EndpointUtil;
 import com.google.api.tools.framework.model.ConfigAspect;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
 import com.google.common.base.Preconditions;
@@ -34,30 +36,27 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Configuration aspect for the endpoint section.
- */
+/** Configuration aspect for the endpoint section. */
 public class EndpointConfigAspect extends ConfigAspectBase {
 
-  private static final Features ENDPOINT_FEATURES = new Features(
-      );
+  public static final String NAME = "endpoint";
+
+  private static final Features ENDPOINT_FEATURES =
+      new Features(
+          );
 
   private static final String GOOGLEAPIS_DNS_SUFFIX = ".googleapis.com";
 
-  /**
-   * Creates endpoint config aspect.
-   */
+  /** Creates endpoint config aspect. */
   public static ConfigAspectBase create(Model model) {
     return new EndpointConfigAspect(model);
   }
 
   private EndpointConfigAspect(Model model) {
-    super(model, "endpoint");
+    super(model, NAME);
   }
 
-  /**
-   * Returns an empty list since this aspect does not depend on any other aspects.
-   */
+  /** Returns an empty list since this aspect does not depend on any other aspects. */
   @Override
   public List<Class<? extends ConfigAspect>> mergeDependencies() {
     return ImmutableList.of();
@@ -67,9 +66,10 @@ public class EndpointConfigAspect extends ConfigAspectBase {
   public void startMerging() {
     Service service = getModel().getServiceConfig();
 
-    List<Endpoint> sourceEndpoints = service.getEndpointsCount() != 0
-        ? service.getEndpointsList()
-        : createDefaultEndpoints(service);
+    List<Endpoint> sourceEndpoints =
+        service.getEndpointsCount() != 0
+            ? service.getEndpointsList()
+            : createDefaultEndpoints(service);
 
     checkForDuplicates(sourceEndpoints);
     List<Endpoint> processedEndpoints = populateDefaults(sourceEndpoints, service);
@@ -84,8 +84,7 @@ public class EndpointConfigAspect extends ConfigAspectBase {
   }
 
   @Override
-  public void merge(ProtoElement element) {
-  }
+  public void merge(ProtoElement element) {}
 
   private List<Endpoint> populateDefaults(List<Endpoint> sourceEndpoints, Service service) {
     ImmutableList.Builder<Endpoint> results = ImmutableList.builder();
@@ -110,9 +109,12 @@ public class EndpointConfigAspect extends ConfigAspectBase {
         }
       }
       builder.clearFeatures();
-      builder.addAllFeatures(ENDPOINT_FEATURES.evaluate(sourceEndpoint.getFeaturesList(),
-          getModel().getConfigVersion(), getModel().getDiagCollector(),
-          getLocationInConfig(sourceEndpoint, "name")));
+      builder.addAllFeatures(
+          ENDPOINT_FEATURES.evaluate(
+              sourceEndpoint.getFeaturesList(),
+              getModel().getConfigVersion(),
+              getModel().getDiagReporter(),
+              MessageLocationContext.create(sourceEndpoint, "name")));
       results.add(builder.build());
     }
     return results.build();
@@ -147,9 +149,7 @@ public class EndpointConfigAspect extends ConfigAspectBase {
     builder.addAllEndpoints(getModel().getAttribute(EndpointUtil.ENDPOINTS_KEY));
   }
 
-  /**
-   * Checks if any endpoint/alias occurs more than once in the service config.
-   */
+  /** Checks if any endpoint/alias occurs more than once in the service config. */
   private void checkForDuplicates(List<Endpoint> endpoints) {
     Set<String> unique = Sets.newHashSet();
     Set<String> dupes = Sets.newLinkedHashSet();
@@ -171,31 +171,33 @@ public class EndpointConfigAspect extends ConfigAspectBase {
     }
 
     if (dupes.size() > 0) {
-      error(getModel(), "The following endpoints/aliases occur multiple times: %s.", dupes);
+      error(
+          ResolvedLocation.create(getModel().getLocation()),
+          "The following endpoints/aliases occur multiple times: %s.",
+          dupes);
     }
   }
 
-  /**
-   * Validates the DNS name(s) of an endpoint.
-   */
+  /** Validates the DNS name(s) of an endpoint. */
   private boolean validateDns(String dns, String errorPrefix) {
     if (Strings.isNullOrEmpty(dns)) {
-      error(getModel(), "%s in service '%s' must not be empty.", errorPrefix,
+      error(
+          ResolvedLocation.create(getModel().getLocation()),
+          "%s in service '%s' must not be empty.",
+          errorPrefix,
           getModel().getServiceConfig().getName());
       return false;
     }
     return true;
   }
 
-  /**
-   * Validates all properties of an endpoint.
-   */
+  /** Validates all properties of an endpoint. */
   private boolean validate(Endpoint endpoint) {
     boolean result = validateDns(endpoint.getName(), "Endpoint name");
     for (String alias : endpoint.getAliasesList()) {
       result = result && validateDns(alias, "Endpoint '" + endpoint.getName() + "''s alias");
     }
+
     return result;
   }
-
 }

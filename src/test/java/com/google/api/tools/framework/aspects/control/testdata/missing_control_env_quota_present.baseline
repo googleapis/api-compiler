@@ -1,2 +1,4 @@
 WARNING: (lint) control-presence: Service test.googleapis.com does not have control environment configured.
+documentation {
+}
 

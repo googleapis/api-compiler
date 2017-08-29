@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.api.AuthRequirement;
 import com.google.api.AuthenticationRule;
-import com.google.api.tools.framework.importers.swagger.SwaggerLocations;
+import com.google.api.tools.framework.importers.swagger.OpenApiLocations;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.model.SecurityRequirementModel;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.model.SecurityRequirementModel.SecurityRequirementModelExtractor;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.NameConverter;
@@ -81,7 +81,7 @@ public class AuthRuleGenerator {
         getSecurityRequirements(
             operation.getSecurity(),
             operation.getVendorExtensions(),
-            SwaggerLocations.createOperationLocation(operationType, swaggerPath));
+            OpenApiLocations.createOperationLocation(operationType, swaggerPath));
     if (authRequirements != null) {
       builder.addAllRequirements(SecurityRequirementModel.createAuthRequirements(authRequirements));
       builder.setSelector(

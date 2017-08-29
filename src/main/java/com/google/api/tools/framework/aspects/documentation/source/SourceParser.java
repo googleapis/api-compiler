@@ -16,55 +16,60 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Parser that parses given Markdown source into {@link SourceElement} structure.
- */
+/** Parser that parses given Markdown source into {@link SourceElement} structure. */
 public class SourceParser {
 
   /**
+   *
+   *
    * <pre>Setext-style headers:
    *     Header 1
    *     ========
    *
    *     Header 2
    *     -------- </pre>
+   *
    * Based on standard Markdown.pl
    */
-  private static final Pattern SETEXT_HEADING = Pattern.compile(
-      "(?<=^|\\n)(.+)" // Header text
-      + "[ \\t]*"
-      + "\\n(=+|-+)"   // Header level
-      + "[ \\t]*"
-      + "\\n+");
+  private static final Pattern SETEXT_HEADING =
+      Pattern.compile(
+          "(?<=^|\\n)(.+)" // Header text
+              + "[ \\t]*"
+              + "\\n(=+|-+)" // Header level
+              + "[ \\t]*"
+              + "\\n+");
 
   /**
+   *
+   *
    * <pre>atx-style headers:
    *   # Header 1
    *   ## Header 2
    *   ## Header 2 with closing hashes ##
    *   ...
    *   ###### Header 6 </pre>
+   *
    * We will match any number of '#'s for normalized subsections.
    */
-  private static final Pattern ATX_HEADING = Pattern.compile(
-      "(?<=^|\\n)(#+)" // Header level
-      + "[ \\t]*"
-      + "(.+?)"        // Header text
-      + "[ \\t]*"
-      + "#*"
-      + "\\n+");
+  private static final Pattern ATX_HEADING =
+      Pattern.compile(
+          "(?<=^|\\n)(#+)" // Header level
+              + "[ \\t]*"
+              + "(.+?)" // Header text
+              + "[ \\t]*"
+              + "#*"
+              + "\\n+");
 
-  private static final Pattern HEADING = Pattern.compile(String.format(
-      "%s|%s", SETEXT_HEADING, ATX_HEADING));
+  private static final Pattern HEADING =
+      Pattern.compile(String.format("%s|%s", SETEXT_HEADING, ATX_HEADING));
 
   private static final int SEXEXT_HEADING_TEXT = 1;
   private static final int SEXEXT_HEADING_LEVEL = 2;
@@ -80,42 +85,43 @@ public class SourceParser {
       + "\\s*"
       + "(?<instrcode>[\\w-]+)" // Instruction code
       + "\\s+"
-      + "(?<instrarg>[\\S\\s]+?)" // Instruction arg
+      + "(?<instrarg>[\\S\\s]*?)" // Instruction arg
       + "\\s*"
       + "(?<!\\\\)==\\)(?:\n|\\Z)?"); // End tag
 
-  private static final Pattern CODE_BLOCK = Pattern.compile(
-      "(?<=\\n\\n|\\A)"
-      + "(?<codeblocksource>" // The code block -- one or more lines, starting with a space/tab
-      + "(?:"
-      + "(?:\\s{4}|\\t)" // # Lines must start with a tab or a tab-width of spaces
-      + ".*\n*"
-      + ")+"
-      + ")"
-      + "((?=\\s{0,3}\\S)|\\Z)"); // Lookahead for non-space at line-start, or end of doc
+  private static final Pattern CODE_BLOCK =
+      Pattern.compile(
+          "(?<=\\n\\n|\\A)"
+              + "(?<codeblocksource>" // The code block -- one or more lines, starting with a
+              // space/tab
+              + "(?:"
+              + "(?:\\s{4}|\\t)" // # Lines must start with a tab or a tab-width of spaces
+              + ".*\n*"
+              + ")+"
+              + ")"
+              + "((?=\\s{0,3}\\S)|\\Z)"); // Lookahead for non-space at line-start, or end of doc
 
-  private static final Pattern HTML_CODE_BLOCK = Pattern.compile(
-      // If the HTML code block is preceeded by two newlines, we strip one. This does not affect
-      // DocGen's final, rendered HTML output. But it ensures that G3doc, which adds an extra
-      // newline around code blocks, does not end up surrounding codeblocks with three newlines
-      // rather than the expected two.
-      "((?<=\\n)(?:(\\s*\\n\\s*)?)|)"
-      + "(?<htmlcodeblocksource>"
-      + "<(?<tag>pre|code)(|\\s.*)>[\\S\\s]*?"
-      + "</\\k<tag>>)"
-      + "((?:\\s*\\n)?(?=\\s*\\n)|)"); // Ignore possible following newline to prevent duplication
-                                       // by G3doc; see preceeding comment.
+  private static final Pattern HTML_CODE_BLOCK =
+      Pattern.compile(
+          // If the HTML code block is preceeded by two newlines, we strip one. This does not affect
+          // DocGen's final, rendered HTML output. But it ensures that G3doc, which adds an extra
+          // newline around code blocks, does not end up surrounding codeblocks with three newlines
+          // rather than the expected two.
+          "((?<=\\n)(?:(\\s*\\n\\s*)?)|)"
+              + "(?<htmlcodeblocksource>"
+              + "<(?<tag>pre|code)(|\\s.*)>[\\S\\s]*?"
+              + "</\\k<tag>>)"
+              + "((?:\\s*\\n)?(?=\\s*\\n)|)"); // Ignore possible following newline to prevent
+  //duplication by G3doc; see preceeding comment.
 
   private static final Pattern FENCED_CODE_BLOCK =
       Pattern.compile("(?<fencedcodeblocksource>```.*\\n[\\S\\s]*?```)");
 
   private static final Pattern CONTENT_PARSING_PATTERNS =
-      Pattern.compile(String.format(
-          "(?<instr>%s)|(?<codeblock>%s)|(?<htmlcodeblock>%s)|(?<fencedcodeblock>%s)",
-                      INSTRUCTION,
-                      CODE_BLOCK,
-                      HTML_CODE_BLOCK,
-                      FENCED_CODE_BLOCK));
+      Pattern.compile(
+          String.format(
+              "(?<instr>%s)|(?<codeblock>%s)|(?<htmlcodeblock>%s)|(?<fencedcodeblock>%s)",
+              INSTRUCTION, CODE_BLOCK, HTML_CODE_BLOCK, FENCED_CODE_BLOCK));
 
   private static final String INSTRUCTION_GROUP = "instr";
   private static final String INSTRUCTION_CODE = "instrcode";
@@ -125,25 +131,25 @@ public class SourceParser {
   private static final String FENCED_CODE_BLOCK_SOURCE_GROUP = "fencedcodeblocksource";
   private static final String INCLUSION_CODE = "include";
 
-  private final DiagCollector diagCollector;
-  private final Location sourceLocation;
+  private final DiagReporter diagReporter;
+  private final LocationContext sourceLocation;
   private final String source;
   private final String docPath;
 
-  public SourceParser(String source, Location sourceLocation, DiagCollector diagCollector,
-      String docPath) {
+  public SourceParser(
+      String source, LocationContext sourceLocation, DiagReporter diagReporter, String docPath) {
     this.source = source;
     this.sourceLocation = sourceLocation;
-    this.diagCollector = diagCollector;
+    this.diagReporter = diagReporter;
     this.docPath = docPath;
   }
 
   /**
-   * Parses given Markdown source and generates model of {@link SourceRoot}. The generated model
-   * is based on Markdown header sections.
+   * Parses given Markdown source and generates model of {@link SourceRoot}. The generated model is
+   * based on Markdown header sections.
    */
   public SourceRoot parse() {
-    SourceRoot root = new SourceRoot(0, source.length(), diagCollector, sourceLocation);
+    SourceRoot root = new SourceRoot(0, source.length());
     SectionHeader curHeader = null;
     Matcher headerMatcher = HEADING.matcher(source);
     while (headerMatcher.find()) {
@@ -157,12 +163,12 @@ public class SourceParser {
 
   /**
    * Fills {@link ContentElement}s into model from region between given header boundaries in the
-   * source. If content elements are top level, they will be filled into
-   * {@link SourceRoot} directly. Otherwise a {@link SourceSection} will be created and filled with
-   * those content elements.
+   * source. If content elements are top level, they will be filled into {@link SourceRoot}
+   * directly. Otherwise a {@link SourceSection} will be created and filled with those content
+   * elements.
    */
-  private void fillContents(String source, SourceRoot root, SectionHeader curHeader,
-      SectionHeader nextHeader) {
+  private void fillContents(
+      String source, SourceRoot root, SectionHeader curHeader, SectionHeader nextHeader) {
     List<ContentElement> contents = parseContents(source, curHeader, nextHeader);
     if (curHeader == null) {
       // Add top level contents to source root.
@@ -171,19 +177,18 @@ public class SourceParser {
       // Create a section with curHeader as header and fill parsed content elements into
       // the section
       int sectionEnd = nextHeader == null ? source.length() : nextHeader.getStartIndex();
-      SourceSection section = new SourceSection(curHeader, curHeader.getStartIndex(),
-          sectionEnd, diagCollector, sourceLocation);
+      SourceSection section = new SourceSection(curHeader, curHeader.getStartIndex(), sectionEnd);
       section.addContents(contents);
       root.addSection(section);
     }
   }
 
   /**
-   * Parse the source region between given section headers boundary to generate
-   * {@link ContentElement}s.
+   * Parse the source region between given section headers boundary to generate {@link
+   * ContentElement}s.
    */
-  private List<ContentElement> parseContents(String source, SectionHeader curHeader,
-      SectionHeader nextHeader) {
+  private List<ContentElement> parseContents(
+      String source, SectionHeader curHeader, SectionHeader nextHeader) {
     List<ContentElement> contents = Lists.newArrayList();
     // Decide the source region for the content based on two header boundaries.
     int curIndex = curHeader == null ? 0 : curHeader.getEndIndex();
@@ -197,8 +202,7 @@ public class SourceParser {
       if (matcher.start() > curIndex) {
         // Extract text content between current index and start of found inclusion instruction.
         String text = source.substring(curIndex, matcher.start());
-        contents.add(new Text(unescapeInstructions(text), curIndex, matcher.start(),
-            diagCollector, sourceLocation));
+        contents.add(new Text(unescapeInstructions(text), curIndex, matcher.start()));
       }
 
       ContentElement newElement;
@@ -207,27 +211,45 @@ public class SourceParser {
         String code = matcher.group(INSTRUCTION_CODE);
         if (INCLUSION_CODE.equals(code)) {
           // Create content element for found file inclusion instruction.
-          newElement = new FileInclusion(docPath,
-              unescapeInstructions(matcher.group(INSTRUCTION_ARG).trim()), headingLevel,
-              matcher.start(), matcher.end(), diagCollector, sourceLocation);
+          newElement =
+              new FileInclusion(
+                  docPath,
+                  unescapeInstructions(matcher.group(INSTRUCTION_ARG).trim()),
+                  headingLevel,
+                  matcher.start(),
+                  matcher.end(),
+                  diagReporter,
+                  sourceLocation);
         } else {
           // Create content element for other instruction.
-          newElement = new Instruction(code, unescapeInstructions(matcher.group(INSTRUCTION_ARG)),
-              matcher.start(), matcher.end(), diagCollector, sourceLocation);
+          newElement =
+              new Instruction(
+                  code,
+                  unescapeInstructions(matcher.group(INSTRUCTION_ARG)),
+                  matcher.start(),
+                  matcher.end());
         }
       } else if (matcher.group(CODE_BLOCK_SOURCE_GROUP) != null) {
         // Create content element for code block.
-        newElement = new CodeBlock(
-            unescapeInstructions(matcher.group(CODE_BLOCK_SOURCE_GROUP)), matcher.start(),
-            matcher.end(), diagCollector, sourceLocation);
+        newElement =
+            new CodeBlock(
+                unescapeInstructions(matcher.group(CODE_BLOCK_SOURCE_GROUP)),
+                matcher.start(),
+                matcher.end());
+
       } else if (matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP) != null) {
-        newElement = new CodeBlock(
-            unescapeInstructions(matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP)),
-            matcher.start(), matcher.end(), diagCollector, sourceLocation);
+        newElement =
+            new CodeBlock(
+                unescapeInstructions(matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP)),
+                matcher.start(),
+                matcher.end());
+
       } else if (matcher.group(FENCED_CODE_BLOCK_SOURCE_GROUP) != null) {
-        newElement = new CodeBlock(
-            unescapeInstructions(matcher.group(FENCED_CODE_BLOCK_SOURCE_GROUP)),
-            matcher.start(), matcher.end(), diagCollector, sourceLocation);
+        newElement =
+            new CodeBlock(
+                unescapeInstructions(matcher.group(FENCED_CODE_BLOCK_SOURCE_GROUP)),
+                matcher.start(),
+                matcher.end());
       } else {
         // If the matcher matched, we should have been in one of the cases handled above;
         // this line should never be reached.
@@ -240,15 +262,12 @@ public class SourceParser {
 
     // Extract trailing text content.
     if (curIndex < end) {
-      contents.add(new Text(source.substring(curIndex, end), curIndex, end,
-          diagCollector, sourceLocation));
+      contents.add(new Text(source.substring(curIndex, end), curIndex, end));
     }
     return contents;
   }
 
-  /**
-   * Create {@link SectionHeader} instance based on matching result.
-   */
+  /** Create {@link SectionHeader} instance based on matching result. */
   private SectionHeader createHeader(Matcher matcher) {
     int level;
     String text;
@@ -259,11 +278,11 @@ public class SourceParser {
       level = matcher.group(SEXEXT_HEADING_LEVEL).startsWith("=") ? 1 : 2;
       text = matcher.group(SEXEXT_HEADING_TEXT);
     }
-    return new SectionHeader(level, text, matcher.start(), matcher.end(),
-        diagCollector, sourceLocation);
+    return new SectionHeader(level, text, matcher.start(), matcher.end());
   }
 
   private String unescapeInstructions(String string) {
     return string.replace("\\(==", "(==").replace("\\==)", "==)");
   }
 }
+

@@ -1,1 +1,1 @@
-Swagger spec file 'invalid_extension.invalid' has invalid extension 'invalid'. Only files with {yaml, yml, json} file extensions are allowed.
+OpenAPI file 'invalid_extension.invalid' has invalid extension 'invalid'. Only files with {yaml, yml, json} file extensions are allowed.

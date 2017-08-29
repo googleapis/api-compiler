@@ -17,75 +17,104 @@
 package com.google.api.tools.framework.aspects.documentation.source;
 
 import com.google.api.tools.framework.aspects.documentation.model.DeprecationDescriptionAttribute;
+import com.google.api.tools.framework.aspects.documentation.model.InliningAttribute;
 import com.google.api.tools.framework.aspects.documentation.model.PageAttribute;
 import com.google.api.tools.framework.aspects.documentation.model.ResourceAttribute;
 import com.google.api.tools.framework.model.Diag;
-import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.Element;
-import com.google.api.tools.framework.model.Location;
+import com.google.api.tools.framework.model.EnumType;
+import com.google.api.tools.framework.model.Field;
 import com.google.api.tools.framework.model.MessageType;
+import com.google.api.tools.framework.model.ProtoContainerElement;
+import com.google.inject.Key;
 
-/**
- * Represents Docgen instructions other than file inclusion:
- * (== code arg ==)
- */
+/** Represents Docgen instructions other than file inclusion: (== code arg ==) */
 public class Instruction extends ContentElement {
 
   private static final String PAGE_INSTRUCTION = "page";
   private static final String SUPPRESS_WARNING_INSTRUCTION = "suppress_warning";
   private static final String RESOURCE_INSTRUCTION = "resource_for";
   private static final String DEPRECATION_DESCRIPTION = "deprecation_description";
+  private static final String INLINE_INSTRUCTION = "inline_message";
 
   private final String code;
   private final String arg;
 
-  public Instruction(String code, String arg, int startIndex, int endIndex,
-      DiagCollector diagCollector, Location sourceLocation) {
-    super(startIndex, endIndex, diagCollector, sourceLocation);
+  public Instruction(String code, String arg, int startIndex, int endIndex) {
+    super(startIndex, endIndex);
     this.code = code.trim();
     this.arg = arg.trim();
   }
 
-  /**
-   * Returns the instruction code
-   */
+  /** Returns the instruction code */
   public String getCode() {
     return code;
   }
 
-  /**
-   * Returns the instruction argument.
-   */
+  /** Returns the instruction argument. */
   public String getArg() {
     return arg;
   }
 
-  /**
-   * Return the content (empty for instruction).
-   */
-  @Override public String getContent() {
+  /** Return the content (empty for instruction). */
+  @Override
+  public String getContent() {
     return "";
   }
 
-  /**
-   * Evaluate the instruction in context of given element.
-   */
+  /** Evaluate the instruction in context of given element. */
   public void evalute(Element element) {
     switch (code) {
       case PAGE_INSTRUCTION:
         element.putAttribute(PageAttribute.KEY, PageAttribute.create(arg));
         break;
       case SUPPRESS_WARNING_INSTRUCTION:
-        element.getModel().addSupressionDirective(element, arg);
+        element
+            .getModel()
+            .getDiagReporter()
+            .getDiagSuppressor()
+            .addSuppressionDirective(element, arg, element.getModel().getConfigAspects());
         break;
       case RESOURCE_INSTRUCTION:
         if (!(element instanceof MessageType)) {
-          element.getModel().getDiagCollector().addDiag(Diag.error(element.getLocation(),
-              "resource instruction must be associated with a message declaration, but '%s' "
-              + "is not a message.",
-              element.getFullName()));
+          element
+              .getModel()
+              .getDiagReporter()
+              .reportError(
+                  ResolvedLocation.create(element.getLocation()),
+                  "resource instruction must be associated with a message declaration, but "
+                      + "'%s' is not a message.",
+                  element.getFullName());
         } else {
           element.addAttribute(ResourceAttribute.KEY, ResourceAttribute.create(arg));
+        }
+        break;
+      case INLINE_INSTRUCTION:
+        if (!(element instanceof MessageType || element instanceof EnumType)) {
+          element
+              .getModel()
+              .getDiagReporter()
+              .reportError(
+                  ResolvedLocation.create(element.getLocation()),
+                  INLINE_INSTRUCTION
+                      + " instruction must be associated with a "
+                      + "message/enum declaration, but '%s' is not a message/enum.",
+                  element.getFullName());
+        } else if (element instanceof MessageType && subCyclic((MessageType) element)) {
+          element
+              .getModel()
+              .getDiagReporter()
+              .reportError(
+                  ResolvedLocation.create(element.getLocation()),
+                  INLINE_INSTRUCTION
+                      + " instruction must be associated with a *non-recursive* "
+                      + "message declaration, but '%s' is recursive or contains a recursive "
+                      + "subfield.",
+                  element.getFullName());
+        } else {
+          recursivePutAttribute(
+              (ProtoContainerElement) element, InliningAttribute.KEY, new InliningAttribute());
         }
         break;
       case DEPRECATION_DESCRIPTION:
@@ -93,8 +122,31 @@ public class Instruction extends ContentElement {
             DeprecationDescriptionAttribute.KEY, DeprecationDescriptionAttribute.create(arg));
         break;
       default:
-        element.getModel().getDiagCollector().addDiag(Diag.error(element.getLocation(),
-            "documentation instruction '%s' unknown.", code));
+        element
+            .getModel()
+            .getDiagReporter()
+            .report(
+                Diag.error(element.getLocation(), "documentation instruction '%s' unknown.", code));
     }
   }
+
+  private <T> void recursivePutAttribute(ProtoContainerElement element, Key<T> key, T attribute) {
+    element.putAttribute(key, attribute);
+    for (ProtoContainerElement message : element.getMessages()) {
+      recursivePutAttribute(message, key, attribute);
+    }
+  }
+
+  private boolean subCyclic(MessageType message) {
+    if (message.isCyclic()) {
+      return true;
+    }
+    for (Field subMessageField : message.getMessageFields()) {
+      if (subCyclic(subMessageField.getType().getMessageType())) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
+

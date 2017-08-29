@@ -9,7 +9,7 @@ apis {
   }
   version: "v1"
   source_context {
-    file_name: "no_package_name"
+    file_name: "no_package_name.proto_nolint"
   }
 }
 types {
@@ -22,7 +22,7 @@ types {
     json_name: "bucketId"
   }
   source_context {
-    file_name: "no_package_name"
+    file_name: "no_package_name.proto_nolint"
   }
 }
 documentation {
@@ -43,6 +43,16 @@ documentation {
     description: "foo bar"
   }
 }
+http {
+}
+quota {
+}
+authentication {
+}
+context {
+}
+usage {
+}
 endpoints {
   name: "blob.googleapis.com"
   aliases: "blob.clients6.google.com"
@@ -52,3 +62,8 @@ endpoints {
 config_version {
   value: 2
 }
+system_parameters {
+}
+experimental {
+}
+

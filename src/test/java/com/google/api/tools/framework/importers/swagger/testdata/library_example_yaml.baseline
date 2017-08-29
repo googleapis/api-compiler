@@ -10,10 +10,10 @@ WARNING: library_example_yaml.yaml: Operation 'delete' in path '/v1/shelves/{she
 WARNING: library_example_yaml.yaml: Operation 'put' in path '/v1/shelves/{shelvesId}/books/{booksId}': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 WARNING: library_example_yaml.yaml: Operation 'post' in path '/v1/shelves/{shelvesId}/books/{booksId}:move': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
 WARNING: library_example_yaml.yaml: Operation 'post' in path '/v1/shelves/{shelvesId}:merge': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
-name: "library-example.googleapis.com"
+name: "library-example.cloud.goog"
 title: "Google Example Library API"
 apis {
-  name: "library_example_googleapis_com_v1"
+  name: "v1.library_example_cloud_goog"
   methods {
     name: "RestrictedGetShelf"
     request_type_url: "type.googleapis.com/namespace.types.RestrictedGetShelfRequest"
@@ -464,116 +464,236 @@ documentation {
 }
 http {
   rules {
-    selector: "library_example_googleapis_com_v1.RestrictedGetShelf"
+    selector: "v1.library_example_cloud_goog.RestrictedGetShelf"
     get: "/v1/restricted/shelves/{shelves_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ListShelves"
+    selector: "v1.library_example_cloud_goog.ListShelves"
     get: "/v1/shelves"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.CreateShelf"
+    selector: "v1.library_example_cloud_goog.CreateShelf"
     post: "/v1/shelves"
     body: "shelf"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.GetShelf"
+    selector: "v1.library_example_cloud_goog.GetShelf"
     get: "/v1/shelves/{shelves_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.DeleteShelf"
+    selector: "v1.library_example_cloud_goog.DeleteShelf"
     delete: "/v1/shelves/{shelves_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ListBooks"
+    selector: "v1.library_example_cloud_goog.ListBooks"
     get: "/v1/shelves/{shelves_id}/books"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.CreateBook"
+    selector: "v1.library_example_cloud_goog.CreateBook"
     post: "/v1/shelves/{shelves_id}/books"
     body: "book"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.GetBook"
+    selector: "v1.library_example_cloud_goog.GetBook"
     get: "/v1/shelves/{shelves_id}/books/{books_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.DeleteBook"
+    selector: "v1.library_example_cloud_goog.DeleteBook"
     delete: "/v1/shelves/{shelves_id}/books/{books_id}"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.UpdateBook"
+    selector: "v1.library_example_cloud_goog.UpdateBook"
     put: "/v1/shelves/{shelves_id}/books/{books_id}"
     body: "book"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.MoveBook"
+    selector: "v1.library_example_cloud_goog.MoveBook"
     post: "/v1/shelves/{shelves_id}/books/{books_id}:move"
     body: "body"
   }
   rules {
-    selector: "library_example_googleapis_com_v1.MergeShelves"
+    selector: "v1.library_example_cloud_goog.MergeShelves"
     post: "/v1/shelves/{shelves_id}:merge"
     body: "body"
   }
 }
+quota {
+  limits {
+    name: "bookstore-read-requests"
+    metric: "bookstore/read_requests"
+    unit: "1/min/{project}"
+    values {
+      key: "STANDARD"
+      value: 1000
+    }
+  }
+  limits {
+    name: "bookstore-write-requests"
+    metric: "bookstore/write_requests"
+    unit: "1/min/{project}"
+    values {
+      key: "STANDARD"
+      value: 100
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.RestrictedGetShelf"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.ListShelves"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.CreateShelf"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.GetShelf"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.DeleteShelf"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.ListBooks"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.CreateBook"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.GetBook"
+    metric_costs {
+      key: "bookstore/read_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.DeleteBook"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.UpdateBook"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 1
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.MoveBook"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 2
+    }
+  }
+  metric_rules {
+    selector: "v1.library_example_cloud_goog.MergeShelves"
+    metric_costs {
+      key: "bookstore/write_requests"
+      value: 2
+    }
+  }
+}
+authentication {
+}
+context {
+}
 usage {
   rules {
-    selector: "library_example_googleapis_com_v1.RestrictedGetShelf"
+    selector: "v1.library_example_cloud_goog.RestrictedGetShelf"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ListShelves"
+    selector: "v1.library_example_cloud_goog.ListShelves"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.CreateShelf"
+    selector: "v1.library_example_cloud_goog.CreateShelf"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.GetShelf"
+    selector: "v1.library_example_cloud_goog.GetShelf"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.DeleteShelf"
+    selector: "v1.library_example_cloud_goog.DeleteShelf"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.ListBooks"
+    selector: "v1.library_example_cloud_goog.ListBooks"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.CreateBook"
+    selector: "v1.library_example_cloud_goog.CreateBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.GetBook"
+    selector: "v1.library_example_cloud_goog.GetBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.DeleteBook"
+    selector: "v1.library_example_cloud_goog.DeleteBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.UpdateBook"
+    selector: "v1.library_example_cloud_goog.UpdateBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.MoveBook"
+    selector: "v1.library_example_cloud_goog.MoveBook"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "library_example_googleapis_com_v1.MergeShelves"
+    selector: "v1.library_example_cloud_goog.MergeShelves"
     allow_unregistered_calls: true
   }
 }
 endpoints {
-  name: "library-example.googleapis.com"
-  aliases: "library-example.clients6.google.com"
-  aliases: "content-library-example.googleapis.com"
-  apis: "library_example_googleapis_com_v1"
+  name: "library-example.cloud.goog"
+  apis: "v1.library_example_cloud_goog"
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+metrics {
+  name: "bookstore/write_requests"
+  metric_kind: GAUGE
+  value_type: INT64
+}
+metrics {
+  name: "bookstore/read_requests"
+  metric_kind: GAUGE
+  value_type: INT64
+}
+system_parameters {
+}
+experimental {
 }
 

@@ -6,7 +6,7 @@ WARNING: uber.json: Operation 'get' in path '/products': Operation does not requ
 name: "api.uber.com"
 title: "Uber API"
 apis {
-  name: "api_uber_com_1_0_0"
+  name: "1.api_uber_com"
   methods {
     name: "GetPrices"
     request_type_url: "type.googleapis.com/namespace.types.GetPricesRequest"
@@ -150,53 +150,63 @@ documentation {
 }
 http {
   rules {
-    selector: "api_uber_com_1_0_0.GetPrices"
+    selector: "1.api_uber_com.GetPrices"
     get: "/v1/estimates/price"
   }
   rules {
-    selector: "api_uber_com_1_0_0.GetEstimates"
+    selector: "1.api_uber_com.GetEstimates"
     get: "/v1/estimates/time"
   }
   rules {
-    selector: "api_uber_com_1_0_0.GetMyHistory"
+    selector: "1.api_uber_com.GetMyHistory"
     get: "/v1/history"
   }
   rules {
-    selector: "api_uber_com_1_0_0.GetMyProfile"
+    selector: "1.api_uber_com.GetMyProfile"
     get: "/v1/me"
   }
   rules {
-    selector: "api_uber_com_1_0_0.GetProducts"
+    selector: "1.api_uber_com.GetProducts"
     get: "/v1/products"
   }
 }
+quota {
+}
+authentication {
+}
+context {
+}
 usage {
   rules {
-    selector: "api_uber_com_1_0_0.GetPrices"
+    selector: "1.api_uber_com.GetPrices"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "api_uber_com_1_0_0.GetEstimates"
+    selector: "1.api_uber_com.GetEstimates"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "api_uber_com_1_0_0.GetMyHistory"
+    selector: "1.api_uber_com.GetMyHistory"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "api_uber_com_1_0_0.GetMyProfile"
+    selector: "1.api_uber_com.GetMyProfile"
     allow_unregistered_calls: true
   }
   rules {
-    selector: "api_uber_com_1_0_0.GetProducts"
+    selector: "1.api_uber_com.GetProducts"
     allow_unregistered_calls: true
   }
 }
 endpoints {
   name: "api.uber.com"
-  apis: "api_uber_com_1_0_0"
+  apis: "1.api_uber_com"
 }
 control {
   environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
+}
+experimental {
 }
 

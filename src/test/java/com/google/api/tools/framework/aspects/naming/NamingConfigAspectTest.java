@@ -33,12 +33,27 @@ public class NamingConfigAspectTest extends ConfigAspectBaselineTestCase {
   }
 
   @Test public void naming() throws Exception {
+    /**
+     * This test verifies a whole pile of naming guidelines for fields, messages, etc.
+     */
     showDiagLocation = true;
     test("naming");
   }
 
-  @Test public void invalid_naming() throws Exception {
+  @Test public void abbreviations() throws Exception {
+    /**
+     * This test verifies that common abbreviations are used (e.g., Configuration -> Config).
+     */
     showDiagLocation = true;
-    test("InvalidNaming");
+    test("abbreviations");
   }
+
+  @Test public void invalid_filename() throws Exception {
+    /**
+     * This test verifies that protos and yaml files are named in snake_case.
+     */
+    showDiagLocation = true;
+    test("InvalidFilename");
+  }
+
 }

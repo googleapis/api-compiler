@@ -39,25 +39,23 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Implementation of scopers. Applications use the factory methods, or subclass and override the
- * {@link #inScope(ProtoElement)} method of this class. The class computes the transitive closure
- * of reachable elements from a given set of roots and uses it to implement the {@link Scoper}
- * interface. During construction of a scoper, errors may be produced if scoping rules are
- * violated. See the documentation of API visibility for the rules.
+ * {@link #inScope(ProtoElement)} method of this class. The class computes the transitive closure of
+ * reachable elements from a given set of roots and uses it to implement the {@link Scoper}
+ * interface. During construction of a scoper, errors may be produced if scoping rules are violated.
+ * See the documentation of API visibility for the rules.
  */
 public abstract class ScoperImpl implements Scoper {
 
-  /**
-   * Returns a scoper which restricts a model to the elements reachable via the given roots.
-   */
+  /** Returns a scoper which restricts a model to the elements reachable via the given roots. */
   public static Scoper create(Iterable<ProtoElement> roots) {
     return new ScoperImpl(roots, "") {
-      @Override public boolean inScope(ProtoElement elem) {
+      @Override
+      public boolean inScope(ProtoElement elem) {
         return true;
       }
     };
@@ -70,9 +68,7 @@ public abstract class ScoperImpl implements Scoper {
   protected final Map<ProtoElement, String> reasonForUnreachable = Maps.newLinkedHashMap();
   private final String errorContext;
 
-  /**
-   * A predicate characterizing reachability.
-   */
+  /** A predicate characterizing reachability. */
   private final Predicate<ProtoElement> reachablePredicate = Predicates.in(reachable);
 
   /**
@@ -81,12 +77,11 @@ public abstract class ScoperImpl implements Scoper {
    */
   public abstract boolean inScope(ProtoElement elem);
 
-   /**
-   * Constructs a scoper for the given roots. Computes reachability transitively based
-   * on the {@link #inScope(ProtoElement)} predicate. This may produced errors
-   * in the case elements are not in scope which are required by in-scope ones, e.g.
-   * request/response messages of methods are not in scope which are used by in-scope
-   * methods.
+  /**
+   * Constructs a scoper for the given roots. Computes reachability transitively based on the {@link
+   * #inScope(ProtoElement)} predicate. This may produced errors in the case elements are not in
+   * scope which are required by in-scope ones, e.g. request/response messages of methods are not in
+   * scope which are used by in-scope methods.
    */
   protected ScoperImpl(Iterable<? extends ProtoElement> roots, String errorContext) {
     this.errorContext = Preconditions.checkNotNull(errorContext);
@@ -127,7 +122,8 @@ public abstract class ScoperImpl implements Scoper {
   public Scoper restrict(final Predicate<ProtoElement> predicate, String errorContext) {
     final ScoperImpl that = this;
     return new ScoperImpl(roots, errorContext) {
-      @Override public boolean inScope(ProtoElement elem) {
+      @Override
+      public boolean inScope(ProtoElement elem) {
         return that.inScope(elem) && predicate.apply(elem);
       }
     };
@@ -143,13 +139,16 @@ public abstract class ScoperImpl implements Scoper {
     if (!errorContext.isEmpty()) {
       message = message + " " + errorContext + ".";
     }
-    Diag diag = elem.getModel().getConfigVersion() >= version
-        ? Diag.error(elem.getLocation(), message, params)
-        : Diag.warning(elem.getLocation(),
-            message + String.format(
-                " Note: this will be an error for config version %s and later.", version),
-            params);
-    elem.getModel().getDiagCollector().addDiag(diag);
+    Diag diag =
+        elem.getModel().getConfigVersion() >= version
+            ? Diag.error(elem.getLocation(), message, params)
+            : Diag.warning(
+                elem.getLocation(),
+                message
+                    + String.format(
+                        " Note: this will be an error for config version %s and later.", version),
+                params);
+    elem.getModel().getDiagReporter().report(diag);
   }
 
   private String reasonForUnreachable(ProtoElement elem) {
@@ -160,9 +159,8 @@ public abstract class ScoperImpl implements Scoper {
   }
 
   /**
-   * A visitor which marks elements and its descendants as reachable, following the rules
-   * for visibility propagation. Emits errors if elements are not in scope which are
-   * required to be.
+   * A visitor which marks elements and its descendants as reachable, following the rules for
+   * visibility propagation. Emits errors if elements are not in scope which are required to be.
    */
   private class Reacher extends Visitor {
 
@@ -170,13 +168,15 @@ public abstract class ScoperImpl implements Scoper {
     private final Set<ProtoElement> visited = Sets.newHashSet();
 
     // Reach an interface. All methods will be reached which are in scope.
-    @Visits void reach(Interface iface) {
+    @Visits
+    void reach(Interface iface) {
       markAsReachable(iface);
       visitInScope(iface.getMethods());
     }
 
     // Reach a method. Both input and output must be in scope.
-    @Visits void reach(Method method) {
+    @Visits
+    void reach(Method method) {
       mustBeInScope(method, method.getInputMessage());
       mustBeInScope(method, method.getOutputMessage());
       markAsReachable(method);
@@ -193,9 +193,12 @@ public abstract class ScoperImpl implements Scoper {
           for (FieldSelector selector : selectors) {
             for (Field field : selector.getFields()) {
               if (!isReachable(field)) {
-                errorSince(2, field,
+                errorSince(
+                    2,
+                    field,
                     "Field '%s' required by HTTP binding of method '%s' cannot be hidden. %s.",
-                    field.getFullName(), method.getFullName(),
+                    field.getFullName(),
+                    method.getFullName(),
                     reasonForUnreachable(field));
               }
             }
@@ -205,7 +208,8 @@ public abstract class ScoperImpl implements Scoper {
     }
 
     // Reach a message. If all fields are unreachable, do not mark the message as reachable.
-    @Visits void reach(MessageType message) {
+    @Visits
+    void reach(MessageType message) {
       markAsReachable(message);
       visitInScope(message.getFields());
 
@@ -215,8 +219,7 @@ public abstract class ScoperImpl implements Scoper {
         if (!isReachable(field)) {
           hasUnreachableDescendants.add(message);
           if (field.isRequired()) {
-            error(field, "A required field cannot be hidden. %s.",
-                reasonForUnreachable(field));
+            error(field, "A required field cannot be hidden. %s.", reasonForUnreachable(field));
           }
         } else {
           TypeRef type = field.getType();
@@ -229,7 +232,8 @@ public abstract class ScoperImpl implements Scoper {
     }
 
     // Reach a field. The type of the field must be in scope.
-    @Visits void reach(Field field) {
+    @Visits
+    void reach(Field field) {
       TypeRef type = field.getType();
       if (type.isMap()) {
         visitInScope(type.getMessageType());
@@ -249,14 +253,17 @@ public abstract class ScoperImpl implements Scoper {
 
     // Reach an enum. If all values are unreachable, mark the enum as unreachable. Otherwise
     // there must be at least one value which is the default.
-    @Visits void reach(EnumType enumType) {
+    @Visits
+    void reach(EnumType enumType) {
       markAsReachable(enumType);
       visitInScope(enumType.getValues());
 
       // Check if default value is hidden, and whether the enum has unreachable descendants.
       for (EnumValue value : enumType.getValues()) {
         if (value.getIndex() == 0 && !isReachable(value)) {
-          error(value, "The default value of '%s' cannot be hidden. %s.",
+          error(
+              value,
+              "The default value of '%s' cannot be hidden. %s.",
               enumType.getFullName(),
               reasonForUnreachable(value));
         }
@@ -267,7 +274,8 @@ public abstract class ScoperImpl implements Scoper {
     }
 
     // Reach an enum value.
-    @Visits void reach(EnumValue enumValue) {
+    @Visits
+    void reach(EnumValue enumValue) {
       markAsReachable(enumValue);
     }
 
@@ -283,8 +291,11 @@ public abstract class ScoperImpl implements Scoper {
             return;
           }
         }
-        error(elem, "'%s' is hidden but required by visible '%s'. %s.",
-            elem.getFullName(), context.getFullName(),
+        error(
+            elem,
+            "'%s' is hidden but required by visible '%s'. %s.",
+            elem.getFullName(),
+            context.getFullName(),
             reasonForUnreachable(elem));
       }
     }
@@ -318,9 +329,12 @@ public abstract class ScoperImpl implements Scoper {
         if (reachable.add(parent)) {
           // Parent was not reachable, check whether it is inScope and produce an error if not.
           if (!inScope(parent)) {
-            errorSince(2, parent,
+            errorSince(
+                2,
+                parent,
                 "Parent '%s' of visible element '%s' cannot be hidden. %s.",
-                parent.getFullName(), elem.getFullName(),
+                parent.getFullName(),
+                elem.getFullName(),
                 reasonForUnreachable(parent));
           }
         }

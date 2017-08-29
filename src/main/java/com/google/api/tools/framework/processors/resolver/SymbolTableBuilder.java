@@ -32,7 +32,6 @@ import com.google.api.tools.framework.util.VisitsBefore;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -64,9 +63,14 @@ class SymbolTableBuilder extends Visitor {
     // Add the interface to the map of known interfaces.
     Interface old = interfaces.put(endpointInterface.getFullName(), endpointInterface);
     if (old != null) {
-      model.getDiagCollector().addDiag(Diag.error(endpointInterface.getLocation(),
-          "Duplicate declaration of interface '%s'. Previous location: %s",
-          endpointInterface.getFullName(), old.getLocation().getDisplayString()));
+      model
+          .getDiagReporter()
+          .report(
+              Diag.error(
+                  endpointInterface.getLocation(),
+                  "Duplicate declaration of interface '%s'. Previous location: %s",
+                  endpointInterface.getFullName(),
+                  old.getLocation().getDisplayString()));
     }
 
     // Build the method-by-name map for this interface, and register the method simple name in the
@@ -75,9 +79,14 @@ class SymbolTableBuilder extends Visitor {
     for (Method method : endpointInterface.getMethods()) {
       Method oldMethod = methodByName.put(method.getSimpleName(), method);
       if (oldMethod != null) {
-        model.getDiagCollector().addDiag(Diag.error(method.getLocation(),
-            "Duplicate declaration of method '%s'. Previous location: %s",
-            method.getSimpleName(), oldMethod.getLocation().getDisplayString()));
+        model
+            .getDiagReporter()
+            .report(
+                Diag.error(
+                    method.getLocation(),
+                    "Duplicate declaration of method '%s'. Previous location: %s",
+                    method.getSimpleName(),
+                    oldMethod.getLocation().getDisplayString()));
       }
 
       List<Method> allMethodsOfName = methods.get(method.getSimpleName());
@@ -103,9 +112,14 @@ class SymbolTableBuilder extends Visitor {
       fieldNames.add(field.getSimpleName());
       Field old = fieldByName.put(field.getSimpleName(), field);
       if (old != null) {
-        model.getDiagCollector().addDiag(Diag.error(field.getLocation(),
-            "Duplicate declaration of field '%s'. Previous location: %s",
-            field.getSimpleName(), old.getLocation().getDisplayString()));
+        model
+            .getDiagReporter()
+            .report(
+                Diag.error(
+                    field.getLocation(),
+                    "Duplicate declaration of field '%s'. Previous location: %s",
+                    field.getSimpleName(),
+                    old.getLocation().getDisplayString()));
       }
     }
     message.setFieldByNameMap(ImmutableMap.copyOf(fieldByName));
@@ -121,9 +135,14 @@ class SymbolTableBuilder extends Visitor {
     for (EnumValue value : enumType.getValues()) {
       EnumValue old = valueByName.put(value.getSimpleName(), value);
       if (old != null) {
-        model.getDiagCollector().addDiag(Diag.error(value.getLocation(),
-            "Duplicate declaration of enum value '%s'. Previous location: %s",
-            value.getSimpleName(), old.getLocation().getDisplayString()));
+        model
+            .getDiagReporter()
+            .report(
+                Diag.error(
+                    value.getLocation(),
+                    "Duplicate declaration of enum value '%s'. Previous location: %s",
+                    value.getSimpleName(),
+                    old.getLocation().getDisplayString()));
       }
     }
     enumType.setValueByNameMap(ImmutableMap.copyOf(valueByName));
@@ -141,9 +160,14 @@ class SymbolTableBuilder extends Visitor {
     String typeName = SymbolTable.getTypeNameInSymbolTable(fullName);
     TypeRef old = types.put(typeName , type);
     if (old != null) {
-      model.getDiagCollector().addDiag(Diag.error(location,
-          "Duplicate declaration of type '%s'. Previous location: %s",
-          fullName, old.getLocation().getDisplayString()));
+      model
+          .getDiagReporter()
+          .report(
+              Diag.error(
+                  location,
+                  "Duplicate declaration of type '%s'. Previous location: %s",
+                  fullName,
+                  old.getLocation().getDisplayString()));
     }
   }
 }

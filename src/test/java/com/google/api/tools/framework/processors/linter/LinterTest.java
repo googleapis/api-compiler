@@ -18,14 +18,11 @@ package com.google.api.tools.framework.processors.linter;
 
 import com.google.api.tools.framework.model.stages.Linted;
 import com.google.api.tools.framework.model.testing.ConfigBaselineTestCase;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/**
-* Baseline tests for {@link Linter} which do not fit into a specific aspect.
-*/
+/** Baseline tests for {@link Linter} which do not fit into a specific aspect. */
 @RunWith(JUnit4.class)
 
 public class LinterTest extends ConfigBaselineTestCase {
@@ -36,7 +33,7 @@ public class LinterTest extends ConfigBaselineTestCase {
   protected Object run() throws Exception {
 
     if (warningFilter != null) {
-      model.setWarningFilter(warningFilter);
+      setWarningFilter(warningFilter);
     }
 
     // Establish stage.
@@ -45,12 +42,14 @@ public class LinterTest extends ConfigBaselineTestCase {
     return null;
   }
 
-  @Test public void ignoremapentry() throws Exception {
+  @Test
+  public void ignoremapentry() throws Exception {
     warningFilter = "documentation";
     test("ignoremapentry");
   }
 
-  @Test public void httpconfig() throws Exception {
+  @Test
+  public void httpconfig() throws Exception {
     warningFilter = "http|versioning";
     test("httpconfig");
   }

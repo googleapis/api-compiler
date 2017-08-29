@@ -1,211 +1,351 @@
 GET ListFruits /trees/{tree_id}/fruits
 ======================================================================
 Rest Kind:   LIST
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: (null)
 
 GET GetFruit /trees/{tree_id}/fruits/{fruit_id}
 ======================================================================
 Rest Kind:   GET
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: (null)
 
 PUT UpdateFruit /trees/{tree_id}/fruits/{fruit_id}
 ======================================================================
 Rest Kind:   UPDATE
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: (null)
 
 POST CreateFruit /trees/{tree_id}/fruits
 ======================================================================
 Rest Kind:   CREATE
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: (null)
 
 POST InsertFruit /trees/{tree_id}/fruits
 ======================================================================
 Rest Kind:   CREATE
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: (null)
 
 POST RipenFruit /trees/{tree_id}/fruits/{fruit_id}/ripen
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: ripen
 
 POST RipenFruit /trees/{tree_id}/fruits/{fruit_id}:ripen
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: ripen
 
 DELETE DeleteFruit /trees/{tree_id}/fruits/{fruit_id}
 ======================================================================
 Rest Kind:   DELETE
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: (null)
 
 PATCH PatchFruit /trees/{tree_id}/fruits/{fruit_id}
 ======================================================================
 Rest Kind:   PATCH
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: (null)
 
 PATCH PatchBranch /trees/{tree_id}/branch
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: patchBranch
 
 GET GetFruitDiameter /{fruit_id}/diameter
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  (empty)
+Version:  (empty)
+Version with default:  v1
+Simple collection:  (empty)
+Versioned collection:  (empty)
+Base collection:  (empty)
 Custom Name: getDiameter
 
 GET ListTrees /trees
 ======================================================================
 Rest Kind:   LIST
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: (null)
 
 GET GetTree /trees/{tree_id}
 ======================================================================
 Rest Kind:   GET
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: (null)
 
 PUT UpdateTree /trees/{tree_id}
 ======================================================================
 Rest Kind:   UPDATE
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: (null)
 
 POST CreateTree /trees
 ======================================================================
 Rest Kind:   CREATE
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: (null)
 
 POST InsertTree /trees
 ======================================================================
 Rest Kind:   CREATE
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: (null)
 
 POST ShakeTree /trees/{tree_id}/shake
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: shake
 
 POST ShakeTree /trees/{tree_id}:shake
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: shake
 
 DELETE DeleteTree /trees/{tree_id}
 ======================================================================
 Rest Kind:   DELETE
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: (null)
 
 PATCH PatchTree /trees/{tree_id}
 ======================================================================
 Rest Kind:   PATCH
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: (null)
 
 GET GetOrchardLocation /orchard/location
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  orchard
+Version:  (empty)
+Version with default:  v1
+Simple collection:  orchard
+Versioned collection:  orchard
+Base collection:  orchard
 Custom Name: getLocation
 
 PUT UpdateOrchardLocation /orchard/location
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  orchard
+Version:  (empty)
+Version with default:  v1
+Simple collection:  orchard
+Versioned collection:  orchard
+Base collection:  orchard
 Custom Name: updateLocation
 
 GET GetOrchard /orchard
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  (empty)
+Version:  (empty)
+Version with default:  v1
+Simple collection:  (empty)
+Versioned collection:  (empty)
+Base collection:  (empty)
 Custom Name: getOrchard
 
 PUT UpdateOrchard /orchard
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  (empty)
+Version:  (empty)
+Version with default:  v1
+Simple collection:  (empty)
+Versioned collection:  (empty)
+Base collection:  (empty)
 Custom Name: updateOrchard
 
 GET FindTallestTree /orchard/tallestTree
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  orchard
+Version:  (empty)
+Version with default:  v1
+Simple collection:  orchard
+Versioned collection:  orchard
+Base collection:  orchard
 Custom Name: tallestTree
 
 GET FindTrees /findTrees
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  (empty)
+Version:  (empty)
+Version with default:  v1
+Simple collection:  (empty)
+Versioned collection:  (empty)
+Base collection:  (empty)
 Custom Name: findTrees
 
 GET FindRipeFruit /trees/{tree_id}/findRipeFruit
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: findRipeFruit
 
 GET FindRipeFruit /trees/{tree_id}:findRipeFruit
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  trees
+Version:  (empty)
+Version with default:  v1
+Simple collection:  trees
+Versioned collection:  trees
+Base collection:  trees
 Custom Name: findRipeFruit
 
 GET FindWorm /trees/{tree_id}/fruits/{fruit_id}/findWorm
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  trees.fruits
+Version:  (empty)
+Version with default:  v1
+Simple collection:  fruits
+Versioned collection:  trees.fruits
+Base collection:  trees.fruits
 Custom Name: findWorm
 
 PUT CreateBush /bushes/{bush_id}
 ======================================================================
 Rest Kind:   CREATE
-Collection:  bushes
+Version:  (empty)
+Version with default:  v1
+Simple collection:  bushes
+Versioned collection:  bushes
+Base collection:  bushes
 Custom Name: (null)
 
 DELETE DeleteJenkins /projects/{project}/jenkins
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  projects
+Version:  (empty)
+Version with default:  v1
+Simple collection:  projects
+Versioned collection:  projects
+Base collection:  projects
 Custom Name: deleteJenkins
 
 GET GetFruit /v1:fruit
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  v1
+Version:  v1
+Version with default:  v1
+Simple collection:  v1
+Versioned collection:  v1
+Base collection:  (empty)
 Custom Name: getFruit
 
 PUT UpdateFruit /v1:fruit
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  v1
+Version:  v1
+Version with default:  v1
+Simple collection:  v1
+Versioned collection:  v1
+Base collection:  (empty)
 Custom Name: updateFruit
 
 DELETE DeleteFruit /v1:fruit
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  v1
+Version:  v1
+Version with default:  v1
+Simple collection:  v1
+Versioned collection:  v1
+Base collection:  (empty)
 Custom Name: deleteFruit
 
 GET GetFruit (empty)
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  *error*
+Version:  (empty)
+Version with default:  v1
+Simple collection:  *error*
+Versioned collection:  *error*
+Base collection:  *error*
 Custom Name: *error*
 Diagnostics:
   ERROR: toplevel: In path template '': unexpected end of input ''.
@@ -214,28 +354,47 @@ Diagnostics:
 GET GetFruit /
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  *error*
-Custom Name: *error*
-Diagnostics:
-  ERROR: toplevel: In path template '/': unexpected end of input '/'.
+Version:  (empty)
+Version with default:  v1
+Simple collection:  (empty)
+Versioned collection:  (empty)
+Base collection:  (empty)
+Custom Name: get
 
 GET GetFruit /:fruit
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  *error*
+Version:  (empty)
+Version with default:  v1
+Simple collection:  *error*
+Versioned collection:  *error*
+Base collection:  *error*
 Custom Name: *error*
 Diagnostics:
-  ERROR: toplevel: In path template '/:fruit': invalid token '/:' before the custom verb.
+  ERROR: toplevel: In path template '/:fruit': unexpected end of input ''.
+  ERROR: toplevel: In path template '/:fruit': effective path must start with leading '/'.
+  WARNING: toplevel: In path template '/:fruit': Token '/:' before a custom verb is not currently supported.
 
 GET MethodNotStartingWithGet /projects/{project}
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  projects
+Version:  (empty)
+Version with default:  v1
+Simple collection:  projects
+Versioned collection:  projects
+Base collection:  projects
 Custom Name: get
 
 GET MethodNotStartingWithGet /projects/{project}
 ======================================================================
 Rest Kind:   CUSTOM
-Collection:  projects
+Version:  (empty)
+Version with default:  v1
+Simple collection:  projects
+Versioned collection:  projects
+Base collection:  projects
 Custom Name: methodNotStartingWithGet
+
+
+
 

@@ -56,7 +56,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Creates service config {@link Type} from swagger models and operation parameters. This class also
+ * Creates service config {@link Type} from OpenAPI models and operation parameters. This class also
  * provides type resolution from a given type reference.
  */
 public class TypeBuilder implements AspectBuilder {
@@ -153,7 +153,7 @@ public class TypeBuilder implements AspectBuilder {
 
     if (resultTypeInfo == null) {
       /* TODO(user): Make this an error once we want to start supporting json to proto
-       * transformation for APIs imported from Swagger.*/
+       * transformation for APIs imported from OpenAPI.*/
       resultTypeInfo = WellKnownType.VALUE.toTypeInfo();
     }
 

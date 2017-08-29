@@ -1,2 +1,0 @@
-Invalid Swagger spec. Please fix the schema errors:
-"/info": domain: validation; keyword: required; message: required property(ies) not found; missing: ["version"]; required: ["title","version"]

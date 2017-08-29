@@ -26,12 +26,9 @@ import com.google.api.tools.framework.model.ProtoElement;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Key;
-
 import java.util.List;
 
-/**
- * Configuration aspect for context section.
- */
+/** Configuration aspect for context section. */
 public class ContextConfigAspect extends RuleBasedConfigAspect<ContextRule, ContextRule> {
 
   private static final ImmutableSet<String> REQUEST_CONTEXTS =
@@ -52,26 +49,23 @@ public class ContextConfigAspect extends RuleBasedConfigAspect<ContextRule, Cont
       ImmutableSet.of(
           "google.rpc.context.ConditionResponseContext", "google.rpc.context.HttpHeaderContext");
 
-  /**
-   * A private key to access context rule attributes.
-   */
+  /** A private key to access context rule attributes. */
   private static final Key<ContextRule> KEY = Key.get(ContextRule.class);
-
-  /**
-   * Creates new context config aspect.
-   */
+  /** Creates new context config aspect. */
   public static ContextConfigAspect create(Model model) {
     return new ContextConfigAspect(model);
   }
 
   ContextConfigAspect(Model model) {
-    super(model, KEY, "context", ContextRule.getDescriptor(), model.getServiceConfig()
-        .getContext().getRulesList());
+    super(
+        model,
+        KEY,
+        "context",
+        ContextRule.getDescriptor(),
+        model.getServiceConfig().getContext().getRulesList());
   }
 
-  /**
-   * Returns an empty list since this aspect does not depend on any other aspects.
-   */
+  /** Returns an empty list since this aspect does not depend on any other aspects. */
   @Override
   public List<Class<? extends ConfigAspect>> mergeDependencies() {
     return ImmutableList.of();
@@ -86,12 +80,12 @@ public class ContextConfigAspect extends RuleBasedConfigAspect<ContextRule, Cont
   protected ContextRule evaluate(ProtoElement element, ContextRule rule, boolean isFromIdl) {
     for (String context : rule.getRequestedList()) {
       if (!REQUEST_CONTEXTS.contains(context)) {
-        error(element, "Requested context header '%s' is unknown.", context);
+        error(element.getLocation(), "Requested context header '%s' is unknown.", context);
       }
     }
     for (String context : rule.getProvidedList()) {
       if (!RESPONSE_CONTEXTS.contains(context)) {
-        error(element, "Provided context header '%s' is unknown.", context);
+        error(element.getLocation(), "Provided context header '%s' is unknown.", context);
       }
     }
     return rule;
@@ -103,9 +97,10 @@ public class ContextConfigAspect extends RuleBasedConfigAspect<ContextRule, Cont
   }
 
   @Override
-  protected void addToRuleBuilder(Service.Builder serviceBuilder, String selector,
-      ContextRule attribute) {
-    serviceBuilder.getContextBuilder()
-      .addRules(attribute.toBuilder().setSelector(selector).build());
+  protected void addToRuleBuilder(
+      Service.Builder serviceBuilder, String selector, ContextRule attribute) {
+    serviceBuilder
+        .getContextBuilder()
+        .addRules(attribute.toBuilder().setSelector(selector).build());
   }
 }

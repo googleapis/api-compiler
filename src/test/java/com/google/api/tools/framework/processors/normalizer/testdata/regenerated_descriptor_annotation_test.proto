@@ -5,6 +5,7 @@ syntax = "proto2";
 package com.google.api.tools.framework.processors.normalizer.RegeneratedDescriptorTest;
 
 import "google/api/annotations.proto";
+import "google/api/visibility.proto";
 import "apiserving/proto/api.proto";
 
 message OuterMessage {

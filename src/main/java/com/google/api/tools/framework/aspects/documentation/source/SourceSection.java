@@ -16,10 +16,7 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
 import com.google.common.collect.Lists;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -31,9 +28,8 @@ public class SourceSection extends SourceElement {
   private final SectionHeader header;
   private final List<ContentElement> contents = Lists.newArrayList();
 
-  public SourceSection(SectionHeader header, int startIndex, int endIndex,
-      DiagCollector diagCollector, Location sourceLocation) {
-    super(startIndex, endIndex, diagCollector, sourceLocation);
+  public SourceSection(SectionHeader header, int startIndex, int endIndex) {
+    super(startIndex, endIndex);
     this.header = header;
   }
 

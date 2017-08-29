@@ -19,6 +19,7 @@ package com.google.api.tools.framework.tools;
 import com.google.api.tools.framework.model.BoundedDiagCollector;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.ExperimentsImpl;
 import com.google.api.tools.framework.model.ExtensionPool;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.SimpleLocation;
@@ -61,7 +62,7 @@ public class ModelBuilder {
         Model.create(
             descriptor,
             protoFileNames,
-            options.get(ToolOptions.EXPERIMENTS),
+            new ExperimentsImpl(options.get(ToolOptions.EXPERIMENTS)),
             userExtensionPool,
             diagCollector);
     if (diagCollector.hasErrors()) {

@@ -1,1 +1,1 @@
-Service name must be provided either explicitly or in Swagger 'host' value.
+Service name must be provided either explicitly or in OpenAPI 'host' value.

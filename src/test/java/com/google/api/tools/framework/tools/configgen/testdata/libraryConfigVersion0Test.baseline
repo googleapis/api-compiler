@@ -770,6 +770,8 @@ http {
     body: "*"
   }
 }
+quota {
+}
 authentication {
   rules {
     selector: "google.example.library.v1.LibraryService.CreateShelf"
@@ -918,11 +920,19 @@ context {
     requested: "google.rpc.context.ProjectContext"
   }
 }
+usage {
+}
 endpoints {
   name: "library-example.googleapis.com"
   aliases: "library-example.clients6.google.com"
   aliases: "content-library-example.googleapis.com"
   apis: "google.example.library.v1.LibraryService"
+}
+config_version {
+}
+system_parameters {
+}
+experimental {
 }
 
 ============== Successfully regenerated service config ==============

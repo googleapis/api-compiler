@@ -16,10 +16,11 @@
 
 package com.google.api.tools.framework.aspects;
 
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
 import com.google.api.tools.framework.model.Element;
 import com.google.api.tools.framework.model.Location;
 import com.google.common.base.Preconditions;
-import com.google.protobuf.Message;
 
 /**
  * Base class of lint rules, which log style violations.
@@ -29,13 +30,16 @@ import com.google.protobuf.Message;
  */
 public abstract class LintRule<E extends Element> {
 
+  /** A prefix to be used in diag messages representing linter warnings. */
+  public static final String DIAG_PREFIX = "(lint) %s-%s: ";
+
   private final ConfigAspectBase aspect;
   private final String ruleName;
   private final Class<E> elemClass;
 
   /**
-   * Constructs a lint rule applicable to the specified model element class. All
-   * lint warnings emitted by the rule use the passed rule name.
+   * Constructs a lint rule applicable to the specified model element class. All lint warnings
+   * emitted by the rule use the passed rule name.
    */
   protected LintRule(ConfigAspectBase aspect, String ruleName, Class<E> elemClass) {
     this.aspect = Preconditions.checkNotNull(aspect);
@@ -43,44 +47,36 @@ public abstract class LintRule<E extends Element> {
     this.elemClass = Preconditions.checkNotNull(elemClass);
   }
 
-  /**
-   * Gets the element class this rule works on.
-   */
+  /** Gets the element class this rule works on. */
   public Class<E> getElementClass() {
     return elemClass;
   }
 
-  /**
-   * Gets the name of the rule used in diagnosis.
-   */
+  /** Gets the name of the rule used in diagnosis. */
   public String getName() {
     return ruleName;
   }
 
   /**
-   * Runs the rule. All issues should be reported using the
-   * {@link #warning(Object, String, Object...)} method.
+   * Runs the rule. All issues should be reported using the {@link #warning(Location, String,
+   * Object...)} methods.
    */
   public abstract void run(E element);
 
-  /**
-   * Logs a lint warning.
-   */
-  protected void warning(Object element, String message, Object... params) {
-    aspect.lintWarning(ruleName, element, message, params);
+  /** Logs a lint warning. */
+  protected void warning(Location location, String message, Object... params) {
+    warning(ResolvedLocation.create(location), message, params);
   }
 
-  /**
-   * Returns the service config file location of the given named field in the (sub)message.
-   */
-  public Location getLocationInConfig(Message message, String fieldName) {
-    return aspect.getLocationInConfig(message, fieldName);
+  /** Logs a lint warning. */
+  protected void warning(LocationContext locationContext, String message, Object... params) {
+    String prefix = String.format(DIAG_PREFIX, aspect.getAspectName(), ruleName);
+    aspect.getDiagReporter().reportWarning(locationContext, prefix + message, params);
   }
 
-  /**
-   * Returns the service config file location of the given field number in the (sub)message.
-   */
-  public Location getLocationInConfig(Message message, int fieldNumber) {
-    return aspect.getLocationInConfig(message, fieldNumber);
+  public static String formatLintWarning(
+      String message, String ruleName, String aspectName, Object... params) {
+    String prefix = String.format(DIAG_PREFIX, aspectName, ruleName);
+    return String.format(prefix + message, params);
   }
 }

@@ -1,3 +1,5 @@
+documentation {
+}
 system_parameters {
   rules {
     selector: "protiary.test.TestService.Call1"

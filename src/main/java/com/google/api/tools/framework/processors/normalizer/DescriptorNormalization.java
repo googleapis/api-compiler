@@ -50,7 +50,6 @@ import com.google.protobuf.Option;
 import com.google.protobuf.StringValue;
 import com.google.protobuf.UInt32Value;
 import com.google.protobuf.UInt64Value;
-
 import java.util.List;
 import java.util.Map;
 
@@ -70,35 +69,35 @@ public final class DescriptorNormalization {
         }
   };
 
-  private static final List<FieldDescriptor> DEFAULT_ENUM_OPTIONS =
+  private static final ImmutableList<FieldDescriptor> DEFAULT_ENUM_OPTIONS =
       FluentIterable.from(EnumOptions.getDescriptor().getFields())
-      .filter(HAS_DEFAULT_VALUE)
-      .toList();
+          .filter(HAS_DEFAULT_VALUE)
+          .toList();
 
-  private static final List<FieldDescriptor> DEFAULT_ENUM_VALUE_OPTIONS =
+  private static final ImmutableList<FieldDescriptor> DEFAULT_ENUM_VALUE_OPTIONS =
       FluentIterable.from(EnumValueOptions.getDescriptor().getFields())
-      .filter(HAS_DEFAULT_VALUE)
-      .toList();
+          .filter(HAS_DEFAULT_VALUE)
+          .toList();
 
-  private static final List<FieldDescriptor> DEFAULT_FIELD_OPTIONS =
+  private static final ImmutableList<FieldDescriptor> DEFAULT_FIELD_OPTIONS =
       FluentIterable.from(FieldOptions.getDescriptor().getFields())
-      .filter(HAS_DEFAULT_VALUE)
-      .toList();
+          .filter(HAS_DEFAULT_VALUE)
+          .toList();
 
-  private static final List<FieldDescriptor> DEFAULT_MESSAGE_OPTIONS =
+  private static final ImmutableList<FieldDescriptor> DEFAULT_MESSAGE_OPTIONS =
       FluentIterable.from(MessageOptions.getDescriptor().getFields())
-      .filter(HAS_DEFAULT_VALUE)
-      .toList();
+          .filter(HAS_DEFAULT_VALUE)
+          .toList();
 
-  private static final List<FieldDescriptor> DEFAULT_METHOD_OPTIONS =
+  private static final ImmutableList<FieldDescriptor> DEFAULT_METHOD_OPTIONS =
       FluentIterable.from(MethodOptions.getDescriptor().getFields())
-      .filter(HAS_DEFAULT_VALUE)
-      .toList();
+          .filter(HAS_DEFAULT_VALUE)
+          .toList();
 
-  private static final List<FieldDescriptor> DEFAULT_SERVICE_OPTIONS =
+  private static final ImmutableList<FieldDescriptor> DEFAULT_SERVICE_OPTIONS =
       FluentIterable.from(ServiceOptions.getDescriptor().getFields())
-      .filter(HAS_DEFAULT_VALUE)
-      .toList();
+          .filter(HAS_DEFAULT_VALUE)
+          .toList();
 
   public static List<Option> getOptions(EnumDescriptorProto descriptor) {
     return getOptions(descriptor, true);

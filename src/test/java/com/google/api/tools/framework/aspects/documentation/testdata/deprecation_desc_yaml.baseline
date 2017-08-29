@@ -1,9 +1,3 @@
-WARNING: (lint) documentation-presence: 'message protiary.test.Message' has no documentation, neither in IDL nor config.
-WARNING: (lint) documentation-presence: 'string protiary.test.Message.field' has no documentation, neither in IDL nor config.
-WARNING: (lint) documentation-presence: 'api protiary.test.Service' has no documentation, neither in IDL nor config.
-WARNING: (lint) documentation-deprecation: 'method protiary.test.Service.Rpc1' is not marked deprecated=true, so its deprecation_description will be ignored.
-WARNING: (lint) documentation-deprecation: 'method protiary.test.Service.Rpc2' is not marked deprecated=true, so its deprecation_description will be ignored.
-WARNING: (lint) documentation-presence: 'method protiary.test.Service.Rpc4' has no documentation, neither in IDL nor config.
 documentation {
   rules {
     selector: "protiary.test"
@@ -30,5 +24,9 @@ documentation {
   pages {
     name: "Overview"
   }
+}
+http {
+}
+quota {
 }
 

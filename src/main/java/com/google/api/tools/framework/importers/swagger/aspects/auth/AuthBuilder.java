@@ -22,12 +22,12 @@ import com.google.api.AuthenticationRule;
 import com.google.api.Service;
 import com.google.api.Usage;
 import com.google.api.UsageRule;
-import com.google.api.tools.framework.importers.swagger.SwaggerLocations;
+import com.google.api.tools.framework.importers.swagger.OpenApiLocations;
 import com.google.api.tools.framework.importers.swagger.aspects.AspectBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.model.SecurityRequirementModel;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.ExtensionNames;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.NameConverter;
-import com.google.api.tools.framework.importers.swagger.aspects.utils.SwaggerUtils;
+import com.google.api.tools.framework.importers.swagger.aspects.utils.OpenApiUtils;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.VendorExtensionUtils;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagCollector;
@@ -41,6 +41,7 @@ import io.swagger.models.SecurityRequirement;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.In;
+import io.swagger.models.auth.OAuth2Definition;
 import io.swagger.models.auth.SecuritySchemeDefinition;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -91,7 +92,9 @@ public final class AuthBuilder implements AspectBuilder {
     if (securitySchema == null) {
       return;
     }
+
     if (securitySchema.getType().equalsIgnoreCase("oauth2")) {
+      OAuth2Definition oauthSchema = (OAuth2Definition) securitySchema;
       AuthProvider.Builder authProviderBuilder = AuthProvider.newBuilder();
       authProviderBuilder.setId(securitySchemaName);
       String oauthIssuerSwaggerExtensionUsed =
@@ -112,7 +115,9 @@ public final class AuthBuilder implements AspectBuilder {
           authProviderBuilder.setIssuer(oauthIssuerSwaggerExtensionObject);
         }
       }
-
+      if (oauthSchema.getAuthorizationUrl() != null) {
+        authProviderBuilder.setAuthorizationUrl(oauthSchema.getAuthorizationUrl());
+      }
       String jwksSwaggerExtensionUsed =
           VendorExtensionUtils.usedExtension(
               diagCollector,
@@ -182,10 +187,10 @@ public final class AuthBuilder implements AspectBuilder {
         isApiKeyRequired(openApiSecurityObject, requiresApiKeyAtTopLevel, apiKeyDefinitions);
     if (!perMethodApiKeyRequired) {
       // TODO(): Remove this check once we have warnings suppression implemented.
-      if (!swaggerPath.equals(SwaggerUtils.WILDCARD_URL_PATH)) {
+      if (!swaggerPath.equals(OpenApiUtils.WILDCARD_URL_PATH)) {
         diagCollector.addDiag(
             Diag.warning(
-                SwaggerLocations.createOperationLocation(operationType, swaggerPath),
+                OpenApiLocations.createOperationLocation(operationType, swaggerPath),
                 "Operation does not require an API key; callers may invoke the method "
                     + "without specifying an associated API-consuming project. "
                     + "To enable API key all the SecurityRequirement Objects "
@@ -273,7 +278,7 @@ public final class AuthBuilder implements AspectBuilder {
                 ? Iterables.transform(swagger.getSecurity(), SecurityRequirementsExtractor.INSTANCE)
                 : null,
             swagger.getVendorExtensions(),
-            new SimpleLocation("Swagger Spec"));
+            new SimpleLocation("OpenAPI"));
     if (authRequirements != null && !authRequirements.isEmpty()) {
       builder.addAllRequirements(SecurityRequirementModel.createAuthRequirements(authRequirements));
       builder.setSelector("*");
@@ -311,4 +316,3 @@ public final class AuthBuilder implements AspectBuilder {
     }
   }
 }
-

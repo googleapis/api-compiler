@@ -1,0 +1,46 @@
+documentation {
+  rules {
+    selector: "Message"
+    description: "A message."
+  }
+  rules {
+    selector: "Service.Rpc"
+    description: "(-- Rpc uses a wrong rpc name but the warning is suppressed. --)"
+  }
+  rules {
+    selector: "Service.Rpc1"
+    description: "(-- Another way to suppress the warning. --)"
+  }
+  pages {
+    name: "Overview"
+  }
+}
+http {
+  rules {
+    selector: "Service.Rpc"
+    get: "/v1/nonconforming"
+  }
+  rules {
+    selector: "Service.Rpc1"
+    get: "/v1/nonconforming1"
+  }
+  rules {
+    selector: "Service.Rpc2"
+    get: "/v1/nonconforming1"
+  }
+  rules {
+    selector: "Service.Rpc3"
+    get: "/v2/nonconforming1"
+  }
+  rules {
+    selector: "Service.Rpc4"
+    get: "/v2/nonconforming2"
+  }
+  rules {
+    selector: "Service.Rpc5"
+    get: "/v1/nonconforming2"
+  }
+}
+quota {
+}
+

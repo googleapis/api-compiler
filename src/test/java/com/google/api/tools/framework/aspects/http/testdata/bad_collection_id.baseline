@@ -1,4 +1,5 @@
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.bad_name_binding.TestService.Call1' should specify a body.
+documentation {
+}
 http {
   rules {
     selector: "protiary.test.bad_name_binding.TestService.Call1"

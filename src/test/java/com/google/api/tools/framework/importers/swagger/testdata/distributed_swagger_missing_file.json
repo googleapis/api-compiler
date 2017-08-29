@@ -1,0 +1,43 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.cloud.goog",
+     "paths": {
+        "/v1/pets/{name}": {
+            "post": {
+                "operationId": "simpleMethod",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/SimpleDefRef"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "General Error",
+                        "schema": {
+                            "$ref": "./distributed_shared_json.json"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "SimpleDefRef": {
+            "$ref": "./missing_file.json#/sharedSchema3"
+        }
+    }
+}

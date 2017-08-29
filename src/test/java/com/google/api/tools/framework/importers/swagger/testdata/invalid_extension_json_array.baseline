@@ -1,0 +1,2 @@
+ERROR: invalid_extension_json_array.json: x-google-endpoints: The extension x-google-endpoints does not match the schema. It should be a json array. Please refer to documentation of the extension.
+Service config creation failed

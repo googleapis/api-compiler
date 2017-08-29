@@ -38,6 +38,7 @@ import com.google.protobuf.DescriptorProtos.MessageOptions;
 import com.google.protobuf.DescriptorProtos.MethodDescriptorProto;
 import com.google.protobuf.DescriptorProtos.MethodOptions;
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto;
+import com.google.protobuf.DescriptorProtos.ServiceOptions;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Enum;
@@ -64,6 +65,7 @@ import java.util.regex.Pattern;
  */
 public class DescriptorGenerator {
 
+  private static final String SERVICE_OPTION_NAME_PREFIX = "proto2.ServiceOptions.";
   private static final String FIELD_OPTION_NAME_PREFIX = "proto2.FieldOptions.";
   private static final String METHOD_OPTION_NAME_PREFIX = "proto2.MethodOptions.";
   private static final String TYPE_OPTION_NAME_PREFIX = "proto2.MessageOptions.";
@@ -187,7 +189,16 @@ public class DescriptorGenerator {
     for (Method method : api.getMethodsList()) {
       builder.addMethod(generateMethod(method));
     }
+    if (!api.getOptionsList().isEmpty()) {
+      builder.setOptions(generateServiceOptions(api));
+    }
     return builder.build();
+  }
+
+  private ServiceOptions generateServiceOptions(Api api) {
+    ServiceOptions.Builder serviceOptionsBuilder = ServiceOptions.newBuilder();
+    setOptions(serviceOptionsBuilder, api.getOptionsList(), SERVICE_OPTION_NAME_PREFIX);
+    return serviceOptionsBuilder.build();
   }
 
   private MethodDescriptorProto generateMethod(Method method) {

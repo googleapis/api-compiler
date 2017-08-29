@@ -21,14 +21,16 @@ import com.google.api.Service.Builder;
 import com.google.api.Usage;
 import com.google.api.UsageRule;
 import com.google.api.tools.framework.aspects.ConfigAspectBase;
+import com.google.api.tools.framework.aspects.LintRule;
 import com.google.api.tools.framework.aspects.RuleBasedConfigAspect;
 import com.google.api.tools.framework.model.ConfigAspect;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
 import com.google.api.tools.framework.model.Method;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Key;
-
 import java.util.List;
 
 /**
@@ -52,9 +54,14 @@ public class UsageConfigAspect extends RuleBasedConfigAspect<UsageRule, UsageRul
    */
   private static final Key<Usage> USAGE_KEY = Key.get(Usage.class);
   private static final Key<UsageRule> UNREGISTERED_CALL_KEY = Key.get(UsageRule.class);
+  public static final String NAME = "usage";
 
   private UsageConfigAspect(Model model) {
-    super(model, UNREGISTERED_CALL_KEY, "usage", UsageRule.getDescriptor(),
+    super(
+        model,
+        UNREGISTERED_CALL_KEY,
+        NAME,
+        UsageRule.getDescriptor(),
         model.getServiceConfig().getUsage().getRulesList());
     registerLintRuleName(UNSUPPORTED_REQUIREMENT_RULE);
   }
@@ -72,21 +79,23 @@ public class UsageConfigAspect extends RuleBasedConfigAspect<UsageRule, UsageRul
     getModel().putAttribute(USAGE_KEY, getModel().getServiceConfig().getUsage());
     for (int i = 0; i < getModel().getServiceConfig().getUsage().getRequirementsCount(); ++i) {
       validateRequirement(
-          getModel().getLocationOfRepeatedFieldInConfig(
-              getModel().getServiceConfig().getUsage(), "requirements", i),
+          MessageLocationContext.createForRepeatedByFieldName(
+              getModel().getServiceConfig().getUsage(), Usage.REQUIREMENTS_FIELD_NUMBER, i),
           getModel().getServiceConfig().getUsage().getRequirements(i));
     }
     super.startMerging();
   }
 
-  private void validateRequirement(Object elementOrLocation, String requirement) {
+  private void validateRequirement(LocationContext location, String requirement) {
     if (requirement.equals(BILLING_REQUIREMENT)
         || requirement.startsWith(TOS_REQUIREMENT_PREFIX)) {
       return;
     }
-
-   lintWarning(UNSUPPORTED_REQUIREMENT_RULE, elementOrLocation,
-       "Unsupported usage requirement: %s", requirement);
+    String message =
+        LintRule.formatLintWarning(
+            "Unsupported usage requirement: %s",
+            UNSUPPORTED_REQUIREMENT_RULE, getAspectName(), requirement);
+    getDiagReporter().reportWarning(location, message);
   }
 
   @Override

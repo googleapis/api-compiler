@@ -1,0 +1,2 @@
+ERROR: x-google-endpoints-with-mismatched-name.json: x-google-endpoints: OpenAPI spec is invalid. The endpoint name: 'mismatched-name.endpoints.test-project.cloud.goog' defined in the extension 'x-google-endpoints' is different than the host name: 'library-example.endpoints.test-project.cloud.goog'. Please use the host name as the endpoint name.
+Service config creation failed

@@ -19,7 +19,6 @@ package com.google.api.tools.framework.processors.normalizer;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.stages.Normalized;
 import com.google.api.tools.framework.model.testing.ConfigBaselineTestCase;
-
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -43,13 +42,13 @@ public class NormalizerTest extends ConfigBaselineTestCase {
   protected Object run() throws Exception {
 
     if (suppressAllWarnings) {
-      model.suppressAllWarnings();
+      model.getDiagReporter().getDiagSuppressor().suppressAllWarningsUnder(model);
     }
 
     // Establish stage.
     model.establishStage(Normalized.KEY);
 
-    if (model.getDiagCollector().hasErrors()) {
+    if (model.getDiagReporter().getDiagCollector().hasErrors()) {
       return null;
     }
 

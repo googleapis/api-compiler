@@ -1,0 +1,15 @@
+syntax = "proto3";
+package protiary.test;
+
+option java_package = "com.google.api.server.tools.protiary";
+
+message In {
+}
+
+message Out {
+}
+
+service TestService {
+  // Call1
+  rpc Call1 (In) returns (Out);
+}

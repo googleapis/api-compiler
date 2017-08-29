@@ -27,6 +27,10 @@ public final class ExtensionNames {
   // endpoints
   public static final String ENDPOINTS_EXTENSION_NAME = addGooglePrefix("endpoints");
 
+  // authorization
+  public static final String AUTHORIZATION_EXTENSION_NAME =
+      addGooglePrefix("experimental-authorization");
+
   // authentication
   public static final String JWKS_SWAGGER_EXTENSION_LEGACY = "x-jwks_uri";
   public static final String OAUTH_ISSUER_SWAGGER_EXTENSION_LEGACY = "x-issuer";
@@ -34,8 +38,13 @@ public final class ExtensionNames {
   public static final String OAUTH_ISSUER_SWAGGER_EXTENSION = addGooglePrefix("issuer");
   public static final String AUDIENCES_SWAGGER_EXTENSION = addGooglePrefix("audiences");
 
+  // api management
+  public static final String MANAGEMENT_SWAGGER_EXTENSION = addGooglePrefix("management");
+
   // allow unregistered calls
   public static final String X_GOOGLE_ALLOW = addGooglePrefix("allow");
+
+  public static final String X_GOOGLE_DEPRECATED = addGooglePrefix("deprecated");
 
   private static String addGooglePrefix(String extensionShortName) {
     return GOOGLE_EXTENSION_PREFIX + extensionShortName;

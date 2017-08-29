@@ -1,0 +1,37 @@
+name: "library-example.cloud.goog"
+title: "Google Example Library API"
+apis {
+  name: "v1.library_example_cloud_goog"
+  version: "v1"
+  source_context {
+    file_name: "x_google_experimental_authorization.json"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+}
+quota {
+}
+authentication {
+}
+context {
+}
+usage {
+}
+endpoints {
+  name: "library-example.cloud.goog"
+  apis: "v1.library_example_cloud_goog"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
+}
+experimental {
+  authorization {
+    provider: "firebaserules.googleapis.com"
+  }
+}
+

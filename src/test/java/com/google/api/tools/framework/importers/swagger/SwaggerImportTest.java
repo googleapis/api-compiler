@@ -98,8 +98,8 @@ public class SwaggerImportTest extends BaselineTestCase {
         String swaggerSpec = testDataLocator.readTestData(fileUrl);
         fileContents.add(FileWrapper.create(fileName, swaggerSpec));
       }
-      SwaggerToService swaggerToService =
-          new SwaggerToService(fileContents.build(), serviceName, typeNamespace, additional);
+      OpenApiToService swaggerToService =
+          new OpenApiToService(fileContents.build(), serviceName, typeNamespace, additional);
       Service service = swaggerToService.createServiceConfig();
 
       int errorCount = 0;
@@ -130,13 +130,19 @@ public class SwaggerImportTest extends BaselineTestCase {
           printableServiceBuilder.addEnums(service.getEnums(i).toBuilder());
         }
       }
+
       // Remove the config version too.
       printableServiceBuilder.clearConfigVersion();
+      // This is a temporary hack, and https://b/34954570 is created to remove the hack.
+      if (!printableServiceBuilder.hasExperimental()) {
+        printableServiceBuilder.getExperimentalBuilder().clearAuthorization();
+      }
       printableServiceBuilder =
           ServiceConfigTestingUtil.clearIrrelevantData(printableServiceBuilder);
       testOutput().println(TextFormatForTest.INSTANCE.printToString(printableServiceBuilder));
 
     } catch (Exception e) {
+      e.printStackTrace();
       testOutput().println(e.getMessage());
       return;
     }
@@ -236,6 +242,11 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void distributed_swagger_missing_file() throws Exception {
+    testWithDefaults("distributed_swagger_missing_file");
+  }
+
+  @Test
   public void invalid_swagger() throws Exception {
     testWithDefaults("invalid_swagger");
   }
@@ -276,6 +287,11 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void operation_name_slash() throws Exception {
+    testWithDefaults("operation_name_slash");
+  }
+
+  @Test
   public void yml_extension() throws Exception {
     testWithDefaults("yml_extension");
   }
@@ -283,6 +299,11 @@ public class SwaggerImportTest extends BaselineTestCase {
   @Test
   public void invalid_vendor_extension_type() throws Exception {
     testWithDefaults("invalid_vendor_extension_type");
+  }
+
+  @Test
+  public void invalid_extension_json_array() throws Exception {
+    testWithDefaults("invalid_extension_json_array");
   }
 
   @Test
@@ -311,8 +332,38 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void x_google_experimental_authorization() throws Exception {
+    testWithDefaults("x_google_experimental_authorization");
+  }
+
+  @Test
+  public void x_google_experimental_authorization_invalid() throws Exception {
+    testWithDefaults("x_google_experimental_authorization_invalid");
+  }
+
+  @Test
   public void x_google_endpoints() throws Exception {
     testWithDefaults("x-google-endpoints");
+  }
+
+  @Test
+  public void x_google_endpoints_with_ip() throws Exception {
+    testWithDefaults("x-google-endpoints-with-ip");
+  }
+
+  @Test
+  public void x_google_endpoints_with_cname() throws Exception {
+    testWithDefaults("x-google-endpoints-with-cname");
+  }
+
+  @Test
+  public void x_google_endpoints_with_mismatched_name() throws Exception {
+    testWithDefaults("x-google-endpoints-with-mismatched-name");
+  }
+
+  @Test
+  public void x_google_endpoints_with_multiple_entries() throws Exception {
+    testWithDefaults("x-google-endpoints-with-multiple-entries");
   }
 
   @Test
@@ -326,18 +377,13 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
-  public void x_google_invalid_array_type() throws Exception {
-    testWithDefaults("x-google-invalid-array-type");
-  }
-
-  @Test
   public void x_google_invalid_unknown_field() throws Exception {
     testWithDefaults("x-google-invalid-unknown-field");
   }
 
   @Test
-  public void library_example_yaml() throws Exception {
-    testWithDefaults("library_example_yaml");
+  public void api_deprecated_false() throws Exception {
+    testWithDefaults("api_deprecated_false");
   }
 
   @Test
@@ -368,6 +414,20 @@ public class SwaggerImportTest extends BaselineTestCase {
         EMPTY_VISIBILITY_LABELS,
         ImmutableList.of("invalid_extension"),
         NO_ADDITIONAL_CONFIGS);
+  }
+
+  @Test
+  public void compiler_warning() throws Exception {
+    test(
+        "",
+        "",
+        EMPTY_VISIBILITY_LABELS,
+        ImmutableList.of("compiler_warning"),
+        ImmutableList.of(
+            FileWrapper.create(
+                "compiler_warning.yaml",
+                testDataLocator.readTestData(
+                    getFileResourceUrl("compiler_warning.yaml")))));
   }
 
   @Test

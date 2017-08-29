@@ -2,3 +2,4 @@ type: google.api.Service
 config_version: 3
 name: foobar.googleprod.com
 title: Google Foobar
+experimental:

@@ -1,6 +1,3 @@
-WARNING: (lint) documentation-presence: 'message protiary.test.Message' has no documentation, neither in IDL nor config.
-WARNING: (lint) documentation-presence: 'string protiary.test.Message.field' has no documentation, neither in IDL nor config.
-WARNING: (lint) documentation-presence: 'api protiary.test.Service1' has no documentation, neither in IDL nor config.
 documentation {
   rules {
     selector: "protiary.test"
@@ -27,5 +24,9 @@ documentation {
   pages {
     name: "Overview"
   }
+}
+http {
+}
+quota {
 }
 

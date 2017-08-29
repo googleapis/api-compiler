@@ -16,12 +16,12 @@
 
 package com.google.api.tools.framework.aspects.http.model;
 
-import com.google.api.tools.framework.aspects.versioning.model.ApiVersionUtil;
 import com.google.api.tools.framework.model.Element;
 import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.TypeRef;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -49,14 +49,16 @@ public class CollectionAttribute extends Element {
       Key.get(new TypeLiteral<List<CollectionAttribute>>() {});
 
   private final Model model;
-  private final String name;
+  private String name;
+  private final String version;
   private final ListMultimap<String, RestMethod> methods = ArrayListMultimap.create();
   private TypeRef resourceType;
   private CollectionAttribute parent;
 
-  public CollectionAttribute(Model model, String name) {
+  public CollectionAttribute(Model model, String name, String version) {
     this.model = model;
     this.name = name;
+    this.version = version;
   }
 
   @Override
@@ -71,12 +73,19 @@ public class CollectionAttribute extends Element {
 
   @Override
   public String getSimpleName() {
-    return name;
+    String fullName = getFullName();
+    return Strings.isNullOrEmpty(fullName) ? "" : fullName.substring(fullName.lastIndexOf('.') + 1);
   }
 
   @Override
   public String getFullName() {
-    return getSimpleName();
+    return versionedCollectionName(version, name);
+  }
+
+  public static String versionedCollectionName(String version, String baseCollectionName) {
+    String sep =
+        Strings.isNullOrEmpty(version) || Strings.isNullOrEmpty(baseCollectionName) ? "" : ".";
+    return version + sep + baseCollectionName;
   }
 
   /** Returns the methods associated with this collection. */
@@ -90,11 +99,25 @@ public class CollectionAttribute extends Element {
     }
     Collections.sort(
         result,
+        // Sort first on RPC method name, then on primary binding, then on REST name
         new Comparator<RestMethod>() {
-
           @Override
           public int compare(RestMethod o1, RestMethod o2) {
-            return o1.getFullName().compareTo(o2.getFullName());
+            int nameComparison = o1.getFullName().compareTo(o2.getFullName());
+            if (nameComparison != 0) {
+              return nameComparison;
+            }
+
+            boolean o1Primary = RestMethod.getPrimaryRestMethod(o1.getBaseMethod()).equals(o1);
+            boolean o2Primary = RestMethod.getPrimaryRestMethod(o2.getBaseMethod()).equals(o2);
+            if (o1Primary && !o2Primary) {
+              return -1;
+            } else if (o2Primary && !o1Primary) {
+              return 1;
+            } else {
+              return o1.getRestFullMethodNameNoVersion()
+                  .compareTo(o2.getRestFullMethodNameNoVersion());
+            }
           }
         });
     return result;
@@ -158,15 +181,19 @@ public class CollectionAttribute extends Element {
    * default "v1" will be returned.
    */
   public String getVersionWithDefault() {
-    return ApiVersionUtil.extractDefaultMajorVersionFromRestName(getFullName());
+    return Strings.isNullOrEmpty(version) ? "v1" : version;
+  }
+
+  /** Returns the base collection name, without version. */
+  public String getBaseName() {
+    return name;
   }
 
   /**
-   * Returns the full name with version prefix stripped if the full name has it. Returns empty if
-   * there is no collection specified in the url.
+   * Mutates the collection name.
    */
-  public String getFullNameNoVersion() {
-    return ApiVersionUtil.stripVersionFromRestName(getFullName());
+  public void setName(String name) {
+    this.name = name;
   }
 
   /**

@@ -1,0 +1,2 @@
+ERROR: x_google_experimental_authorization_invalid.json: x-google-experimental-authorization: Extension x-google-experimental-authorization cannot be converted into proto type google.api.AuthorizationConfig. Details: Cannot find field: wrong_attr in message google.api.AuthorizationConfig
+Service config creation failed

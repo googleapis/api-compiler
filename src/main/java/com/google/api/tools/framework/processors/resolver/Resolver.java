@@ -46,11 +46,11 @@ public class Resolver implements Processor {
 
   @Override
   public boolean run(Model model) {
-    int oldErrorCount = model.getDiagCollector().getErrorCount();
+    int oldErrorCount = model.getDiagReporter().getDiagCollector().getErrorCount();
     SymbolTable symbolTable = new SymbolTableBuilder(model).run();
     model.setSymbolTable(symbolTable);
     new ReferenceResolver(model, symbolTable).run();
-    if (oldErrorCount == model.getDiagCollector().getErrorCount()) {
+    if (oldErrorCount == model.getDiagReporter().getDiagCollector().getErrorCount()) {
       // No new errors produced -- success.
       model.putAttribute(Resolved.KEY, new Resolved());
       return true;

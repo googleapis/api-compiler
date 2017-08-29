@@ -86,7 +86,7 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
               }
             })), Pattern.DOTALL);
     int processedIndex = 0;
-    for (final Diag diag : model.getDiagCollector().getDiags()) {
+    for (final Diag diag : model.getDiagReporter().getDiagCollector().getDiags()) {
       ++processedIndex;
       if (diag.getKind() != Diag.Kind.ERROR
           && !messagePattern.matcher(diag.getMessage()).matches()) {
@@ -94,7 +94,7 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
       }
       printDiag(diag);
     }
-    if (model.getDiagCollector().hasErrors()) {
+    if (model.getDiagReporter().getDiagCollector().hasErrors()) {
       // Don't continue with normalization because that could crash.
       return null;
     }
@@ -111,7 +111,7 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
     new Normalizer().normalizeAspects(model, baselineAspects, config);
 
     // Start from processedIndex so that we don't print the warnings that we already printed out.
-    List<Diag> diags = model.getDiagCollector().getDiags();
+    List<Diag> diags = model.getDiagReporter().getDiagCollector().getDiags();
     for (int i = processedIndex; i < diags.size(); ++i) {
       final Diag diag = diags.get(i);
       if (diag.getKind() != Diag.Kind.ERROR
@@ -120,7 +120,7 @@ public abstract class ConfigAspectBaselineTestCase extends ConfigBaselineTestCas
       }
      printDiag(diag);
     }
-    if (model.getDiagCollector().hasErrors()) {
+    if (model.getDiagReporter().getDiagCollector().hasErrors()) {
       // Don't continue because that could crash.
       return null;
     }

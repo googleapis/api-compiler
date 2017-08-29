@@ -495,6 +495,8 @@ http {
     post: "/v1/buckets/{bucket_name.bucket_id}/objects/createAllParams"
   }
 }
+quota {
+}
 authentication {
   rules {
     selector: "protiary.test.Storage.GetBucket"
@@ -610,6 +612,8 @@ context {
     requested: "google.rpc.context.AbuseContext"
   }
 }
+usage {
+}
 endpoints {
   name: "blob.googleapis.com"
   aliases: "blob.clients6.google.com"
@@ -622,3 +626,8 @@ config_version {
 control {
   environment: "servicecontrol.googleapis.com"
 }
+system_parameters {
+}
+experimental {
+}
+

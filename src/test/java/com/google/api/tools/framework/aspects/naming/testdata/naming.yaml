@@ -1,7 +1,10 @@
 type: google.api.Service
 config_version: 3
-name: blob.google_apis.com
+name: blob.google_apis.googleapis.com  # Invalid name
 apis:
-- name: protiary.test.Storage
-- name: protiary.test.StorageIdentifier
+- name: protiary.test.NamingService
+- name: protiary.test.camelCaseServiceName
+- name: protiary.test.CapsCamelCaseServiceName
+- name: protiary.test.snake_case_service_name
+- name: protiary.test.CAPS_SNAKE_CASE_SERVICE_NAME
 

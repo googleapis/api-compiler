@@ -1,0 +1,64 @@
+WARNING: operation_name_slash.json: Operation 'get' in path '/': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+name: "library-example.cloud.goog"
+title: "Google Example Library API"
+apis {
+  name: "v1.library_example_cloud_goog"
+  methods {
+    name: "SimpleMethod"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  version: "v1"
+  source_context {
+    file_name: "operation_name_slash.json"
+  }
+}
+types {
+  name: "namespace.types.SimpleDef"
+  fields {
+    kind: TYPE_STRING
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_string_a"
+    json_name: "myStringA"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
+    get: "/"
+  }
+}
+quota {
+}
+authentication {
+  rules {
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
+  }
+}
+context {
+}
+usage {
+  rules {
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
+    allow_unregistered_calls: true
+  }
+}
+endpoints {
+  name: "library-example.cloud.goog"
+  apis: "v1.library_example_cloud_goog"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
+}
+experimental {
+}
+

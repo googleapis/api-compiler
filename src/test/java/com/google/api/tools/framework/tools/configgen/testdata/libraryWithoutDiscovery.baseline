@@ -1,4 +1,3 @@
-WARNING: toplevel: The api_service name {} does not match the base service name {library-example} of {library-example.googleapis.com}.
 WARNING: toplevel: (lint) control-presence: Service library-example.googleapis.com does not have control environment configured.
 WARNING: library_without_discovery.yaml:2: (lint) versioning-config: Specified config_version value '2' is not equal to the current default value '3'. Consider changing this value to the default config version.
 ============== file: normalized config without derived data ==============
@@ -7,7 +6,15 @@ title: "Google Example Library API"
 documentation {
   summary: "A simple Google Example Library API."
 }
+http {
+}
+quota {
+}
 authentication {
+}
+context {
+}
+usage {
 }
 endpoints {
   name: "library-example.googleapis.com"
@@ -16,6 +23,10 @@ endpoints {
 }
 config_version {
   value: 2
+}
+system_parameters {
+}
+experimental {
 }
 
 ============== Successfully regenerated service config ==============

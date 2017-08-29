@@ -1,0 +1,2 @@
+ERROR: x-google-endpoints-with-multiple-entries.json: x-google-endpoints: OpenAPI spec is invalid. Multiple endpoint entries are defined in the extension 'x-google-endpoints'. At most one entry is allowed.
+Service config creation failed

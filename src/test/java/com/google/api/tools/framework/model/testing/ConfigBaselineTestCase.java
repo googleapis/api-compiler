@@ -18,13 +18,16 @@ package com.google.api.tools.framework.model.testing;
 
 import com.google.api.Service;
 import com.google.api.tools.framework.model.Diag;
+import com.google.api.tools.framework.model.ExperimentsImpl;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.testing.TestModelGenerator.ModelTestInfo;
 import com.google.api.tools.framework.setup.StandardSetup;
 import com.google.api.tools.framework.snippet.Doc;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 import java.io.File;
 import java.io.IOException;
@@ -57,6 +60,12 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
    * files.
    */
   protected boolean showDiagLocation = true;
+
+  /**
+   * Map of regex Pattern to the replacement strings to be used for sanitizing/stabilizing diag
+   * message strings.
+   */
+  protected Map<String, String> diagPatternReplacements = ImmutableMap.of();
 
   /** List of suppression directives that should be added to the model. */
   protected List<String> suppressionDirectives = Lists.newArrayList("versioning-config");
@@ -93,9 +102,7 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
     return false;
   }
 
-  /**
-   * Add the given experiment on the model.
-   */
+  /** Add the given experiment on the model. */
   public void enableExperiment(String experiment) {
     experiments.add(experiment);
   }
@@ -105,9 +112,7 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
     return testConfig;
   }
 
-  /**
-   * Run a test, using defaults for proto compilation, etc.
-   */
+  /** Run a test, using defaults for proto compilation, etc. */
   protected void test(String... baseNames) throws Exception {
     test(new TestModelGenerator(getTestDataLocator(), tempDir), baseNames);
   }
@@ -117,28 +122,26 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
    * base name (i.e. baseName.proto or baseName.yaml), constructs model, and calls {@link #run()}.
    * Post that, prints diags and the result of the run to the baseline.
    */
-  protected void test(
-      TestModelGenerator testModelGenerator, String... baseNames) throws Exception {
+  protected void test(TestModelGenerator testModelGenerator, String... baseNames) throws Exception {
     test(testModelGenerator, Arrays.asList(baseNames));
   }
-  protected void test(
-      TestModelGenerator testModelGenerator, Iterable<String> baseNames) throws Exception {
+
+  protected void test(TestModelGenerator testModelGenerator, Iterable<String> baseNames)
+      throws Exception {
     String firstBaseName = baseNames.iterator().next();
-    ModelTestInfo modelTestInfo = testModelGenerator.buildModel(baseNames);
+    ModelTestInfo modelTestInfo =
+        testModelGenerator.buildModel(baseNames, new ExperimentsImpl(experiments));
     this.model = modelTestInfo.getModel();
     this.testConfig = modelTestInfo.getTestConfig();
-
     // Setup
     setupModel();
 
-    // Enable the experiments on the model.
-    for (String experiment : experiments) {
-      model.enableExperiment(experiment);
-    }
-
     if (suppressionDirectives != null) {
       for (String suppressionDirective : suppressionDirectives) {
-        model.addSupressionDirective(model, suppressionDirective);
+        model
+            .getDiagReporter()
+            .getDiagSuppressor()
+            .addSuppressionDirective(model, suppressionDirective, model.getConfigAspects());
       }
     }
 
@@ -147,12 +150,12 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
 
     // Output diag into baseline file.
     if (!suppressDiagnosis()) {
-      for (Diag diag : model.getDiagCollector().getDiags()) {
+      for (Diag diag : model.getDiagReporter().getDiagCollector().getDiags()) {
         printDiag(diag);
       }
     }
 
-    if (!model.getDiagCollector().hasErrors() && result != null) {
+    if (!model.getDiagReporter().getDiagCollector().hasErrors() && result != null) {
       // Output the result depending on its type.
       if (result instanceof Map) {
         @SuppressWarnings("unchecked")
@@ -172,16 +175,30 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
    *
    */
   protected void printDiag(final Diag diag) {
-    String message = DiagUtils.getDiagMessage(diag);
+    // There are some diag messages that include strings that change over time (e.g. list of valid
+    // region names), so try to filter messages to make the baseline output a bit more stable.
+    Diag diagToPrint = diag;
+    if (!diagPatternReplacements.isEmpty()) {
+      String message = diagToPrint.getMessage();
+      for (Map.Entry<String, String> entry : diagPatternReplacements.entrySet()) {
+        message = message.replaceAll(entry.getKey(), entry.getValue());
+      }
+      if (!message.equals(diagToPrint.getMessage())) {
+        diagToPrint = Diag.create(diag.getLocation(), "%s", diag.getKind(), message);
+      }
+    }
+    String message = DiagUtils.getDiagMessage(diagToPrint);
     if (showDiagLocation) {
       testOutput()
           .printf(
               String.format(
                       "%s: %s: %s",
-                      diag.getKind().toString(), getLocationWithoutFullPath(diag), message)
+                      diagToPrint.getKind().toString(),
+                      getLocationWithoutFullPath(diagToPrint),
+                      message)
                   + "%n");
     } else {
-      testOutput().printf("%s: %s%n", diag.getKind(), message);
+      testOutput().printf("%s: %s%n", diagToPrint.getKind(), message);
     }
   }
 
@@ -194,6 +211,18 @@ public abstract class ConfigBaselineTestCase extends BaselineTestCase {
       location = location.replace(toReplace, "");
     }
     return location;
+  }
+
+  /**
+   * Set a filter for warnings based on regular expression for aspect name. Only warnings containing
+   * the aspect name pattern are produced.
+   */
+  public void setWarningFilter(@Nullable String aspectNamePattern) {
+    // Add as a pattern to the model.
+    model
+        .getDiagReporter()
+        .getDiagSuppressor()
+        .addPattern(model, String.format("^(?!.*(%s)).*", aspectNamePattern));
   }
 
   /** Fetches content from various values for a content source (File, Doc, etc.) */

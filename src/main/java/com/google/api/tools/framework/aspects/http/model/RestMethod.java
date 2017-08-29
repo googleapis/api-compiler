@@ -16,13 +16,11 @@
 
 package com.google.api.tools.framework.aspects.http.model;
 
-import com.google.api.tools.framework.aspects.versioning.model.ApiVersionUtil;
 import com.google.api.tools.framework.model.Element;
 import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Method;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.TypeRef;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import javax.annotation.Nullable;
 
@@ -32,12 +30,31 @@ import javax.annotation.Nullable;
  */
 public class RestMethod extends Element {
 
-  /**
-   * Create a new REST method.
-   */
-  public static RestMethod create(Method method, RestKind kind, String collectionName,
-      String customMethodName) {
-    return new RestMethod(method, kind, collectionName, customMethodName);
+  /** Create a new REST method. */
+  public static RestMethod create(
+      Method method,
+      RestKind kind,
+      String collectionName,
+      String customMethodName,
+      String methodNameOverride) {
+    return new RestMethod(
+        method, kind, collectionName, "", customMethodName, methodNameOverride);
+  }
+
+  /** Create a new REST method. */
+  public static RestMethod create(
+      Method method,
+      RestKind kind,
+      CollectionName collectionName,
+      String customMethodName,
+      String methodNameOverride) {
+    return new RestMethod(
+        method,
+        kind,
+        collectionName.baseName(),
+        collectionName.version(),
+        customMethodName,
+        methodNameOverride);
   }
 
   /**
@@ -55,16 +72,31 @@ public class RestMethod extends Element {
 
   private RestKind restKind;
   private String restCustomMethodName;
+  private final String restMethodName;
   private boolean hasValidRestPattern = true;
-  private String restCollectionName = "";
+  private String baseCollectionName = "";
+  private final String version;
 
   private final Method method;
 
-  private RestMethod(Method method, RestKind kind, String collectionName, String customMethodName) {
+  private RestMethod(
+      Method method,
+      RestKind kind,
+      String baseCollectionName,
+      String version,
+      String customMethodName,
+      String methodNameOverride) {
     this.method = method;
     this.restKind = kind;
-    this.restCollectionName = collectionName;
+    this.baseCollectionName = baseCollectionName;
+    this.version = version;
     this.restCustomMethodName = customMethodName;
+    if (!Strings.isNullOrEmpty(methodNameOverride)) {
+      this.restMethodName = methodNameOverride;
+    } else {
+      this.restMethodName =
+          restKind == RestKind.CUSTOM ? restCustomMethodName : restKind.getMethodName();
+    }
   }
 
   @Override
@@ -114,21 +146,31 @@ public class RestMethod extends Element {
   }
 
   /**
-   * Returns the full REST method name.
+   * Mutates the baseCollectionName.
    */
-  public String getRestFullMethodName() {
-    if (Strings.isNullOrEmpty(restCollectionName)) {
+  public void setBaseCollectionName(String baseCollectionName) {
+    this.baseCollectionName = baseCollectionName;
+  }
+  /**
+   * Returns the full REST method name, including version and collection.
+   */
+  public String getRestVersionedFullMethodName() {
+    if (Strings.isNullOrEmpty(getRestCollectionName())) {
       // Top-level method without collection
       return getRestMethodName();
     }
-    return restCollectionName + "." + getRestMethodName();
+    return getRestCollectionName() + "." + getRestMethodName();
   }
 
   /**
-   * Returns the full rest name without the version string.
+   * Returns the full rest name without the version string, including collection.
    */
   public String getRestFullMethodNameNoVersion() {
-    return ApiVersionUtil.stripVersionFromRestName(getRestFullMethodName());
+    if (Strings.isNullOrEmpty(baseCollectionName)) {
+      // Top-level method without collection
+      return getRestMethodName();
+    }
+    return baseCollectionName + "." + getRestMethodName();
   }
 
   /**
@@ -142,7 +184,7 @@ public class RestMethod extends Element {
    * Returns the rest method name.
    */
   public String getRestMethodName() {
-    return restKind == RestKind.CUSTOM ? restCustomMethodName : restKind.getMethodName();
+    return restMethodName;
   }
 
   /**
@@ -160,55 +202,42 @@ public class RestMethod extends Element {
   }
 
   /**
-   * Returns the rest collection name.
+   * Returns the versioned rest collection name.
    */
   public String getRestCollectionName() {
-    return restCollectionName;
+    return CollectionAttribute.versionedCollectionName(version, baseCollectionName);
   }
 
   /**
-   * Returns the rest collection name.
+   * Returns the last segment of the rest collection name.
    */
   public String getSimpleRestCollectionName() {
-    return Strings.isNullOrEmpty(restCollectionName)
-        ? "" : restCollectionName.substring(restCollectionName.lastIndexOf(".") + 1);
+    String versionedRestCollectionName = getRestCollectionName();
+    return Strings.isNullOrEmpty(versionedRestCollectionName)
+        ? ""
+        : versionedRestCollectionName.substring(versionedRestCollectionName.lastIndexOf('.') + 1);
   }
   /**
    * Returns the rest collection name without version prefix. Returns empty if there is no
    * collection specified in the rest method.
    */
-  public String getRestCollectionNameNoVersion() {
-    return ApiVersionUtil.stripVersionFromRestName(restCollectionName);
+  public String getBaseRestCollectionName() {
+    return baseCollectionName;
   }
 
   /**
-   * Sets the rest kind.
+   * Returns the version.
    */
-  public void setRestKind(RestKind kind) {
-    Preconditions.checkArgument(kind != RestKind.CUSTOM);
-    this.restKind = kind;
+  public String getVersion() {
+    return version;
   }
 
   /**
-   * Sets the rest custom method name.
-   */
-  public void setRestCustomMethodName(String restCustomMethodName) {
-    restKind = RestKind.CUSTOM;
-    this.restCustomMethodName = restCustomMethodName;
-  }
-
-  /**
-   * Sets the rest collection name.
-   */
-  public void setRestCollectionName(String restCollectionName) {
-    this.restCollectionName = restCollectionName;
-  }
-
-  /**
-   * Returns the full name with version prefix stripped if the full name has it.
+   * Returns the version, or "v1" if it is absent.
+   * TODO(user): Consolidate the "v1" default value with elsewhere.
    */
   public String getVersionWithDefault() {
-    return ApiVersionUtil.extractDefaultMajorVersionFromRestName(getRestFullMethodName());
+    return Strings.isNullOrEmpty(version) ? "v1" : version;
   }
 
   public void setHasValidRestPattern(boolean hasValidRestPattern) {
@@ -218,4 +247,30 @@ public class RestMethod extends Element {
   public boolean hasValidRestPattern() {
     return hasValidRestPattern;
   }
+
+  /**
+   * Type of streaming method.
+   */
+  public enum StreamingType {
+    NONE,
+    CLIENT_SIDE,
+    SERVER_SIDE,
+    BIDIRECTONAL
+  }
+
+  /**
+   * Return the streaming type of the method.
+   */
+  public StreamingType getStreamingType() {
+    if (method.getResponseStreaming()) {
+      if (method.getRequestStreaming()) {
+        return StreamingType.BIDIRECTONAL;
+      }
+      return StreamingType.SERVER_SIDE;
+    } else if (method.getRequestStreaming()) {
+      return StreamingType.CLIENT_SIDE;
+    }
+    return StreamingType.NONE;
+  }
+
 }

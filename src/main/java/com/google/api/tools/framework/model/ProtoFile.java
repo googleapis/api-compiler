@@ -27,7 +27,6 @@ import com.google.protobuf.DescriptorProtos.FileDescriptorProto;
 import com.google.protobuf.DescriptorProtos.ServiceDescriptorProto;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Syntax;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,7 +40,16 @@ public class ProtoFile extends ProtoContainerElement {
   // Locations for documentation in proto files.
   private static final ImmutableList<String> FILE_DOC_LOCATIONS = ImmutableList.of(
       "12", // syntax statement
-      "8",  // option statement
+
+      // TODO(user) Decide if we want to add this back in. In its current form, it doesn't work
+      // because the comments are attached to specific "option" statements, so the path is something
+      // that starts with "8" (e.g. "8.999.0").  We would need to do a prefix match (or some such)
+      // on the path to pick them all up, and that would end up potentially adding new comments to
+      // the returned comment block at the file-level, which COULD conceivably break something. And
+      // this file-level behavior doesn't seem to be documented anywhere, so we could just drop
+      // this support on "option" statements.
+      // "8",  // option statement
+
       "2"   // package statement
       );
 
@@ -103,8 +111,8 @@ public class ProtoFile extends ProtoContainerElement {
     locationMap = builder.build();
 
     // Initialize ProtoFile location.
-    protoToLocation.put(this, new SimpleLocation(proto.getName()));
     syntax = getProtoSyntax(proto);
+    protoToLocation.put(this, new ProtoLocation(this));
   }
 
   @Override public String toString() {
@@ -192,7 +200,7 @@ public class ProtoFile extends ProtoContainerElement {
     }
 
     Location location =
-        SimpleLocation.convertFrom(getSourceCodeLocation(element.getPath()), element);
+        ProtoLocation.convertFrom(getSourceCodeLocation(element.getPath()), element);
     protoToLocation.put(element, location);
     return location;
   }

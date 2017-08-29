@@ -16,46 +16,24 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
-import com.google.api.tools.framework.model.Diag;
-import com.google.api.tools.framework.model.DiagCollector;
-import com.google.api.tools.framework.model.Location;
-
-/**
- * Represent an abstract element of Markdown source.
- */
+/** Represent an abstract element of Markdown source. */
 abstract class SourceElement {
 
   private final int startIndex;
   private final int endIndex;
-  private final DiagCollector diagCollector;
-  private final Location sourceLocation;
 
-  public SourceElement(int startIndex, int endIndex, DiagCollector diagCollector,
-      Location sourceLocation) {
+  public SourceElement(int startIndex, int endIndex) {
     this.startIndex = startIndex;
     this.endIndex = endIndex;
-    this.diagCollector = diagCollector;
-    this.sourceLocation = sourceLocation;
   }
 
-  /**
-   * The start index (inclusive) of the content the node represents from the source.
-   */
+  /** The start index (inclusive) of the content the node represents from the source. */
   public int getStartIndex() {
     return startIndex;
   }
 
-  /**
-   * The end index (exclusive) of the content the node represents from the source.
-   */
+  /** The end index (exclusive) of the content the node represents from the source. */
   public int getEndIndex() {
     return endIndex;
-  }
-
-  /**
-   * Reports error message.
-   */
-  public void error(String message, Object... params) {
-    diagCollector.addDiag(Diag.error(sourceLocation, message, params));
   }
 }

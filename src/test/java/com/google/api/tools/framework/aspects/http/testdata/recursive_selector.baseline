@@ -1,2 +1,1 @@
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.TestService.Call1' should specify a body.
 ERROR: http: rules in additional_bindings must not specify a selector

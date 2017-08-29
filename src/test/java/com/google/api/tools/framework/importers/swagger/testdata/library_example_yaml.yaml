@@ -3,12 +3,32 @@ info:
   title: Google Example Library API
   description: A simple Google Example Library API.
   version: v1
-host: library-example.googleapis.com
+host: library-example.cloud.goog
 schemes:
   - http
   - https
 basePath: /
 x-google-allow: configured
+x-google-management:
+  quota:
+    limits:
+      - name: bookstore-read-requests
+        values:
+          STANDARD: 1000 # user provided in Swagger as "default_limit"
+        unit: "1/min/{project}"
+        metric: bookstore/read_requests
+      - name: bookstore-write-requests
+        values:
+          STANDARD: 100 # user provided in Swagger as "default_limit"
+        unit: "1/min/{project}"
+        metric: bookstore/write_requests
+  metrics:
+    - name: bookstore/write_requests
+      valueType: INT64 # default
+      metricKind: GAUGE # default
+    - name: bookstore/read_requests
+      valueType: INT64 # default
+      metricKind: GAUGE # default
 paths:
   /v1/shelves:
     post:
@@ -25,6 +45,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Shelf'
+      x-google-quota:
+        metricCosts:
+          bookstore/write_requests: 1
     get:
       operationId: ListShelves
       description: >-
@@ -56,6 +79,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/ListShelvesResponse'
+      x-google-quota:
+        metricCosts:
+          bookstore/read_requests: 1
   '/v1/shelves/{shelvesId}':
     get:
       operationId: GetShelf
@@ -71,6 +97,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Shelf'
+      x-google-quota:
+        metricCosts:
+          bookstore/read_requests: 1
     delete:
       operationId: DeleteShelf
       description: Deletes a shelf. Returns NOT_FOUND if the shelf does not exist.
@@ -85,6 +114,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Empty'
+      x-google-quota:
+        metricCosts:
+          bookstore/write_requests: 1
   '/v1/restricted/shelves/{shelvesId}':
     get:
       operationId: RestrictedGetShelf
@@ -103,6 +135,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Shelf'
+      x-google-quota:
+        metricCosts:
+          bookstore/read_requests: 1
   '/v1/shelves/{shelvesId}:merge':
     post:
       operationId: MergeShelves
@@ -137,6 +172,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Shelf'
+      x-google-quota:
+        metricCosts:
+          bookstore/write_requests: 2
   '/v1/shelves/{shelvesId}/books':
     post:
       operationId: CreateBook
@@ -157,6 +195,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Book'
+      x-google-quota:
+        metricCosts:
+          bookstore/write_requests: 1
     get:
       operationId: ListBooks
       description: >-
@@ -195,6 +236,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/ListBooksResponse'
+      x-google-quota:
+        metricCosts:
+          bookstore/read_requests: 1
   '/v1/shelves/{shelvesId}/books/{booksId}':
     get:
       operationId: GetBook
@@ -215,6 +259,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Book'
+      x-google-quota:
+        metricCosts:
+          bookstore/read_requests: 1
     delete:
       operationId: DeleteBook
       description: Deletes a book. Returns NOT_FOUND if the book does not exist.
@@ -234,6 +281,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Empty'
+      x-google-quota:
+        metricCosts:
+          bookstore/write_requests: 1
     put:
       operationId: UpdateBook
       description: |-
@@ -260,6 +310,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Book'
+      x-google-quota:
+        metricCosts:
+          bookstore/write_requests: 1
   '/v1/shelves/{shelvesId}/books/{booksId}:move':
     post:
       operationId: MoveBook
@@ -287,6 +340,9 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Book'
+      x-google-quota:
+        metricCosts:
+          bookstore/write_requests: 2
 definitions:
   Shelf:
     description: A Shelf contains a collection of books with a theme.

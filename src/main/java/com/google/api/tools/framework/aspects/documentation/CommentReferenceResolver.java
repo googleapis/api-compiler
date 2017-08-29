@@ -16,14 +16,13 @@
 
 package com.google.api.tools.framework.aspects.documentation;
 
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
 import com.google.api.tools.framework.model.Element;
-import com.google.api.tools.framework.model.Location;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
 import com.google.api.tools.framework.model.SymbolTable;
 import com.google.api.tools.framework.model.Visitor;
 import com.google.api.tools.framework.util.VisitsBefore;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -76,7 +75,7 @@ public class CommentReferenceResolver implements DocumentationProcessor {
   }
 
   @Override
-  public String process(String comment, Location sourceLocation, Element element) {
+  public String process(String comment, LocationContext sourceLocation, Element element) {
     // Resolver only works based on given element full name. And we will return original comment
     // if given element is null.
     if (element == null) {

@@ -1,2 +1,1 @@
 ERROR: http: Field path 'J2' is ambiguous: protiary.test.json_name_duplicate.In has field 'J2' and also has field 'J3' with json_name='J2'
-WARNING: http: POST/PATCH/PUT method for 'protiary.test.json_name_duplicate.TestService.Call1' should specify a body.

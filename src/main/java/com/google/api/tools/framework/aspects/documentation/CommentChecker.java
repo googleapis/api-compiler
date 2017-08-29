@@ -17,11 +17,10 @@
 package com.google.api.tools.framework.aspects.documentation;
 
 import com.google.api.tools.framework.aspects.documentation.model.DocumentationUtil;
-import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.LocationContext;
 import com.google.api.tools.framework.model.Element;
-import com.google.api.tools.framework.model.Location;
 import com.google.common.base.Preconditions;
-
 import javax.annotation.Nullable;
 
 /**
@@ -30,23 +29,19 @@ import javax.annotation.Nullable;
 final class CommentChecker implements DocumentationProcessor {
   // TODO(user): comments should be treated like regular source elements.
 
-  private final DiagCollector diagCollector;
+  private final DiagReporter diagReporter;
 
-  /**
-   * Creates an instance of {@link CommentChecker}
-   */
-  public CommentChecker(DiagCollector diagCollector) {
-    this.diagCollector = Preconditions.checkNotNull(diagCollector,
-        "diagCollector should not be null.");
+  /** Creates an instance of {@link CommentChecker} */
+  public CommentChecker(DiagReporter diagReporter) {
+    this.diagReporter =
+        Preconditions.checkNotNull(diagReporter, "diagReporter should not be null.");
   }
 
-  /**
-   * See {@link DocumentationUtil#filter}.
-   */
+  /** See {@link DocumentationUtil#filter}. */
   @Override
-  public String process(@Nullable String source, Location location,
-      @Nullable Element element) {
-    DocumentationUtil.filter(diagCollector, null, location, source);
+  public String process(
+      @Nullable String source, LocationContext location, @Nullable Element element) {
+    DocumentationUtil.filter(diagReporter, null, location, source);
     return source;
   }
 }

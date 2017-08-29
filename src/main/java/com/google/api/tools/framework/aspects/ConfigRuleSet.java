@@ -17,10 +17,10 @@
 package com.google.api.tools.framework.aspects;
 
 import com.google.api.tools.framework.model.ConfigLocationResolver;
-import com.google.api.tools.framework.model.Diag;
-import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.DiagReporter;
+import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
+import com.google.api.tools.framework.model.Experiments;
 import com.google.api.tools.framework.model.Location;
-import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -39,17 +39,24 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 /**
- * Represents a configuration rule set, allowing to discover a configuration rule for a given
- * proto element. Helper type to implement config aspects.
+ * Represents a configuration rule set, allowing to discover a configuration rule for a given proto
+ * element. Helper type to implement config aspects.
  */
 public class ConfigRuleSet<RuleType extends Message> {
-  /**
-   * Constructs a rule set for the given type and rules.
-   */
+  /** Constructs a rule set for the given type and rules. */
   public static <RuleType extends Message> ConfigRuleSet<RuleType> of(
-      Descriptor ruleDescriptor, List<RuleType> rules, Model model) {
-    return new ConfigRuleSet<RuleType>(ruleDescriptor, rules, model);
+      Descriptor ruleDescriptor,
+      List<RuleType> rules,
+      Experiments experiments,
+      ConfigLocationResolver configLocationResolver,
+      DiagReporter diagReporter) {
+    return new ConfigRuleSet<>(
+        ruleDescriptor, rules, experiments, configLocationResolver, diagReporter);
   }
+
+  public static final ImmutableList<String> SYSTEM_PROTO_PREFIXES =
+      ImmutableList.of(
+          "google.protobuf.");
 
   private static final int SELECTOR_FIELD_NUM = 1;
   private static final String SELECTOR_FIELD_NAME = "selector";
@@ -62,20 +69,28 @@ public class ConfigRuleSet<RuleType extends Message> {
       Pattern.compile("^(\\w+(\\.\\w+)*((\\.\\*)|(\\.\\(\\w+(\\.\\w+)*\\)))?)|\\*$");
 
   private final List<RuleWrapper<RuleType>> rules;
-  private final Model model;
   private final FieldDescriptor selectorFieldDesc;
   private final Map<ProtoElement, RuleType> ruleMap = Maps.newHashMap();
+  private final DiagReporter diagReporter;
+  private final ConfigLocationResolver configLocationResolver;
+  private final Experiments experiments;
 
-  /**
-   * Mapping from rule to unmatched selectors.
-   */
+  /** Mapping from rule to unmatched selectors. */
   private final Map<RuleWrapper<RuleType>, Set<String>> unmatchedRules = Maps.newLinkedHashMap();
 
-  public ConfigRuleSet(Descriptor ruleDescriptor, List<RuleType> rules, Model model) {
-    Preconditions.checkNotNull(ruleDescriptor);
-    Preconditions.checkNotNull(model);
+  public ConfigRuleSet(
+      Descriptor ruleDescriptor,
+      List<RuleType> rules,
+      Experiments experiments,
+      ConfigLocationResolver configLocationResolver,
+      DiagReporter diagReporter) {
+    Preconditions.checkNotNull(ruleDescriptor, "ruleDescriptor");
+    this.experiments = Preconditions.checkNotNull(experiments, "experiments");
+    this.diagReporter = Preconditions.checkNotNull(diagReporter, "diagReporter");
+    this.configLocationResolver =
+        Preconditions.checkNotNull(configLocationResolver, "configLocationResolver");
     this.selectorFieldDesc = ruleDescriptor.findFieldByNumber(SELECTOR_FIELD_NUM);
-    this.model = model;
+
     // Sanity check for selector field.
     Preconditions.checkArgument(
         selectorFieldDesc != null
@@ -91,16 +106,12 @@ public class ConfigRuleSet<RuleType extends Message> {
     }
   }
 
-  /**
-   * Returns true if experiment maintain_selector_minimization_bug is enabled; false otherwise.
-   */
+  /** Returns true if experiment maintain_selector_minimization_bug is enabled; false otherwise. */
   private boolean maintainSelectorMinimizationBugExperimentEnabled() {
-    return (model != null && model.isExperimentEnabled(MAINTAIN_SELECTOR_MINIMIZATION_BUG));
+    return experiments.isExperimentEnabled(MAINTAIN_SELECTOR_MINIMIZATION_BUG);
   }
 
-  /**
-   * Build {@link RuleWrapper} instances from given rules.
-   */
+  /** Build {@link RuleWrapper} instances from given rules. */
   private List<RuleWrapper<RuleType>> buildRules(List<RuleType> rules) {
     ImmutableList.Builder<RuleWrapper<RuleType>> flattened = ImmutableList.builder();
     for (RuleType rule : rules) {
@@ -109,39 +120,28 @@ public class ConfigRuleSet<RuleType extends Message> {
     return flattened.build();
   }
 
-  /**
-   * Validate selector syntax and report errors.
-   */
-  public void reportBadSelectors(
-      DiagCollector collector, ConfigLocationResolver configLocationResolver, String category) {
-    reportBadSelectors(collector, configLocationResolver, category, "");
+  /** Validate selector syntax and report errors. */
+  public void reportBadSelectors(String category) {
+    reportBadSelectors(category, "");
   }
 
-  /**
-   * Validate selector syntax and report errors (with given error message prefix).
-   */
-  public void reportBadSelectors(DiagCollector collector,
-      ConfigLocationResolver configLocationResolver, String category, String messagePrefix) {
+  /** Validate selector syntax and report errors (with given error message prefix). */
+  public void reportBadSelectors(String category, String messagePrefix) {
     for (RuleWrapper<RuleType> ruleWrapper : rules) {
       for (String selector : ruleWrapper.selectors) {
         if (!SELECTOR_PATTERN.matcher(selector).matches()) {
-          collector.addDiag(
-              getBadSelectorErrorDiag(
-                  configLocationResolver.getLocationInConfig(ruleWrapper.rule, SELECTOR_FIELD_NAME),
-                  category,
-                  messagePrefix,
-                  selector));
+          String message =
+              messagePrefix
+                  + "%s rule has bad syntax in selector '%s'. See "
+                  + "documentation for information on selector syntax.";
+          diagReporter.reportError(
+              MessageLocationContext.create(ruleWrapper.rule, SELECTOR_FIELD_NAME),
+              message,
+              category,
+              selector);
         }
       }
     }
-  }
-
-  private Diag getBadSelectorErrorDiag(
-      Location location, String category, String messagePrefix, String selector) {
-    return Diag.error(location,
-        messagePrefix + "%s rule has bad syntax in selector '%s'. See "
-        + "documentation for information on selector syntax.",
-        category, selector);
   }
 
   /**
@@ -160,9 +160,7 @@ public class ConfigRuleSet<RuleType extends Message> {
     return minimized.build();
   }
 
-  /**
-   * Returns the matching rule for the element, or null, if no matching exists.
-   */
+  /** Returns the matching rule for the element, or null, if no matching exists. */
   @Nullable
   public RuleType matchingRule(ProtoElement elem) {
     RuleType result = ruleMap.get(elem);
@@ -188,40 +186,35 @@ public class ConfigRuleSet<RuleType extends Message> {
     return null;
   }
 
-  /**
-   * Reports any unmatched rules.
-   */
-  public void reportUnmatchedRules(
-      DiagCollector collector, ConfigLocationResolver configLocationResolver, String category) {
+  /** Reports any unmatched rules. */
+  public void reportUnmatchedRules(String category) {
     for (Map.Entry<RuleWrapper<RuleType>, Set<String>> unmatched : unmatchedRules.entrySet()) {
       Set<String> selectors = unmatched.getValue();
       selectors.remove("*");
       // For rules which are not general default, report a warning.
       if (!selectors.isEmpty()) {
         String unmatchedSelectors = SELECTOR_JOINER.join(unmatched.getValue());
-        collector.addDiag(
-            Diag.warning(
-                configLocationResolver.getLocationInConfig(
-                    unmatched.getKey().rule, SELECTOR_FIELD_NAME),
-                "%s rule has selector(s) '%s' that do not match and are not "
-                    + "shadowed by other rules.",
-                category,
-                unmatchedSelectors));
+        diagReporter.reportWarning(
+            MessageLocationContext.create(unmatched.getKey().rule, SELECTOR_FIELD_NAME),
+            "%s rule has selector(s) '%s' that do not match and are not "
+                + "shadowed by other rules.",
+            category,
+            unmatchedSelectors);
       }
     }
   }
 
   /**
-   * Represent Rule which keeps RuleType with comma delimited selectors Flattened into
-   * {@link Iterable} of selectors.
+   * Represent Rule which keeps RuleType with comma delimited selectors Flattened into {@link
+   * Iterable} of selectors.
    */
-  private class RuleWrapper<RuleType extends Message> {
+  private class RuleWrapper<WrappedRuleType extends Message> {
     private final Splitter selectorSplitter = Splitter.on(',').trimResults();
-    private final RuleType rule;
+    private final WrappedRuleType rule;
     private final Set<String> selectors;
     private final FieldDescriptor selectorField;
 
-    private RuleWrapper(RuleType rule) {
+    private RuleWrapper(WrappedRuleType rule) {
       this.rule = rule;
       selectorField = rule.getDescriptorForType().findFieldByNumber(SELECTOR_FIELD_NUM);
       List<String> subSelectors = selectorSplitter.splitToList(getUnflattenedSelector());
@@ -234,16 +227,14 @@ public class ConfigRuleSet<RuleType extends Message> {
       this.selectors = Sets.newHashSet(subSelectors);
     }
 
-    /**
-     * Returns the unflattened selectors of the rule.
-     */
+    /** Returns the unflattened selectors of the rule. */
     private String getUnflattenedSelector() {
       return (String) rule.getField(selectorField);
     }
 
     /**
-     * Returns the selector that matches full name of given {@link ProtoElement}.
-     * Otherwise, returns null.
+     * Returns the selector that matches full name of given {@link ProtoElement}. Otherwise, returns
+     * null.
      */
     private String getMatchedSelector(ProtoElement elem) {
       for (String selector : selectors) {
@@ -254,10 +245,14 @@ public class ConfigRuleSet<RuleType extends Message> {
       return null;
     }
 
-    /**
-     * Check whether a name matches selector.
-     */
+    /** Check whether a name matches selector. */
     private boolean matches(String selector, String name) {
+      // If the proto element name represents a system element, the selector must be a system
+      // selector as well. Otherwise, return false.
+      if (isSystemElementOrSelector(name) && !isSystemElementOrSelector(selector)) {
+        return false;
+      }
+
       if (selector.equals("*")) {
         return true;
       }
@@ -267,29 +262,40 @@ public class ConfigRuleSet<RuleType extends Message> {
       return name.equals(selector);
     }
 
+    /**
+     * Returns true if protoElementNameOrSelector is a system proto element or system element
+     * selector.
+     */
+    private boolean isSystemElementOrSelector(String protoElementNameOrSelector) {
+      for (String systemProtoPrefix : SYSTEM_PROTO_PREFIXES) {
+        if (protoElementNameOrSelector.startsWith(systemProtoPrefix)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     /** Remove selectors if they are subsumed by any selectors of given rule list. */
-    private void minimizeSelectors(List<RuleWrapper<RuleType>> rules, int startIndex) {
-      Location toBeMatchedRuleLocation = model.getLocationInConfig(rule, SELECTOR_FIELD_NAME);
+    private void minimizeSelectors(List<RuleWrapper<WrappedRuleType>> rules, int startIndex) {
+      Location toBeMatchedRuleLocation =
+          configLocationResolver.getLocationInConfig(rule, SELECTOR_FIELD_NAME);
       for (Iterator<String> iter = selectors.iterator(); iter.hasNext(); ) {
         String selector = iter.next();
         for (int i = startIndex; i < rules.size(); i++) {
-          RuleWrapper<RuleType> ruleWrapper = rules.get(i);
+          RuleWrapper<WrappedRuleType> ruleWrapper = rules.get(i);
           if (isSubsumed(selector, ruleWrapper.selectors)) {
             Location matchingRuleLocation =
-                model.getLocationInConfig(ruleWrapper.rule, SELECTOR_FIELD_NAME);
+                configLocationResolver.getLocationInConfig(ruleWrapper.rule, SELECTOR_FIELD_NAME);
             if (!maintainSelectorMinimizationBugExperimentEnabled()
                 && isSameYamlFile(matchingRuleLocation, toBeMatchedRuleLocation)) {
-              model
-                  .getDiagCollector()
-                  .addDiag(
-                      Diag.error(
-                          matchingRuleLocation,
-                          "Selector '%s' at location %s subsumes selector '%s' at location %s. "
-                              + "Subsuming selectors in the same file is not supported.",
-                          ruleWrapper.getUnflattenedSelector(),
-                          matchingRuleLocation.getDisplayString(),
-                          selector,
-                          toBeMatchedRuleLocation.getDisplayString()));
+              diagReporter.reportError(
+                  MessageLocationContext.create(ruleWrapper.rule, SELECTOR_FIELD_NAME),
+                  "Selector '%s' at location %s subsumes selector '%s' at location %s. "
+                      + "Subsuming selectors in the same file is not supported.",
+                  ruleWrapper.getUnflattenedSelector(),
+                  matchingRuleLocation.getDisplayString(),
+                  selector,
+                  toBeMatchedRuleLocation.getDisplayString());
             }
             iter.remove();
             break;
@@ -307,9 +313,7 @@ public class ConfigRuleSet<RuleType extends Message> {
           && location1.getContainerName().equalsIgnoreCase(location2.getContainerName());
     }
 
-    /**
-     * Check whether selector is subsumed by any of other selectors.
-     */
+    /** Check whether selector is subsumed by any of other selectors. */
     private boolean isSubsumed(String selector, Iterable<String> others) {
       for (String other : others) {
         if (subsumes(other, selector)) {
@@ -320,10 +324,16 @@ public class ConfigRuleSet<RuleType extends Message> {
     }
 
     /**
-     * Check whether selector subsumes another selector, i.e. every name matching the
-     * other selector will also match this selector.
+     * Check whether selector subsumes another selector, i.e. every name matching the other selector
+     * will also match this selector.
      */
     private boolean subsumes(String selector, String other) {
+      // If the other selector is a system element selector, the selector must be a system element
+      // selector as well. Otherwise, return false.
+      if (isSystemElementOrSelector(other) && !isSystemElementOrSelector(selector)) {
+        return false;
+      }
+
       if (selector.equals("*")) {
         return true;
       }
