@@ -1,0 +1,51 @@
+WARNING: options_operation.json: Operation 'options' in path '/foo': Operation does not require an API key; callers may invoke the method without specifying an associated API-consuming project. To enable API key all the SecurityRequirement Objects (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-requirement-object) inside security definition must reference at least one SecurityDefinition of type : 'apiKey'.
+name: "library-example.cloud.goog"
+title: "Google Example Library API"
+apis {
+  name: "v1.library_example_cloud_goog"
+  methods {
+    name: "SimpleMethod"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  version: "v1"
+  source_context {
+    file_name: "options_operation.json"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
+    custom {
+      kind: "OPTIONS"
+      path: "/foo"
+    }
+  }
+}
+quota {
+}
+authentication {
+}
+context {
+}
+usage {
+  rules {
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
+    allow_unregistered_calls: true
+  }
+}
+endpoints {
+  name: "library-example.cloud.goog"
+  apis: "v1.library_example_cloud_goog"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
+}
+experimental {
+}
+

@@ -45,11 +45,20 @@ public class ProtoLocation implements Location {
 
   public ProtoLocation(
       DescriptorProtos.SourceCodeInfo.Location location, final ProtoElement element) {
-    this.displayString = String.format(
-        "%s:%d:%d",
-        element.getFile().getLocation().getDisplayString(),
-        location.getSpan(0) + 1,
-        location.getSpan(1) + 1);
+    // Spit out "?:?" for line:column if there's no "span" set in the location.  This can happen
+    // when (for example) a proto transform tool synthesizes a field that doesn't appear in the
+    // source *.proto files.
+    if (location.getSpanCount() > 0) {
+      this.displayString =
+          String.format(
+              "%s:%d:%d",
+              element.getFile().getLocation().getDisplayString(),
+              location.getSpan(0) + 1,
+              location.getSpan(1) + 1);
+    } else {
+      this.displayString =
+          String.format("%s:?:?", element.getFile().getLocation().getDisplayString());
+    }
     this.element = element;
   }
 

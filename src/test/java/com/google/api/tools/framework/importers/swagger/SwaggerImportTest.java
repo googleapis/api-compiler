@@ -143,6 +143,8 @@ public class SwaggerImportTest extends BaselineTestCase {
 
     } catch (Exception e) {
       e.printStackTrace();
+      // Uncomment below to see stack traces in testOutput (useful for debugging)
+      // e.printStackTrace(testOutput());
       testOutput().println(e.getMessage());
       return;
     }
@@ -287,8 +289,23 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void missing_definitions() throws Exception {
+    testWithDefaults("missing_definitions");
+  }
+
+  @Test
   public void operation_name_slash() throws Exception {
     testWithDefaults("operation_name_slash");
+  }
+
+  @Test
+  public void options_operation() throws Exception {
+    testWithDefaults("options_operation");
+  }
+
+  @Test
+  public void head_operation() throws Exception {
+    testWithDefaults("head_operation");
   }
 
   @Test

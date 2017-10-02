@@ -1,0 +1,58 @@
+name: "library-example.cloud.goog"
+title: "Google Example Library API"
+apis {
+  name: "v1.library_example_cloud_goog"
+  methods {
+    name: "Get_pet"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  methods {
+    name: "Post_pet"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  version: "v1"
+  source_context {
+    file_name: "x_google_backend_url.json"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "v1.library_example_cloud_goog.Get_pet"
+    get: "/v1/pets"
+  }
+  rules {
+    selector: "v1.library_example_cloud_goog.Post_pet"
+    post: "/v1/pets"
+  }
+}
+quota {
+}
+authentication {
+}
+context {
+}
+usage {
+  rules {
+    selector: "v1.library_example_cloud_goog.Get_pet"
+  }
+  rules {
+    selector: "v1.library_example_cloud_goog.Post_pet"
+  }
+}
+endpoints {
+  name: "library-example.cloud.goog"
+  apis: "v1.library_example_cloud_goog"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
+}
+experimental {
+}
+

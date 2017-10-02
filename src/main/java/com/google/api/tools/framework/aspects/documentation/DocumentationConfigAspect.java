@@ -29,6 +29,8 @@ import com.google.api.tools.framework.aspects.documentation.model.PageAttribute;
 import com.google.api.tools.framework.model.ConfigAspect;
 import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
 import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
+import com.google.api.tools.framework.model.EnumType;
+import com.google.api.tools.framework.model.MessageType;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
 import com.google.api.tools.framework.model.SymbolTable;
@@ -48,6 +50,8 @@ public class DocumentationConfigAspect
   }
 
   private static final ImmutableList<Page> EMPTY_PAGES = ImmutableList.of();
+  public static final String INLINE_ALL_MESSAGES = "inline-all-messages";
+  private final boolean inlineAllMessages;
 
   private final DocumentationProcessorSet processorSet;
 
@@ -59,6 +63,7 @@ public class DocumentationConfigAspect
         DocumentationRule.getDescriptor(),
         model.getServiceConfig().getDocumentation().getRulesList());
     processorSet = DocumentationProcessorSet.standardSetup(model);
+    inlineAllMessages = model.getExperiments().isExperimentEnabled(INLINE_ALL_MESSAGES);
   }
 
   /** Returns an empty list since this aspect does not depend on any other aspects. */
@@ -89,13 +94,17 @@ public class DocumentationConfigAspect
     // in the proto.
     String description = element.getFile().getDocumentation(element);
 
+    if (inlineAllMessages && (element instanceof MessageType || element instanceof EnumType)) {
+      description = description + "\n(== inline_message ==)";
+    }
+
     if (Strings.isNullOrEmpty(description)) {
       return null;
     }
 
     return DocumentationRule.newBuilder()
         .setSelector(element.getFullName())
-        .setDescription(trimCommentIndentation(element.getFile().getDocumentation(element)))
+        .setDescription(trimCommentIndentation(description))
         .build();
   }
 

@@ -26,13 +26,18 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /** Utilities for fetching Vendor Extensions from Swagger. */
 public class VendorExtensionUtils {
 
-  /** Returns name of the vendor extension used. */
-  public static <T> String usedExtension(
+  /**
+   * Returns name of the vendor extension used.
+   * Returns the empty string if the extension is missing or invalid.
+   */
+  @Nonnull
+  public static String usedExtension(
       DiagCollector diagCollector,
       Map<String, Object> vendorExtensions,
       String extensionName,
@@ -64,6 +69,11 @@ public class VendorExtensionUtils {
     return "";
   }
 
+  /**
+   * Returns the value of the specified vendor extension.
+   * The vendor extension must exist.
+   * Returns null if the extension type does not match the specified type.
+   */
   @Nullable
   public static <T> T getExtensionValue(
       Map<String, Object> extensions,
@@ -83,6 +93,34 @@ public class VendorExtensionUtils {
               clazz.getName()));
       return null;
     }
+  }
+
+  /**
+   * Returns the value of the specified vendor extension.
+   * Returns null if the extension is missing,
+   * or if an error occurred when processing the extension.
+   */
+  @Nullable
+  public static <T> T getExtensionValueOrNull(
+      Map<String, Object> extensions,
+      Class<T> clazz,
+      DiagCollector diagCollector,
+      String extensionName) {
+    final Object extensionValue = extensions.get(extensionName);
+    if (extensionValue == null) {
+      // Extension is missing:
+      return null;
+    }
+    if (!clazz.isInstance(extensionValue)) {
+      diagCollector.addDiag(
+          Diag.error(
+              new SimpleLocation(extensionName),
+              "Extension %s has invalid type. Valid type is %s",
+              extensionName,
+              clazz.getName()));
+      return null;
+    }
+    return clazz.cast(extensionValue);
   }
 
   private static List<String> getExtensionsNamesUsed(

@@ -124,6 +124,22 @@ metrics:
   metric_kind: DELTA # DISTRIBUTION metric is not allowed to be used with analytics.
   value_type: DISTRIBUTION
 
+
+billing:
+
+  consumer_destinations:
+    - monitored_resource: "type" # Destination must refer to the monitored resource defined in the monitored resources section.
+    - monitored_resource: "type1"
+      metrics:
+      - metric1
+      - metric2 # Metric name must be defined in the metrics section.
+      - metric2____
+      - metric3 # List must not be longer than the predefined limit.
+      - metric3 # Same metric used more than once.
+    - monitored_resource: "type1" # Same resource used more than once.
+      metrics:
+      - metric1
+
 logging:
   producer_destinations:
   - monitored_resource: "type" # Destination must refer to the monitored resource defined in the monitored resources section.

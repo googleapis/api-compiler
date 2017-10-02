@@ -118,6 +118,7 @@ public class ProtoApiFromOpenApi {
           getNewWildCardPathObject(userDefinedWildCardPathObject),
           duplicateOperationIdLookup);
     }
+
     coreApiBuilder.setVersion(swagger.getInfo().getVersion());
     if (isDeprecated(swagger)) {
       coreApiBuilder.addOptions(
@@ -197,7 +198,7 @@ public class ProtoApiFromOpenApi {
       Service.Builder serviceBuilder,
       String urlPath,
       Path pathObj,
-      Map<String, String> dupliacteOperationIdLookup) {
+      Map<String, String> duplicateOperationIdLookup) {
     Map<String, Operation> operations = getOperationsForPath(pathObj);
     for (String operationType : operations.keySet()) {
       Operation operation = operations.get(operationType);
@@ -205,7 +206,7 @@ public class ProtoApiFromOpenApi {
         continue;
       }
       if (!validateOperationId(
-          operation, urlPath, operationType, diagCollector, dupliacteOperationIdLookup)) {
+          operation, urlPath, operationType, diagCollector, duplicateOperationIdLookup)) {
         continue;
       }
 
@@ -330,6 +331,7 @@ public class ProtoApiFromOpenApi {
   private Map<String, Operation> getOperationsForPath(Path pathObj) {
     Map<String, Operation> hmap = Maps.newLinkedHashMap();
     hmap.put("get", pathObj.getGet());
+    hmap.put("head", pathObj.getHead());
     hmap.put("delete", pathObj.getDelete());
     hmap.put("patch", pathObj.getPatch());
     hmap.put("post", pathObj.getPost());

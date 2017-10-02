@@ -16,6 +16,7 @@
 
 package com.google.api.tools.framework.aspects.documentation.source;
 
+import com.google.api.tools.framework.aspects.documentation.DocumentationConfigAspect;
 import com.google.api.tools.framework.aspects.documentation.model.DeprecationDescriptionAttribute;
 import com.google.api.tools.framework.aspects.documentation.model.InliningAttribute;
 import com.google.api.tools.framework.aspects.documentation.model.PageAttribute;
@@ -102,19 +103,36 @@ public class Instruction extends ContentElement {
                       + "message/enum declaration, but '%s' is not a message/enum.",
                   element.getFullName());
         } else if (element instanceof MessageType && subCyclic((MessageType) element)) {
-          element
-              .getModel()
-              .getDiagReporter()
-              .reportError(
-                  ResolvedLocation.create(element.getLocation()),
-                  INLINE_INSTRUCTION
-                      + " instruction must be associated with a *non-recursive* "
-                      + "message declaration, but '%s' is recursive or contains a recursive "
-                      + "subfield.",
-                  element.getFullName());
+          if (!element.getModel().getExperiments()
+              .isExperimentEnabled(DocumentationConfigAspect.INLINE_ALL_MESSAGES)) {
+            element
+                .getModel()
+                .getDiagReporter()
+                .reportError(
+                    ResolvedLocation.create(element.getLocation()),
+                    INLINE_INSTRUCTION
+                        + " instruction must be associated with a *non-recursive* "
+                        + "message declaration, but '%s' is recursive or contains a recursive "
+                        + "subfield.",
+                    element.getFullName());
+
+          } else {
+            // Warn and skip if inline-all-messages experiment enabled
+            element
+                .getModel()
+                .getDiagReporter()
+                .reportWarning(
+                    ResolvedLocation.create(element.getLocation()),
+                    "message '%s' is recursive and will not be inlined.",
+                    element.getFullName());
+          }
         } else {
-          recursivePutAttribute(
-              (ProtoContainerElement) element, InliningAttribute.KEY, new InliningAttribute());
+          if (element instanceof ProtoContainerElement) {
+            recursivePutAttribute(
+                (ProtoContainerElement) element, InliningAttribute.KEY, new InliningAttribute());
+          } else {
+            element.putAttribute(InliningAttribute.KEY, new InliningAttribute());
+          }
         }
         break;
       case DEPRECATION_DESCRIPTION:
@@ -134,6 +152,9 @@ public class Instruction extends ContentElement {
     element.putAttribute(key, attribute);
     for (ProtoContainerElement message : element.getMessages()) {
       recursivePutAttribute(message, key, attribute);
+    }
+    for (EnumType enumType : element.getEnums()) {
+      enumType.putAttribute(key, attribute);
     }
   }
 

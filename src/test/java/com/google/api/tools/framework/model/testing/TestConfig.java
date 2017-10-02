@@ -18,7 +18,6 @@ package com.google.api.tools.framework.model.testing;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.api.AnnotationsProto;
 import com.google.api.Service;
 import com.google.api.tools.framework.model.ConfigSource;
 import com.google.api.tools.framework.model.DiagCollector;
@@ -26,6 +25,7 @@ import com.google.api.tools.framework.model.Experiments;
 import com.google.api.tools.framework.model.ExperimentsImpl;
 import com.google.api.tools.framework.model.ExtensionPool;
 import com.google.api.tools.framework.model.Model;
+import com.google.api.tools.framework.tools.ToolProtoUtil;
 import com.google.api.tools.framework.yaml.YamlReader;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -69,13 +69,7 @@ public class TestConfig {
   private static final Pattern PROTO_IMPORT_PATTERN =
       Pattern.compile("\\s*import\\s*(?:public)?\\s*\"(.*)\"");
 
-  private static final ExtensionRegistry EXTENSIONS;
-
-  static {
-    EXTENSIONS = ExtensionRegistry.newInstance();
-    AnnotationsProto.registerAllExtensions(EXTENSIONS);
-
-  }
+  private static final ExtensionRegistry EXTENSIONS = ToolProtoUtil.getStandardPlatformExtensions();
 
   private final List<String> protoFiles;
   private final Path descriptorFile;

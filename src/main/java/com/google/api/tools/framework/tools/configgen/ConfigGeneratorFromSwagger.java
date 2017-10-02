@@ -16,11 +16,8 @@
 
 package com.google.api.tools.framework.tools.configgen;
 
-import com.google.api.Service;
 import com.google.api.tools.framework.tools.SwaggerToolDriverBase;
 import com.google.api.tools.framework.tools.ToolOptions;
-import java.io.IOException;
-import javax.annotation.Nullable;
 
 /**
  * This driver generates the normalized config based on swagger doc.
@@ -29,17 +26,6 @@ public class ConfigGeneratorFromSwagger extends SwaggerToolDriverBase implements
 
   public ConfigGeneratorFromSwagger(ToolOptions options) {
     super(options);
-  }
-
-  @Override
-  @Nullable
-  public Service generateServiceConfig() throws IOException {
-    int exitCode = super.run();
-    if (exitCode == 1) {
-      return null;
-    } else {
-      return super.getServiceConfig();
-    }
   }
 
   @Override

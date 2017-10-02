@@ -20,6 +20,9 @@ import com.google.api.Service;
 import com.google.api.tools.framework.importers.swagger.aspects.AspectBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.type.WellKnownTypeUtils.WellKnownType;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.NameConverter;
+import com.google.api.tools.framework.model.Diag;
+import com.google.api.tools.framework.model.DiagCollector;
+import com.google.api.tools.framework.model.SimpleLocation;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -66,12 +69,14 @@ public class TypeBuilder implements AspectBuilder {
   private final Swagger swagger;
   private final String namespace;
   private final String namespacePrefix; // Pre-computed namespace with a trailing dot.
+  private final DiagCollector diagCollector;
 
-  public TypeBuilder(Swagger swagger, String namespace) {
+  public TypeBuilder(Swagger swagger, String namespace, DiagCollector diagCollector) {
     this.swagger = swagger;
     this.namespace = namespace;
     this.namespacePrefix =
         (namespace.isEmpty() || namespace.endsWith(".")) ? namespace : namespace + ".";
+    this.diagCollector = diagCollector;
   }
 
   @Override
@@ -104,50 +109,53 @@ public class TypeBuilder implements AspectBuilder {
     if (processedTypeNameToTypeInfo.containsKey(modelRefId)) {
       return processedTypeNameToTypeInfo.get(modelRefId);
     }
-    if (model instanceof ComposedModel) {
-      // TODO(user): Expand this composed Model and create a Type from it.
-      resultTypeInfo = WellKnownType.VALUE.toTypeInfo();
-    }
-    if (model instanceof ArrayModel) {
-      resultTypeInfo = getArrayModelTypeInfo(serviceBuilder, ((ArrayModel) model).getItems());
-    }
-    if (model instanceof RefModel) {
-      resultTypeInfo = getRefModelTypeInfo(serviceBuilder, (RefModel) model);
-    }
-    if (model instanceof ModelImpl) {
-      ModelImpl modelImpl = (ModelImpl) model;
-      if (isPrimitiveTypeWrapper(modelImpl)) {
-        // Represent this as a wrapper type for the primitive type.
-        resultTypeInfo = WellKnownType.fromString(modelImpl.getType()).toTypeInfo();
-      } else if (hasAdditionalProperties(modelImpl) && hasProperties(modelImpl)) {
-        // Since both properties and additional properties are present, we cannot create a
-        // protobuf.Type object for it. Therefore, represent this as a Struct type.
-        resultTypeInfo = WellKnownType.STRUCT.toTypeInfo();
-      } else if (hasAdditionalProperties(modelImpl) && !hasProperties(modelImpl)) {
-        // Since additional properties is present without properties, we can represent this as a
-        // map.
-        TypeInfo mapEntry =
-            getMapEntryTypeInfo(
-                ensureNamed(
-                    serviceBuilder,
-                    getTypeInfo(serviceBuilder, modelImpl.getAdditionalProperties()),
-                    "MapValue"));
-        mapEntry = ensureNamed(serviceBuilder, mapEntry, "MapEntry");
-        resultTypeInfo = mapEntry.withCardinality(Cardinality.CARDINALITY_REPEATED);
-      } else if (!hasAdditionalProperties(modelImpl)) {
-        // Since there is no additional properties, create a protobuf.Type.
-        String protoTypeName = NameConverter.schemaNameToMessageName(typeName);
-        String typeUrl = WellKnownTypeUtils.TYPE_SERVICE_BASE_URL + namespacePrefix + protoTypeName;
+    if (model != null) {
+      if (model instanceof ComposedModel) {
+        // TODO(user): Expand this composed Model and create a Type from it.
+        resultTypeInfo = WellKnownType.VALUE.toTypeInfo();
+      }
+      if (model instanceof ArrayModel) {
+        resultTypeInfo = getArrayModelTypeInfo(serviceBuilder, ((ArrayModel) model).getItems());
+      }
+      if (model instanceof RefModel) {
+        resultTypeInfo = getRefModelTypeInfo(serviceBuilder, (RefModel) model);
+      }
+      if (model instanceof ModelImpl) {
+        ModelImpl modelImpl = (ModelImpl) model;
+        if (isPrimitiveTypeWrapper(modelImpl)) {
+          // Represent this as a wrapper type for the primitive type.
+          resultTypeInfo = WellKnownType.fromString(modelImpl.getType()).toTypeInfo();
+        } else if (hasAdditionalProperties(modelImpl) && hasProperties(modelImpl)) {
+          // Since both properties and additional properties are present, we cannot create a
+          // protobuf.Type object for it. Therefore, represent this as a Struct type.
+          resultTypeInfo = WellKnownType.STRUCT.toTypeInfo();
+        } else if (hasAdditionalProperties(modelImpl) && !hasProperties(modelImpl)) {
+          // Since additional properties is present without properties, we can represent this as a
+          // map.
+          TypeInfo mapEntry =
+              getMapEntryTypeInfo(
+                  ensureNamed(
+                      serviceBuilder,
+                      getTypeInfo(serviceBuilder, modelImpl.getAdditionalProperties()),
+                      "MapValue"));
+          mapEntry = ensureNamed(serviceBuilder, mapEntry, "MapEntry");
+          resultTypeInfo = mapEntry.withCardinality(Cardinality.CARDINALITY_REPEATED);
+        } else if (!hasAdditionalProperties(modelImpl)) {
+          // Since there is no additional properties, create a protobuf.Type.
+          String protoTypeName = NameConverter.schemaNameToMessageName(typeName);
+          String typeUrl =
+              WellKnownTypeUtils.TYPE_SERVICE_BASE_URL + namespacePrefix + protoTypeName;
 
-        // Add to the processed list before creating the type. This will prevent from cyclic
-        // dependency
-        Preconditions.checkState(!processedTypeNameToTypeInfo.containsKey(modelRefId));
-        resultTypeInfo =
-            TypeInfo.create(typeUrl, Kind.TYPE_MESSAGE, Cardinality.CARDINALITY_OPTIONAL);
-        processedTypeNameToTypeInfo.put(modelRefId, resultTypeInfo);
-        ImmutableList.Builder<Field> fieldsBuilder = createFields(serviceBuilder, modelImpl);
-        resultTypeInfo = resultTypeInfo.withFields(fieldsBuilder.build()).withTypeUrl("");
-        resultTypeInfo = ensureNamed(serviceBuilder, resultTypeInfo, protoTypeName);
+          // Add to the processed list before creating the type. This will prevent from cyclic
+          // dependency
+          Preconditions.checkState(!processedTypeNameToTypeInfo.containsKey(modelRefId));
+          resultTypeInfo =
+              TypeInfo.create(typeUrl, Kind.TYPE_MESSAGE, Cardinality.CARDINALITY_OPTIONAL);
+          processedTypeNameToTypeInfo.put(modelRefId, resultTypeInfo);
+          ImmutableList.Builder<Field> fieldsBuilder = createFields(serviceBuilder, modelImpl);
+          resultTypeInfo = resultTypeInfo.withFields(fieldsBuilder.build()).withTypeUrl("");
+          resultTypeInfo = ensureNamed(serviceBuilder, resultTypeInfo, protoTypeName);
+        }
       }
     }
 
@@ -201,7 +209,11 @@ public class TypeBuilder implements AspectBuilder {
     resultTypeInfo =
         Preconditions.checkNotNull(
             addTypeFromModel(
-                serviceBuilder, refModelName, swagger.getDefinitions().get(refModelName)));
+                serviceBuilder,
+                refModelName,
+                swagger.getDefinitions() == null
+                    ? null
+                    : swagger.getDefinitions().get(refModelName)));
     return resultTypeInfo;
   }
 
@@ -374,6 +386,14 @@ public class TypeBuilder implements AspectBuilder {
         String referencePath = ((RefProperty) property).get$ref();
         Preconditions.checkState(referencePath.startsWith("#/definitions/"));
         String refPropertyName = referencePath.substring("#/definitions/".length());
+        if (swagger.getDefinitions() == null) {
+          diagCollector.addDiag(
+              Diag.error(
+                  SimpleLocation.TOPLEVEL,
+                  "Reference path %s found, but no Definitions section in OpenApi File.",
+                  referencePath));
+          return addTypeFromModel(serviceBuilder, refPropertyName, null);
+        }
         Model model = swagger.getDefinitions().get(refPropertyName);
         return addTypeFromModel(serviceBuilder, refPropertyName, model);
       case "array":

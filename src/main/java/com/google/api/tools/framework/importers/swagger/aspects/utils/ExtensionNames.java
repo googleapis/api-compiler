@@ -41,6 +41,10 @@ public final class ExtensionNames {
   // api management
   public static final String MANAGEMENT_SWAGGER_EXTENSION = addGooglePrefix("management");
 
+  // backend routing
+  public static final String BACKEND_URL_EXTENSION = addGooglePrefix("backend-url");
+  public static final String BACKEND_DEADLINE_EXTENSION = addGooglePrefix("backend-deadline");
+
   // allow unregistered calls
   public static final String X_GOOGLE_ALLOW = addGooglePrefix("allow");
 

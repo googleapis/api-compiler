@@ -48,7 +48,7 @@ ext {
       snakeyaml: 'org.yaml:snakeyaml:1.16',
       swaggerModel: 'io.swagger:swagger-models:1.5.9',
       swaggerParser: 'io.swagger:swagger-parser:1.0.22',
-      grpcCore: 'com.google.api.grpc:grpc-google-common-protos:0.1.16',
+      grpcCore: 'com.google.api.grpc:grpc-google-common-protos:0.1.20',
       apacheCommonCli: 'commons-cli:commons-cli:1.3',
       jsonSchemaValidator: 'com.github.fge:json-schema-validator:2.0.0',
 

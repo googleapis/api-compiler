@@ -45,6 +45,12 @@ ERROR: servicecontrol: The log name 'cloudaudit.googleapis.com/producer_activity
 ERROR: servicecontrol: cloudaudit.googleapis.com/producer_activity is not a valid Cloud Audit log name. Valid Cloud Audit log name prefixes are: cloudaudit.googleapis.com/activity, cloudaudit.googleapis.com/data_access.
 ERROR: servicecontrol: The log name 'cloudaudit.googleapis.com/data_access' is too long. It must not be longer than 10 characters.
 ERROR: servicecontrol: The log name 'cloudaudit.googleapis.com/activity/create' is too long. It must not be longer than 10 characters.
+ERROR: servicecontrol: Multiple consumer billing destinations use the same monitored resource type 'type1'.
+ERROR: servicecontrol: The The 'consumer' billing destination for 'type' resource refers to the monitored resource that cannot be resolved.
+ERROR: servicecontrol: The The 'consumer' billing destination for 'type' resource must contain at least one metric name.
+ERROR: servicecontrol: The The 'consumer' billing destination for 'type1' resource metric names list has more than the allowed size of 3 elements.
+ERROR: servicecontrol: The The 'consumer' billing destination for 'type1' resource refers to 'metric2' metric that cannot be resolved.
+ERROR: servicecontrol: The The 'consumer' billing destination for 'type1' resource uses 'metric3' metric more than once.
 ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type' resource refers to the monitored resource that cannot be resolved.
 ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type' resource must contain at least one metric name.
 ERROR: servicecontrol: The The 'consumer' monitoring destination for 'type1' resource metric names list has more than the allowed size of 3 elements.

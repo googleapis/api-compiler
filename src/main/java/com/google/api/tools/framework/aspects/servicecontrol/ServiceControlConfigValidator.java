@@ -16,6 +16,8 @@
 
 package com.google.api.tools.framework.aspects.servicecontrol;
 
+import com.google.api.Billing;
+import com.google.api.Billing.BillingDestination;
 import com.google.api.LabelDescriptor;
 import com.google.api.LogDescriptor;
 import com.google.api.Logging;
@@ -41,6 +43,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.protobuf.Message;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -108,6 +111,7 @@ class ServiceControlConfigValidator {
     validator.validateMonitoredResources(serviceConfig.getMonitoredResourcesList());
     validator.validateMetrics(serviceConfig.getMetricsList());
     validator.validateLogs(serviceConfig.getLogsList());
+    validator.validateBilling(serviceConfig.getBilling());
     validator.validateMonitoring(serviceConfig.getMonitoring());
     validator.validateLogging(serviceConfig.getLogging());
     validator.validateMetricsAndLogsUsed();
@@ -450,6 +454,107 @@ class ServiceControlConfigValidator {
       }
     }
 
+  }
+
+  private void validateBilling(Billing billing) {
+    validateBillingMonitoredResourceIsNotDoubleReference(billing);
+
+    for (BillingDestination destination : billing.getConsumerDestinationsList()) {
+      validateBillingDestination(destination);
+    }
+
+  }
+
+  private void validateBillingMonitoredResourceIsDefined(BillingDestination destination) {
+    String destinationName = getDestinationName(destination);
+
+    // - Monitored resource name must refer to the name defined in the monitored resources.
+    if (!monitoredResources.contains(destination.getMonitoredResource())) {
+      error(
+          MessageLocationContext.create(
+              destination, BillingDestination.MONITORED_RESOURCE_FIELD_NUMBER),
+          "The %s refers to the monitored resource that cannot be resolved.",
+          destinationName);
+    }
+  }
+
+  private void validateBillingMonitoredResourceIsNotDoubleReference(Billing billing) {
+    // - Multiple destinations cannot use the same monitored resource type.
+    Set<String> usedResources = new HashSet<>();
+    for (BillingDestination destination : billing.getConsumerDestinationsList()) {
+      if (!usedResources.add(destination.getMonitoredResource())) {
+        error(
+            SimpleLocation.TOPLEVEL,
+            "Multiple consumer billing destinations use the same monitored resource type '%s'.",
+            destination.getMonitoredResource());
+      }
+    }
+  }
+
+  private void validateBillingMetrics(
+      List<String> metricNames,
+      Message component,
+      String componentName,
+      int componentFieldNumber,
+      int metricFieldNumber) {
+    // - Metrics names list cannot be longer than predefined limit.
+    validateMaxListSize(
+        MessageLocationContext.create(component, componentFieldNumber),
+        componentName + " metric names list",
+        metricNames,
+        bounds.getMaxMetrics());
+
+    // - Metric names must refer to a name defined in the metrics section.
+    Set<String> seenMetrics = new HashSet<>();
+    for (int i = 0; i < metricNames.size(); i++) {
+      String metricName = metricNames.get(i);
+      LocationContext location =
+          MessageLocationContext.createForRepeatedByFieldName(component, metricFieldNumber, i);
+
+      if (!seenMetrics.add(metricName)) {
+        error(location, "The %s uses '%s' metric more than once.", componentName, metricName);
+      }
+      if (!metrics.containsKey(metricName)) {
+        error(
+            location,
+            "The %s refers to '%s' metric that cannot be resolved.",
+            componentName,
+            metricName);
+      } else {
+        // Mark metric name as used.
+        metrics.put(metricName, true);
+      }
+    }
+  }
+
+  private void validateBillingMonitoredResouceMetrics(BillingDestination destination) {
+    String destinationName = getDestinationName(destination);
+
+    // - Metrics list must not be empty.
+    if (destination.getMetricsCount() == 0) {
+      error(
+          MessageLocationContext.create(
+              destination, BillingDestination.MONITORED_RESOURCE_FIELD_NUMBER),
+          "The %s must contain at least one metric name.",
+          destinationName);
+    }
+
+    validateBillingMetrics(
+        destination.getMetricsList(),
+        destination,
+        destinationName,
+        BillingDestination.MONITORED_RESOURCE_FIELD_NUMBER,
+        BillingDestination.METRICS_FIELD_NUMBER);
+  }
+
+  private void validateBillingDestination(BillingDestination destination) {
+    validateBillingMonitoredResourceIsDefined(destination);
+    validateBillingMonitoredResouceMetrics(destination);
+  }
+
+  private static String getDestinationName(BillingDestination destination) {
+    return String.format(
+        "The 'consumer' billing destination for '%s' resource", destination.getMonitoredResource());
   }
 
   private static String getDestinationName(String type, MonitoringDestination destination) {

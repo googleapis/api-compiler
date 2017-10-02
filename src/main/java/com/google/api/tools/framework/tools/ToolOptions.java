@@ -197,7 +197,7 @@ public class ToolOptions {
           "descriptor_contents",
           "The descriptor set representing the compiled protos the tool works on. and its file"
               + " contents",
-          null);
+          FileWrapper.create("empty", ""));
 
   public static final Option<List<String>> CONFIG_FILES =
       createOption(

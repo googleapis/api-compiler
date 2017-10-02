@@ -77,23 +77,19 @@ public class ProtoHelpers {
           return null;
         }
 
-        if (fieldValue instanceof EnumValueDescriptor
-            && clazz.isEnum()) {
+        if (fieldValue instanceof EnumValueDescriptor && clazz.isEnum()) {
           // Do some sanity checks and convert the EnumValueDescriptor into the (Type) class (which
           // has to be an enum)
           EnumValueDescriptor fieldEnumValue = (EnumValueDescriptor) fieldValue;
           if (clazz.getSimpleName().equals(fieldEnumValue.getType().getName())) {
             Type[] enumValues = clazz.getEnumConstants();
-            if (fieldEnumValue.getIndex() >= 0
-                && fieldEnumValue.getIndex() < enumValues.length) {
+            if (fieldEnumValue.getIndex() >= 0 && fieldEnumValue.getIndex() < enumValues.length) {
               Type value = enumValues[fieldEnumValue.getIndex()];
               return value;
             }
           }
-          throw new RuntimeException(String.format(
-              "Couldn't convert '%s' to class '%s'",
-              fieldValue,
-              clazz.getName()));
+          throw new RuntimeException(
+              String.format("Couldn't convert '%s' to class '%s'", fieldValue, clazz.getName()));
         }
 
         return clazz.cast(fieldValue);
@@ -101,11 +97,7 @@ public class ProtoHelpers {
         throw new RuntimeException(
             String.format(
                 "Expected (%s) type, not (%s), for field '%s' of (%s)%s",
-                clazz,
-                fieldValue.getClass(),
-                fieldDesc.getName(),
-                mob.getClass(),
-                getName(mob)),
+                clazz, fieldValue.getClass(), fieldDesc.getName(), mob.getClass(), getName(mob)),
             ex);
       }
     }
@@ -128,10 +120,12 @@ public class ProtoHelpers {
   }
 
   @Nullable
-  public static <MessageType extends GeneratedMessage.ExtendableMessage<MessageType>,
-                 Type extends GeneratedMessage> Type getExtensionObject(
-      GeneratedMessage.ExtendableMessageOrBuilder<MessageType> mob,
-      ExtensionLite<MessageType, Type> extension) {
+  public static <
+          MessageType extends GeneratedMessage.ExtendableMessage<MessageType>,
+          Type extends GeneratedMessage>
+      Type getExtensionObject(
+          GeneratedMessage.ExtendableMessageOrBuilder<MessageType> mob,
+          ExtensionLite<MessageType, Type> extension) {
     if (mob.hasExtension(extension)) {
       return mob.getExtension(extension);
     }
@@ -151,5 +145,10 @@ public class ProtoHelpers {
       extensionList.add(mob.getExtension(extension, extensionIndex));
     }
     return extensionList.build();
+  }
+
+  /** Helper function to build location path. */
+  public static ProtoPathWrapper buildPath(ProtoPathWrapper parentPath, Integer... children) {
+    return new ProtoPathWrapper(parentPath, children);
   }
 }

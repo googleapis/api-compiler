@@ -127,7 +127,7 @@ public abstract class BaselineTestCase {
     }
   }
 
-  private static final String DEFAULT_BASELINE_SUFFIX = ".baseline";
+  protected static final String DEFAULT_BASELINE_SUFFIX = ".baseline";
 
   private static final String DIRECTORY_TO_COPY_NEW_BASELINE;
   private static final boolean RETAIN_DIRECTORY_TREE_FOR_BASELINE_OUTPUT;
@@ -202,9 +202,14 @@ public abstract class BaselineTestCase {
     }
   };
 
-  /**
-   * Gets the relative name the base line data file should have. Can be overriden.
-   */
+  /** Gets expected result. */
+  protected String getExpected() throws Exception {
+    URL expectedUrl = getTestDataLocator().findTestData(baselineFileName());
+    String expected = expectedUrl != null ? getTestDataLocator().readTestData(expectedUrl) : null;
+    return expected;
+  }
+
+  /** Gets the relative name the base line data file should have. Can be overridden. */
   protected String baselineFileName() {
     return testName.getMethodName() + DEFAULT_BASELINE_SUFFIX;
   }
@@ -221,9 +226,8 @@ public abstract class BaselineTestCase {
       writer.flush();
       output.flush();
       String actual = new String(((ByteArrayOutputStream) output).toByteArray(), UTF_8);
+      String expected = getExpected();
 
-      URL expectedUrl = getTestDataLocator().findTestData(baselineFileName());
-      String expected = expectedUrl != null ? getTestDataLocator().readTestData(expectedUrl) : null;
       if (expected == null) {
         String actualLocation = tryCreateNewBaseline(actual);
         throw new BaselineComparisonError(
@@ -234,7 +238,7 @@ public abstract class BaselineTestCase {
         throw new BaselineComparisonError(testName.getMethodName(), baselineFileName(),
             expected, actual, actualLocation);
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }

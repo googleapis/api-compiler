@@ -1,0 +1,44 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.cloud.goog",
+    "paths": {
+        "/v1/pets": {
+            "post": {
+                "operationId": "post_pet",
+                "x-google-backend-url": "https://backend1/post_pet",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            },
+            "get": {
+                "operationId": "get_pet",
+                "x-google-backend-url": "https://backend2/get_pet",
+                "x-google-backend-deadline": 10,
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "api_key": []
+        }
+    ],
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "key",
+            "in": "query"
+        }
+    }
+}

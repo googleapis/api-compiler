@@ -16,10 +16,10 @@
 
 package com.google.api.tools.framework.importers.swagger.aspects;
 
+import com.google.api.CustomHttpPattern;
 import com.google.api.HttpRule;
 import com.google.api.tools.framework.importers.swagger.OpenApiLocations;
 import com.google.api.tools.framework.importers.swagger.aspects.utils.NameConverter;
-import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagCollector;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -88,11 +88,11 @@ public class HttpRuleGenerator {
         httpRuleBuilder.setPost(httpRulePath);
         break;
       default:
-        diagCollector.addDiag(
-            Diag.warning(
-                OpenApiLocations.createOperationLocation(operationType, httpRulePath),
-                "Operation is invalid. Default to 'post' operation"));
-        httpRuleBuilder.setPost(httpRulePath);
+        httpRuleBuilder.setCustom(
+            CustomHttpPattern.newBuilder()
+                .setKind(operationType.toUpperCase())
+                .setPath(httpRulePath)
+                .build());
     }
     return httpRuleBuilder.build();
   }

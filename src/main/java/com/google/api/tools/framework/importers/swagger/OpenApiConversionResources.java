@@ -22,6 +22,7 @@ import com.google.api.tools.framework.importers.swagger.aspects.ProtoApiFromOpen
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.auth.AuthRuleGenerator;
 import com.google.api.tools.framework.importers.swagger.aspects.authz.AuthzBuilder;
+import com.google.api.tools.framework.importers.swagger.aspects.backend.BackendBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.endpoint.EndpointBuilder;
 import com.google.api.tools.framework.importers.swagger.aspects.quota.MetricRuleGenerator;
 import com.google.api.tools.framework.importers.swagger.aspects.quota.QuotaBuilder;
@@ -44,7 +45,7 @@ public abstract class OpenApiConversionResources {
   public static OpenApiConversionResources create(
       Swagger swagger, String filename, String methodNamespace, String typeNamespace) {
     OpenApiImporterDiagCollector diagCollector = new OpenApiImporterDiagCollector(filename);
-    TypeBuilder typeBuilder = new TypeBuilder(swagger, typeNamespace);
+    TypeBuilder typeBuilder = new TypeBuilder(swagger, typeNamespace, diagCollector);
     HttpRuleGenerator httpRuleGenerator =
         new HttpRuleGenerator(methodNamespace, swagger.getBasePath(), diagCollector);
     AuthRuleGenerator authRuleGenerator = new AuthRuleGenerator(methodNamespace, diagCollector);
@@ -54,6 +55,7 @@ public abstract class OpenApiConversionResources {
     QuotaBuilder quotaBuilder = new QuotaBuilder(diagCollector);
     EndpointBuilder endpointBuilder = new EndpointBuilder(diagCollector);
     AuthzBuilder authzBuilder = new AuthzBuilder(diagCollector);
+    BackendBuilder backendBuilder = new BackendBuilder(methodNamespace, diagCollector);
     ProtoApiFromOpenApi apiBuilder =
         new ProtoApiFromOpenApi(
             diagCollector,
@@ -64,8 +66,8 @@ public abstract class OpenApiConversionResources {
             authRuleGenerator,
             metricRuleGenerator,
             authBuilder);
-    List<AspectBuilder> aspectBuilders =
-        Lists.newArrayList(typeBuilder, authBuilder, endpointBuilder, quotaBuilder, authzBuilder);
+    final List<AspectBuilder> aspectBuilders = Lists.newArrayList(
+        typeBuilder, authBuilder, backendBuilder, endpointBuilder, quotaBuilder, authzBuilder);
     return new AutoValue_OpenApiConversionResources(aspectBuilders, apiBuilder, diagCollector);
   }
 }
