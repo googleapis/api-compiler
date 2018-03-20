@@ -24,6 +24,8 @@ public final class ExtensionNames {
 
   private static final String GOOGLE_EXTENSION_PREFIX = "x-google-";
 
+  public static final String API_NAME = addGooglePrefix("api-name");
+
   // endpoints
   public static final String ENDPOINTS_EXTENSION_NAME = addGooglePrefix("endpoints");
 

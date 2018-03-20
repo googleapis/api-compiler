@@ -31,7 +31,6 @@ import java.util.List;
 
 /** Class to create a {@link Service} instance from a group of {@link Swagger} objects. */
 public class OpenApiToService {
-
   static final String WILDCARD_URL_PATH = "/**";
 
   private final List<OpenApiFile> openApis;
@@ -72,11 +71,25 @@ public class OpenApiToService {
   public Service createServiceConfig() throws OpenApiConversionException {
     new TopLevelBuilder()
         .setTopLevelFields(openApis.get(0).serviceBuilder(), openApis, serviceName);
-    buildService(openApis);
+    try {
+      buildService(openApis);
+    } catch (Exception ex) {
+      aggregateAllDiagnostics(openApis);
+      // If the openApi files have known errors, regardless of any exceptions that have been
+      // generated while parsing them, we log and swallow the exception so that we can respond with
+      // the errors that we've already generated.
+      if (diagCollector.hasErrors()) {
+        return null;
+      }
+
+      throw ex;
+    }
+
     aggregateAllDiagnostics(openApis);
     if (diagCollector.hasErrors()) {
       return null;
     }
+
     List<Service.Builder> serviceBuilders = Lists.newArrayList();
     for (OpenApiFile openApiFile : openApis) {
       serviceBuilders.add(openApiFile.serviceBuilder());

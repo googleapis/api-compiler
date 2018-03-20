@@ -19,6 +19,7 @@ package com.google.api.tools.framework.util;
 import com.google.api.tools.framework.util.buildervisitor.BuilderVisitorNodeInfo;
 import com.google.api.tools.framework.util.buildervisitor.FileNodeInfo;
 import com.google.api.tools.framework.util.buildervisitor.MessageNodeInfo;
+import com.google.common.base.Strings;
 import com.google.protobuf.DescriptorProtos.DescriptorProto;
 import com.google.protobuf.DescriptorProtos.EnumDescriptorProto;
 import com.google.protobuf.DescriptorProtos.EnumValueDescriptorProto;
@@ -31,6 +32,7 @@ import com.google.protobuf.DescriptorProtos.SourceCodeInfo;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * A visitor base class for protocol buffer builders. Implements all the accept methods for
@@ -42,6 +44,7 @@ public abstract class BuilderVisitor extends GenericVisitor<Message.Builder> {
 
   // Current state of this visitor instance.
   private final Stack<BuilderVisitorNodeInfo> ancestors = new Stack<>();
+  private final Stack<String> fullyQualifiedNameComponents = new Stack<>();
   private boolean modified = false;
   private FileNodeInfo currentFile = null;
 
@@ -63,6 +66,10 @@ public abstract class BuilderVisitor extends GenericVisitor<Message.Builder> {
     return getAncestorInfo(generationsToSkip).node();
   }
 
+  public String getAncestorFullyQualifiedName(int generationsToSkip) {
+    return getAncestorInfo(generationsToSkip).getFullyQualifiedName();
+  }
+
   private BuilderVisitorNodeInfo getAncestorInfo(int generationsToSkip) {
     int index = ancestors.size() - 1 - generationsToSkip;
     if (index < 0 || index >= ancestors.size()) {
@@ -80,6 +87,20 @@ public abstract class BuilderVisitor extends GenericVisitor<Message.Builder> {
 
   public Message.Builder getParent() {
     return getAncestor(0);
+  }
+
+  public FileDescriptorProto.Builder getCurrentFile() {
+    if (currentFile != null) {
+      return (FileDescriptorProto.Builder) currentFile.node();
+    }
+    return null;
+  }
+
+  public String getFullyQualifiedName() {
+    return fullyQualifiedNameComponents
+        .stream()
+        .filter(s -> !Strings.isNullOrEmpty(s.trim()))
+        .collect(Collectors.joining("."));
   }
 
   public String getCurrentContext() {
@@ -103,7 +124,11 @@ public abstract class BuilderVisitor extends GenericVisitor<Message.Builder> {
 
     if (pushed instanceof FileNodeInfo) {
       currentFile = (FileNodeInfo) pushed;
+      fullyQualifiedNameComponents.push(((FileDescriptorProto.Builder) pushed.node()).getPackage());
+    } else {
+      fullyQualifiedNameComponents.push(ProtoHelpers.getName(pushed.node()));
     }
+    pushed.setFullyQualifiedName(getFullyQualifiedName());
     return pushed;
   }
 
@@ -115,6 +140,7 @@ public abstract class BuilderVisitor extends GenericVisitor<Message.Builder> {
       // Reset the currentFile state -- assumes that we can't have nested File nodes.
       currentFile = null;
     }
+    fullyQualifiedNameComponents.pop();
     return popped;
   }
 

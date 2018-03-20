@@ -126,15 +126,12 @@ quota {
 }
 authentication {
 }
-context {
-}
 usage {
 }
 endpoints {
   name: "blob.googleapis.com"
   aliases: "blob.clients6.google.com"
   aliases: "content-blob.googleapis.com"
-  apis: "protiary.test.ContainerStorage"
 }
 config_version {
   value: 1

@@ -18,6 +18,7 @@ package com.google.api.tools.framework.aspects.documentation.source;
 
 import com.google.api.tools.framework.model.DiagReporter;
 import com.google.api.tools.framework.model.DiagReporter.LocationContext;
+import com.google.api.tools.framework.model.Model;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -131,17 +132,30 @@ public class SourceParser {
   private static final String FENCED_CODE_BLOCK_SOURCE_GROUP = "fencedcodeblocksource";
   private static final String INCLUSION_CODE = "include";
 
+  private static final String PLAIN_CODE_TAG = "disable-markdown-code-block";
+
   private final DiagReporter diagReporter;
   private final LocationContext sourceLocation;
   private final String source;
   private final String docPath;
+  private final Model model;
 
   public SourceParser(
-      String source, LocationContext sourceLocation, DiagReporter diagReporter, String docPath) {
+      String source,
+      LocationContext sourceLocation,
+      DiagReporter diagReporter,
+      String docPath,
+      Model model) {
     this.source = source;
     this.sourceLocation = sourceLocation;
     this.diagReporter = diagReporter;
     this.docPath = docPath;
+    this.model = model;
+  }
+
+  public SourceParser(
+      String source, LocationContext sourceLocation, DiagReporter diagReporter, String docPath) {
+    this(source, sourceLocation, diagReporter, docPath, null);
   }
 
   /**
@@ -198,6 +212,7 @@ public class SourceParser {
     }
 
     Matcher matcher = CONTENT_PARSING_PATTERNS.matcher(source).region(curIndex, end);
+
     while (matcher.find()) {
       if (matcher.start() > curIndex) {
         // Extract text content between current index and start of found inclusion instruction.
@@ -236,14 +251,12 @@ public class SourceParser {
                 unescapeInstructions(matcher.group(CODE_BLOCK_SOURCE_GROUP)),
                 matcher.start(),
                 matcher.end());
-
       } else if (matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP) != null) {
         newElement =
             new CodeBlock(
                 unescapeInstructions(matcher.group(HTML_CODE_BLOCK_SOURCE_GROUP)),
                 matcher.start(),
                 matcher.end());
-
       } else if (matcher.group(FENCED_CODE_BLOCK_SOURCE_GROUP) != null) {
         newElement =
             new CodeBlock(
@@ -260,10 +273,14 @@ public class SourceParser {
       curIndex = matcher.end();
     }
 
+    String text = source.substring(curIndex, end);
+
     // Extract trailing text content.
-    if (curIndex < end) {
-      contents.add(new Text(source.substring(curIndex, end), curIndex, end));
+    if (!text.isEmpty()) {
+      end = curIndex + text.length();
+      contents.add(new Text(text, curIndex, end));
     }
+
     return contents;
   }
 
@@ -285,4 +302,3 @@ public class SourceParser {
     return string.replace("\\(==", "(==").replace("\\==)", "==)");
   }
 }
-

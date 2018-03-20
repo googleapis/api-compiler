@@ -1,0 +1,100 @@
+name: "apis.example.com"
+title: "Bookstore"
+apis {
+  name: "1.publisher"
+  methods {
+    name: "Publish"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  version: "1.0.0"
+  source_context {
+    file_name: "multi_apis_single_name.json"
+  }
+}
+apis {
+  name: "2.publisher"
+  methods {
+    name: "Publish"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  version: "2.0.0"
+  source_context {
+    file_name: "multi_apis_single_name2.json"
+  }
+}
+apis {
+  name: "1.subscriber"
+  methods {
+    name: "Subscribe"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  version: "1.0.0"
+  source_context {
+    file_name: "multi_apis_single_name3.json"
+  }
+}
+apis {
+  name: "2.subscriber"
+  methods {
+    name: "Subscribe"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/google.protobuf.Value"
+  }
+  version: "2.0.0"
+  source_context {
+    file_name: "multi_apis_single_name4.json"
+  }
+}
+documentation {
+  summary: "A simple Bookstore example."
+}
+http {
+  rules {
+    selector: "1.publisher.Publish"
+    post: "/v1/channel/publisher"
+  }
+  rules {
+    selector: "2.publisher.Publish"
+    post: "/v2/channel/publisher"
+  }
+  rules {
+    selector: "1.subscriber.Subscribe"
+    post: "/v1/channel/subscriber"
+  }
+  rules {
+    selector: "2.subscriber.Subscribe"
+    post: "/v2/channel/subscriber"
+  }
+}
+quota {
+}
+authentication {
+}
+usage {
+  rules {
+    selector: "1.publisher.Publish"
+  }
+  rules {
+    selector: "2.publisher.Publish"
+  }
+  rules {
+    selector: "1.subscriber.Subscribe"
+  }
+  rules {
+    selector: "2.subscriber.Subscribe"
+  }
+}
+endpoints {
+  name: "apis.example.com"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
+}
+experimental {
+}
+

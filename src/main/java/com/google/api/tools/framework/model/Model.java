@@ -680,11 +680,14 @@ public class Model extends Element implements ConfigLocationResolver {
   // -------------------------------------------------------------------------
   // Generation of derived discovery docs.
   private boolean deriveDiscoveryDoc = true;
-
+  public static final String SKIP_DISCOVERY_GENERATION = "skip_discovery_generation";
   /**
    * Returns true if the derived discovery doc should be generated and added into service config.
    */
   public boolean shouldDerivedDiscoveryDoc() {
+    if (experiments.isExperimentEnabled(SKIP_DISCOVERY_GENERATION)) {
+      return false;
+    }
     return deriveDiscoveryDoc;
   }
 

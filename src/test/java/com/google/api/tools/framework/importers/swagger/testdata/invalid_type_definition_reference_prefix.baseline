@@ -1,0 +1,2 @@
+ERROR: invalid_type_definition_reference_prefix.json: Type definition reference path '#/invalid-prefix/SimpleDef' must begin with '#/definitions/'
+Service config creation failed

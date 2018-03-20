@@ -7,7 +7,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.7'
+    classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5'
   }
 }
 
@@ -19,8 +19,8 @@ apply plugin: "eclipse"
 apply plugin: "com.google.protobuf"
 apply plugin: "application"
 
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 group = "com.google.api"
 version = "0.0.7"

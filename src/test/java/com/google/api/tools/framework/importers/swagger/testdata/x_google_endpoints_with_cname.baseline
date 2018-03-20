@@ -16,13 +16,10 @@ quota {
 }
 authentication {
 }
-context {
-}
 usage {
 }
 endpoints {
   name: "library-example.endpoints.test-project.cloud.goog"
-  apis: "v1.library_example_endpoints_test_project_cloud_goog"
   target: "mytest.appspot.com"
 }
 control {

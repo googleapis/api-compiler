@@ -24,7 +24,6 @@ import com.google.api.Service;
 import com.google.api.tools.framework.aspects.RuleBasedConfigAspect;
 import com.google.api.tools.framework.aspects.authentication.model.AuthAttribute;
 import com.google.api.tools.framework.model.ConfigAspect;
-import com.google.api.tools.framework.model.DiagReporter.MessageLocationContext;
 import com.google.api.tools.framework.model.Method;
 import com.google.api.tools.framework.model.Model;
 import com.google.api.tools.framework.model.ProtoElement;
@@ -34,39 +33,29 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 
-/**
- * Configuration aspect for authentication binding.
- */
+/** Configuration aspect for authentication binding. */
 public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, AuthAttribute> {
+  public static final String ASPECT_NAME = "auth";
 
   /** Splitter for oauth scopes specified in auth rule. */
   private static final Splitter OAUTH_SCOPE_SPLITTER = Splitter.on(",").omitEmptyStrings();
 
-  /**
-   * Static instance of empty {@link ImmutableList}.
-   */
+  /** Static instance of empty {@link ImmutableList}. */
   private static final ImmutableList<String> EMPTY_STRING_LIST = ImmutableList.of();
 
-  /**
-   * Resource root for snippet file.
-   */
+  /** Resource root for snippet file. */
   private static final String SNIPPET_RESOURCE_ROOT =
       "com/google/api/tools/framework/aspects/authentication/snippet";
 
-  /**
-   * Snippet file name.
-   */
+  /** Snippet file name. */
   private static final String SNIPPET_RESOURCE = "auth_document.snip";
 
-  /**
-   * Snippet interface for auth configuration aspect documentation.
-   */
-  private static final SnippetInterface snippet = SnippetSet.createSnippetInterface(
-      SnippetInterface.class, SNIPPET_RESOURCE_ROOT, SNIPPET_RESOURCE);
+  /** Snippet interface for auth configuration aspect documentation. */
+  private static final SnippetInterface snippet =
+      SnippetSet.createSnippetInterface(
+          SnippetInterface.class, SNIPPET_RESOURCE_ROOT, SNIPPET_RESOURCE);
 
-  /**
-   * The service-level authentication configuration.
-   */
+  /** The service-level authentication configuration. */
   private final Authentication authConfig;
 
   public static AuthConfigAspect create(Model model) {
@@ -74,18 +63,29 @@ public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, 
     return new AuthConfigAspect(model);
   }
 
-  /**
-   * Creates authentication binding from the given model.
-   */
+  /** Creates authentication binding from the given model. */
   AuthConfigAspect(Model model) {
-    super(model, AuthAttribute.KEY, "auth", AuthenticationRule.getDescriptor(),
+    super(
+        model,
+        AuthAttribute.KEY,
+        ASPECT_NAME,
+        AuthenticationRule.getDescriptor(),
         model.getServiceConfig().getAuthentication().getRulesList());
     this.authConfig = model.getServiceConfig().getAuthentication();
   }
 
-  /**
-   * Returns an empty list since this aspect does not depend on any other aspects.
-   */
+  /** Return the AuthProvider that matches the specified providerId, or null if none is found **/
+  public static AuthProvider getAuthProvider(String providerId, Model model) {
+    for (AuthProvider authProvider :
+        model.getServiceConfig().getAuthentication().getProvidersList()) {
+      if (!authProvider.getId().isEmpty() && authProvider.getId().equals(providerId)) {
+        return authProvider;
+      }
+    }
+    return null;
+  }
+
+  /** Returns an empty list since this aspect does not depend on any other aspects. */
   @Override
   public List<Class<? extends ConfigAspect>> mergeDependencies() {
     return ImmutableList.of();
@@ -97,50 +97,10 @@ public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, 
   }
 
   @Override
-  public void startMerging() {
-    for (AuthenticationRule rule :
-        getModel().getServiceConfig().getAuthentication().getRulesList()) {
-      validateRequirements(rule.getRequirementsList());
-    }
-  }
-
-  @Override
   protected AuthAttribute evaluate(
       ProtoElement element, AuthenticationRule rule, boolean isFromIdl) {
     return new AuthAttribute(rule);
 
-  }
-
-  private void validateRequirements(List<AuthRequirement> requirementsList) {
-    for (AuthRequirement requirement : requirementsList) {
-      AuthProvider authProvider = getAuthProvider(requirement.getProviderId());
-      if (authProvider == null) {
-        error(
-            MessageLocationContext.create(requirement, AuthRequirement.PROVIDER_ID_FIELD_NUMBER),
-            "Cannot find auth provider with id '%s'",
-            requirement.getProviderId());
-      } else {
-        if (!requirement.getAudiences().isEmpty() && !authProvider.getAudiences().isEmpty()) {
-          if (!requirement.getAudiences().equalsIgnoreCase(authProvider.getAudiences())) {
-            error(
-                MessageLocationContext.create(requirement, AuthRequirement.AUDIENCES_FIELD_NUMBER),
-                "Setting 'audiences' field inside both 'requirement' and provider '%s' is not"
-                    + " allowed. Please set the 'audiences' field only inside the 'provider'.",
-                authProvider.getId());
-          }
-        }
-      }
-    }
-  }
-
-  private AuthProvider getAuthProvider(String providerId) {
-    for (AuthProvider authProvider :
-        getModel().getServiceConfig().getAuthentication().getProvidersList()) {
-      if (!authProvider.getId().isEmpty() && authProvider.getId().equals(providerId)) {
-        return authProvider;
-      }
-    }
-    return null;
   }
 
   @Override
@@ -149,8 +109,8 @@ public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, 
   }
 
   @Override
-  protected void addToRuleBuilder(Service.Builder serviceBuilder, String selector,
-      AuthAttribute binding) {
+  protected void addToRuleBuilder(
+      Service.Builder serviceBuilder, String selector, AuthAttribute binding) {
     // Add AuthenticationRule.
 
     // Copy the audiences field value from AuthProvider into AuthRequirements.
@@ -167,7 +127,7 @@ public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, 
   }
 
   private String getProviderAudience(String providerId) {
-    AuthProvider authProvider = getAuthProvider(providerId);
+    AuthProvider authProvider = getAuthProvider(providerId, getModel());
     if (authProvider != null) {
       return authProvider.getAudiences();
     }
@@ -177,31 +137,29 @@ public class AuthConfigAspect extends RuleBasedConfigAspect<AuthenticationRule, 
   @Override
   public String getDocumentationTitle(ProtoElement element) {
     ImmutableList<String> scopes = getOauthScopes(element);
-    return scopes.isEmpty() ? null : "Authorization";
+    return scopes.isEmpty() ? null : "Authorization Scopes";
   }
 
   @Override
   public String getDocumentation(ProtoElement element) {
     ImmutableList<String> scopes = getOauthScopes(element);
     return scopes.isEmpty()
-        ? null : snippet.authDocumentation(scopes, scopes.size() == 1).prettyPrint();
+        ? null
+        : snippet.authDocumentation(scopes, scopes.size() == 1).prettyPrint();
   }
 
   private ImmutableList<String> getOauthScopes(ProtoElement element) {
     AuthAttribute auth = element.getAttribute(AuthAttribute.KEY);
     return auth != null && auth.getAuthenticationRule().hasOauth()
-        ? ImmutableList.copyOf(OAUTH_SCOPE_SPLITTER.split(
-            auth.getAuthenticationRule().getOauth().getCanonicalScopes()))
-            : EMPTY_STRING_LIST;
+        ? ImmutableList.copyOf(
+            OAUTH_SCOPE_SPLITTER.split(
+                auth.getAuthenticationRule().getOauth().getCanonicalScopes()))
+        : EMPTY_STRING_LIST;
   }
 
-  /**
-   * Interface for Snippet to generate documentation for the auth configuration aspect.
-   */
+  /** Interface for Snippet to generate documentation for the auth configuration aspect. */
   private static interface SnippetInterface {
-    /**
-     * Generates documentation body for given proto element.
-     */
+    /** Generates documentation body for given proto element. */
     Doc authDocumentation(ImmutableList<String> oauthScopes, boolean singleScope);
   }
 }

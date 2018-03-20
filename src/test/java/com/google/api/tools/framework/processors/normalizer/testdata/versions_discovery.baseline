@@ -238,16 +238,6 @@ quota {
 }
 authentication {
 }
-context {
-  rules {
-    selector: "google.discovery.Discovery.GetDiscovery"
-    requested: "google.rpc.context.VisibilityContext"
-  }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscoveryRest"
-    requested: "google.rpc.context.VisibilityContext"
-  }
-}
 usage {
 }
 config_version {

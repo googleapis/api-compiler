@@ -1,0 +1,2 @@
+ERROR: type_reference_ref_loop.json: Invalid circular reference detected for type 'myRef'
+Service config creation failed

@@ -1,0 +1,57 @@
+name: "library-example.cloud.goog"
+title: "Google Example Library API"
+apis {
+  name: "v1.library_example_cloud_goog"
+  methods {
+    name: "SimpleMethod"
+    request_type_url: "type.googleapis.com/google.protobuf.Empty"
+    response_type_url: "type.googleapis.com/namespace.types.SimpleDef"
+  }
+  version: "v1"
+  source_context {
+    file_name: "array_type_missing_items.json"
+  }
+}
+types {
+  name: "namespace.types.SimpleDef"
+  fields {
+    kind: TYPE_MESSAGE
+    cardinality: CARDINALITY_OPTIONAL
+    number: 1
+    name: "my_array"
+    type_url: "type.googleapis.com/google.protobuf.ListValue"
+    json_name: "myArray"
+  }
+  source_context {
+    file_name: "namespace.types"
+  }
+}
+documentation {
+  summary: "A simple Google Example Library API."
+}
+http {
+  rules {
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
+    post: "/v1/pets"
+  }
+}
+quota {
+}
+authentication {
+}
+usage {
+  rules {
+    selector: "v1.library_example_cloud_goog.SimpleMethod"
+  }
+}
+endpoints {
+  name: "library-example.cloud.goog"
+}
+control {
+  environment: "servicecontrol.googleapis.com"
+}
+system_parameters {
+}
+experimental {
+}
+

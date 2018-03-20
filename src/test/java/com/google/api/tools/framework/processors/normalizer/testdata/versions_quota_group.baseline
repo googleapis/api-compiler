@@ -296,24 +296,12 @@ quota {
 }
 authentication {
 }
-context {
-  rules {
-    selector: "google.discovery.Discovery.GetDiscovery"
-    requested: "google.rpc.context.VisibilityContext"
-  }
-  rules {
-    selector: "google.discovery.Discovery.GetDiscoveryRest"
-    requested: "google.rpc.context.VisibilityContext"
-  }
-}
 usage {
 }
 endpoints {
   name: "test.googleapis.com"
   aliases: "test.clients6.google.com"
   aliases: "content-test.googleapis.com"
-  apis: "proto.test.v1.TestService"
-  apis: "google.discovery.Discovery"
 }
 config_version {
   value: 2

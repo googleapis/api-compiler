@@ -1117,76 +1117,12 @@ authentication {
     allow_without_credential: true
   }
 }
-context {
-  rules {
-    selector: "google.example.library.v1.LibraryService.CreateShelf"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.GetShelf"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.RestrictedGetShelf"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.ListShelves"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.DeleteShelf"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.MergeShelves"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.CreateBook"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.GetBook"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.ListBooks"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.DeleteBook"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.UpdateBook"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-  rules {
-    selector: "google.example.library.v1.LibraryService.MoveBook"
-    requested: "google.rpc.context.VisibilityContext"
-    requested: "google.rpc.context.ProjectContext"
-  }
-}
 usage {
 }
 endpoints {
   name: "library-example.googleapis.com"
   aliases: "library-example.clients6.google.com"
   aliases: "content-library-example.googleapis.com"
-  apis: "google.example.library.v1.LibraryService"
-  apis: "google.discovery.Discovery"
 }
 config_version {
 }

@@ -85,15 +85,12 @@ quota {
 }
 authentication {
 }
-context {
-}
 usage {
 }
 endpoints {
   name: "echo.googleapis.com"
   aliases: "echo.clients6.google.com"
   aliases: "content-echo.googleapis.com"
-  apis: "protiary.test.EchoService"
 }
 config_version {
   value: 3

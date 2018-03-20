@@ -20,6 +20,7 @@ import com.google.api.tools.framework.aspects.documentation.DocumentationConfigA
 import com.google.api.tools.framework.aspects.documentation.model.DeprecationDescriptionAttribute;
 import com.google.api.tools.framework.aspects.documentation.model.InliningAttribute;
 import com.google.api.tools.framework.aspects.documentation.model.PageAttribute;
+import com.google.api.tools.framework.aspects.documentation.model.RequiredFieldAttribute;
 import com.google.api.tools.framework.aspects.documentation.model.ResourceAttribute;
 import com.google.api.tools.framework.model.Diag;
 import com.google.api.tools.framework.model.DiagReporter.ResolvedLocation;
@@ -38,6 +39,7 @@ public class Instruction extends ContentElement {
   private static final String RESOURCE_INSTRUCTION = "resource_for";
   private static final String DEPRECATION_DESCRIPTION = "deprecation_description";
   private static final String INLINE_INSTRUCTION = "inline_message";
+  private static final String REQUIRED_FIELD_INSTRUCTION = "required_field";
 
   private final String code;
   private final String arg;
@@ -139,6 +141,19 @@ public class Instruction extends ContentElement {
         element.putAttribute(
             DeprecationDescriptionAttribute.KEY, DeprecationDescriptionAttribute.create(arg));
         break;
+      case REQUIRED_FIELD_INSTRUCTION:
+        if (!(element instanceof Field)) {
+          element
+              .getModel()
+              .getDiagReporter()
+              .report(
+                  Diag.error(
+                      element.getLocation(),
+                      "required_field instruction can only be applied to a field."));
+        } else {
+          addMethodToRequiredField((Field) element);
+        }
+        break;
       default:
         element
             .getModel()
@@ -146,6 +161,19 @@ public class Instruction extends ContentElement {
             .report(
                 Diag.error(element.getLocation(), "documentation instruction '%s' unknown.", code));
     }
+  }
+
+  private void addMethodToRequiredField(Field field) {
+    String restMethodName = getArg();
+    MessageType messageType = (MessageType) field.getParent();
+    if (messageType.hasAttribute(RequiredFieldAttribute.KEY)) {
+      messageType.getAttribute(RequiredFieldAttribute.KEY).addField(field, restMethodName);
+    } else {
+      RequiredFieldAttribute requiredFieldAttribute = new RequiredFieldAttribute();
+      requiredFieldAttribute.addField(field, restMethodName);
+      messageType.putAttribute(RequiredFieldAttribute.KEY, requiredFieldAttribute);
+    }
+    return;
   }
 
   private <T> void recursivePutAttribute(ProtoContainerElement element, Key<T> key, T attribute) {
@@ -170,4 +198,3 @@ public class Instruction extends ContentElement {
     return false;
   }
 }
-

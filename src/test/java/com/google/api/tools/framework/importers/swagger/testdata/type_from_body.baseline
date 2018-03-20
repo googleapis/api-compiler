@@ -67,8 +67,6 @@ quota {
 }
 authentication {
 }
-context {
-}
 usage {
   rules {
     selector: "v1.library_example_cloud_goog.SimpleMethod"
@@ -77,7 +75,6 @@ usage {
 }
 endpoints {
   name: "library-example.cloud.goog"
-  apis: "v1.library_example_cloud_goog"
 }
 control {
   environment: "servicecontrol.googleapis.com"

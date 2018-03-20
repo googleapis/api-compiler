@@ -10,8 +10,6 @@ quota {
 }
 authentication {
 }
-context {
-}
 usage {
 }
 endpoints {

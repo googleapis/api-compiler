@@ -21,7 +21,6 @@ import com.google.api.tools.framework.model.testing.TestDataLocator;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -82,7 +81,7 @@ public class ModelTest {
   }
 
   @Test public void testStageProcessing() {
-    final StringBuffer log = new StringBuffer();
+    final StringBuilder log = new StringBuilder();
     final Key<Boolean> stage1 = Key.get(Boolean.class, Names.named("stage1"));
     final Key<Boolean> stage2 = Key.get(Boolean.class, Names.named("stage2"));
     testModel.registerProcessor(new Processor() {

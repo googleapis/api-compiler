@@ -288,8 +288,6 @@ quota {
 }
 authentication {
 }
-context {
-}
 usage {
   requirements: "invalidserviceusage.googleapis.com/tos/universal"
 }
@@ -297,7 +295,6 @@ endpoints {
   name: "multiplebindings.googleapis.com"
   aliases: "multiplebindings.clients6.google.com"
   aliases: "content-multiplebindings.googleapis.com"
-  apis: "tech.env.framework.testing.MultipleHttpBindings"
 }
 config_version {
   value: 1

@@ -29,28 +29,21 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.inject.Key;
-
 import java.util.List;
 
 /**
- * Describes the mapping of of a method to HTTP. Attached by the aspects to methods
- * which do have an http configuration.
+ * Describes the mapping of a method to HTTP. Attached by the aspects to methods which do have an
+ * http configuration.
  */
 public class HttpAttribute {
 
-  /**
-   * Key used to access this attribute.
-   */
+  /** Key used to access this attribute. */
   public static final Key<HttpAttribute> KEY = Key.get(HttpAttribute.class);
 
-  /**
-   * Base class for path segments.
-   */
+  /** Base class for path segments. */
   public abstract static class PathSegment {
 
-    /**
-     * Returns the syntax of this segment.
-     */
+    /** Returns the syntax of this segment. */
     public abstract String syntax();
 
     @Override
@@ -58,9 +51,7 @@ public class HttpAttribute {
       return syntax();
     }
 
-    /**
-     * Returns the syntax for a full path given as a list of segments.
-     */
+    /** Returns the syntax for a full path given as a list of segments. */
     public static String toSyntax(Iterable<PathSegment> parts) {
       return toSyntax(parts, true);
     }
@@ -76,9 +67,7 @@ public class HttpAttribute {
       return result.toString();
     }
 
-    /**
-     * Returns the separator to be used before this path segment. Defaults to '/'.
-     */
+    /** Returns the separator to be used before this path segment. Defaults to '/'. */
     String separator() {
       return "/";
     }
@@ -106,9 +95,7 @@ public class HttpAttribute {
     }
   }
 
-  /**
-   * A path segment representing a literal.
-   */
+  /** A path segment representing a literal. */
   public static class LiteralSegment extends PathSegment {
 
     private final String literal;
@@ -143,9 +130,7 @@ public class HttpAttribute {
     }
   }
 
-  /**
-   * A path segment representing a field reference.
-   */
+  /** A path segment representing a field reference. */
   public static class FieldSegment extends PathSegment {
 
     private final String fieldPath;
@@ -166,16 +151,12 @@ public class HttpAttribute {
       return subPath;
     }
 
-    /**
-     * Gets the field this segment links to.
-     */
+    /** Gets the field this segment links to. */
     public FieldSelector getFieldSelector() {
       return selector;
     }
 
-    /**
-     * Sets the field this segment links to.
-     */
+    /** Sets the field this segment links to. */
     public void setFieldSelector(FieldSelector selector) {
       this.selector = selector;
     }
@@ -210,9 +191,15 @@ public class HttpAttribute {
    * Constructs an http binding for the given method kind, message, path, and body. See
    * documentation of the getters for the meaning of those values.
    */
-  public HttpAttribute(HttpRule rule, MethodKind methodKind, MessageType message,
-      ImmutableList<PathSegment> path, String body, boolean isFromIdl,
-      ImmutableList<HttpAttribute> additionalBindings, boolean isPrimary) {
+  public HttpAttribute(
+      HttpRule rule,
+      MethodKind methodKind,
+      MessageType message,
+      ImmutableList<PathSegment> path,
+      String body,
+      boolean isFromIdl,
+      ImmutableList<HttpAttribute> additionalBindings,
+      boolean isPrimary) {
 
     this.currentRule = Preconditions.checkNotNull(rule);
     this.methodKind = Preconditions.checkNotNull(methodKind);
@@ -224,20 +211,23 @@ public class HttpAttribute {
     this.isPrimary = isPrimary;
   }
 
-  /**
-   * Creates an empty binding for a method which is not exposed via http.
-   */
+  /** Creates an empty binding for a method which is not exposed via http. */
   public static HttpAttribute noConfig(MessageType message) {
     HttpAttribute config =
-        new HttpAttribute(HttpRule.getDefaultInstance(), MethodKind.NONE, message,
-            ImmutableList.<PathSegment>of(), null, false, ImmutableList.<HttpAttribute>of(), true);
+        new HttpAttribute(
+            HttpRule.getDefaultInstance(),
+            MethodKind.NONE,
+            message,
+            ImmutableList.<PathSegment>of(),
+            null,
+            false,
+            ImmutableList.<HttpAttribute>of(),
+            true);
     config.setFields(ImmutableList.<FieldSelector>of(), ImmutableList.<FieldSelector>of());
     return config;
   }
 
-  /**
-   * Returns the name of the any field specified in the underlying http rule.
-   */
+  /** Returns the name of the any field specified in the underlying http rule. */
   public String getAnySpecifiedFieldInHttpRule() {
     String fieldName;
     if (Strings.isNullOrEmpty(getHttpRule().getSelector())) {
@@ -268,23 +258,17 @@ public class HttpAttribute {
     return fieldName;
   }
 
-  /**
-   * Returns true if this is the primary binding.
-   */
+  /** Returns true if this is the primary binding. */
   public boolean isPrimary() {
     return isPrimary;
   }
 
-  /**
-   * Returns the associated rest method. Each HTTP binding has one.
-   */
+  /** Returns the associated rest method. Each HTTP binding has one. */
   public RestMethod getRestMethod() {
     return restMethod;
   }
 
-  /**
-   * Sets the rest method.
-   */
+  /** Sets the rest method. */
   public void setRestMethod(RestMethod method) {
     this.restMethod = method;
   }
@@ -328,16 +312,27 @@ public class HttpAttribute {
 
     // Change additional bindings.
     ImmutableList<HttpAttribute> changedAdditionalBindings =
-        FluentIterable.from(additionalBindings).transform(
-            new Function<HttpAttribute, HttpAttribute>() {
-              @Override public HttpAttribute apply(HttpAttribute attrib) {
-                return attrib.reroot(newRoot);
-              }
-        }).toList();
+        FluentIterable.from(additionalBindings)
+            .transform(
+                new Function<HttpAttribute, HttpAttribute>() {
+                  @Override
+                  public HttpAttribute apply(HttpAttribute attrib) {
+                    return attrib.reroot(newRoot);
+                  }
+                })
+            .toList();
 
     // Return new binding.
-    HttpAttribute attrib = new HttpAttribute(changedRule.build(), methodKind, message,
-        changedPath.build(), body, isFromIdl, changedAdditionalBindings, isPrimary);
+    HttpAttribute attrib =
+        new HttpAttribute(
+            changedRule.build(),
+            methodKind,
+            message,
+            changedPath.build(),
+            body,
+            isFromIdl,
+            changedAdditionalBindings,
+            isPrimary);
     attrib.pathSelectors = pathSelectors;
     attrib.bodySelectors = bodySelectors;
     attrib.paramSelectors = paramSelectors;
@@ -352,40 +347,30 @@ public class HttpAttribute {
     return FluentIterable.from(ImmutableList.of(this)).append(additionalBindings);
   }
 
-  //-------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   // Syntax
 
-  /**
-   * Gets the underlying http rule.
-   */
+  /** Gets the underlying http rule. */
   public HttpRule getHttpRule() {
     return currentRule;
   }
 
-  /**
-   * Gets the http method kind.
-   */
+  /** Gets the http method kind. */
   public MethodKind getMethodKind() {
     return methodKind;
   }
 
-  /**
-   * Gets the request message this configuration is associated with.
-   */
+  /** Gets the request message this configuration is associated with. */
   public MessageType getMessage() {
     return message;
   }
 
-  /**
-   * Gets the path as a list of segments.
-   */
+  /** Gets the path as a list of segments. */
   public ImmutableList<PathSegment> getPath() {
     return path;
   }
 
-  /**
-   * Gets the flattened path, where all FieldSegments have been replaced by their sub-paths.
-   */
+  /** Gets the flattened path, where all FieldSegments have been replaced by their sub-paths. */
   public ImmutableList<PathSegment> getFlatPath() {
     if (flattenedPath != null) {
       return flattenedPath;
@@ -411,86 +396,79 @@ public class HttpAttribute {
     }
   }
 
-  /**
-   * Gets the body or null if none specified.
-   */
+  /** Gets the body or null if none specified. */
   public String getBody() {
     return body;
   }
 
-  /**
-   * Return true if the http binding information is from IDL.
-   */
+  /** Return true if the http binding information is from IDL. */
   public boolean isFromIdl() {
     return isFromIdl;
   }
 
-  /**
-   * Returns true if the body is configured to include unbound fields.
-   */
+  /** Returns true if the body is configured to include unbound fields. */
   public boolean bodyCapturesUnboundFields() {
     return "*".equals(body);
   }
 
-  //-------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   // Attributes belonging to merged stage
 
   private ImmutableList<FieldSelector> pathSelectors;
   private ImmutableList<FieldSelector> paramSelectors;
   private ImmutableList<FieldSelector> bodySelectors;
 
-  /**
-   * Gets the fields which are bound via the path.
-   */
+  /** Gets the fields which are bound via the path. */
   public ImmutableList<FieldSelector> getPathSelectors() {
     return pathSelectors;
   }
 
-  /**
-   * Gets fields which are bound via parameters.
-   */
+  /** Gets fields which are bound via parameters. */
   public ImmutableList<FieldSelector> getParamSelectors() {
     return paramSelectors;
   }
 
-  /**
-   * Get fields which are bound via the body.
-   */
+  /** Get fields which are bound via the body. */
   public ImmutableList<FieldSelector> getBodySelectors() {
     return bodySelectors;
   }
 
   /**
-   * Sets the parameter and body fields. Also derives the path fields from the path,
-   * assuming they have been resolved.
+   * Sets the parameter and body fields. Also derives the path fields from the path, assuming they
+   * have been resolved.
    */
-  public void setFields(ImmutableList<FieldSelector> paramFields,
-      ImmutableList<FieldSelector> bodyFields) {
+  public void setFields(
+      ImmutableList<FieldSelector> paramFields, ImmutableList<FieldSelector> bodyFields) {
     this.paramSelectors = paramFields;
     this.bodySelectors = bodyFields;
-    this.pathSelectors = FluentIterable.from(path).filter(FieldSegment.class)
-        .filter(new Predicate<FieldSegment>() {
-          @Override public boolean apply(FieldSegment seg) {
-            return seg.getFieldSelector() != null;
-          }
-        })
-        .transform(new Function<FieldSegment, FieldSelector>() {
-          @Override public FieldSelector apply(FieldSegment seg) {
-            return seg.getFieldSelector();
-          }
-        }).toList();
+    this.pathSelectors =
+        FluentIterable.from(path)
+            .filter(FieldSegment.class)
+            .filter(
+                new Predicate<FieldSegment>() {
+                  @Override
+                  public boolean apply(FieldSegment seg) {
+                    return seg.getFieldSelector() != null;
+                  }
+                })
+            .transform(
+                new Function<FieldSegment, FieldSelector>() {
+                  @Override
+                  public FieldSelector apply(FieldSegment seg) {
+                    return seg.getFieldSelector();
+                  }
+                })
+            .toList();
   }
 
-  //-------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   // Attributes belonging to scoped stage
 
   private ImmutableList<FieldSelector> visiblePathSelectors;
   private ImmutableList<FieldSelector> visibleParamSelectors;
   private ImmutableList<FieldSelector> visibleBodySelectors;
 
-  /**
-   * Gets visible fields which are bound via the path.
-   */
+  /** Gets visible fields which are bound via the path. */
   public ImmutableList<FieldSelector> getVisiblePathSelectors() {
     if (visiblePathSelectors == null) {
       visiblePathSelectors = buildVisibleSelectors(pathSelectors);
@@ -498,9 +476,7 @@ public class HttpAttribute {
     return visiblePathSelectors;
   }
 
-  /**
-   * Gets visible fields which are bound via parameters.
-   */
+  /** Gets visible fields which are bound via parameters. */
   public ImmutableList<FieldSelector> getVisibleParamSelectors() {
     if (visibleParamSelectors == null) {
       visibleParamSelectors = buildVisibleSelectors(paramSelectors);
@@ -508,9 +484,7 @@ public class HttpAttribute {
     return visibleParamSelectors;
   }
 
-  /**
-   * Gets visible fields which are bound via body.
-   */
+  /** Gets visible fields which are bound via body. */
   public ImmutableList<FieldSelector> getVisibleBodySelectors() {
     if (visibleBodySelectors == null) {
       visibleBodySelectors = buildVisibleSelectors(bodySelectors);
@@ -518,8 +492,7 @@ public class HttpAttribute {
     return visibleBodySelectors;
   }
 
-  private ImmutableList<FieldSelector> buildVisibleSelectors(
-      List<FieldSelector> selectors) {
+  private ImmutableList<FieldSelector> buildVisibleSelectors(List<FieldSelector> selectors) {
     ImmutableList.Builder<FieldSelector> listBuilder = ImmutableList.builder();
     for (FieldSelector selector : selectors) {
       boolean hasInvisibleField = false;

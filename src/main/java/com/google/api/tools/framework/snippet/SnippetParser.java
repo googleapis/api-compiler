@@ -34,7 +34,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -101,7 +100,7 @@ class SnippetParser {
 
     private String getPath() {
       if (parent != null) {
-        return parent.getPath() + File.pathSeparator + name;
+        return parent.getPath() + ':' + name;
       }
       return name;
     }

@@ -1,0 +1,48 @@
+{
+  "swagger": "2.0",
+  "host": "apis.example.com",
+  "x-google-api-name": "publisher",
+  "info": {
+    "version": "1.0.0",
+    "title": "Bookstore",
+    "description": "A simple Bookstore example."
+  },
+  "basePath": "/v1",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "key",
+      "in": "query"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "paths": {
+    "/channel/publisher": {
+      "post": {
+        "description": "Returns all shelves in the bookstore",
+        "operationId": "publish",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "shelves list response"
+          }
+        }
+      }
+    }
+  }
+}

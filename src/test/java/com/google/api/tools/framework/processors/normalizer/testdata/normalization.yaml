@@ -42,12 +42,6 @@ http:
   - selector: protiary.test.Storage.CustomObjectCreateAllParam
     post: /v1/buckets/{bucket_name.bucket_id}/objects/createAllParams
 
-context:
-  rules:
-  - selector: "*"
-    requested:
-    - google.rpc.context.ProjectContext
-    - google.rpc.context.AbuseContext
 
 
 authentication:

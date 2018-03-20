@@ -58,15 +58,12 @@ quota {
 }
 authentication {
 }
-context {
-}
 usage {
 }
 endpoints {
   name: "test.googleapis.com"
   aliases: "test.clients6.google.com"
   aliases: "content-test.googleapis.com"
-  apis: "test.v1.Service"
 }
 config_version {
   value: 3

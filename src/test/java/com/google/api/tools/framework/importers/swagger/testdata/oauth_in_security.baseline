@@ -146,8 +146,6 @@ authentication {
     authorization_url: "http://petstore.swagger.wordnik.com/api/oauth/dialog"
   }
 }
-context {
-}
 usage {
   rules {
     selector: "v1.library_example_cloud_goog.RemoveSecurityByXSecurity"
@@ -168,7 +166,6 @@ usage {
 }
 endpoints {
   name: "library-example.cloud.goog"
-  apis: "v1.library_example_cloud_goog"
 }
 control {
   environment: "servicecontrol.googleapis.com"

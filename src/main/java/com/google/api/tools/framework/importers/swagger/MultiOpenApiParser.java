@@ -23,6 +23,7 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.jsonschema.report.ProcessingReport;
 import com.github.fge.jsonschema.report.ProcessingMessage;
 import com.google.api.Service;
+import com.google.api.tools.framework.importers.swagger.aspects.utils.ExtensionNames;
 import com.google.api.tools.framework.tools.FileWrapper;
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Joiner;
@@ -71,10 +72,16 @@ public class MultiOpenApiParser {
     public abstract OpenApiConversionResources conversionResources();
 
     public static OpenApiFile create(
-        Service.Builder serviceBuilder, Swagger swagger, String filename, String typeNamespace) {
+        Service.Builder serviceBuilder, Swagger swagger, String filename, String typeNamespace)
+        throws OpenApiConversionException {
       String hostname = Strings.nullToEmpty(swagger.getHost());
       String version = Strings.nullToEmpty(swagger.getInfo().getVersion());
-      String apiName = ApiNameGenerator.generate(hostname, version);
+      String googleApiName = "";
+      if (swagger.getVendorExtensions() != null) {
+        googleApiName = Strings.nullToEmpty(
+            (String) swagger.getVendorExtensions().get(ExtensionNames.API_NAME));
+      }
+      String apiName = ApiNameGenerator.generate(hostname, googleApiName, version);
       return new AutoValue_MultiOpenApiParser_OpenApiFile(
           serviceBuilder,
           swagger,

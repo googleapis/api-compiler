@@ -26,7 +26,6 @@ import com.google.api.tools.framework.tools.ToolOptions.Option;
 import com.google.api.tools.framework.tools.ToolProtoUtil;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -70,13 +69,11 @@ public class ConfigGeneratorDriver extends ToolDriverBase {
       ToolOptions.createOption(
           String.class, "project_id", "An API producer project ID to use for the config.", "");
 
-  private final ToolOptions options;
   private final ConfigGenerator configGenerator;
   private Service generatedServiceConfig = null;
 
   public ConfigGeneratorDriver(ToolOptions options) {
     super(options);
-    this.options = Preconditions.checkNotNull(options, "options cannot be null");
     if (hasProtoDescriptorInput()) {
       configGenerator = new ConfigGeneratorFromProtoDescriptor(options);
     } else {
@@ -87,15 +84,18 @@ public class ConfigGeneratorDriver extends ToolDriverBase {
   @Override
   public void process() throws IOException {
     if (!validateInputs()) {
-      getDiagCollector().addDiag(Diag.error(SimpleLocation.TOPLEVEL,
-          "Invalid arguments passed to the tool. Please see usage of this tool"
-          + " by passing --help option"));
+      getDiagCollector()
+          .addDiag(
+              Diag.error(
+                  SimpleLocation.TOPLEVEL,
+                  "Invalid arguments passed to the tool. Please see usage of this tool"
+                      + " by passing --help option"));
     }
 
     generatedServiceConfig = configGenerator.generateServiceConfig();
     if (generatedServiceConfig == null) {
-      getDiagCollector().addDiag(
-          Diag.error(SimpleLocation.TOPLEVEL, "Service config cannot be generated"));
+      getDiagCollector()
+          .addDiag(Diag.error(SimpleLocation.TOPLEVEL, "Service config cannot be generated"));
       return;
     }
     Service.Builder builder = generatedServiceConfig.toBuilder();

@@ -174,8 +174,6 @@ quota {
 }
 authentication {
 }
-context {
-}
 usage {
   rules {
     selector: "1.api_uber_com.GetPrices"
@@ -200,7 +198,6 @@ usage {
 }
 endpoints {
   name: "api.uber.com"
-  apis: "1.api_uber_com"
 }
 control {
   environment: "servicecontrol.googleapis.com"

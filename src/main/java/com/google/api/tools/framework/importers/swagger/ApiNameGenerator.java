@@ -19,32 +19,58 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import java.util.List;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.CharUtils;
 
 /**
- * Generates API name in the form [major_version].[hostname] for semantic version or
- * [version].[hostname] for other versioning schemes, with all non ASCII alphanumeric characters
- * replaced with {@link ApiNameGenerator#API_NAME_FILLER_CHAR}. Adds '_' at start if hostname is
- * empty or starts with non alpha character, since API names can only start with alpha or '_'
+ * Generates canonical API names in the form "[version].[api-name]" where:
+ *
+ * If the service version string (info.version) conforms to semantic versioning,
+ * the API version is the major version.
+ * In all other cases, the API version is the entire service version string.
+ *
+ * The API name may be explicitly specified by the user through the `x-google-api-name` OpenAPI
+ * extension. If absent, the API name is derived from the service hostname, with all non ASCII
+ * alphanumeric characters replaced with {@link ApiNameGenerator#API_NAME_FILLER_CHAR}.
+ *
+ * Adds '_' at start if hostname is empty or starts with non alpha character,
+ * since API names can only start with alpha or '_'.
  */
 public class ApiNameGenerator {
-
+  private static final Pattern RE_API_NAME = Pattern.compile("[a-z][a-z0-9]{0,39}+");
   private static final char API_NAME_FILLER_CHAR = '_';
   private static final char SEPARATOR = '.';
   private static final int SEMANTIC_VERSION_EXPECTED_PIECES = 3; //semantic version is in form x.y.z
 
-  public static String generate(String hostname, String version) {
+  /**
+   * Generates canonical API name based on hostname/api-name/version combination.
+   * The API name may be explicitly specified through the x-google-api-name OpenAPI extension.
+   * If absent, the API name is derived from the service name.
+   */
+  public static String generate(String hostname, String googleApiName, String version)
+      throws OpenApiConversionException {
     String cleanedHostName = replaceNonAlphanumericChars(hostname, false);
     if (!startsWithAlphaOrUnderscore(cleanedHostName)) {
       cleanedHostName = API_NAME_FILLER_CHAR + cleanedHostName;
     }
-    String cleanedMajorVersion = replaceNonAlphanumericChars(parseMajorVersion(version), true);
 
-    StringBuilder apiName = new StringBuilder();
-    if (!cleanedMajorVersion.isEmpty()) {
-      apiName.append(cleanedMajorVersion).append(SEPARATOR);
+    if (!googleApiName.isEmpty() && !isValidApiName(googleApiName)) {
+      throw new OpenApiConversionException(
+          String.format("Invalid API name '%s' : API names much conform to %s.",
+              googleApiName, RE_API_NAME.pattern()));
     }
-    return apiName.append(cleanedHostName).toString();
+
+    String apiName = googleApiName;
+    if (apiName.isEmpty()) {
+      apiName = cleanedHostName;
+    }
+
+    String cleanedMajorVersion = replaceNonAlphanumericChars(parseMajorVersion(version), true);
+    if (cleanedMajorVersion.isEmpty()) {
+      return apiName;
+    } else {
+      return String.format("%s%s%s", cleanedMajorVersion, SEPARATOR, apiName);
+    }
   }
 
   /**
@@ -83,5 +109,9 @@ public class ApiNameGenerator {
     }
     char firstCharacter = string.charAt(0);
     return CharUtils.isAsciiAlpha(firstCharacter) || firstCharacter == API_NAME_FILLER_CHAR;
+  }
+
+  private static boolean isValidApiName(String apiName) {
+    return RE_API_NAME.matcher(apiName).matches();
   }
 }

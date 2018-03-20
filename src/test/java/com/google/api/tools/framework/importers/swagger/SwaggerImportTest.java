@@ -404,6 +404,23 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
+  public void multi_apis_single_name() throws Exception {
+    testWithDefaults(
+        "multi_apis_single_name",
+        "multi_apis_single_name2",
+        "multi_apis_single_name3",
+        "multi_apis_single_name4");
+  }
+
+  @Test
+  public void multi_apis_single_name_version_conflict() throws Exception {
+    testWithDefaults(
+        "multi_apis_single_name_version_conflict",
+        "multi_apis_single_name_version_conflict2",
+        "multi_apis_single_name_version_conflict3");
+  }
+
+  @Test
   public void petstore_expanded() throws Exception {
     testWithDefaults("petstore_expanded");
   }
@@ -458,16 +475,6 @@ public class SwaggerImportTest extends BaselineTestCase {
   }
 
   @Test
-  public void multiple_swagger_duplicate_versions() throws Exception {
-    test(
-        "",
-        "",
-        EMPTY_VISIBILITY_LABELS,
-        ImmutableList.of("library_example", "library_example_v2"),
-        NO_ADDITIONAL_CONFIGS);
-  }
-
-  @Test
   public void multiple_swagger() throws Exception {
     test(
         "",
@@ -507,4 +514,33 @@ public class SwaggerImportTest extends BaselineTestCase {
         ADDITIONAL_CONFIGS);
   }
 
+  @Test
+  public void array_type_missing_items() throws Exception {
+    testWithDefaults("array_type_missing_items");
+  }
+
+  @Test
+  public void type_reference_array_loop() throws Exception {
+    testWithDefaults("type_reference_array_loop");
+  }
+
+  @Test
+  public void type_reference_ref_loop() throws Exception {
+    testWithDefaults("type_reference_ref_loop");
+  }
+
+  @Test
+  public void type_reference_object_self_reference() throws Exception {
+    testWithDefaults("type_reference_object_self_reference");
+  }
+
+  @Test
+  public void invalid_type_definition_reference_prefix() throws Exception {
+    testWithDefaults("invalid_type_definition_reference_prefix");
+  }
+
+  @Test
+  public void invalid_type_reference_prefix() throws Exception {
+    testWithDefaults("invalid_type_reference_prefix");
+  }
 }

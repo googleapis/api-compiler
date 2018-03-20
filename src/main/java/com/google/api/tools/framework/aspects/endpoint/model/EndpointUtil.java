@@ -95,11 +95,7 @@ public class EndpointUtil {
     } else if (element instanceof Interface) {
       Endpoint endpointConfig = getEndpointConfig(model, endpoint);
       if (endpointConfig != null) {
-        for (String api : endpointConfig.getApisList()) {
-          if (api.equals(element.getFullName())) {
-            return true;
-          }
-        }
+        return true;
       }
       return false;
     } else {

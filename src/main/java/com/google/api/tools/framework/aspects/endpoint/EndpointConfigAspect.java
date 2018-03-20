@@ -31,7 +31,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.protobuf.Api;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -72,7 +71,7 @@ public class EndpointConfigAspect extends ConfigAspectBase {
             : createDefaultEndpoints(service);
 
     checkForDuplicates(sourceEndpoints);
-    List<Endpoint> processedEndpoints = populateDefaults(sourceEndpoints, service);
+    List<Endpoint> processedEndpoints = populateDefaults(sourceEndpoints);
     getModel().putAttribute(EndpointUtil.ENDPOINTS_KEY, processedEndpoints);
   }
 
@@ -86,7 +85,7 @@ public class EndpointConfigAspect extends ConfigAspectBase {
   @Override
   public void merge(ProtoElement element) {}
 
-  private List<Endpoint> populateDefaults(List<Endpoint> sourceEndpoints, Service service) {
+  private List<Endpoint> populateDefaults(List<Endpoint> sourceEndpoints) {
     ImmutableList.Builder<Endpoint> results = ImmutableList.builder();
     for (Endpoint sourceEndpoint : sourceEndpoints) {
       if (!validate(sourceEndpoint)) {
@@ -102,11 +101,6 @@ public class EndpointConfigAspect extends ConfigAspectBase {
         aliases.addAll(builder.getAliasesList());
         builder.clearAliases();
         builder.addAllAliases(aliases);
-      }
-      if (sourceEndpoint.getApisCount() == 0) {
-        for (Api api : service.getApisList()) {
-          builder.addApis(api.getName());
-        }
       }
       builder.clearFeatures();
       builder.addAllFeatures(

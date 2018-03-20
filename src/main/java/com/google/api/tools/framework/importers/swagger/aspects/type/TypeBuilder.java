@@ -63,9 +63,11 @@ import java.util.TreeSet;
  * provides type resolution from a given type reference.
  */
 public class TypeBuilder implements AspectBuilder {
+  private static final String TYPE_DEFINITIONS_PREFIX = "#/definitions/";
+
   private final Set<String> createdTypesFullName = Sets.newHashSet();
-  //  private final List<Type> types = Lists.newArrayList();
   private final Map<String, TypeInfo> processedTypeNameToTypeInfo = Maps.newHashMap();
+  private final Set<String> visitedTypes = Sets.newHashSet();
   private final Swagger swagger;
   private final String namespace;
   private final String namespacePrefix; // Pre-computed namespace with a trailing dot.
@@ -87,6 +89,7 @@ public class TypeBuilder implements AspectBuilder {
     TreeSet<String> swaggerModelNames = Sets.newTreeSet(swagger.getDefinitions().keySet());
     for (String swaggerModelName : swaggerModelNames) {
 
+      visitedTypes.clear();
       addTypeFromModel(
           serviceBuilder, swaggerModelName, swagger.getDefinitions().get(swaggerModelName));
     }
@@ -103,12 +106,32 @@ public class TypeBuilder implements AspectBuilder {
    * return the suitable predefined google.protobuf* types.
    */
   TypeInfo addTypeFromModel(Service.Builder serviceBuilder, String typeName, Model model) {
-    String modelRefId = "#/definitions/" + typeName;
+    String modelRefId = TYPE_DEFINITIONS_PREFIX + typeName;
     TypeInfo resultTypeInfo = null;
 
     if (processedTypeNameToTypeInfo.containsKey(modelRefId)) {
       return processedTypeNameToTypeInfo.get(modelRefId);
+    } else if (visitedTypes.contains(modelRefId)) {
+      // For nodes that have already been visited but were eventually successfully resolved by our
+      // depth-first traversal, processedTypeNameToTypeInfo will contain the resolution and we will
+      // not hit this conditional. This allows for valid references to other nodes in the type
+      // dependency tree that can be resolved. If, however, our traversal of the tree encounters a
+      // node we have seen before in that same traversal and have NOT yet resolved, then we know we
+      // have an unresolvable circular dependence.
+      //
+      // Note that we have a special case for 'object' types - for those, we are able to store the
+      // generic 'message' type in the processedTypeNameToTypeInfo map before proceeding with the
+      // traversal, so we are able to handle object types whose members reference additional
+      // objects.
+      diagCollector.addDiag(
+          Diag.error(
+              SimpleLocation.TOPLEVEL,
+              "Invalid circular reference detected for type '%s'",
+              typeName));
+      return null;
     }
+    visitedTypes.add(modelRefId);
+
     if (model != null) {
       if (model instanceof ComposedModel) {
         // TODO(user): Expand this composed Model and create a Type from it.
@@ -203,17 +226,22 @@ public class TypeBuilder implements AspectBuilder {
 
   /** Returns the {@link TypeInfo} for the referenced model. */
   private TypeInfo getRefModelTypeInfo(Service.Builder serviceBuilder, RefModel refModel) {
-    TypeInfo resultTypeInfo;
-    Preconditions.checkState(refModel.get$ref().startsWith("#/definitions/"));
-    String refModelName = refModel.get$ref().substring("#/definitions/".length());
-    resultTypeInfo =
-        Preconditions.checkNotNull(
-            addTypeFromModel(
+    if (!refModel.get$ref().startsWith(TYPE_DEFINITIONS_PREFIX)) {
+      diagCollector.addDiag(
+          Diag.error(
+              SimpleLocation.TOPLEVEL,
+              "Type definition reference path '%s' must begin with '%s'",
+              refModel.get$ref(),
+              TYPE_DEFINITIONS_PREFIX));
+      return null;
+    }
+    String refModelName = refModel.get$ref().substring(TYPE_DEFINITIONS_PREFIX.length());
+    TypeInfo resultTypeInfo = addTypeFromModel(
                 serviceBuilder,
                 refModelName,
                 swagger.getDefinitions() == null
                     ? null
-                    : swagger.getDefinitions().get(refModelName)));
+                    : swagger.getDefinitions().get(refModelName));
     return resultTypeInfo;
   }
 
@@ -222,10 +250,13 @@ public class TypeBuilder implements AspectBuilder {
     TypeInfo resultTypeInfo;
     TypeInfo arrayItemTypeInfo =
         ensureNamed(serviceBuilder, getTypeInfo(serviceBuilder, arrayItems), "ArrayEntry");
-    // Check if this is a repeated of repeated. Since repeated of repeated is not allowed, we will
-    // represent this as {@link com.google.protobuf.ListValue} type.
-    if (arrayItemTypeInfo == null
-        || arrayItemTypeInfo.cardinality() == Cardinality.CARDINALITY_REPEATED) {
+    // Check if the type is unspecified. If so, we represent this array as a generic List
+    if (arrayItemTypeInfo == null) {
+      resultTypeInfo =
+          WellKnownType.LIST.toTypeInfo().withCardinality(Cardinality.CARDINALITY_OPTIONAL);
+      // Check if this is a repeated of repeated. Since repeated of repeated is not allowed, we will
+      // represent this as {@link com.google.protobuf.ListValue} type.
+    } else if (arrayItemTypeInfo.cardinality() == Cardinality.CARDINALITY_REPEATED) {
       resultTypeInfo =
           WellKnownType.LIST.toTypeInfo().withCardinality(Cardinality.CARDINALITY_REPEATED);
     } else {
@@ -375,7 +406,7 @@ public class TypeBuilder implements AspectBuilder {
       Property property,
       Property arrayItems) {
     if (WellKnownTypeUtils.isPrimitiveType(type)) {
-      //TODO: this is weird, why is typeUrl here empty when in other cases its not??
+      // TODO: this is weird, why is typeUrl here empty when in other cases its not??
       return TypeInfo.create(
           null,
           WellKnownTypeUtils.getKind(WellKnownType.fromString(type), format),
@@ -384,8 +415,16 @@ public class TypeBuilder implements AspectBuilder {
     switch (type) {
       case "ref":
         String referencePath = ((RefProperty) property).get$ref();
-        Preconditions.checkState(referencePath.startsWith("#/definitions/"));
-        String refPropertyName = referencePath.substring("#/definitions/".length());
+        if (!referencePath.startsWith(TYPE_DEFINITIONS_PREFIX)) {
+          diagCollector.addDiag(
+              Diag.error(
+                  SimpleLocation.TOPLEVEL,
+                  "Type definition reference path '%s' must begin with '%s'",
+                  referencePath,
+                  TYPE_DEFINITIONS_PREFIX));
+          return null;
+        }
+        String refPropertyName = referencePath.substring(TYPE_DEFINITIONS_PREFIX.length());
         if (swagger.getDefinitions() == null) {
           diagCollector.addDiag(
               Diag.error(
@@ -453,7 +492,9 @@ public class TypeBuilder implements AspectBuilder {
    */
   public TypeInfo ensureNamed(
       Service.Builder serviceBuilder, TypeInfo typeInfo, String nameSuggestion) {
-    if (typeInfo.kind() != Kind.TYPE_MESSAGE || !Strings.isNullOrEmpty(typeInfo.typeUrl())) {
+    if (typeInfo == null
+        || typeInfo.kind() != Kind.TYPE_MESSAGE
+        || !Strings.isNullOrEmpty(typeInfo.typeUrl())) {
       return typeInfo;
     }
 

@@ -52,6 +52,12 @@ public abstract class BuilderVisitorNodeInfo {
   /** Get the Builder object associated with this node being visited by the BuilderVisitor. */
   public abstract Message.Builder node();
 
+  /** Get the name of the node() this NodeInfo object wraps */
+  public abstract String getFullyQualifiedName();
+
+  /** Set the name of the node() this NodeInfo object wraps */
+  public abstract void setFullyQualifiedName(String fullyQualifiedName);
+
   /** Get the set of child Builder objects to be deleted from this parent node. */
   public abstract Set<Message.Builder> toBeDeleted();
 

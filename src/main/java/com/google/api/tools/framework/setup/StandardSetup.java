@@ -17,7 +17,7 @@
 package com.google.api.tools.framework.setup;
 
 import com.google.api.tools.framework.aspects.authentication.AuthConfigAspect;
-import com.google.api.tools.framework.aspects.context.ContextConfigAspect;
+import com.google.api.tools.framework.aspects.authentication.validators.AuthenticationValidator;
 import com.google.api.tools.framework.aspects.control.ControlConfigAspect;
 import com.google.api.tools.framework.aspects.documentation.DocumentationConfigAspect;
 import com.google.api.tools.framework.aspects.endpoint.EndpointConfigAspect;
@@ -30,6 +30,7 @@ import com.google.api.tools.framework.aspects.servicecontrol.ServiceControlConfi
 import com.google.api.tools.framework.aspects.superquota.SuperQuotaConfigAspect;
 import com.google.api.tools.framework.aspects.superquota.validators.QuotaLimitNameValidator;
 import com.google.api.tools.framework.aspects.superquota.validators.QuotaLimitValuesValidator;
+import com.google.api.tools.framework.aspects.superquota.validators.QuotaMetricRuleValidator;
 import com.google.api.tools.framework.aspects.superquota.validators.QuotaMetricsExistValidator;
 import com.google.api.tools.framework.aspects.superquota.validators.QuotaUnitValidator;
 import com.google.api.tools.framework.aspects.systemparameter.SystemParameterConfigAspect;
@@ -61,8 +62,6 @@ public class StandardSetup {
   public static void registerStandardConfigAspects(Model model) {
 
     model.registerConfigAspect(DocumentationConfigAspect.create(model));
-
-    model.registerConfigAspect(ContextConfigAspect.create(model));
 
     VersionConfigAspect versionAspect = VersionConfigAspect.create(model);
     versionAspect.registerLintRule(new ConfigVersionRule(versionAspect));
@@ -97,8 +96,10 @@ public class StandardSetup {
       model.registerValidator(new QuotaUnitValidator(model.getDiagReporter()));
       model.registerValidator(new QuotaLimitValuesValidator(model.getDiagReporter()));
     model.registerValidator(new QuotaLimitNameValidator(model.getDiagReporter()));
+    model.registerValidator(new QuotaMetricRuleValidator(model.getDiagReporter()));
     model.registerValidator(new QuotaMetricsExistValidator(model.getDiagReporter()));
 
+    model.registerValidator(new AuthenticationValidator(model.getDiagReporter()));
   }
 
 }

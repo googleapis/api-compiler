@@ -54,9 +54,7 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
   /** A private key to store the RestAnalyzer with the model. */
   private static final Key<RestAnalyzer> REST_ANALYZER_KEY = Key.get(RestAnalyzer.class);
 
-  /**
-   * Creates http config aspect.
-   */
+  /** Creates http config aspect. */
   public static HttpConfigAspect create(Model model) {
     return new HttpConfigAspect(model);
   }
@@ -70,9 +68,7 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
         model.getServiceConfig().getHttp().getRulesList());
   }
 
-  /**
-   * Depends on documentation aspect via consumption of {@link ResourceAttribute}.
-   */
+  /** Depends on documentation aspect via consumption of {@link ResourceAttribute}. */
   @Override
   public List<Class<? extends ConfigAspect>> mergeDependencies() {
     return ImmutableList.<Class<? extends ConfigAspect>>of(DocumentationConfigAspect.class);
@@ -109,8 +105,8 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
     Model model = getModel();
 
     // Attach the rest collections to the model.
-    model.putAttribute(CollectionAttribute.KEY,
-        model.getAttribute(REST_ANALYZER_KEY).finalizeAndGetCollections());
+    model.putAttribute(
+        CollectionAttribute.KEY, model.getAttribute(REST_ANALYZER_KEY).finalizeAndGetCollections());
     model.removeAttribute(REST_ANALYZER_KEY);
 
     super.endMerging();
@@ -123,18 +119,17 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
 
   @Override
   protected void addToRuleBuilder(Builder builder, String selector, HttpAttribute binding) {
-    builder.getHttpBuilder().addRules(
-        binding.getHttpRule().toBuilder().setSelector(selector).build());
+    builder
+        .getHttpBuilder()
+        .addRules(binding.getHttpRule().toBuilder().setSelector(selector).build());
   }
 
   // --------------------------------------------------------------------------------
   // Parsing and resolving of http config
 
-  /**
-   * Parse and resolve the http rule for the given method.
-   */
-  private HttpAttribute parseAndResolve(final Method method, HttpRule rule,
-      final boolean isFromIdl) {
+  /** Parse and resolve the http rule for the given method. */
+  private HttpAttribute parseAndResolve(
+      final Method method, HttpRule rule, final boolean isFromIdl) {
     // Construct the http mapping.
     List<HttpAttribute> additionalBindings =
         Lists.transform(
@@ -165,12 +160,16 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
     return binding;
   }
 
-  private HttpAttribute constructBinding(Method method, HttpRule rule, boolean isFromIdl,
-      List<HttpAttribute> additionalBindings, boolean isPrimary) {
+  private HttpAttribute constructBinding(
+      Method method,
+      HttpRule rule,
+      boolean isFromIdl,
+      List<HttpAttribute> additionalBindings,
+      boolean isPrimary) {
     // Extract the path and the method kind.
     MethodKind kind;
     String path;
-    switch(rule.getPatternCase()) {
+    switch (rule.getPatternCase()) {
       case GET:
         kind = MethodKind.GET;
         path = rule.getGet();
@@ -200,29 +199,31 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
     }
 
     // Parse the path.
-    ImmutableList<PathSegment> parsedPath = new HttpTemplateParser(
-        asDiagCollector(), method.getLocation(),
-        path, method.getModel().getConfigVersion()).parse();
+    ImmutableList<PathSegment> parsedPath =
+        new HttpTemplateParser(
+                asDiagCollector(), method.getLocation(), path, method.getModel().getConfigVersion())
+            .parse();
     if (parsedPath == null) {
       return null;
     }
 
     // Construct the http mapping.
-    return new HttpAttribute(rule,
+    return new HttpAttribute(
+        rule,
         kind,
         method.getInputType().getMessageType(),
         parsedPath,
         rule.getBody().isEmpty() ? null : rule.getBody(),
         isFromIdl,
-        additionalBindings != null ? ImmutableList.copyOf(additionalBindings)
+        additionalBindings != null
+            ? ImmutableList.copyOf(additionalBindings)
             : ImmutableList.<HttpAttribute>of(),
         isPrimary);
   }
-  /**
-   * Resolves the http method config for the given method.
-   */
+
+  /** Resolves the http method config for the given method. */
   private void resolve(HttpAttribute binding, Method method) {
-    // Walk over the path and resolve field paths. Remember any bound selectors.
+    // Walk over the path and resolve field paths. Remember any bound selectors
     // while doing so.
     Set<FieldSelector> bound = Sets.newLinkedHashSet();
     resolve(method, bound, binding.getPath());
@@ -243,22 +244,23 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
     }
 
     // Now compute all those field selectors not bound by path or body.
+    Set<FieldSelector> paramFields = Sets.newLinkedHashSet();
     Set<FieldSelector> unbound = Sets.newLinkedHashSet();
-    computeUnbound(method.getInputType().getMessageType(), bound, FieldSelector.of(), unbound);
+    computeUnbound(
+        method.getInputType().getMessageType(), bound, FieldSelector.of(), paramFields, unbound);
 
     // Resolve the http method config.
     if (binding.bodyCapturesUnboundFields()) {
       // All unbound fields are mapped to the body.
-      binding.setFields(ImmutableList.<FieldSelector>of(), ImmutableList.copyOf(unbound));
+      bodyFields.addAll(unbound);
     } else {
-      binding.setFields(ImmutableList.copyOf(unbound), bodyFields.build());
+      paramFields.addAll(unbound);
     }
+    binding.setFields(ImmutableList.copyOf(paramFields), bodyFields.build());
 
   }
 
-  /**
-   * Resolves field reference in a path, recursing into sub-paths.
-   */
+  /** Resolves field reference in a path, recursing into sub-paths. */
   private void resolve(Method method, Set<FieldSelector> bound, Iterable<PathSegment> path) {
     for (PathSegment seg : path) {
       if (seg instanceof FieldSegment) {
@@ -299,11 +301,14 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
   }
 
   /**
-   * Computes the field selectors not bound w.r.t. a given message and the set of unbound
-   * selectors.
+   * Computes the field selectors not bound w.r.t. a given message and the set of unbound selectors.
    */
-  private void computeUnbound(MessageType message, Set<FieldSelector> bound,
-      FieldSelector parent, Set<FieldSelector> unbound) {
+  private void computeUnbound(
+      MessageType message,
+      Set<FieldSelector> bound,
+      FieldSelector parent,
+      Set<FieldSelector> paramFields,
+      Set<FieldSelector> unbound) {
     for (Field field : message.getFields()) {
       FieldSelector selector = parent.add(field);
       if (bound.contains(selector)) {
@@ -312,16 +317,19 @@ public class HttpConfigAspect extends RuleBasedConfigAspect<HttpRule, HttpAttrib
       }
       boolean boundSubFields = false;
       if (selector.getType().isMessage()) {
+        // Descend into the sub-fields of this field's message type
         for (FieldSelector boundSelector : bound) {
           if (selector.isPrefixOf(boundSelector)) {
             // This field's message has some sub-fields which are bound. Recurse to discover the
             // unbound ones on the next level.
             boundSubFields = true;
-            computeUnbound(selector.getType().getMessageType(), bound, selector, unbound);
+            computeUnbound(
+                selector.getType().getMessageType(), bound, selector, paramFields, unbound);
             break;
           }
         }
       }
+
       if (!boundSubFields) {
         // This field as a whole marked as unbound.
         unbound.add(selector);

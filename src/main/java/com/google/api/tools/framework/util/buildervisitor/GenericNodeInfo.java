@@ -31,6 +31,7 @@ import java.util.Set;
  */
 public class GenericNodeInfo extends BuilderVisitorNodeInfo {
   private final Message.Builder node;
+  private String fullyQualifiedName;
   private final FileNodeInfo fileNodeInfo;
   private final Set<Message.Builder> toBeDeleted = new HashSet<>();
 
@@ -52,6 +53,16 @@ public class GenericNodeInfo extends BuilderVisitorNodeInfo {
 
   @Override public Message.Builder node() {
     return node;
+  }
+
+  /** Get the name of the node() this NodeInfo object wraps */
+  @Override public String getFullyQualifiedName() {
+    return fullyQualifiedName;
+  }
+
+  /** Set the name of the node() this NodeInfo object wraps */
+  @Override public void setFullyQualifiedName(String fullyQualifiedName) {
+    this.fullyQualifiedName = fullyQualifiedName;
   }
 
   @Override public Set<Message.Builder> toBeDeleted() {

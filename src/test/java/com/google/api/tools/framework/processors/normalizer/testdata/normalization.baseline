@@ -560,65 +560,12 @@ authentication {
     }
   }
 }
-context {
-  rules {
-    selector: "protiary.test.Storage.GetBucket"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-  rules {
-    selector: "protiary.test.Storage.CreateObject"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-  rules {
-    selector: "protiary.test.Storage.GetObject"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-  rules {
-    selector: "protiary.test.Storage.GetObjectByFullName"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-  rules {
-    selector: "protiary.test.Storage.ListBuckets"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-  rules {
-    selector: "protiary.test.Storage.ListBuckets2"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-  rules {
-    selector: "protiary.test.Storage.CreateBucket"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-  rules {
-    selector: "protiary.test.Storage.CustomCreate"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-  rules {
-    selector: "protiary.test.Storage.CustomObjectCreate"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-  rules {
-    selector: "protiary.test.Storage.CustomObjectCreateAllParam"
-    requested: "google.rpc.context.ProjectContext"
-    requested: "google.rpc.context.AbuseContext"
-  }
-}
 usage {
 }
 endpoints {
   name: "blob.googleapis.com"
   aliases: "blob.clients6.google.com"
   aliases: "content-blob.googleapis.com"
-  apis: "protiary.test.Storage"
 }
 config_version {
   value: 2

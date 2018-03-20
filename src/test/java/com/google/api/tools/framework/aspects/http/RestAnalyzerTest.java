@@ -137,7 +137,6 @@ public class RestAnalyzerTest extends BaselineTestCase {
     Interface iface = Interface.create(file, ServiceDescriptorProto.getDefaultInstance(), "");
     Method method =
         Method.create(iface, MethodDescriptorProto.newBuilder().setName(simpleName).build(), "");
-
     RestMethod restMethod;
     ImmutableList<PathSegment> path = parse(model, template);
     if (!model.getDiagReporter().getDiagCollector().getDiags().isEmpty()) {

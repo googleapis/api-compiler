@@ -17,20 +17,33 @@
 package com.google.api.tools.framework.tools;
 
 import com.google.api.AnnotationsProto;
+import com.google.protobuf.DescriptorProtos.FileDescriptorSet;
 import com.google.protobuf.ExtensionRegistry;
+import java.io.FileInputStream;
+import java.io.IOException;
 
-/**
- * Proto utilities for tools.
- */
+/** Proto utilities for tools. */
 public class ToolProtoUtil {
   /**
-   * Get the standard extension registry to use for processing service config. By default,
-   * registers extensions from {@code google/api/annotations.proto} (and related proto files).
+   * Get the standard extension registry to use for processing service config. By default, registers
+   * extensions from {@code google/api/annotations.proto} (and related proto files).
    */
   public static ExtensionRegistry getStandardPlatformExtensions() {
     ExtensionRegistry registry = ExtensionRegistry.newInstance();
     AnnotationsProto.registerAllExtensions(registry);
 
     return registry;
+  }
+
+  public static FileDescriptorSet openDescriptorSet(String fileName) {
+    return openDescriptorSet(fileName, getStandardPlatformExtensions());
+  }
+
+  public static FileDescriptorSet openDescriptorSet(String fileName, ExtensionRegistry registry) {
+    try {
+      return FileDescriptorSet.parseFrom(new FileInputStream(fileName), registry);
+    } catch (IOException e) {
+      throw new RuntimeException(String.format("Cannot open+parse input file '%s'", fileName), e);
+    }
   }
 }

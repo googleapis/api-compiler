@@ -1,0 +1,77 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Google Example Library API",
+      "description": "A simple Google Example Library API.",
+      "version": "v1"
+    },
+    "host": "library-example.cloud.goog",
+     "paths": {
+        "/v1/pets": {
+            "post": {
+                "operationId": "simpleMethod",
+                "parameters": [{
+                    "name": "myBodyRef",
+                    "in": "body",
+                    "schema": {
+                        "$ref": "#/definitions/selfReferenceObject"
+                    }
+                }],
+                "responses": {
+                    "default": {
+                        "description": "successful operation",
+                        "schema": {
+                                "$ref": "#/definitions/myObject"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "myObject": {
+            "properties": {
+                "myNestedObject": {
+                  "$ref": "#/definitions/myObject2"
+                },
+                "myNestedObject2": {
+                  "properties": {
+                    "myNestedObject3": {
+                      "$ref": "#/definitions/myObject2"
+                    }
+                  }
+                }
+            }
+        },
+        "myObject2": {
+            "properties": {
+                "foo": {
+                  "type": "string"
+                }
+            }
+        },
+        "selfReferenceObject": {
+            "properties": {
+                "foo": {
+                    "$ref": "#/definitions/foo"
+                },
+                "leftObject3": {
+                    "$ref": "#/definitions/selfReferenceObject"
+                },
+                "rightObject3": {
+                    "$ref": "#/definitions/selfReferenceObject"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "key",
+            "in": "query"
+        }
+    },
+    "security": [{
+        "api_key": []
+    }]
+}

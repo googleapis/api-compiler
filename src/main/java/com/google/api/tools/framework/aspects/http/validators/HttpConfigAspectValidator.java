@@ -38,8 +38,9 @@ import java.util.Set;
 
 /**
  * Validates different parts of http configuration to ensure things like:
- * <li> Body, Path, Query, Response parameters has valid values.
- * <li> Configuration conforms to the api style guide.
+ * <li>Body, Path, Query, Response parameters has valid values.
+ * <li>Configuration conforms to the api style guide.
+ *
  *     <p>TODO(user): Split this validation into more logical components.
  */
 public class HttpConfigAspectValidator extends ConfigValidator<Method> {
@@ -123,7 +124,6 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
   }
 
   private void checkBodyConstraints(HttpAttribute binding, Method method) {
-
     if (binding.getBody() != null && !binding.bodyCapturesUnboundFields()) {
       if (!FieldSelector.hasSinglePathElement(binding.getBody())) {
         error(
@@ -161,6 +161,7 @@ public class HttpConfigAspectValidator extends ConfigValidator<Method> {
   /** Check context conditions on http parameters. */
   private void checkHttpParameterConditions(Method method, Field field, Set<MessageType> visited) {
     TypeRef type = field.getType();
+
     WellKnownType wkt = type.getWellKnownType();
     if (type.isMap()) {
       error(

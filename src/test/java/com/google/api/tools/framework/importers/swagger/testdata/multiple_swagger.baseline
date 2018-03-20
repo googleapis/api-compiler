@@ -161,8 +161,6 @@ quota {
 }
 authentication {
 }
-context {
-}
 usage {
   rules {
     selector: "1.petstore_swagger_io.FindPets"
@@ -199,8 +197,6 @@ usage {
 }
 endpoints {
   name: "petstore.swagger.io"
-  apis: "1.petstore_swagger_io"
-  apis: "2.petstore_swagger_io"
 }
 control {
   environment: "servicecontrol.googleapis.com"

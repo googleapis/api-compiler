@@ -1,0 +1,2 @@
+ERROR: type_reference_array_loop.json: Invalid circular reference detected for type 'myArray'
+Service config creation failed

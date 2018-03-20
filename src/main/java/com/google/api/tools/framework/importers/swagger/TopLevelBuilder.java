@@ -23,8 +23,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Multimaps;
 import com.google.protobuf.UInt32Value;
 import io.swagger.models.Info;
 import java.util.List;
@@ -115,23 +116,20 @@ public class TopLevelBuilder {
 
   private static void validateVersions(List<OpenApiFile> openApiFiles)
       throws OpenApiConversionException {
-    List<String> versions = Lists.newArrayList();
-    List<String> versionLocations = Lists.newArrayList();
-    for (OpenApiFile openApiFile : openApiFiles) {
-      String version = openApiFile.swagger().getInfo().getVersion();
-      versions.add(version);
-      versionLocations.add(String.format("%s:%s", openApiFile.filename(), version));
+    final ListMultimap<String, OpenApiFile> apis = Multimaps.index(openApiFiles, f -> f.apiName());
+    for (String apiName : apis.keySet()) {
+      final List<OpenApiFile> files = apis.get(apiName);
+      if (files.size() > 1) {
+        final List<String> locations = Lists.newArrayList();
+        for (OpenApiFile file : files) {
+          locations.add(
+              String.format("%s:%s", file.filename(), file.swagger().getInfo().getVersion()));
+        }
+        throw new OpenApiConversionException(
+            String.format(
+                "OpenAPI files includes conflicting API versions. Files and Versions found: {%s}",
+                Joiner.on(", ").join(locations)));
+      }
     }
-    if (listHasDuplicates(versions)) {
-      throw new OpenApiConversionException(
-          String.format(
-              "Multiple OpenAPI files cannot have the same 'info.version' value. "
-                  + "Files and Versions found: {%s}",
-              Joiner.on(", ").join(versionLocations)));
-    }
-  }
-
-  private static boolean listHasDuplicates(List<?> elements) {
-    return Sets.newHashSet(elements).size() != elements.size();
   }
 }

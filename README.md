@@ -2,6 +2,9 @@
 
 # Google API Compiler
 
+**NOTE**: API Compiler needs Java8 or higher. If you want to use Java7, please
+use the release tag [API Compiler Java7Support](https://github.com/googleapis/api-compiler/tree/Java7Support).
+
 ## Overview
 
 Google API Compiler (Api Compiler) is an open source tool for processing API
