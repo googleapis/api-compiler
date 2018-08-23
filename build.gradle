@@ -23,7 +23,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 group = "com.google.api"
-version = "0.0.8"
+version = "0.0.9-SNAPSHOT"
 archivesBaseName = "api-compiler"
 mainClassName = "com.google.api.tools.framework.tools.configgen.ServiceConfigGeneratorTool"
 
